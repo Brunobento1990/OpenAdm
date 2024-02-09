@@ -20,12 +20,18 @@ public class ConfiguracaoParceiroConfiguration : IEntityTypeConfiguration<Config
             .HasDefaultValueSql("now()");
         builder.Property(x => x.Numero)
             .ValueGeneratedOnAdd();
-        builder.Property(x => x.Dominio)
+        builder.Property(x => x.DominioSiteAdm)
+            .IsRequired()
+            .HasMaxLength(255);
+        builder.Property(x => x.DominioSiteEcommerce)
             .IsRequired()
             .HasMaxLength(255);
         builder.Property(x => x.ConexaoDb)
             .IsRequired()
             .HasMaxLength(1000);
-        builder.HasIndex(x => x.Dominio);
+        builder.HasIndex(x => x.DominioSiteAdm)
+            .IsUnique(true);
+        builder.HasIndex(x => x.DominioSiteEcommerce)
+            .IsUnique(true);
     }
 }

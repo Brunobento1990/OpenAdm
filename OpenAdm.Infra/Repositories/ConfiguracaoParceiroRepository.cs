@@ -14,7 +14,7 @@ public class ConfiguracaoParceiroRepository(OpenAdmContext context)
         return await _context
             .ConfiguracoesParceiro
             .AsNoTracking()
-            .Where(x => x.Dominio == dominio)
+            .Where(x => x.Ativo && (x.DominioSiteAdm == dominio || x.DominioSiteEcommerce == dominio))
             .Select(x => x.ConexaoDb)
             .FirstOrDefaultAsync();
     }

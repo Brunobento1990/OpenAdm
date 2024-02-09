@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
-using Moq;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.Factories.Factory;
 
@@ -15,7 +14,7 @@ public class DomainFactoryTest
         httpContextAccessorMock.Setup(x => x.HttpContext).Returns((HttpContext?)null);
         var factory = new DomainFactory(httpContextAccessorMock.Object);
 
-        Assert.Throws<ExceptionDomain>(() => factory.GetDomainParceiro());
+        Assert.Throws<ExceptionApi>(factory.GetDomainParceiro);
     }
 
     [Fact]

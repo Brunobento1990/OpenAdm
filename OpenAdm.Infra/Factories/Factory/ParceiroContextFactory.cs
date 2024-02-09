@@ -23,13 +23,15 @@ public class ParceiroContextFactory : IParceiroContextFactory
     public async Task<ParceiroContext> CreateParceiroContextAsync()
     {
         var conexao = await _configuracaoParceiroRepository
-            .GetConexaoDbByDominioAsync(_dominio) ??
-            throw new ExceptionDomain(ContextErrorMessage.StringDeConexaoInvalida);
+            .GetConexaoDbByDominioAsync(_dominio);
+
+        if (string.IsNullOrWhiteSpace(conexao))
+            throw new ExceptionApi(ContextErrorMessage.StringDeConexaoInvalida);
 
         return CreateContext(conexao);
     }
 
-    private static ParceiroContext CreateContext(string conexao)
+    private static ParceiroContext CreateContext(string? conexao)
     {
         var optionsBuilderClient = new DbContextOptionsBuilder<ParceiroContext>();
 

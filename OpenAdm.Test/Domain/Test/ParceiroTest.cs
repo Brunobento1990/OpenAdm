@@ -37,7 +37,7 @@ public class ParceiroTest
     [InlineData(" ")]
     public void NaoDeveCriarParceiroSemCnpj(string cnpj)
     {
-        Assert.Throws<ExceptionDomain>(
+        Assert.Throws<ExceptionApi>(
             () => ParceiroBuilder
                     .Init()
                     .NaoDeveCriarSemCnpj(cnpj)
@@ -50,7 +50,7 @@ public class ParceiroTest
     [InlineData(" ")]
     public void NaoDeveCriarParceiroSemRazaoSocial(string razaoSocial)
     {
-        Assert.Throws<ExceptionDomain>(
+        Assert.Throws<ExceptionApi>(
             () => ParceiroBuilder
                     .Init()
                     .NaoDeveCriarSemRazaoSocial(razaoSocial)
@@ -63,7 +63,7 @@ public class ParceiroTest
     [InlineData(" ")]
     public void NaoDeveCriarParceiroSemNomeFantasia(string nomeFantasia)
     {
-        Assert.Throws<ExceptionDomain>(
+        Assert.Throws<ExceptionApi>(
             () => ParceiroBuilder
                     .Init()
                     .NaoDeveCriarSemNomeFantasia(nomeFantasia)

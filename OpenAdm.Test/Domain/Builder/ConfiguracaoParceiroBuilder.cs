@@ -9,7 +9,8 @@ public class ConfiguracaoParceiroBuilder
     private readonly DateTime _update;
     private readonly long _numero;
     private string _conexaoDb;
-    private string _dominio;
+    private string _dominioSiteEcommerce;
+    private string _dominioSiteAdm;
     private readonly bool _ativo;
 
     public ConfiguracaoParceiroBuilder()
@@ -20,16 +21,23 @@ public class ConfiguracaoParceiroBuilder
         var faker = new Faker();
         _numero = faker.Random.Long(1, 10000);
         _conexaoDb = faker.Lorem.Paragraph(min: 10);
-        _dominio = faker.Internet.DomainName();
+        _dominioSiteAdm = faker.Internet.DomainName();
+        _dominioSiteEcommerce = faker.Internet.DomainName();
         _ativo = true;
     }
 
 
     public static ConfiguracaoParceiroBuilder Init() => new();
 
-    public ConfiguracaoParceiroBuilder SemDominio(string dominio)
+    public ConfiguracaoParceiroBuilder SemDominioSiteAdm(string dominio)
     {
-        _dominio = dominio;
+        _dominioSiteAdm = dominio;
+        return this;
+    }
+
+    public ConfiguracaoParceiroBuilder SemDominioSiteEcommerce(string dominio)
+    {
+        _dominioSiteEcommerce = dominio;
         return this;
     }
 
@@ -41,6 +49,6 @@ public class ConfiguracaoParceiroBuilder
 
     public ConfiguracaoParceiro Build()
     {
-        return new(_id, _created, _update, _numero, _conexaoDb, _dominio, _ativo, Guid.NewGuid());
+        return new(_id, _created, _update, _numero, _conexaoDb, _dominioSiteAdm, _dominioSiteEcommerce, _ativo, Guid.NewGuid());
     }
 }

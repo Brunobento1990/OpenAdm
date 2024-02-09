@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OpenAdm.Application\OpenAdm.Application.csproj" />
     <ProjectReference Include="..\OpenAdm.Domain\OpenAdm.Domain.csproj" />
     <ProjectReference Include="..\OpenAdm.Infra\OpenAdm.Infra.csproj" />
   </ItemGroup>

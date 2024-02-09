@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Exceptions;
 
-public class ExceptionDomain(string? message = GenericError.Error) 
+public class ExceptionApi(string? message = GenericError.Error) 
     : Exception(message)
 {
 }

@@ -11,22 +11,26 @@ public sealed class ConfiguracaoParceiro : BaseEntity
         DateTime dataDeAtualizacao,
         long numero,
         string conexaoDb,
-        string dominio,
+        string dominioSiteAdm,
+        string dominioSiteEcommerce,
         bool ativo,
         Guid parceiroId)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         ValidationString.Validate(conexaoDb);
-        ValidationString.Validate(dominio);
+        ValidationString.Validate(dominioSiteAdm);
+        ValidationString.Validate(dominioSiteEcommerce);
 
+        DominioSiteEcommerce = dominioSiteEcommerce;
+        DominioSiteAdm = dominioSiteAdm;
         ConexaoDb = conexaoDb;
-        Dominio = dominio;
         Ativo = ativo;
         ParceiroId = parceiroId;
     }
 
     public string ConexaoDb { get; private set; }
-    public string Dominio { get; private set; }
+    public string DominioSiteAdm { get; private set; }
+    public string DominioSiteEcommerce { get; private set; }
     public bool Ativo { get; private set; }
     public Guid ParceiroId { get; private set; }
     public Parceiro Parceiro { get; set; } = null!;

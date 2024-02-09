@@ -13,7 +13,8 @@ public class ConfiguracaoParceiroTest
         var dto = new
         {
             ConexaoDb = "postgres",
-            Dominio = "https://localhost:3000",
+            DominioSiteAdm = "https://localhost:3000",
+            DominioSiteEcommerce = "https://localhost:3001",
             Ativo = true,
             ParceiroId = Guid.NewGuid()
         };
@@ -24,7 +25,8 @@ public class ConfiguracaoParceiroTest
             DateTime.Now,
             1,
             dto.ConexaoDb,
-            dto.Dominio,
+            dto.DominioSiteAdm,
+            dto.DominioSiteEcommerce,
             dto.Ativo,
             dto.ParceiroId);
 
@@ -40,7 +42,7 @@ public class ConfiguracaoParceiroTest
     [InlineData(" ")]
     public void NaoDeveCriarSemConexaoDb(string conexaoDb)
     {
-        Assert.Throws<ExceptionDomain>(
+        Assert.Throws<ExceptionApi>(
             () => ConfiguracaoParceiroBuilder
                     .Init()
                     .SemStringDb(conexaoDb)
@@ -51,12 +53,25 @@ public class ConfiguracaoParceiroTest
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void NaoDeveCriarDominio(string dominio)
+    public void NaoDeveCriarSemDominioSiteAdm(string dominio)
     {
-        Assert.Throws<ExceptionDomain>(
+        Assert.Throws<ExceptionApi>(
             () => ConfiguracaoParceiroBuilder
                     .Init()
-                    .SemDominio(dominio)
+                    .SemDominioSiteAdm(dominio)
+                    .Build());
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void NaoDeveCriarSemDominioSiteEcommerce(string dominio)
+    {
+        Assert.Throws<ExceptionApi>(
+            () => ConfiguracaoParceiroBuilder
+                    .Init()
+                    .SemDominioSiteEcommerce(dominio)
                     .Build());
     }
 }

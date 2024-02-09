@@ -6,9 +6,9 @@ namespace OpenAdm.IoC;
 
 public static class DependencyInjectContext
 {
-    public static void InjectContext(this IServiceCollection services)
+    public static void InjectContext(this IServiceCollection services, string connectionString)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        services.AddDbContext<OpenAdmContext>(opt => opt.UseNpgsql(""));
+        services.AddDbContext<OpenAdmContext>(opt => opt.UseNpgsql(connectionString));
     }
 }
