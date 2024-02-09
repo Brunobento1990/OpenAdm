@@ -1,0 +1,14 @@
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using OpenAdm.Infra.Context;
+
+namespace OpenAdm.IoC;
+
+public static class DependencyInjectContext
+{
+    public static void InjectContext(this IServiceCollection services)
+    {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        services.AddDbContext<OpenAdmContext>(opt => opt.UseNpgsql(""));
+    }
+}

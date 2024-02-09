@@ -1,0 +1,18 @@
+﻿using Microsoft.EntityFrameworkCore;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Infra.EntityConfiguration;
+
+namespace OpenAdm.Infra.Context;
+
+public class OpenAdmContext(DbContextOptions options) 
+    : DbContext(options)
+{
+    public DbSet<Parceiro> Parceiros { get; set; }
+    public DbSet<ConfiguracaoParceiro> ConfiguracoesParceiro { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfiguration(new ParceiroConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfiguracaoParceiroConfiguration());
+    }
+}

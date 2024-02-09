@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34525.116
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAdm.Domain", "OpenAdm.Domain\OpenAdm.Domain.csproj", "{7B53B3AE-9A1C-4F2E-8EC3-3D5C40B4A7FC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAdm.Test", "OpenAdm.Test\OpenAdm.Test.csproj", "{E9EC2AAF-3BBD-451D-8F75-EE0EEF781522}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAdm.Infra", "OpenAdm.Infra\OpenAdm.Infra.csproj", "{A3C7A7CA-4C73-4236-BD13-2F7D288830D5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAdm.Application", "OpenAdm.Application\OpenAdm.Application.csproj", "{0C3E0576-7D1F-472B-A387-9B681B5367F4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAdm.IoC", "OpenAdm.IoC\OpenAdm.IoC.csproj", "{ACCA2F8D-613D-4350-810C-F83D93E6DEA5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAdm.Api", "OpenAdm.Api\OpenAdm.Api.csproj", "{369987FE-CC81-4EE5-BEE6-F481EDB208EC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7B53B3AE-9A1C-4F2E-8EC3-3D5C40B4A7FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B53B3AE-9A1C-4F2E-8EC3-3D5C40B4A7FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B53B3AE-9A1C-4F2E-8EC3-3D5C40B4A7FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B53B3AE-9A1C-4F2E-8EC3-3D5C40B4A7FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9EC2AAF-3BBD-451D-8F75-EE0EEF781522}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9EC2AAF-3BBD-451D-8F75-EE0EEF781522}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9EC2AAF-3BBD-451D-8F75-EE0EEF781522}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9EC2AAF-3BBD-451D-8F75-EE0EEF781522}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3C7A7CA-4C73-4236-BD13-2F7D288830D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3C7A7CA-4C73-4236-BD13-2F7D288830D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3C7A7CA-4C73-4236-BD13-2F7D288830D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3C7A7CA-4C73-4236-BD13-2F7D288830D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C3E0576-7D1F-472B-A387-9B681B5367F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C3E0576-7D1F-472B-A387-9B681B5367F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C3E0576-7D1F-472B-A387-9B681B5367F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C3E0576-7D1F-472B-A387-9B681B5367F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACCA2F8D-613D-4350-810C-F83D93E6DEA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACCA2F8D-613D-4350-810C-F83D93E6DEA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACCA2F8D-613D-4350-810C-F83D93E6DEA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACCA2F8D-613D-4350-810C-F83D93E6DEA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{369987FE-CC81-4EE5-BEE6-F481EDB208EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{369987FE-CC81-4EE5-BEE6-F481EDB208EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{369987FE-CC81-4EE5-BEE6-F481EDB208EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{369987FE-CC81-4EE5-BEE6-F481EDB208EC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F25489C-9150-42A3-A27E-ACF8629B5A83}
+	EndGlobalSection
+EndGlobal
