@@ -20,7 +20,7 @@ RUN dotnet build "OpenAdm.Api/OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /ap
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "OpenAdm.Api/OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
