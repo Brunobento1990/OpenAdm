@@ -9,10 +9,10 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["OpenAdm.Api.csproj", "."]
-COPY ["OpenAdm.Application.csproj", "."]
-COPY ["OpenAdm.Domain.csproj", "."]
-COPY ["OpenAdm.IoC.csproj", "."]
-COPY ["OpenAdm.Infra.csproj", "."]
+COPY ["./OpenAdm.Application.csproj", "."]
+COPY ["./OpenAdm.Domain.csproj", "."]
+COPY ["./OpenAdm.IoC.csproj", "."]
+COPY ["./OpenAdm.Infra.csproj", "."]
 RUN dotnet restore "./OpenAdm.Api.csproj"
 COPY . .
 WORKDIR "/src/."
