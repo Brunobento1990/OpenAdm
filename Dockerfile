@@ -16,11 +16,11 @@ COPY ["OpenAdm.Infra/OpenAdm.Infra.csproj", "OpenAdm.Infra/"]
 RUN dotnet restore "OpenAdm.Api/OpenAdm.Api.csproj"
 COPY . .
 WORKDIR "/src/OpenAdm.Api"
-RUN dotnet build "OpenAdm.Api/OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "OpenAdm.Api/OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
