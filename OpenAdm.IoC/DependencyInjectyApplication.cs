@@ -9,5 +9,7 @@ public static class DependencyInjectyApplication
     public static void InjectServices(this IServiceCollection services)
     {
         services.AddScoped<IBannerService, BannerService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ILoginFuncionarioService, LoginFuncionarioService>();
     }
 }

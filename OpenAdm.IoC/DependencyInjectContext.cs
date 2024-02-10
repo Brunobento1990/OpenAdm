@@ -10,5 +10,6 @@ public static class DependencyInjectContext
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         services.AddDbContext<OpenAdmContext>(opt => opt.UseNpgsql(connectionString));
+        //services.AddDbContext<ParceiroContext>(opt => opt.UseNpgsql(connectionString));
     }
 }

@@ -19,5 +19,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
 
         services.AddScoped<IBannerRepository, BannerRepository>();
+        services.AddScoped<ILoginFuncionarioRepository, LoginFuncionarioRepository>();
     }
 }
