@@ -21,7 +21,7 @@ jobs:
     - name: Build
       run: dotnet build ./OpenAdm.Api --configuration Release
     - name: Test
-      run: dotnet test
+      run: dotnet test ./OpenAdm.Test
     - name: Build-Image-Docker
       run: docker build ./OpenAdm.Api -t brunobentocaina/open-adm-api:latest
     - name: Push
