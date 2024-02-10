@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: dotnet restore ./OpenAdm.Api
     - name: Build
-      run: dotnet build --configuration Release
+      run: dotnet build ./OpenAdm.Api --configuration Release
     - name: Test
       run: dotnet test
     - name: Build-Image-Docker
