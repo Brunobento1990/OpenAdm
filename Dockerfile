@@ -13,7 +13,7 @@ COPY ["OpenAdm.Application/OpenAdm.Application.csproj", "OpenAdm.Application/"]
 COPY ["OpenAdm.Domain/OpenAdm.Domain.csproj", "OpenAdm.Domain/"]
 COPY ["OpenAdm.IoC/OpenAdm.IoC.csproj", "OpenAdm.IoC/"]
 COPY ["OpenAdm.Infra/OpenAdm.Infra.csproj", "OpenAdm.Infra/"]
-RUN dotnet restore "./OpenAdm.Api.csproj"
+RUN dotnet restore "OpenAdm.Api/OpenAdm.Api.csproj"
 COPY . .
 WORKDIR "/src/OpenAdm.Api"
 RUN dotnet build "OpenAdm.Api/OpenAdm.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
