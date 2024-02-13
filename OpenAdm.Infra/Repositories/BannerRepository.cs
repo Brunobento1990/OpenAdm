@@ -1,19 +1,18 @@
 ﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Infra.Context;
+using OpenAdm.Infra.EntityConfiguration;
 using OpenAdm.Infra.Factories.Interfaces;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class BannerRepository(IParceiroContextFactory parceiroContextFactory)
-        : GenericRepository<Banner>(parceiroContextFactory), IBannerRepository
+public class BannerRepository(ParceiroContext parceiroContext)
+        : GenericRepository<Banner>(parceiroContext), IBannerRepository
 {
-    private readonly IParceiroContextFactory _parceiroContextFactory = parceiroContextFactory;
+    private readonly ParceiroContext _parceiroContext = parceiroContext;
 
-    public async Task<IQueryable<Banner>> GetBannersAsync()
+    public IQueryable<Banner> GetBannersAsync()
     {
-        var context = await _parceiroContextFactory
-            .CreateParceiroContextAsync();
-
-        return context.Banners;
+        return _parceiroContext.Banners;
     }
 }

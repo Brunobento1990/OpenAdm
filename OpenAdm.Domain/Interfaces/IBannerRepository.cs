@@ -4,5 +4,5 @@ namespace OpenAdm.Domain.Interfaces;
 
 public interface IBannerRepository : IGenericRepository<Banner>
 {
-    Task<IQueryable<Banner>> GetBannersAsync();
+    IQueryable<Banner> GetBannersAsync();
 }

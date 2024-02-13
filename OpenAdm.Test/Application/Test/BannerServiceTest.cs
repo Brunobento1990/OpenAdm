@@ -20,11 +20,11 @@ public class BannerServiceTest
         var querable = banners.AsQueryable();
 
         var repositoryBannerMock = new Mock<IBannerRepository>();
-        repositoryBannerMock.Setup(x => x.GetBannersAsync()).ReturnsAsync(querable);
+        repositoryBannerMock.Setup(x => x.GetBannersAsync()).Returns(querable);
 
         var service = new BannerService(repositoryBannerMock.Object);
 
-        var result = await service.GetBannersAsync();
+        var result = service.GetBannersAsync();
 
         Assert.NotNull(result);
         Assert.IsAssignableFrom<IEnumerable<BannerViewModel>>(result);

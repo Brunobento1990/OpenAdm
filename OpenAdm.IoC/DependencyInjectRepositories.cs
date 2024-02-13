@@ -14,8 +14,6 @@ public static class DependencyInjectRepositories
     {
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
         services.AddTransient<IDomainFactory, DomainFactory>();
-        services.AddTransient<IParceiroContextFactory, ParceiroContextFactory>();
-        services.AddTransient<IContextFactory, ContextFactory>();
 
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
 

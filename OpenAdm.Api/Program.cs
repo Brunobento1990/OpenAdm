@@ -1,7 +1,6 @@
 using dotenv.net;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
-using OpenAdm.Api.Middlewares;
 using OpenAdm.IoC;
 using System.Text.Json.Serialization;
 
@@ -44,7 +43,6 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
-builder.Services.AddTransient<FactoryContextMiddleware>();
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));
 builder.Services.InjectRepositories();
 builder.Services.InjectServices();
@@ -70,8 +68,6 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     });
     app.UseSwaggerUI();
 }
-
-app.UseMiddleware<FactoryContextMiddleware>();
 
 app.UseAuthentication();
 

@@ -4,5 +4,5 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IBannerService
 {
-    Task<IEnumerable<BannerViewModel>> GetBannersAsync();
+    IEnumerable<BannerViewModel> GetBannersAsync();
 }

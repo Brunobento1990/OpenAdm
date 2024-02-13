@@ -9,9 +9,9 @@ public class BannerService(IBannerRepository bannerRepository)
 {
     private readonly IBannerRepository _bannerRepository = bannerRepository;
 
-    public async Task<IEnumerable<BannerViewModel>> GetBannersAsync()
+    public IEnumerable<BannerViewModel> GetBannersAsync()
     {
-        var banners = await _bannerRepository.GetBannersAsync();
+        var banners = _bannerRepository.GetBannersAsync();
 
         return banners.Select(banner => new BannerViewModel().ToEntity(banner));
     }

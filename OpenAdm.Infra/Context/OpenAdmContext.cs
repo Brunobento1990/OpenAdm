@@ -4,7 +4,7 @@ using OpenAdm.Infra.EntityConfiguration;
 
 namespace OpenAdm.Infra.Context;
 
-public class OpenAdmContext(DbContextOptions options) 
+public class OpenAdmContext(DbContextOptions<OpenAdmContext> options) 
     : DbContext(options)
 {
     public DbSet<Parceiro> Parceiros { get; set; }

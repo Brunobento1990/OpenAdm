@@ -1,18 +1,17 @@
 ﻿using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Factories.Interfaces;
+using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class GenericRepository<T>(IParceiroContextFactory parceiroContextFactory)
+public class GenericRepository<T>(ParceiroContext parceiroContext)
     : IGenericRepository<T> where T : class
 {
-    private readonly IParceiroContextFactory _parceiroContextFactory = parceiroContextFactory;
+    private readonly ParceiroContext _parceiroContext = parceiroContext;
 
     public async Task<T> AddAsync(T entity)
     {
-        var context = await _parceiroContextFactory.CreateParceiroContextAsync();
-        await context.AddAsync(entity);
-        await context.SaveChangesAsync();
+        await _parceiroContext.AddAsync(entity);
+        await _parceiroContext.SaveChangesAsync();
         return entity;
     }
 }
