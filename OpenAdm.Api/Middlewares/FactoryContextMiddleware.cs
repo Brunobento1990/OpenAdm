@@ -10,6 +10,7 @@ public class FactoryContextMiddleware : IMiddleware
     {
         try
         {
+
             var origin = context.Request.Headers.FirstOrDefault(x => x.Key == "Referer").Value;
 
             if (string.IsNullOrWhiteSpace(origin))
