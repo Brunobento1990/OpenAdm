@@ -9,9 +9,15 @@ namespace OpenAdm.Api.Controllers;
 public class LoginFuncionarioController : ControllerBaseApi
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;
+    private readonly ConfiguracaoDeToken _configGenerateToken;
 
     public LoginFuncionarioController(ILoginFuncionarioService loginFuncionarioService)
     {
+        var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
+        var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
+        var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
+        var expirate = DateTime.Now.AddHours(int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION")));
+        _configGenerateToken = new ConfiguracaoDeToken(key, issue, audience, expirate);
         _loginFuncionarioService = loginFuncionarioService;
     }
 
@@ -20,7 +26,7 @@ public class LoginFuncionarioController : ControllerBaseApi
     {
         try
         {
-            var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin);
+            var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin, _configGenerateToken);
             return Ok(responselogin);
         }
         catch (Exception ex)

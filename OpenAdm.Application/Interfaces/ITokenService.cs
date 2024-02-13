@@ -1,9 +1,9 @@
-﻿using OpenAdm.Domain.Entities;
+﻿using OpenAdm.Application.Models;
 
 namespace OpenAdm.Application.Interfaces;
 
 public interface ITokenService
 {
-    string GenerateTokenFuncionario(Funcionario funcionario);
+    string GenerateToken(object obj, ConfiguracaoDeToken configGenerateToken);
     bool IsFuncionario();
 }

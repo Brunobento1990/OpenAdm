@@ -5,15 +5,14 @@ using OpenAdm.Infra.Factories.Interfaces;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class LoginFuncionarioRepository(IParceiroContextFactory parceiroContextFactory)
+public class LoginFuncionarioRepository(IContextFactory contextFactory)
     : ILoginFuncionarioRepository
 {
-    private readonly IParceiroContextFactory _parceiroContextFactory = parceiroContextFactory;
-
+    private readonly IContextFactory _contextFactory = contextFactory;
     public async Task<Funcionario?> GetFuncionarioByEmailAsync(string email)
     {
-        var context = await _parceiroContextFactory
-            .CreateParceiroContextAsync();
+        var context = await _contextFactory
+            .GetParceiroContextAsync();
 
         return await context
             .Funcionarios

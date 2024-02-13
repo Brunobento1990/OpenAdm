@@ -4,5 +4,5 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface ILoginFuncionarioService
 {
-    Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin);
+    Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin, ConfiguracaoDeToken configGenerateToken);
 }

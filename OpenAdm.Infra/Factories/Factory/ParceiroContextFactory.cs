@@ -20,17 +20,6 @@ public class ParceiroContextFactory : IParceiroContextFactory
         _configuracaoParceiroRepository = configuracaoParceiroRepository;
     }
 
-    public async Task<ParceiroContext> CreateParceiroContextAsync()
-    {
-        var conexao = await _configuracaoParceiroRepository
-            .GetConexaoDbByDominioAsync(_dominio);
-
-        if (string.IsNullOrWhiteSpace(conexao))
-            throw new ExceptionApi(ContextErrorMessage.StringDeConexaoInvalida);
-
-        return CreateContext(conexao);
-    }
-
     private static ParceiroContext CreateContext(string? conexao)
     {
         var optionsBuilderClient = new DbContextOptionsBuilder<ParceiroContext>();
@@ -39,5 +28,16 @@ public class ParceiroContextFactory : IParceiroContextFactory
             b => b.MigrationsAssembly(typeof(ParceiroContext).Assembly.FullName));
 
         return new ParceiroContext(optionsBuilderClient.Options);
+    }
+
+    public async Task<ParceiroContext> CreateParceiroContextAsync()
+    {
+        var conexao = await _configuracaoParceiroRepository
+                .GetConexaoDbByDominioAsync(_dominio);
+
+        if (string.IsNullOrWhiteSpace(conexao))
+            throw new ExceptionApi(ContextErrorMessage.StringDeConexaoInvalida);
+
+        return CreateContext(conexao);
     }
 }

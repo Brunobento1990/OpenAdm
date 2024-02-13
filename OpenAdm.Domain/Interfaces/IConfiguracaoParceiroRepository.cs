@@ -1,6 +1,4 @@
-﻿using OpenAdm.Domain.Entities;
-
-namespace OpenAdm.Domain.Interfaces;
+﻿namespace OpenAdm.Domain.Interfaces;
 
 public interface IConfiguracaoParceiroRepository
 {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,34 +13,19 @@ namespace OpenAdm.Application.Services;
 public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenService
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-    private readonly string _key = "248e9aa8-53a7-4eab-ab98-c2147055e044";
-    private readonly string _issuer = "JWT_ISSUER";
-    private readonly string _audience = "JWT_AUDIENCE";
 
-    public string GenerateTokenFuncionario(Funcionario funcionario)
+    public string GenerateToken(object obj, ConfiguracaoDeToken configGenerateToken)
     {
-        var claims = new[]
-        {
-            new Claim("Nome", funcionario.Nome),
-            new Claim("Email", funcionario.Email),
-            new Claim("Numero", funcionario.Numero.ToString()),
-            new Claim("Id", funcionario.Id.ToString()),
-            new Claim("IsFuncionario", "TRUE"),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_key));
+            Encoding.UTF8.GetBytes(configGenerateToken.Key));
 
         var credenciais = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var expiration = DateTime.UtcNow.AddHours(24);
-
         var token = new JwtSecurityToken(
-          issuer: _issuer,
-          audience: _audience,
-          claims: claims,
-          expires: expiration,
+          issuer: configGenerateToken.Issue,
+          audience: configGenerateToken.Audience,
+          claims: configGenerateToken.GenerateClaimsFuncionario(obj),
+          expires: configGenerateToken.Expiration,
           signingCredentials: credenciais);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
@@ -55,6 +41,6 @@ public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenServ
 
         var isFuncionario = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "IsFuncionario")?.Value;
 
-        return !string.IsNullOrWhiteSpace(isFuncionario);
+        return !string.IsNullOrWhiteSpace(isFuncionario) && isFuncionario == "TRUE";
     }
 }

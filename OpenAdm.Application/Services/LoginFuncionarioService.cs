@@ -13,15 +13,15 @@ public class LoginFuncionarioService(ITokenService tokenService, ILoginFuncionar
     private readonly ITokenService _tokenService = tokenService;
     private readonly ILoginFuncionarioRepository _loginFuncionarioRepository = loginFuncionarioRepository;
 
-    public async Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin)
+    public async Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin, ConfiguracaoDeToken configGenerateToken)
     {
         var funcionario = await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(requestLogin.Email);
 
         if (funcionario == null || !Verify(requestLogin.Senha, funcionario.Senha))
             throw new ExceptionApi(DomainErrorMessage.ErrorEmailOuSenhaInvalido);
 
-        var token = _tokenService.GenerateTokenFuncionario(funcionario);
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
+        var token = _tokenService.GenerateToken(funcionarioViewModel, configGenerateToken);
 
         return new(token, funcionarioViewModel);
     }
