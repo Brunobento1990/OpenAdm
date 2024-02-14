@@ -75,6 +75,8 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.UseCors("base");
