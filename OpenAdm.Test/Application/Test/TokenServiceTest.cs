@@ -28,7 +28,15 @@ public class TokenServiceTest
     public void DeveRetornarIsFuncionario()
     {
         var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        var funcionario = new Funcionario(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "email@gmail.com", "123", "Test", null, null);
+        var funcionario = new FuncionarioViewModel()
+        {
+            DataDeAtualizacao = DateTime.Now,
+            DataDeCriacao = DateTime.Now,
+            Email = "teste@gmail.com",
+            Id = Guid.NewGuid(),
+            Nome = "Testes",
+            Numero = 1
+        };
         var tokenService = new TokenService(httpContextAccessorMock.Object);
         var identity = new ClaimsIdentity(_configtoken.GenerateClaimsFuncionario(funcionario));
         httpContextAccessorMock.Setup(x => x.HttpContext.User.Identity).Returns(identity);
