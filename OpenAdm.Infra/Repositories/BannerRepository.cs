@@ -21,9 +21,12 @@ public class BannerRepository(ParceiroContext parceiroContext)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public IQueryable<Banner> GetBannersAsync()
+    public async Task<IList<Banner>> GetBannersAsync()
     {
-        return _parceiroContext.Banners;
+        return await _parceiroContext
+            .Banners
+            .Where(x => x.Ativo)
+            .ToListAsync();
     }
 
     public async Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(PaginacaoBannerDto paginacaoBannerDto)

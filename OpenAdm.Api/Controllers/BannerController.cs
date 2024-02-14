@@ -20,7 +20,7 @@ public class BannerController(IBannerService bannerService) : ControllerBaseApi
     {
         try
         {
-            var bannersViewModel = _bannerService.GetBannersAsync();
+            var bannersViewModel = await _bannerService.GetBannersAsync();
             return Ok(bannersViewModel);
         }
         catch (Exception ex)

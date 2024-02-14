@@ -1,5 +1,7 @@
 ﻿
 using OpenAdm.Domain.Enums;
+using OpenAdm.Domain.Errors;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Domain.Entities;
 
@@ -19,6 +21,9 @@ public sealed class Pedido : BaseEntity
 
     public void UpdateStatus(StatusPedido statusPedido)
     {
+        if (StatusPedido == StatusPedido.Entregue)
+            throw new ExceptionApi(DomainErrorMessage.StatusDoPedidoEntregue);
+
         StatusPedido = statusPedido;
     }
 }

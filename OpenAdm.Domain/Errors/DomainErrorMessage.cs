@@ -10,4 +10,5 @@ public static class DomainErrorMessage
     public const string ErrorSenhaInvalido = "APIERROR009";
     public const string ErrorTelefoneInvalido = "APIERROR010";
     public const string ErrorEmailOuSenhaInvalido = "APIERROR011";
+    public const string StatusDoPedidoEntregue = "APIERROR014";
 }

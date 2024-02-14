@@ -31,4 +31,12 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             Values = values
         };
     }
+
+    public async Task<Pedido?> GetPedidoByIdAsync(Guid id)
+    {
+        return await _parceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x =>  x.Id == id);
+    }
 }

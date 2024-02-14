@@ -17,20 +17,18 @@ public class BannerServiceTest
             new(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1 ,new byte[10], true)
         };
 
-        var querable = banners.AsQueryable();
-
         var repositoryBannerMock = new Mock<IBannerRepository>();
-        repositoryBannerMock.Setup(x => x.GetBannersAsync()).Returns(querable);
+        repositoryBannerMock.Setup(x => x.GetBannersAsync()).ReturnsAsync(banners);
 
         var service = new BannerService(repositoryBannerMock.Object);
 
-        var result = service.GetBannersAsync();
+        var result = await service.GetBannersAsync();
 
         Assert.NotNull(result);
         Assert.IsAssignableFrom<IEnumerable<BannerViewModel>>(result);
         banners
             .First().Id
             .ToExpectedObject()
-            .ShouldEqual(result.ToList().First().Id);
+            .ShouldEqual(result.First().Id);
     }
 }

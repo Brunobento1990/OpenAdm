@@ -2,6 +2,6 @@
 
 public class PaginacaoViewModel<T> where T : class
 {
-    public IEnumerable<T> Values { get; set; }
+    public IList<T> Values { get; set; } = new List<T>();
     public int TotalPage { get; set; }
 }

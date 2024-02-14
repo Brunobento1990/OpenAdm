@@ -7,4 +7,6 @@ namespace OpenAdm.Application.Interfaces;
 public interface IPedidoService
 {
     Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto);
+    Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto);
+    Task<bool> DeletePedidoAsync(Guid id);
 }

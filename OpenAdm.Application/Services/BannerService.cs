@@ -6,6 +6,7 @@ using OpenAdm.Domain.Model;
 using OpenAdm.Application.Dtos.Banners;
 using System.Text;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Errors;
 
 namespace OpenAdm.Application.Services;
 
@@ -13,7 +14,6 @@ public class BannerService(IBannerRepository bannerRepository)
     : IBannerService
 {
     private readonly IBannerRepository _bannerRepository = bannerRepository;
-    const string _bannerNotFound = "O banner não foi localizado!";
 
     public async Task<BannerViewModel> CreateBannerAsync(BannerCreateDto bannerCreateDto)
     {
@@ -27,7 +27,7 @@ public class BannerService(IBannerRepository bannerRepository)
     public async Task DeleteBannerAsync(Guid id)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(_bannerNotFound);
+            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
 
         var result = await _bannerRepository.DeleteAsync(banner);
 
@@ -37,7 +37,7 @@ public class BannerService(IBannerRepository bannerRepository)
     public async Task<BannerViewModel> EditBannerAsync(BannerEditDto bannerEditDto)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(bannerEditDto.Id)
-            ?? throw new ExceptionApi(_bannerNotFound);
+            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
 
         banner.Update(bannerEditDto.Foto, bannerEditDto.Ativo);
 
@@ -49,16 +49,18 @@ public class BannerService(IBannerRepository bannerRepository)
     public async Task<BannerViewModel> GetBannerByIdAsync(Guid id)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(_bannerNotFound);
+            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
 
         return new BannerViewModel().ToEntity(banner);
     }
 
-    public IEnumerable<BannerViewModel> GetBannersAsync()
+    public async Task<IList<BannerViewModel>> GetBannersAsync()
     {
-        var banners = _bannerRepository.GetBannersAsync();
+        var banners = await _bannerRepository.GetBannersAsync();
 
-        return banners.Select(banner => new BannerViewModel().ToEntity(banner));
+        return banners
+            .Select(banner => new BannerViewModel().ToEntity(banner))
+            .ToList();
     }
 
     public async Task<PaginacaoViewModel<BannerViewModel>> GetPaginacaoAsync(PaginacaoBannerDto paginacaoBannerDto)
@@ -68,7 +70,7 @@ public class BannerService(IBannerRepository bannerRepository)
         return new()
         {
             TotalPage = paginacao.TotalPage,
-            Values = paginacao.Values.Select(x => new BannerViewModel().ToEntity(x))
+            Values = paginacao.Values.Select(x => new BannerViewModel().ToEntity(x)).ToList()
         };
     }
 }
