@@ -5,14 +5,13 @@ namespace OpenAdm.Infra.Extensions.IQueryable;
 
 public static class CustomFilter
 {
-    public static async Task<(int TotalPages, List<TEntity> Values)> CustomFilterAsync<TEntity>(this IQueryable<TEntity> querable, FilterModel filterModel)
+    public static async Task<(int TotalPages, IQueryable<TEntity> Values)> CustomFilterAsync<TEntity>(this IQueryable<TEntity> querable, FilterModel filterModel)
     {
         var total = await querable
             .CountCustomAsync(filterModel.Take);
 
-        var values = await querable
-            .Paginate(filterModel.Skip, filterModel.Take)
-            .ToListAsync();
+        var values = querable
+            .Paginate(filterModel.Skip, filterModel.Take).AsQueryable();
 
         return (total, values);
     }

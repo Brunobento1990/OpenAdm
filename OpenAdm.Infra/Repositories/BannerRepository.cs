@@ -32,7 +32,7 @@ public class BannerRepository(ParceiroContext parceiroContext)
                 .Banners
                 .AsNoTracking()
                 .AsQueryable()
-                .OrderByDescending(x => EF.Property<Pedido>(x, paginacaoBannerDto.OrderBy))
+                .OrderByDescending(x => EF.Property<Banner>(x, paginacaoBannerDto.OrderBy))
                 .WhereIsNotNull(paginacaoBannerDto.GetWhereBySearch())
                 .CustomFilterAsync(paginacaoBannerDto);
 

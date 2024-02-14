@@ -68,7 +68,7 @@ public class BannerService(IBannerRepository bannerRepository)
         return new()
         {
             TotalPage = paginacao.TotalPage,
-            Values = paginacao.Values.Select(x => new BannerViewModel().ToEntity(x)).ToList()
+            Values = paginacao.Values.Select(x => new BannerViewModel().ToEntity(x))
         };
     }
 }
