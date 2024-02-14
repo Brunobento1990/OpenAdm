@@ -14,10 +14,11 @@ public static class DependencyInjectRepositories
     {
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
         services.AddTransient<IDomainFactory, DomainFactory>();
-        services.AddTransient<IParceiroContextFactory, ParceiroContextFactory>();
 
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
 
         services.AddScoped<IBannerRepository, BannerRepository>();
+        services.AddScoped<ILoginFuncionarioRepository, LoginFuncionarioRepository>();
+        services.AddScoped<IPedidoRepository, PedidoRepository>();
     }
 }

@@ -1,0 +1,30 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup dotnet
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    - name: Install dependencies
+      run: dotnet restore ./OpenAdm.Api
+    - name: Build
+      run: dotnet build ./OpenAdm.Api --configuration Release
+    - name: Test
+      run: dotnet test ./OpenAdm.Test
+    - name: Build-Image-Docker
+      run: docker build ./ -t brunobentocaina/open-adm-api:latest
+    - name: Push
+      run: |
+        docker login -u brunobentocaina -p ${{ secrets.DOCKER_HUB_KEY }}
+        docker push brunobentocaina/open-adm-api:latest

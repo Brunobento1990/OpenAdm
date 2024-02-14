@@ -2,15 +2,17 @@ using dotenv.net;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.IoC;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
 
-// Add services to the container.
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers().AddJsonOptions(opt =>
+{
+    opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -42,22 +44,40 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
+var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
+var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
+
+builder.Services.InjectJwt(key, issue, audience);
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));
 builder.Services.InjectRepositories();
 builder.Services.InjectServices();
+builder.Services.InjectCors();
 builder.Services.InjectHttpClient(VariaveisDeAmbiente.GetVariavel("URL_DISCORD"));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+var basePath = "/api/v1";
+app.UsePathBase(new PathString(basePath));
+
+app.UseRouting();
+
+if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = "swagger/{documentName}/swagger.json";
+        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+        {
+            swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{basePath}" } };
+        });
+    });
     app.UseSwaggerUI();
 }
 
-
 app.UseAuthorization();
+
+app.UseCors("base");
 
 app.MapControllers();
 
