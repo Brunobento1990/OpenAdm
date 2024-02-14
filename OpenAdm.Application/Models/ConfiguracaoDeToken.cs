@@ -1,5 +1,4 @@
-﻿using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Exceptions;
+﻿using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -28,7 +27,7 @@ public class ConfiguracaoDeToken(
 
         }
 
-        var isFuncionario = obj.GetType() == typeof(Funcionario);
+        var isFuncionario = obj.GetType() == typeof(FuncionarioViewModel);
 
         if (isFuncionario)
             claims.Add(new Claim("IsFuncionario", "TRUE"));

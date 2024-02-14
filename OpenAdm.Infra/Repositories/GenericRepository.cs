@@ -14,4 +14,18 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         await _parceiroContext.SaveChangesAsync();
         return entity;
     }
+
+    public async Task<bool> DeleteAsync(T entity)
+    {
+        _parceiroContext.Remove(entity);
+        return await _parceiroContext.SaveChangesAsync() > 0;
+    }
+
+    public async Task<T> UpdateAsync(T entity)
+    {
+        _parceiroContext.Attach(entity);
+        _parceiroContext.Update(entity);
+        await _parceiroContext.SaveChangesAsync();
+        return entity;
+    }
 }

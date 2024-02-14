@@ -43,6 +43,12 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
+var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
+var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
+
+builder.Services.InjectJwt(key, issue, audience);
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));
 builder.Services.InjectRepositories();
 builder.Services.InjectServices();
