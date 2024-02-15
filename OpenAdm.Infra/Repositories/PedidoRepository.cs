@@ -37,6 +37,8 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await _parceiroContext
             .Pedidos
             .AsNoTracking()
+            .Include(x => x.Usuario)
+            .Include(x => x.ItensPedido)
             .FirstOrDefaultAsync(x =>  x.Id == id);
     }
 }
