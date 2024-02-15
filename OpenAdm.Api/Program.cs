@@ -50,7 +50,7 @@ var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
 
 builder.Services.InjectJwt(key, issue, audience);
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));
-builder.Services.InjectRepositories();
+builder.Services.InjectRepositories(VariaveisDeAmbiente.GetVariavel("REDIS_URL"));
 builder.Services.InjectServices();
 builder.Services.InjectCors();
 builder.Services.InjectHttpClient(VariaveisDeAmbiente.GetVariavel("URL_DISCORD"));
