@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OpenAdm.Application.Models;
+namespace OpenAdm.Application.Models.Logins;
 
 public class RequestLogin
 {

@@ -1,14 +1,14 @@
 ﻿using OpenAdm.Domain.Entities;
 using System.Text;
 
-namespace OpenAdm.Application.Models;
+namespace OpenAdm.Application.Models.Banners;
 
 public class BannerViewModel : BaseModel
 {
     public string Foto { get; set; } = string.Empty;
     public bool Ativo { get; set; }
 
-    public BannerViewModel ToEntity(Banner entity)
+    public BannerViewModel ToModel(Banner entity)
     {
         Id = entity.Id;
         DataDeCriacao = entity.DataDeCriacao;

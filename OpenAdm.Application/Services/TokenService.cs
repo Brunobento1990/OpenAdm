@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models;
+using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;

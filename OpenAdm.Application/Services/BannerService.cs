@@ -1,5 +1,4 @@
 ﻿using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.PaginateDto;
 using OpenAdm.Domain.Model;
@@ -7,6 +6,7 @@ using OpenAdm.Application.Dtos.Banners;
 using System.Text;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Errors;
+using OpenAdm.Application.Models.Banners;
 
 namespace OpenAdm.Application.Services;
 
@@ -21,7 +21,7 @@ public class BannerService(IBannerRepository bannerRepository)
 
         await _bannerRepository.AddAsync(banner);
 
-        return new BannerViewModel().ToEntity(banner);
+        return new BannerViewModel().ToModel(banner);
     }
 
     public async Task DeleteBannerAsync(Guid id)
@@ -43,7 +43,7 @@ public class BannerService(IBannerRepository bannerRepository)
 
         await _bannerRepository.UpdateAsync(banner);
 
-        return new BannerViewModel().ToEntity(banner);
+        return new BannerViewModel().ToModel(banner);
     }
 
     public async Task<BannerViewModel> GetBannerByIdAsync(Guid id)
@@ -51,7 +51,7 @@ public class BannerService(IBannerRepository bannerRepository)
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
             ?? throw new ExceptionApi(GenericError.RegistroNotFound);
 
-        return new BannerViewModel().ToEntity(banner);
+        return new BannerViewModel().ToModel(banner);
     }
 
     public async Task<IList<BannerViewModel>> GetBannersAsync()
@@ -59,7 +59,7 @@ public class BannerService(IBannerRepository bannerRepository)
         var banners = await _bannerRepository.GetBannersAsync();
 
         return banners
-            .Select(banner => new BannerViewModel().ToEntity(banner))
+            .Select(banner => new BannerViewModel().ToModel(banner))
             .ToList();
     }
 
@@ -70,7 +70,7 @@ public class BannerService(IBannerRepository bannerRepository)
         return new()
         {
             TotalPage = paginacao.TotalPage,
-            Values = paginacao.Values.Select(x => new BannerViewModel().ToEntity(x)).ToList()
+            Values = paginacao.Values.Select(x => new BannerViewModel().ToModel(x)).ToList()
         };
     }
 }

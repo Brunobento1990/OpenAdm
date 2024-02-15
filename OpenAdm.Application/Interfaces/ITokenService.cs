@@ -1,4 +1,4 @@
-﻿using OpenAdm.Application.Models;
+﻿using OpenAdm.Application.Models.Tokens;
 
 namespace OpenAdm.Application.Interfaces;
 

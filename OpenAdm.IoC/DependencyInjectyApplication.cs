@@ -12,5 +12,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ILoginFuncionarioService, LoginFuncionarioService>();
         services.AddScoped<IPedidoService, PedidoService>();
+        services.AddScoped<IHomeSevice, HomeSevice>();
     }
 }

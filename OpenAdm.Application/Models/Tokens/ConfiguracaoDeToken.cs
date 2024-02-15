@@ -1,8 +1,9 @@
-﻿using OpenAdm.Domain.Exceptions;
+﻿using OpenAdm.Application.Models.Funcionarios;
+using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace OpenAdm.Application.Models;
+namespace OpenAdm.Application.Models.Tokens;
 
 public class ConfiguracaoDeToken(
     string key,

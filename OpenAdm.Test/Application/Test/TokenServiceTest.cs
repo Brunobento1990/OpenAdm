@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using OpenAdm.Application.Models;
+using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;

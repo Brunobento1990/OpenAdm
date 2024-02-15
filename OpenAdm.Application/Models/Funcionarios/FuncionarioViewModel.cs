@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using System.Text;
 
-namespace OpenAdm.Application.Models;
+namespace OpenAdm.Application.Models.Funcionarios;
 
 public class FuncionarioViewModel : BaseModel
 {

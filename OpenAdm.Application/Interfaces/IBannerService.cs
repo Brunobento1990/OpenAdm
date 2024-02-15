@@ -1,7 +1,7 @@
-﻿using OpenAdm.Application.Models;
-using OpenAdm.Domain.Model.PaginateDto;
+﻿using OpenAdm.Domain.Model.PaginateDto;
 using OpenAdm.Domain.Model;
 using OpenAdm.Application.Dtos.Banners;
+using OpenAdm.Application.Models.Banners;
 
 namespace OpenAdm.Application.Interfaces;
 

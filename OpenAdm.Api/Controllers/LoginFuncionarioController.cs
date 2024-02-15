@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models;
+using OpenAdm.Application.Models.Logins;
+using OpenAdm.Application.Models.Tokens;
 
 namespace OpenAdm.Api.Controllers;
 

@@ -1,4 +1,6 @@
-﻿namespace OpenAdm.Application.Models;
+﻿using OpenAdm.Application.Models.Funcionarios;
+
+namespace OpenAdm.Application.Models.Logins;
 
 public class ResponseLoginFuncionarioViewModel(string token, FuncionarioViewModel userData)
 {
