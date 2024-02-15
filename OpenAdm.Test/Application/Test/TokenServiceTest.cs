@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using OpenAdm.Application.Models.Funcionarios;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
