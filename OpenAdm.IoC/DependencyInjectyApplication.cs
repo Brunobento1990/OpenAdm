@@ -15,5 +15,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IHomeSevice, HomeSevice>();
         services.AddScoped<ICategoriaService, CategoriaService>();
         services.AddScoped<IProdutoService, ProdutoService>();
+        services.AddScoped<ILoginUsuarioService, LoginUsuarioService>();
+        services.AddScoped<ICarrinhoService, CarrinhoService>();
     }
 }

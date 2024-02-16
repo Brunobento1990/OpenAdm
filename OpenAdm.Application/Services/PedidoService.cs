@@ -16,7 +16,7 @@ public class PedidoService(IPedidoRepository pedidoRepository)
     public async Task<bool> DeletePedidoAsync(Guid id)
     {
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(id)
-            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
     
         return await _pedidoRepository.DeleteAsync(pedido);
     }
@@ -35,7 +35,7 @@ public class PedidoService(IPedidoRepository pedidoRepository)
     public async Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto)
     {
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(updateStatusPedidoDto.PedidoId)
-            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
         pedido.UpdateStatus(updateStatusPedidoDto.StatusPedido);
 

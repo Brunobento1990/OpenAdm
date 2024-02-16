@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Exceptions;
 
-public class ExceptionApi(string? message = GenericError.Error) 
+public class ExceptionApi(string? message = CodigoErrors.ErrorGeneric) 
     : Exception(message)
 {
 }

@@ -27,7 +27,7 @@ public class BannerService(IBannerRepository bannerRepository)
     public async Task DeleteBannerAsync(Guid id)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
         var result = await _bannerRepository.DeleteAsync(banner);
 
@@ -37,7 +37,7 @@ public class BannerService(IBannerRepository bannerRepository)
     public async Task<BannerViewModel> EditBannerAsync(BannerEditDto bannerEditDto)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(bannerEditDto.Id)
-            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
         banner.Update(bannerEditDto.Foto, bannerEditDto.Ativo);
 
@@ -49,7 +49,7 @@ public class BannerService(IBannerRepository bannerRepository)
     public async Task<BannerViewModel> GetBannerByIdAsync(Guid id)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(GenericError.RegistroNotFound);
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
         return new BannerViewModel().ToModel(banner);
     }

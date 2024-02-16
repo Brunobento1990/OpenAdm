@@ -40,6 +40,12 @@ public class PedidoBuilder
         return pedido;
     }
 
+    public PedidoBuilder SemUsuario(Guid? usuarioId)
+    {
+        _usuarioId = usuarioId == null ? Guid.Empty : usuarioId.Value;
+        return this;
+    }
+
     public UpdateStatusPedidoDto BuildStatusPedidoDto()
     {
         return new UpdateStatusPedidoDto()

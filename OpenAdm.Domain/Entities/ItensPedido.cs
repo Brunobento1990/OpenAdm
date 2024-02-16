@@ -1,21 +1,28 @@
 ﻿
+using OpenAdm.Domain.Validations;
+
 namespace OpenAdm.Domain.Entities;
 
 public sealed class ItensPedido : BaseItens
 {
     public ItensPedido(
-        Guid id, 
-        DateTime dataDeCriacao, 
-        DateTime dataDeAtualizacao, 
-        long numero, 
-        Guid? pesoId, 
-        Guid? tamanhoId, 
-        Guid produtoId, 
-        Guid pedidoId, 
-        decimal valorUnitario, 
-        decimal quantidade) 
+        Guid id,
+        DateTime dataDeCriacao,
+        DateTime dataDeAtualizacao,
+        long numero,
+        Guid? pesoId,
+        Guid? tamanhoId,
+        Guid produtoId,
+        Guid pedidoId,
+        decimal valorUnitario,
+        decimal quantidade)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero, produtoId)
     {
+        ValidationDecimal.ValidDecimalNullAndZero(quantidade);
+        ValidationDecimal.ValidDecimalNullAndZero(valorUnitario);
+        ValidationGuid.ValidGuidNullAndEmpty(pedidoId);
+        ValidationGuid.ValidGuidNullAndEmpty(produtoId);
+
         PesoId = pesoId;
         TamanhoId = tamanhoId;
         PedidoId = pedidoId;

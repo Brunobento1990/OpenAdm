@@ -4,6 +4,7 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
+using System.Linq;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -32,10 +33,19 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Take(_take)
             .ToListAsync();
 
+        var produtosIds = produtos.Select(x => x.Id).ToList();
         var tamanhos = await _parceiroContext
             .TamanhosProdutos
             .AsNoTracking()
+            .Where(x => produtosIds.Contains(x.ProdutoId))
             .Include(x => x.Tamanho)
+            .ToListAsync();
+
+        var pesos = await _parceiroContext
+            .PesosProdutos
+            .AsNoTracking()
+            .Include(x => x.Peso)
+            .Where(x => produtosIds.Contains(x.ProdutoId))
             .ToListAsync();
 
         if (produtos.Count > 0)
@@ -46,6 +56,13 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 produto.Tamanhos = tamanhos
                     .Where(x => x.ProdutoId == produto.Id)
                     .Select(tm => new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao))
+                    .ToList();
+
+                produto.Pesos = pesos
+                    .Where(x => x.ProdutoId == produto.Id)
+                    .Select(tm =>
+                        new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao)
+                     )
                     .ToList();
             });
         }
@@ -105,10 +122,20 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Where(x => x.CategoriaId == categoriaId)
             .ToListAsync();
 
+        var produtosIds = produtos.Select(x => x.Id).ToList();
+
         var tamanhos = await _parceiroContext
             .TamanhosProdutos
             .AsNoTracking()
             .Include(x => x.Tamanho)
+            .Where(x => produtosIds.Contains(x.ProdutoId))
+            .ToListAsync();
+
+        var pesos = await _parceiroContext
+            .PesosProdutos
+            .AsNoTracking()
+            .Include(x => x.Peso)
+            .Where(x => produtosIds.Contains(x.ProdutoId))
             .ToListAsync();
 
         if (produtos.Count > 0)
@@ -122,8 +149,43 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                         new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao)
                      )
                     .ToList();
+
+                produto.Pesos = pesos
+                    .Where(x => x.ProdutoId == produto.Id)
+                    .Select(tm =>
+                        new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao)
+                     )
+                    .ToList();
             });
         }
+
+        return produtos;
+    }
+
+    public async Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids)
+    {
+        var produtos = await _parceiroContext
+            .Produtos
+            .AsQueryable()
+            .Include(x => x.Categoria)
+            .Include(x => x.Pesos)
+            .Include(x => x.Tamanhos)
+            .Where(x => ids.Contains(x.Id))
+            .AsNoTracking()
+            .ToListAsync();
+
+        produtos.ForEach(produto =>
+        {
+            produto.Categoria.Produtos = new();
+            produto.Pesos.ForEach(peso =>
+            {
+                peso.Produtos = new();
+            });
+            produto.Tamanhos.ForEach(tamanho =>
+            {
+                tamanho.Produtos = new();
+            });
+        });
 
         return produtos;
     }

@@ -16,9 +16,9 @@ public sealed class Parceiro : BaseEntity
         string cnpj)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
-        ValidationString.ValidateWithLength(cnpj, length: 14, message: DomainErrorMessage.ErrorCnpj);
-        ValidationString.ValidateWithLength(razaoSocial, message: DomainErrorMessage.ErrorRazaoSocial);
-        ValidationString.ValidateWithLength(nomeFantasia, message: DomainErrorMessage.ErrorRazaoSocial);
+        ValidationString.ValidateWithLength(cnpj, length: 14, message: CodigoErrors.ErrorCnpj);
+        ValidationString.ValidateWithLength(razaoSocial, message: CodigoErrors.ErrorRazaoSocial);
+        ValidationString.ValidateWithLength(nomeFantasia, message: CodigoErrors.ErrorRazaoSocial);
 
         RazaoSocial = razaoSocial;
         NomeFantasia = nomeFantasia;

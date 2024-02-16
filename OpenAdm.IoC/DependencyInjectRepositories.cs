@@ -25,6 +25,8 @@ public static class DependencyInjectRepositories
         services.AddTransient<IDomainFactory, DomainFactory>();
 
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
+        services.AddScoped<ILoginUsuarioRepository, LoginUsuarioRepository>();
+        services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
 
         services.AddScoped<BannerRepository>();
         services.AddScoped<IBannerRepository, BannerCached>();

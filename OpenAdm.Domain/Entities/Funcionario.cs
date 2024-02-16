@@ -1,5 +1,4 @@
-﻿
-using OpenAdm.Domain.Errors;
+﻿using OpenAdm.Domain.Errors;
 using OpenAdm.Domain.Validations;
 
 namespace OpenAdm.Domain.Entities;
@@ -9,9 +8,9 @@ public sealed class Funcionario : BaseEntity
     public Funcionario(Guid id, DateTime dataDeCriacao, DateTime dataDeAtualizacao, long numero, string email, string senha, string nome, string? telefone, byte[]? avatar)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
-        ValidationString.ValidateWithLength(email, 255, DomainErrorMessage.ErrorEmailInvalido);
-        ValidationString.ValidateWithLength(nome, 255, DomainErrorMessage.ErrorNomeInvalido);
-        ValidationString.ValidateWithLength(senha, 1000, DomainErrorMessage.ErrorNomeInvalido);
+        ValidationString.ValidateWithLength(email, 255, CodigoErrors.ErrorEmailInvalido);
+        ValidationString.ValidateWithLength(nome, 255, CodigoErrors.ErrorNomeInvalido);
+        ValidationString.ValidateWithLength(senha, 1000, CodigoErrors.ErrorNomeInvalido);
         ValidationString.ValidateTelefone(telefone);
 
         Email = email;

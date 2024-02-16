@@ -6,25 +6,25 @@ namespace OpenAdm.Domain.Validations;
 
 public class ValidationString
 {
-    public static void Validate(string? value, string message = GenericError.Error)
+    public static void Validate(string? value, string message = CodigoErrors.ErrorGeneric)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ExceptionApi(message);
     }
 
-    public static void ValidateWithLength(string? value, int length = 255, string message = GenericError.Error)
+    public static void ValidateWithLength(string? value, int length = 255, string message = CodigoErrors.ErrorGeneric)
     {
         if (string.IsNullOrWhiteSpace(value) || value.Length > length)
             throw new ExceptionApi(message);
     }
 
-    public static void ValidateLength(string? value, int length = 255, string message = GenericError.Error)
+    public static void ValidateLength(string? value, int length = 255, string message = CodigoErrors.ErrorGeneric)
     {
         if (!string.IsNullOrWhiteSpace(value) && value.Length > length)
             throw new ExceptionApi(message);
     }
 
-    public static void ValidateTelefone(string? value, string message = DomainErrorMessage.ErrorTelefoneInvalido)
+    public static void ValidateTelefone(string? value, string message = CodigoErrors.ErrorTelefoneInvalido)
     {
         const int length = 14;
         const string pattern = "^[0-9]+$";

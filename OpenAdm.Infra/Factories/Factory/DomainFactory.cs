@@ -19,7 +19,7 @@ public class DomainFactory : IDomainFactory
     public string GetDomainParceiro()
     {
         if (string.IsNullOrWhiteSpace(_dominio))
-            throw new ExceptionApi(ContextErrorMessage.OrigemDaRequisicaoInvalida);
+            throw new ExceptionApi(CodigoErrors.OrigemDaRequisicaoInvalida);
 
         return _dominio;
     }

@@ -7,12 +7,15 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("login")]
-public class LoginFuncionarioController : ControllerBaseApi
+public class LoginController : ControllerBaseApi
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;
+    private readonly ILoginUsuarioService _loginUsuarioService;
     private readonly ConfiguracaoDeToken _configGenerateToken;
 
-    public LoginFuncionarioController(ILoginFuncionarioService loginFuncionarioService)
+    public LoginController(
+        ILoginFuncionarioService loginFuncionarioService, 
+        ILoginUsuarioService loginUsuarioService)
     {
         var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
         var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
@@ -20,14 +23,29 @@ public class LoginFuncionarioController : ControllerBaseApi
         var expirate = DateTime.Now.AddHours(int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION")));
         _configGenerateToken = new ConfiguracaoDeToken(key, issue, audience, expirate);
         _loginFuncionarioService = loginFuncionarioService;
+        _loginUsuarioService = loginUsuarioService;
     }
 
     [HttpPost("funcionario")]
-    public async Task<IActionResult> Login(RequestLogin requestLogin)
+    public async Task<IActionResult> LoginFuncionario(RequestLogin requestLogin)
     {
         try
         {
             var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin, _configGenerateToken);
+            return Ok(responselogin);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpPost("usuario")]
+    public async Task<IActionResult> LoginUsuario(RequestLogin requestLogin)
+    {
+        try
+        {
+            var responselogin = await _loginUsuarioService.LoginAsync(requestLogin, _configGenerateToken);
             return Ok(responselogin);
         }
         catch (Exception ex)

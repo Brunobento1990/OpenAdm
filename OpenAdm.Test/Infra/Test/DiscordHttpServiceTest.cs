@@ -1,5 +1,4 @@
-﻿using OpenAdm.Domain.Exceptions;
-using OpenAdm.Infra.HttpService.Services;
+﻿using OpenAdm.Infra.HttpService.Services;
 
 namespace OpenAdm.Test.Infra.Test;
 
@@ -14,7 +13,7 @@ public class DiscordHttpServiceTest
         var httpClientFactory = new Mock<IHttpClientFactory>();
         var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
 
-        await Assert.ThrowsAnyAsync<ExceptionApi>(
+        await Assert.ThrowsAnyAsync<Exception>(
             async () => await discordHttpService.NotifyExceptionAsync(message, "", ""));
     }
 
@@ -27,7 +26,7 @@ public class DiscordHttpServiceTest
         var httpClientFactory = new Mock<IHttpClientFactory>();
         var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
 
-        await Assert.ThrowsAnyAsync<ExceptionApi>(
+        await Assert.ThrowsAnyAsync<Exception>(
             async () => await discordHttpService.NotifyExceptionAsync("Teste", webHookId, ""));
     }
 
@@ -40,7 +39,7 @@ public class DiscordHttpServiceTest
         var httpClientFactory = new Mock<IHttpClientFactory>();
         var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
 
-        await Assert.ThrowsAnyAsync<ExceptionApi>(
+        await Assert.ThrowsAnyAsync<Exception>(
             async () => await discordHttpService.NotifyExceptionAsync("Teste", "123", webHookToken));
     }
 }

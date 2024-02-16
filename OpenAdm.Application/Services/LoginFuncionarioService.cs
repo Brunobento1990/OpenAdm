@@ -20,7 +20,7 @@ public class LoginFuncionarioService(ITokenService tokenService, ILoginFuncionar
         var funcionario = await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(requestLogin.Email);
 
         if (funcionario == null || !Verify(requestLogin.Senha, funcionario.Senha))
-            throw new ExceptionApi(DomainErrorMessage.ErrorEmailOuSenhaInvalido);
+            throw new ExceptionApi(CodigoErrors.ErrorEmailOuSenhaInvalido);
 
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
         var token = _tokenService.GenerateToken(funcionarioViewModel, configGenerateToken);

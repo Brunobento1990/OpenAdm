@@ -1,4 +1,7 @@
 ﻿
+using OpenAdm.Domain.Errors;
+using OpenAdm.Domain.Validations;
+
 namespace OpenAdm.Domain.Entities;
 
 public sealed class TabelaDePreco : BaseEntity
@@ -12,6 +15,7 @@ public sealed class TabelaDePreco : BaseEntity
         bool ativaEcommerce)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
+        ValidationString.ValidateWithLength(descricao, message: CodigoErrors.DescricaoTabelaDePrecoInvalida);
         Descricao = descricao;
         AtivaEcommerce = ativaEcommerce;
     }

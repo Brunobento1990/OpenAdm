@@ -82,4 +82,9 @@ public class ProdutoCached : GenericRepository<Produto>, IProdutoRepository
 
         return produtos ?? new List<Produto>();
     }
+
+    public async Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids)
+    {
+        return await _produtoRepository.GetProdutosByListIdAsync(ids);
+    }
 }
