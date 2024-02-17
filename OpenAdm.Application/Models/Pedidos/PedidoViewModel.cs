@@ -2,7 +2,7 @@
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enums;
 
-namespace OpenAdm.Application.Dtos.Pedidos;
+namespace OpenAdm.Application.Models.Pedidos;
 
 public class PedidoViewModel : BaseViewModel
 {
@@ -16,7 +16,9 @@ public class PedidoViewModel : BaseViewModel
         Numero = entity.Numero;
         ValorTotal = entity.ValorTotal;
         StatusPedido = entity.StatusPedido;
-        Usuario = entity.Usuario.Nome;
+
+        if (entity.Usuario != null)
+            Usuario = entity.Usuario.Nome;
 
         return this;
     }

@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Errors;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
@@ -8,16 +9,17 @@ using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
-public class PedidoService(IPedidoRepository pedidoRepository) 
+public class PedidoService(IPedidoRepository pedidoRepository, ITokenService tokenService)
     : IPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
+    private readonly ITokenService _tokenService = tokenService;
 
     public async Task<bool> DeletePedidoAsync(Guid id)
     {
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(id)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
-    
+
         return await _pedidoRepository.DeleteAsync(pedido);
     }
 
@@ -30,6 +32,15 @@ public class PedidoService(IPedidoRepository pedidoRepository)
             TotalPage = paginacao.TotalPage,
             Values = paginacao.Values.Select(x => new PedidoViewModel().ForModel(x)).ToList()
         };
+    }
+
+    public async Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido)
+    {
+        var usuarioId = _tokenService.GetTokenUsuarioViewModel().Id;
+        var pedidos = await _pedidoRepository.GetPedidosByUsuarioIdAsync(usuarioId, statusPedido);
+        return pedidos
+            .Select(x => new PedidoViewModel().ForModel(x))
+            .ToList();
     }
 
     public async Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto)

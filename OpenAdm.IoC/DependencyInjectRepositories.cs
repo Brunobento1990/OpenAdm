@@ -39,5 +39,14 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ProdutoRepository>();
         services.AddScoped<IProdutoRepository, ProdutoCached>();
+
+        services.AddScoped<UsuarioRepository>();
+        services.AddScoped<IUsuarioRepository, UsuarioCached>();
+
+        services.AddScoped<ItensPedidoRepository>();
+        services.AddScoped<IItensPedidoRepository, ItensPedidoCached>();
+
+        services.AddScoped<ConfiguracaoDeEmailRepository>();
+        services.AddScoped<IConfiguracaoDeEmailRepository, ConfiguracaoDeEmailCached>();
     }
 }

@@ -1,4 +1,4 @@
-﻿using OpenAdm.Application.Dtos.Pedidos;
+﻿using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enums;

@@ -18,7 +18,6 @@ public class CarrinhoController : ControllerBaseApi
         _carrinhoService = carrinhoService;
     }
 
-    [EnableCors("iscasluneoriginwithpost")]
     [HttpPut("adicionar")]
     public async Task<IActionResult> AdicionarCarinho(AddCarrinhoModel addCarrinhoDto)
     {

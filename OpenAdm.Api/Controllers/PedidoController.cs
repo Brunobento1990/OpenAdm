@@ -9,6 +9,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("pedidos")]
+[Authorize(AuthenticationSchemes = "Bearer")]
 public class PedidoController : ControllerBaseApi
 {
     private readonly IPedidoService _pedidoService;
@@ -18,7 +19,6 @@ public class PedidoController : ControllerBaseApi
         _pedidoService = pedidoService;
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [IsFuncionario]
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoPedidoDto paginacaoPedidoDto)
@@ -34,7 +34,6 @@ public class PedidoController : ControllerBaseApi
         }
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [IsFuncionario]
     [HttpPut("update-status")]
     public async Task<IActionResult> UpdateStatusPedido(UpdateStatusPedidoDto updateStatusPedidoDto)
@@ -50,7 +49,6 @@ public class PedidoController : ControllerBaseApi
         }
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [IsFuncionario]
     [HttpDelete("delete")]
     public async Task<IActionResult> Delete([FromQuery] Guid id)
@@ -59,6 +57,20 @@ public class PedidoController : ControllerBaseApi
         {
             await _pedidoService.DeletePedidoAsync(id);
             return Ok();
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpGet("list")]
+    public async Task<IActionResult> GetPedidos([FromQuery] int statusPedido)
+    {
+        try
+        {
+            var pedidos = await _pedidoService.GetPedidosUsuarioAsync(statusPedido);
+            return Ok(pedidos);
         }
         catch (Exception ex)
         {

@@ -25,6 +25,7 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
     public DbSet<TabelaDePreco> TabelaDePreco { get; set; }
     public DbSet<ItensTabelaDePreco> ItensTabelaDePreco { get; set; }
     public DbSet<ProdutosMaisVendidos> ProdutosMaisVendidos { get; set; }
+    public DbSet<ConfiguracaoDeEmail> ConfiguracoesDeEmail { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -52,5 +53,6 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
         modelBuilder.ApplyConfiguration(new TabelaDePrecoConfiguration());
         modelBuilder.ApplyConfiguration(new ItensTabelaDePrecoConfiguration());
         modelBuilder.ApplyConfiguration(new ProdutosMaisVendidosConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfiguracaoDeEmailConfiguration());
     }
 }
