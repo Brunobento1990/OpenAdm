@@ -46,6 +46,10 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
             usuario.UpdateSenha(newSenha);
             await _usuarioRepository.UpdateAsync(usuario);
         }
+        else
+        {
+            throw new Exception(CodigoErrors.ErrorGeneric);
+        }
 
         return result;
     }
