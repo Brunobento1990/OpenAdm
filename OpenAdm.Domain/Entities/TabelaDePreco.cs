@@ -23,4 +23,32 @@ public sealed class TabelaDePreco : BaseEntity
     public string Descricao { get; private set; }
     public bool AtivaEcommerce { get; private set; }
     public List<ItensTabelaDePreco> ItensTabelaDePreco { get; set; } = new();
+
+    public decimal GetValorUnitarioByTamanhoId(Guid produtoId, Guid? tamanhoId)
+    {
+        var itemTabelaDePreco = ItensTabelaDePreco
+            .FirstOrDefault(x => x.ProdutoId == produtoId && x.TamanhoId == tamanhoId);
+
+        if(itemTabelaDePreco == null)
+        {
+            itemTabelaDePreco = ItensTabelaDePreco
+            .FirstOrDefault(x => x.ProdutoId == produtoId);
+        }
+
+        return itemTabelaDePreco?.ValorUnitario ?? 0;
+    }
+
+    public decimal GetValorUnitarioByPesoId(Guid produtoId, Guid? pesoId)
+    {
+        var itemTabelaDePreco = ItensTabelaDePreco
+            .FirstOrDefault(x => x.ProdutoId == produtoId && x.PesoId == pesoId);
+
+        if (itemTabelaDePreco == null)
+        {
+            itemTabelaDePreco = ItensTabelaDePreco
+            .FirstOrDefault(x => x.ProdutoId == produtoId);
+        }
+
+        return itemTabelaDePreco?.ValorUnitario ?? 0;
+    }
 }

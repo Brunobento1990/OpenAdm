@@ -23,6 +23,20 @@ public class UsuarioController : ControllerBaseApi
         _usuarioService = usuarioService;
     }
 
+    [HttpPost("create")]
+    public async Task<IActionResult> CretaeUsuario(CreateUsuarioDto createUsuarioDto)
+    {
+        try
+        {
+            var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto, _configGenerateToken);
+            return Ok(responseCreateUsuario);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
     [Authorize(AuthenticationSchemes = "Bearer")]
     [HttpGet("get-conta")]
     public async Task<IActionResult> GetConta()

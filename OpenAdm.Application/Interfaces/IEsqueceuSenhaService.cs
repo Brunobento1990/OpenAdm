@@ -4,5 +4,5 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IEsqueceuSenhaService
 {
-    Task<bool> EsqueceuSenhaAsync(EsqueceuSenhaDto esqueceuSenhaDto);
+    Task<bool> RecuperarSenhaAsync(EsqueceuSenhaDto esqueceuSenhaDto);
 }

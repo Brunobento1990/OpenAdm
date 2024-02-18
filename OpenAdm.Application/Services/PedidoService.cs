@@ -1,19 +1,41 @@
 ﻿using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enums;
 using OpenAdm.Domain.Errors;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
+using System.Reactive.Linq;
 
 namespace OpenAdm.Application.Services;
 
-public class PedidoService(IPedidoRepository pedidoRepository, ITokenService tokenService)
+public class PedidoService(
+    IPedidoRepository pedidoRepository, 
+    ITokenService tokenService, 
+    ITabelaDePrecoRepository tabelaDePrecoRepository)
     : IPedidoService
 {
+    private readonly ITabelaDePrecoRepository _tabelaDePrecoRepository = tabelaDePrecoRepository;
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly ITokenService _tokenService = tokenService;
+
+    public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
+    {
+        var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync()
+        ?? throw new Exception(CodigoErrors.RegistroNotFound);
+        var clienteId = _tokenService.GetTokenUsuarioViewModel().Id;
+        var date = DateTime.Now;
+        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, clienteId);
+
+        pedido.ProcessarItensPedido(pedidoCreateDto.PedidosPorPeso, pedidoCreateDto.PedidosPorTamanho, tabelaDePreco);
+
+        await _pedidoRepository.AddAsync(pedido);
+
+        return new PedidoViewModel().ForModel(pedido);
+    }
 
     public async Task<bool> DeletePedidoAsync(Guid id)
     {

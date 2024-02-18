@@ -20,6 +20,23 @@ public class UsuarioService : IUsuarioService
         _tokenService = tokenService;
     }
 
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto, ConfiguracaoDeToken configuracaoDeToken)
+    {
+        var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
+
+        if (usuario != null)
+            throw new ExceptionApi(CodigoErrors.UsuarioEcommerceJaCadastrado);
+
+        usuario = createUsuarioDto.ToEntity();
+
+        await _usuarioRepository.AddAsync(usuario);
+
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
+        var token = _tokenService.GenerateToken(usuarioViewModel, configuracaoDeToken);
+
+        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token);
+    }
+
     public async Task<UsuarioViewModel> GetUsuarioByIdAsync()
     {
         var idToken = _tokenService.GetTokenUsuarioViewModel().Id;

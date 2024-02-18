@@ -48,5 +48,8 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ConfiguracaoDeEmailRepository>();
         services.AddScoped<IConfiguracaoDeEmailRepository, ConfiguracaoDeEmailCached>();
+
+        services.AddScoped<TabelaDePrecoRepository>();
+        services.AddScoped<ITabelaDePrecoRepository, TabelaDePrecoCached>();
     }
 }

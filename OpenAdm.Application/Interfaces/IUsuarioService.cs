@@ -8,5 +8,6 @@ namespace OpenAdm.Application.Interfaces;
 public interface IUsuarioService
 {
     Task<UsuarioViewModel> GetUsuarioByIdAsync();
+    Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto, ConfiguracaoDeToken configuracaoDeToken);
     Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto, ConfiguracaoDeToken configuracaoDeToken);
 }

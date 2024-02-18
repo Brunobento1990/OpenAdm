@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
+using System;
 
 namespace OpenAdm.IoC;
 
@@ -11,7 +12,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ILoginFuncionarioService, LoginFuncionarioService>();
-        services.AddScoped<IPedidoService, PedidoService>();
+        services.AddTransient<IPedidoService, PedidoService>();
         services.AddScoped<IHomeSevice, HomeSevice>();
         services.AddScoped<ICategoriaService, CategoriaService>();
         services.AddScoped<IProdutoService, ProdutoService>();

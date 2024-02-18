@@ -23,4 +23,5 @@ public static class CodigoErrors
     public const string PedidoSemItens = "APIERROR017";
     public const string TabelaDePrecoInvalida = "APIERROR018";
     public const string DescricaoTabelaDePrecoInvalida = "APIERROR019";
+    public const string UsuarioEcommerceJaCadastrado = "APIERROR020";
 }

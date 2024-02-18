@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Api.Controllers;
@@ -17,6 +19,21 @@ public class PedidoController : ControllerBaseApi
     public PedidoController(IPedidoService pedidoService)
     {
         _pedidoService = pedidoService;
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> CreatePedido(PedidoCreateDto pedidoCreateDto)
+    {
+        try
+        {
+            var result = await _pedidoService.CreatePedidoAsync(pedidoCreateDto);
+
+            return Ok(new { message = "Pedido criado com sucesso!" });
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
     }
 
     [IsFuncionario]

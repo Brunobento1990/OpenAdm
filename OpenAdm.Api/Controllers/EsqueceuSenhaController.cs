@@ -20,7 +20,7 @@ public class EsqueceuSenhaController : ControllerBaseApi
     {
         try
         {
-            await _esqueceuSenhaService.EsqueceuSenhaAsync(esqueceuSenhaDto);
+            await _esqueceuSenhaService.RecuperarSenhaAsync(esqueceuSenhaDto);
             return Ok();
         }
         catch (Exception ex)

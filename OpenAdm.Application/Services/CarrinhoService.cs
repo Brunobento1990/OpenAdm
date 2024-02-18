@@ -11,22 +11,23 @@ public class CarrinhoService : ICarrinhoService
 {
     private readonly ICarrinhoRepository _carrinhoRepository;
     private readonly IProdutoRepository _produtoRepository;
-    private readonly string _key;
+    private readonly ITokenService _tokenService;
 
     public CarrinhoService(ICarrinhoRepository carrinhoRepository, IProdutoRepository produtoRepository, ITokenService tokenService)
     {
         _carrinhoRepository = carrinhoRepository;
         _produtoRepository = produtoRepository;
-        _key = tokenService.GetTokenUsuarioViewModel().Id.ToString();
+        _tokenService = tokenService;
     }
 
     public async Task<bool> AdicionarProdutoAsync(AddCarrinhoModel addCarrinhoModel)
     {
+        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
 
-        if(carrinho.UsuarioId == Guid.Empty)
+        if (carrinho.UsuarioId == Guid.Empty)
             carrinho.UsuarioId = Guid.Parse(_key);
-        
+
         var addProduto = carrinho?
             .Produtos
             .FirstOrDefault(x => x.ProdutoId == addCarrinhoModel.ProdutoId);
@@ -55,6 +56,7 @@ public class CarrinhoService : ICarrinhoService
 
     public async Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId)
     {
+        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
 
         if (carrinho.UsuarioId == Guid.Empty)
@@ -73,6 +75,8 @@ public class CarrinhoService : ICarrinhoService
 
     public async Task<IList<CarrinhoViewModel>> GetCarrinhoAsync()
     {
+        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
+
         var carrinhosViewModels = new List<CarrinhoViewModel>();
 
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
@@ -133,6 +137,7 @@ public class CarrinhoService : ICarrinhoService
 
     public async Task<int> GetCountCarrinhoAsync()
     {
+        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
         return await _carrinhoRepository.GetCountCarrinhoAsync(_key);
     }
 
@@ -181,5 +186,10 @@ public class CarrinhoService : ICarrinhoService
                 tamanho.Quantidade += tamanhoCarrinho.Quantidade;
             }
         }
+    }
+
+    public async Task LimparCarrinhoDoUsuarioAsync(Guid usuarioId)
+    {
+        await _carrinhoRepository.DeleteCarrinhoAsync(usuarioId.ToString());
     }
 }

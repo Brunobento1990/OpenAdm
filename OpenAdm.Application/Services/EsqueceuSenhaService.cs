@@ -20,7 +20,7 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
         _emailService = emailService;
     }
 
-    public async Task<bool> EsqueceuSenhaAsync(EsqueceuSenhaDto esqueceuSenhaDto)
+    public async Task<bool> RecuperarSenhaAsync(EsqueceuSenhaDto esqueceuSenhaDto)
     {
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(esqueceuSenhaDto.Email)
             ?? throw new Exception(CodigoErrors.ErrorGeneric);
@@ -28,7 +28,7 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
         var senha = GenerateSenha.Generate();
 
 
-        var message = $"Recuperação de senha efetuada com sucesso!\nSua nova senha é {senha} .\nImportante!\nNo Próximo acesso ao nosso site, efetue a troca da senha.\nCaso não tenha feito o pedido de recuperação de senha, por favor, entre em contato com o suporte!.";
+        var message = $"Recuperação de senha efetuada com sucesso!\nSua nova senha é {senha} .\nImportante!\nNo Próximo acesso ao nosso site, efetue a troca da senha.\nCaso não tenha feito o pedido de recuperação de senha, por favor, entre em contato com o suporte!";
         var assunto = "Recuperação de senha";
 
         var emailModel = new EnvioEmailModel()

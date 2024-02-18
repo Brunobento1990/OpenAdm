@@ -48,4 +48,9 @@ public class CarrinhoRepository : ICarrinhoRepository
 
         return carrinho.Produtos.Select(x => x.ProdutoId).ToList().Count;
     }
+
+    public async Task DeleteCarrinhoAsync(string key)
+    {
+        await _distributedCache.RemoveAsync(key);
+    }
 }

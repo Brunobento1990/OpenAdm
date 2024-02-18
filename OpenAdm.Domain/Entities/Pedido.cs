@@ -50,8 +50,7 @@ public sealed class Pedido : BaseEntity
         foreach (var pedidoPorTamanhoModel in pedidoPorTamanhoModels)
         {
             var valorUnitario = tabelaDePreco
-                .ItensTabelaDePreco
-                .FirstOrDefault(item => item.ProdutoId == pedidoPorTamanhoModel.ProdutoId && item.TamanhoId == pedidoPorTamanhoModel.TamanhoId)?.ValorUnitario ?? 0;
+                .GetValorUnitarioByTamanhoId(pedidoPorTamanhoModel.ProdutoId, pedidoPorTamanhoModel.TamanhoId);
 
             ItensPedido.Add(new ItensPedido(
                 id: Guid.NewGuid(),
@@ -70,8 +69,7 @@ public sealed class Pedido : BaseEntity
         foreach (var pedidoPorPesoModel in pedidoPorPesoModels)
         {
             var valorUnitario = tabelaDePreco
-                .ItensTabelaDePreco
-                .FirstOrDefault(item => item.ProdutoId == pedidoPorPesoModel.ProdutoId && item.PesoId == pedidoPorPesoModel.PesoId)?.ValorUnitario ?? 0;
+                .GetValorUnitarioByPesoId(pedidoPorPesoModel.ProdutoId, pedidoPorPesoModel.PesoId);
 
             ItensPedido.Add(new ItensPedido(
                 id: Guid.NewGuid(),
