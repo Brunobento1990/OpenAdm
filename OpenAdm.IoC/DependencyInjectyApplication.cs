@@ -22,5 +22,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<IItensPedidoService, ItensPedidoService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IEsqueceuSenhaService, EsqueceuSenhaService>();
+        services.AddScoped<IProcessarPedidoService, ProcessarPedidoService>();
     }
 }

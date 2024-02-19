@@ -13,14 +13,16 @@ using System.Reactive.Linq;
 namespace OpenAdm.Application.Services;
 
 public class PedidoService(
-    IPedidoRepository pedidoRepository, 
-    ITokenService tokenService, 
-    ITabelaDePrecoRepository tabelaDePrecoRepository)
+    IPedidoRepository pedidoRepository,
+    ITokenService tokenService,
+    ITabelaDePrecoRepository tabelaDePrecoRepository,
+    IProcessarPedidoService processarPedidoService)
     : IPedidoService
 {
     private readonly ITabelaDePrecoRepository _tabelaDePrecoRepository = tabelaDePrecoRepository;
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly ITokenService _tokenService = tokenService;
+    private readonly IProcessarPedidoService _processarPedidoService = processarPedidoService;
 
     public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
     {
@@ -33,6 +35,8 @@ public class PedidoService(
         pedido.ProcessarItensPedido(pedidoCreateDto.PedidosPorPeso, pedidoCreateDto.PedidosPorTamanho, tabelaDePreco);
 
         await _pedidoRepository.AddAsync(pedido);
+
+        await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
 
         return new PedidoViewModel().ForModel(pedido);
     }
@@ -73,6 +77,11 @@ public class PedidoService(
         pedido.UpdateStatus(updateStatusPedidoDto.StatusPedido);
 
         await _pedidoRepository.UpdateAsync(pedido);
+
+        if (pedido.StatusPedido == StatusPedido.Entregue)
+        {
+            await _processarPedidoService.ProcessarProdutosMaisVendidosAsync(pedido);
+        }
 
         return new PedidoViewModel().ForModel(pedido);
     }

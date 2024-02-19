@@ -9,7 +9,7 @@ using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class PedidoRepository(ParceiroContext parceiroContext) 
+public class PedidoRepository(ParceiroContext parceiroContext)
     : GenericRepository<Pedido>(parceiroContext), IPedidoRepository
 {
     private readonly ParceiroContext _parceiroContext = parceiroContext;
@@ -40,7 +40,22 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .Include(x => x.Usuario)
             .Include(x => x.ItensPedido)
-            .FirstOrDefaultAsync(x =>  x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id)
+    {
+        return await _parceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .Include(x => x.ItensPedido)
+                .ThenInclude(x => x.Produto)
+            .Include(x => x.ItensPedido)
+                .ThenInclude(x => x.Tamanho)
+            .Include(x => x.ItensPedido)
+                .ThenInclude(x => x.Peso)
+            .Include(x => x.Usuario)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<List<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido)

@@ -54,6 +54,7 @@ builder.Services.InjectRepositories(VariaveisDeAmbiente.GetVariavel("REDIS_URL")
 builder.Services.InjectServices();
 builder.Services.InjectCors();
 builder.Services.InjectHttpClient(VariaveisDeAmbiente.GetVariavel("URL_DISCORD"));
+builder.Services.InjectMensageria(VariaveisDeAmbiente.GetVariavel("MENSAGERIA_URI"));
 
 var app = builder.Build();
 

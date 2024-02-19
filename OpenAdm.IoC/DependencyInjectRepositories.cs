@@ -51,5 +51,9 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<TabelaDePrecoRepository>();
         services.AddScoped<ITabelaDePrecoRepository, TabelaDePrecoCached>();
+
+
+        services.AddScoped<ConfiguracoesDePedidoRepository>();
+        services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoCached>();
     }
 }
