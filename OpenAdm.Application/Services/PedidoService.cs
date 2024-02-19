@@ -69,6 +69,11 @@ public class PedidoService(
             .ToList();
     }
 
+    public async Task ReenviarPedidoViaEmailAsync(Guid pedidoId)
+    {
+        await _processarPedidoService.ProcessarCreateAsync(pedidoId);
+    }
+
     public async Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto)
     {
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(updateStatusPedidoDto.PedidoId)

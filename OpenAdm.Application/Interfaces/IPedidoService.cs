@@ -12,4 +12,5 @@ public interface IPedidoService
     Task<bool> DeletePedidoAsync(Guid id);
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido);
     Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto);
+    Task ReenviarPedidoViaEmailAsync(Guid pedidoId);
 }

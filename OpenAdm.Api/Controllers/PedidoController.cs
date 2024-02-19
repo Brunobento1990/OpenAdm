@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Api.Controllers;
@@ -88,6 +86,21 @@ public class PedidoController : ControllerBaseApi
         {
             var pedidos = await _pedidoService.GetPedidosUsuarioAsync(statusPedido);
             return Ok(pedidos);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [IsFuncionario]
+    [HttpGet("reenviar-pedido")]
+    public async Task<IActionResult> ReenviarPedido([FromQuery] Guid pedidoId)
+    {
+        try
+        {
+            await _pedidoService.ReenviarPedidoViaEmailAsync(pedidoId);
+            return Ok();
         }
         catch (Exception ex)
         {
