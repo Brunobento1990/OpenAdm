@@ -21,10 +21,11 @@ public class PedidoServiceTest
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var tokenServiceMock = new Mock<ITokenService>();
+        var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tokenServiceMock.Object, tabelaDePrecoRepositoryMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tokenServiceMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
 
         await Assert
             .ThrowsAnyAsync<ExceptionApi>(
@@ -41,10 +42,11 @@ public class PedidoServiceTest
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var tokenServiceMock = new Mock<ITokenService>();
+        var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tokenServiceMock.Object, tabelaDePrecoRepositoryMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tokenServiceMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
         var pedidoViewModel = await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus);
 
         Assert.NotNull(pedidoViewModel);
@@ -61,11 +63,12 @@ public class PedidoServiceTest
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var tokenServiceMock = new Mock<ITokenService>();
+        var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
         pedidoRepositoryMock.Setup(x => x.DeleteAsync(pedido)).ReturnsAsync(true);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tokenServiceMock.Object, tabelaDePrecoRepositoryMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tokenServiceMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
         var result = await pedidoService.DeletePedidoAsync(pedido.Id);
 
         Assert.IsType<bool>(result);
