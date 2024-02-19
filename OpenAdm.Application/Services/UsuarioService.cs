@@ -46,6 +46,18 @@ public class UsuarioService : IUsuarioService
         return new UsuarioViewModel().ToModel(usuario);
     }
 
+    public async Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
+    {
+        var id = _tokenService.GetTokenUsuarioViewModel().Id;
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id);
+        if (usuario == null || !updateSenhaUsuarioDto.Senha.Equals(updateSenhaUsuarioDto.ReSenha))
+            throw new ExceptionApi(CodigoErrors.AsSenhaNaoConferem);
+
+        usuario.UpdateSenha(updateSenhaUsuarioDto.HashSenha());
+
+        await _usuarioRepository.UpdateAsync(usuario);
+    }
+
     public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto, ConfiguracaoDeToken configuracaoDeToken)
     {
         var idToken = _tokenService.GetTokenUsuarioViewModel().Id;

@@ -67,4 +67,19 @@ public class UsuarioController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [HttpPut("update-senha")]
+    public async Task<IActionResult> UpdateSenha(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
+    {
+        try
+        {
+            await _usuarioService.TrocarSenhaAsync(updateSenhaUsuarioDto);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }
