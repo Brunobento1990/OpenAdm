@@ -1,4 +1,4 @@
-﻿using OpenAdm.Domain.Entities;
+﻿using Domain.Pkg.Entities;
 using System.Text;
 
 namespace OpenAdm.Application.Models.Funcionarios;

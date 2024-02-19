@@ -1,5 +1,5 @@
-﻿using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Exceptions;
+﻿using Domain.Pkg.Entities;
+using Domain.Pkg.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 

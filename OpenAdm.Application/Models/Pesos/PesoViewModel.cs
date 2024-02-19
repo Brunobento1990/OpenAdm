@@ -1,5 +1,4 @@
-﻿using OpenAdm.Application.Models;
-using OpenAdm.Domain.Entities;
+﻿using Domain.Pkg.Entities;
 
 namespace OpenAdm.Application.Models.Pesos;
 

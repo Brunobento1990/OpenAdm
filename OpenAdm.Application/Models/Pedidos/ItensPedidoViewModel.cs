@@ -1,7 +1,7 @@
-﻿using OpenAdm.Application.Models.Pesos;
+﻿using Domain.Pkg.Entities;
+using OpenAdm.Application.Models.Pesos;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Application.Models.Tamanhos;
-using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Models.Pedidos;
 

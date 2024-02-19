@@ -1,4 +1,4 @@
-﻿using OpenAdm.Domain.Model.Pedidos;
+﻿using Domain.Pkg.Model;
 
 namespace OpenAdm.Application.Dtos.Pedidos;
 

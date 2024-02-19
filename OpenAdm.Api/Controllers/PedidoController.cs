@@ -107,4 +107,19 @@ public class PedidoController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [IsFuncionario]
+    [HttpGet("download-pedido")]
+    public async Task<IActionResult> DownloadPedido([FromQuery] Guid pedidoId)
+    {
+        try
+        {
+            var pdf = await _pedidoService.DownloadPedidoPdfAsync(pedidoId);
+            return Ok(new { pdf });
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }

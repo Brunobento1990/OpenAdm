@@ -1,11 +1,10 @@
 ﻿using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Application.Services;
-using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Enums;
-using OpenAdm.Domain.Exceptions;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
+using Domain.Pkg.Enum;
+using OpenAdm.Application.Models.Pedidos;
 
 namespace OpenAdm.Test.Application.Test;
 

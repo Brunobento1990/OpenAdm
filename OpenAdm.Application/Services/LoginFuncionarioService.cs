@@ -1,9 +1,9 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using Domain.Pkg.Errors;
+using Domain.Pkg.Exceptions;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Funcionarios;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Tokens;
-using OpenAdm.Domain.Errors;
-using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using static BCrypt.Net.BCrypt;
 

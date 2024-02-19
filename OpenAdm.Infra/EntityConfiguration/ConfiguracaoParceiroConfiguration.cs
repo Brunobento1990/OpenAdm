@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OpenAdm.Domain.Entities;
-using System.Reflection.Emit;
+using Domain.Pkg.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 

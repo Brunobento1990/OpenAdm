@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Infra.HttpService.Interfaces;
 using System.Net.Http.Headers;
 using OpenAdm.Infra.Model;
-using OpenAdm.Domain.Errors;
+using Domain.Pkg.Errors;
 
 namespace OpenAdm.Infra.HttpService.Services;
 

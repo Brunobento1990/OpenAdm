@@ -1,4 +1,4 @@
-﻿using OpenAdm.Domain.Entities;
+﻿using Domain.Pkg.Entities;
 using System.Linq.Expressions;
 
 namespace OpenAdm.Domain.Model.PaginateDto;

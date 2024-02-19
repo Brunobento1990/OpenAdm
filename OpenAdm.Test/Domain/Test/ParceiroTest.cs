@@ -1,6 +1,6 @@
 ﻿using ExpectedObjects;
-using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Exceptions;
+using Domain.Pkg.Entities;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Domain.Test;

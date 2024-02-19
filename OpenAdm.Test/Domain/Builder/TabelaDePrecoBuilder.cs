@@ -1,5 +1,4 @@
-﻿using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Model.Pedidos;
+﻿using Domain.Pkg.Entities;
 
 namespace OpenAdm.Test.Domain.Builder;
 

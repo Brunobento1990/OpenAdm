@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OpenAdm.Domain.Entities;
+﻿using Domain.Pkg.Entities;
+using Microsoft.EntityFrameworkCore;
 using OpenAdm.Infra.EntityConfiguration;
 
 namespace OpenAdm.Infra.Context;

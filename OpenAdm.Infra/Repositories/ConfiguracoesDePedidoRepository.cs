@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OpenAdm.Domain.Entities;
+using Domain.Pkg.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 

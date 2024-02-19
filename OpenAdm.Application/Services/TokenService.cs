@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Domain.Pkg.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Application.Models.Usuarios;
-using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

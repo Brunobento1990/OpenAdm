@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
-using OpenAdm.Domain.Exceptions;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Factories.Factory;
 
 namespace OpenAdm.Test.Infra.Test;

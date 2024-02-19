@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OpenAdm.Domain.Exceptions;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.HttpService.Interfaces;
 
 namespace OpenAdm.Api.Controllers;

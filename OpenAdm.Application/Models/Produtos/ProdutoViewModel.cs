@@ -1,7 +1,7 @@
-﻿using OpenAdm.Application.Models.Categorias;
+﻿using Domain.Pkg.Entities;
+using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Application.Models.Pesos;
 using OpenAdm.Application.Models.Tamanhos;
-using OpenAdm.Domain.Entities;
 using System.Text;
 
 namespace OpenAdm.Application.Models.Produtos;

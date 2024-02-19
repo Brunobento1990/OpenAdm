@@ -1,6 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.Bases;
-using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Enums;
+using Domain.Pkg.Entities;
+using Domain.Pkg.Enum;
 
 namespace OpenAdm.Application.Models.Pedidos;
 

@@ -1,5 +1,5 @@
-﻿using OpenAdm.Application.Models;
-using OpenAdm.Domain.Entities;
+﻿using Domain.Pkg.Entities;
+using OpenAdm.Application.Models;
 using System.ComponentModel.DataAnnotations;
 using static BCrypt.Net.BCrypt;
 

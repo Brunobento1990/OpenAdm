@@ -1,5 +1,5 @@
-﻿using OpenAdm.Application.Models.Produtos;
-using OpenAdm.Domain.Entities;
+﻿using Domain.Pkg.Entities;
+using OpenAdm.Application.Models.Produtos;
 using System.Text;
 
 namespace OpenAdm.Application.Models.Categorias;

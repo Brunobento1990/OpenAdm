@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using OpenAdm.Domain.Entities;
+using Domain.Pkg.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 public class TamanhosProdutosConfiguration : IEntityTypeConfiguration<TamanhosProdutos>

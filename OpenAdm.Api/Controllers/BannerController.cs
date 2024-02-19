@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Model.PaginateDto;
 
 namespace OpenAdm.Api.Controllers;

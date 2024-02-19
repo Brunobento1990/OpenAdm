@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Emails;
-using OpenAdm.Domain.Errors;
+using Domain.Pkg.Errors;
 using OpenAdm.Domain.Interfaces;
 using static BCrypt.Net.BCrypt;
 

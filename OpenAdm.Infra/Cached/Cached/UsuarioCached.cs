@@ -1,7 +1,7 @@
-﻿using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Interfaces;
+﻿using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
+using Domain.Pkg.Entities;
 
 namespace OpenAdm.Infra.Cached.Cached;
 

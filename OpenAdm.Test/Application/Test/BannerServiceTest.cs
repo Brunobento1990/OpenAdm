@@ -1,8 +1,8 @@
-﻿using ExpectedObjects;
+﻿using Domain.Pkg.Entities;
+using ExpectedObjects;
 using Moq;
 using OpenAdm.Application.Models.Banners;
 using OpenAdm.Application.Services;
-using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Test.Application.Test;

@@ -3,8 +3,8 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Application.Models.Usuarios;
-using OpenAdm.Domain.Errors;
-using OpenAdm.Domain.Exceptions;
+using Domain.Pkg.Errors;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;

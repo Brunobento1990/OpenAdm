@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using OpenAdm.Domain.Errors;
-using OpenAdm.Domain.Exceptions;
+using Domain.Pkg.Errors;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Factories.Interfaces;
 
 namespace OpenAdm.Infra.Factories.Factory;

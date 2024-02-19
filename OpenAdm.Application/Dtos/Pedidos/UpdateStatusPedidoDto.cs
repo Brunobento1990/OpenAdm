@@ -1,4 +1,4 @@
-﻿using OpenAdm.Domain.Enums;
+﻿using Domain.Pkg.Enum;
 
 namespace OpenAdm.Application.Dtos.Pedidos;
 

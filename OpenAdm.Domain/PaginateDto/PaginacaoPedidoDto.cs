@@ -1,5 +1,5 @@
-﻿using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Enums;
+﻿using Domain.Pkg.Entities;
+using Domain.Pkg.Enum;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
 

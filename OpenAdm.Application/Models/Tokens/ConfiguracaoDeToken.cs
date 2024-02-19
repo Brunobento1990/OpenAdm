@@ -1,5 +1,5 @@
-﻿using OpenAdm.Application.Models.Funcionarios;
-using OpenAdm.Domain.Exceptions;
+﻿using Domain.Pkg.Exceptions;
+using OpenAdm.Application.Models.Funcionarios;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 

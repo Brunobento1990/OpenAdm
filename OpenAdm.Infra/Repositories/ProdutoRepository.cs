@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
-using System.Linq;
+using Domain.Pkg.Entities;
 
 namespace OpenAdm.Infra.Repositories;
 

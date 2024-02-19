@@ -2,12 +2,14 @@ using dotenv.net;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.IoC;
+using QuestPDF.Infrastructure;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
 
+QuestPDF.Settings.License = LicenseType.Community;
 
 builder.Services.AddControllers().AddJsonOptions(opt =>
 {

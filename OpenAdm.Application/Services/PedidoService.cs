@@ -1,10 +1,11 @@
-﻿using OpenAdm.Application.Dtos.Pedidos;
+﻿using Domain.Pkg.Entities;
+using Domain.Pkg.Enum;
+using Domain.Pkg.Errors;
+using Domain.Pkg.Exceptions;
+using Domain.Pkg.Pdfs.Services;
+using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
-using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Enums;
-using OpenAdm.Domain.Errors;
-using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
@@ -47,6 +48,16 @@ public class PedidoService(
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
         return await _pedidoRepository.DeleteAsync(pedido);
+    }
+
+    public async Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId)
+    {
+        var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+
+        var pdf = new PedidoPdfService().GeneratePdfAsync(pedido);
+
+        return pdf;
     }
 
     public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto)

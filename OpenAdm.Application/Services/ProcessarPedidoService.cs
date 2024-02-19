@@ -2,7 +2,7 @@
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Application.Mensageria.Interfaces;
-using OpenAdm.Domain.Entities;
+using Domain.Pkg.Entities;
 
 namespace OpenAdm.Application.Services;
 

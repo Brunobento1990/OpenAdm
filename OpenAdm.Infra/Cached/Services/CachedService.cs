@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using OpenAdm.Domain.Exceptions;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Factories.Interfaces;
 using System.Text.Json;
