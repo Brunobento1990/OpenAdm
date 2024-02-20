@@ -25,13 +25,15 @@ public class UsuarioCached : IUsuarioRepository
 
     public async Task<bool> DeleteAsync(Usuario entity)
     {
+        var key = $"usuario-{entity.Id}";
         await _cachedService.RemoveCachedAsync(_keyList);
+        await _cachedService.RemoveCachedAsync(key);
         return await _usuarioRepository.DeleteAsync(entity);
     }
 
     public async Task<Usuario?> GetUsuarioByIdAsync(Guid id)
     {
-        var key = id.ToString();
+        var key = $"usuario-{id}";
         var usuario = await _cachedService.GetItemAsync(key);
 
         if (usuario == null)
@@ -48,8 +50,9 @@ public class UsuarioCached : IUsuarioRepository
 
     public async Task<Usuario> UpdateAsync(Usuario entity)
     {
+        var key = $"usuario-{entity.Id}";
         await _cachedService.RemoveCachedAsync(_keyList);
-        await _cachedService.RemoveCachedAsync(entity.Id.ToString());
+        await _cachedService.RemoveCachedAsync(key);
         return await _usuarioRepository.UpdateAsync(entity);
     }
 
