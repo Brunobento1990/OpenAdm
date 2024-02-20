@@ -3,23 +3,34 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.PaginateDto;
 using OpenAdm.Infra.Cached.Interfaces;
-using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Repositories;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
-public class BannerCached : GenericRepository<Banner>, IBannerRepository
+public class BannerCached : IBannerRepository
 {
     private readonly BannerRepository _bannerRepository;
     private readonly ICachedService<Banner> _cachedService;
+    private static readonly string _keyList = "banners";
     public BannerCached(
-        ParceiroContext parceiroContext,
         BannerRepository bannerRepository,
         ICachedService<Banner> cachedService)
-            : base(parceiroContext)
     {
         _bannerRepository = bannerRepository;
         _cachedService = cachedService;
+    }
+
+    public async Task<Banner> AddAsync(Banner entity)
+    {
+        await _cachedService.RemoveCachedAsync(_keyList);
+        return await _bannerRepository.AddAsync(entity);
+    }
+
+    public async Task<bool> DeleteAsync(Banner entity)
+    {
+        await _cachedService.RemoveCachedAsync(_keyList);
+        await _cachedService.RemoveCachedAsync(entity.Id.ToString());
+        return await _bannerRepository.DeleteAsync(entity);
     }
 
     public async Task<Banner?> GetBannerByIdAsync(Guid id)
@@ -58,5 +69,12 @@ public class BannerCached : GenericRepository<Banner>, IBannerRepository
     public async Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(PaginacaoBannerDto paginacaoBannerDto)
     {
         return await _bannerRepository.GetPaginacaoBannerAsync(paginacaoBannerDto);
+    }
+
+    public async Task<Banner> UpdateAsync(Banner entity)
+    {
+        await _cachedService.RemoveCachedAsync(_keyList);
+        await _cachedService.RemoveCachedAsync(entity.Id.ToString());
+        return await _bannerRepository.UpdateAsync(entity);
     }
 }

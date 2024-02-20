@@ -5,17 +5,13 @@ using Domain.Pkg.Entities;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
-public class ConfiguracaoDeEmailCached : IConfiguracaoDeEmailRepository
+public class ConfiguracaoDeEmailCached(
+    ConfiguracaoDeEmailRepository configuracaoDeEmailRepository, 
+    ICachedService<ConfiguracaoDeEmail> cachedService) : IConfiguracaoDeEmailRepository
 {
-    private readonly ConfiguracaoDeEmailRepository _configuracaoDeEmailRepository;
-    private readonly ICachedService<ConfiguracaoDeEmail> _cachedService;
+    private readonly ConfiguracaoDeEmailRepository _configuracaoDeEmailRepository = configuracaoDeEmailRepository;
+    private readonly ICachedService<ConfiguracaoDeEmail> _cachedService = cachedService;
     private const string _keyList = "configuracoes-email";
-
-    public ConfiguracaoDeEmailCached(ConfiguracaoDeEmailRepository configuracaoDeEmailRepository, ICachedService<ConfiguracaoDeEmail> cachedService)
-    {
-        _configuracaoDeEmailRepository = configuracaoDeEmailRepository;
-        _cachedService = cachedService;
-    }
 
     public async Task<ConfiguracaoDeEmail> AddAsync(ConfiguracaoDeEmail entity)
     {

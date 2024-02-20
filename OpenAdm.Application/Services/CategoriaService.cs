@@ -1,4 +1,5 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Dtos.Categorias;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Domain.Interfaces;
 
@@ -11,6 +12,15 @@ public class CategoriaService : ICategoriaService
     public CategoriaService(ICategoriaRepository categoriaRepository)
     {
         _categoriaRepository = categoriaRepository;
+    }
+
+    public async Task<CategoriaViewModel> CreateCategoriaAsync(CategoriaCreateDto categoriaCreateDto)
+    {
+        var categoria = categoriaCreateDto.ToEntity();
+
+        await _categoriaRepository.AddAsync(categoria);
+
+        return new CategoriaViewModel().ToModel(categoria);
     }
 
     public async Task<IList<CategoriaViewModel>> GetCategoriasAsync()

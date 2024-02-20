@@ -1,18 +1,18 @@
 ﻿using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Cached.Interfaces;
-using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Repositories;
 using Domain.Pkg.Entities;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
-public class ProdutoCached : GenericRepository<Produto>, IProdutoRepository
+public class ProdutoCached : IProdutoRepository
 {
     private readonly ProdutoRepository _produtoRepository;
     private readonly ICachedService<Produto> _cachedService;
     private const string _keyListMaisVendidos = "produtos-mais-vendidos";
-    public ProdutoCached(ParceiroContext parceiroContext, ICachedService<Produto> cachedService, ProdutoRepository produtoRepository) : base(parceiroContext)
+    private const string _keyList = "produtos";
+    public ProdutoCached(ICachedService<Produto> cachedService, ProdutoRepository produtoRepository)
     {
         _cachedService = cachedService;
         _produtoRepository = produtoRepository;
@@ -86,5 +86,25 @@ public class ProdutoCached : GenericRepository<Produto>, IProdutoRepository
     public async Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids)
     {
         return await _produtoRepository.GetProdutosByListIdAsync(ids);
+    }
+
+    public async Task<Produto> AddAsync(Produto entity)
+    {
+        await _cachedService.RemoveCachedAsync(_keyList);
+        return await _produtoRepository.AddAsync(entity);
+    }
+
+    public async Task<Produto> UpdateAsync(Produto entity)
+    {
+        await _cachedService.RemoveCachedAsync(_keyList);
+        await _cachedService.RemoveCachedAsync(entity.Id.ToString());
+        return await _produtoRepository.UpdateAsync(entity);
+    }
+
+    public async Task<bool> DeleteAsync(Produto entity)
+    {
+        await _cachedService.RemoveCachedAsync(_keyList);
+        await _cachedService.RemoveCachedAsync(entity.Id.ToString());
+        return await _produtoRepository.DeleteAsync(entity);
     }
 }

@@ -1,15 +1,12 @@
 ﻿using Domain.Pkg.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Cached.Interfaces;
-using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Repositories;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
-public class CategoriaCached(
-    ParceiroContext parceiroContext,
-    CategoriaRepository categoriaRepository,
-    ICachedService<Categoria> cachedService) : GenericRepository<Categoria>(parceiroContext), ICategoriaRepository
+public class CategoriaCached(CategoriaRepository categoriaRepository,
+    ICachedService<Categoria> cachedService) : ICategoriaRepository
 {
     private readonly CategoriaRepository _categoriaRepository = categoriaRepository;
     private readonly ICachedService<Categoria> _cachedService = cachedService;
@@ -30,5 +27,25 @@ public class CategoriaCached(
         }
 
         return categorias;
+    }
+
+    public async Task<Categoria> AddAsync(Categoria entity)
+    {
+        await _cachedService.RemoveCachedAsync(_keyList);
+        return await _categoriaRepository.AddAsync(entity);
+    }
+
+    public async Task<Categoria> UpdateAsync(Categoria entity)
+    {
+        await _cachedService.RemoveCachedAsync(entity.Id.ToString());
+        await _cachedService.RemoveCachedAsync(_keyList);
+        return await _categoriaRepository.UpdateAsync(entity);
+    }
+
+    public async Task<bool> DeleteAsync(Categoria entity)
+    {
+        await _cachedService.RemoveCachedAsync(entity.Id.ToString());
+        await _cachedService.RemoveCachedAsync(_keyList);
+        return await _categoriaRepository.DeleteAsync(entity);
     }
 }

@@ -55,7 +55,7 @@ public class PedidoService(
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        var pdf = new PedidoPdfService().GeneratePdfAsync(pedido);
+        var pdf = PedidoPdfService.GeneratePdfAsync(pedido);
 
         return pdf;
     }
