@@ -1,7 +1,10 @@
 ﻿using Domain.Pkg.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Context;
+using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -41,5 +44,22 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
         }
 
         return categorias;
+    }
+
+    public async Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(PaginacaoCategoriaDto paginacaoCategoriaDto)
+    {
+        var (total, values) = await _parceiroContext
+                .Categorias
+                .AsNoTracking()
+                .AsQueryable()
+                .OrderByDescending(x => EF.Property<Categoria>(x, paginacaoCategoriaDto.OrderBy))
+                .WhereIsNotNull(paginacaoCategoriaDto.GetWhereBySearch())
+                .CustomFilterAsync(paginacaoCategoriaDto);
+
+        return new()
+        {
+            TotalPage = total,
+            Values = values
+        };
     }
 }

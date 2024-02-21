@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Interfaces;
 
@@ -7,4 +8,5 @@ public interface IProdutoService
 {
     Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(int page);
     Task<IList<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
+    Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto);
 }

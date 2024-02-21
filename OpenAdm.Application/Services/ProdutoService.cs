@@ -2,6 +2,7 @@
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -12,6 +13,17 @@ public class ProdutoService : IProdutoService
     public ProdutoService(IProdutoRepository produtoRepository)
     {
         _produtoRepository = produtoRepository;
+    }
+
+    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto)
+    {
+        var paginacao = await _produtoRepository.GetPaginacaoProdutoAsync(paginacaoProdutoDto);
+
+        return new PaginacaoViewModel<ProdutoViewModel>()
+        {
+            TotalPage = paginacao.TotalPage,
+            Values = paginacao.Values.Select(x => new ProdutoViewModel().ToModel(x)).ToList()
+        };
     }
 
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(int page)

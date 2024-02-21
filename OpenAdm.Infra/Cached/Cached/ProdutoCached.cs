@@ -3,6 +3,7 @@ using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using Domain.Pkg.Entities;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -106,5 +107,10 @@ public class ProdutoCached : IProdutoRepository
         await _cachedService.RemoveCachedAsync(_keyList);
         await _cachedService.RemoveCachedAsync(entity.Id.ToString());
         return await _produtoRepository.DeleteAsync(entity);
+    }
+
+    public async Task<PaginacaoViewModel<Produto>> GetPaginacaoProdutoAsync(PaginacaoProdutoDto paginacaoProdutoDto)
+    {
+        return await _produtoRepository.GetPaginacaoProdutoAsync(paginacaoProdutoDto);
     }
 }

@@ -2,6 +2,8 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -28,5 +30,16 @@ public class CategoriaService : ICategoriaService
         var categorias = await _categoriaRepository.GetCategoriasAsync();
 
         return categorias.Select(x => new CategoriaViewModel().ToModel(x)).ToList();
+    }
+
+    public async Task<PaginacaoViewModel<CategoriaViewModel>> GetPaginacaoAsync(PaginacaoCategoriaDto paginacaoCategoriaDto)
+    {
+        var paginacao = await _categoriaRepository.GetPaginacaoCategoriaAsync(paginacaoCategoriaDto);
+
+        return new PaginacaoViewModel<CategoriaViewModel>
+        {
+            TotalPage = paginacao.TotalPage,
+            Values = paginacao.Values.Select(x => new CategoriaViewModel().ToModel(x)).ToList()
+        };
     }
 }

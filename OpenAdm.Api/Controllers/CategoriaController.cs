@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Categorias;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -36,6 +37,22 @@ public class CategoriaController(ICategoriaService categoriaService)
         {
             var categoriaVieqModel = await _categoriaService.CreateCategoriaAsync(categoriaCreateDto);
             return Ok(categoriaVieqModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpGet("paginacao")]
+    [IsFuncionario]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> PaginacaoCategoria([FromQuery]PaginacaoCategoriaDto paginacaoCategoriaDto)
+    {
+        try
+        {
+            var paginacao = await _categoriaService.GetPaginacaoAsync(paginacaoCategoriaDto);
+            return Ok(paginacao);
         }
         catch (Exception ex)
         {
