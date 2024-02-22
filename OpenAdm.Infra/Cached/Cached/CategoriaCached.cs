@@ -1,7 +1,6 @@
 ﻿using Domain.Pkg.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 
@@ -51,8 +50,8 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
         return await _categoriaRepository.DeleteAsync(entity);
     }
 
-    public async Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(PaginacaoCategoriaDto paginacaoCategoriaDto)
+    public async Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(FilterModel<Categoria> filterModel)
     {
-        return await _categoriaRepository.GetPaginacaoCategoriaAsync(paginacaoCategoriaDto);
+        return await _categoriaRepository.GetPaginacaoCategoriaAsync(filterModel);
     }
 }

@@ -1,6 +1,7 @@
-﻿namespace OpenAdm.Infra.Factories.Interfaces;
+﻿namespace OpenAdm.Domain.Factories.Interfaces;
 
 public interface IDomainFactory
 {
     string GetDomainParceiro();
 }
+

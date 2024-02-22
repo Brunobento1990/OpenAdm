@@ -2,11 +2,11 @@
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
 
-namespace OpenAdm.Domain.PaginateDto;
+namespace OpenAdm.Application.PaginateDto;
 
-public class PaginacaoCategoriaDto : FilterModel
+public class PaginacaoProdutoDto : FilterModel<Produto>
 {
-    public Expression<Func<Categoria, bool>>? GetWhereBySearch()
+    public override Expression<Func<Produto, bool>>? GetWhereBySearch()
     {
         if (string.IsNullOrWhiteSpace(Search))
             return null;

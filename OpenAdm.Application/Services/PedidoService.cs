@@ -6,9 +6,9 @@ using Domain.Pkg.Pdfs.Services;
 using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Application.PaginateDto;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.PaginateDto;
 using System.Reactive.Linq;
 
 namespace OpenAdm.Application.Services;

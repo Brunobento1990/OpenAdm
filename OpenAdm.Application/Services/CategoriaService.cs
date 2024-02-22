@@ -1,9 +1,9 @@
 ﻿using OpenAdm.Application.Dtos.Categorias;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Categorias;
+using OpenAdm.Application.PaginateDto;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 

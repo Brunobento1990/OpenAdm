@@ -5,7 +5,7 @@ namespace OpenAdm.Infra.Extensions.IQueryable;
 
 public static class CustomFilter
 {
-    public static async Task<(int TotalPages, IList<TEntity> Values)> CustomFilterAsync<TEntity>(this IQueryable<TEntity> querable, FilterModel filterModel)
+    public static async Task<(int TotalPages, IList<TEntity> Values)> CustomFilterAsync<TEntity>(this IQueryable<TEntity> querable, FilterModel<TEntity> filterModel)
     {
         var total = await querable
             .CountCustomAsync(filterModel.Take);

@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Application.PaginateDto;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Interfaces;
 

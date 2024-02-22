@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 using Domain.Pkg.Entities;
@@ -14,17 +13,16 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 {
     private readonly ParceiroContext _parceiroContext = parceiroContext;
 
-    public async Task<PaginacaoViewModel<Pedido>> GetPaginacaoPedidoAsync(PaginacaoPedidoDto paginacaoPedidoDto)
+    public async Task<PaginacaoViewModel<Pedido>> GetPaginacaoPedidoAsync(FilterModel<Pedido> filterModel)
     {
         var (total, values) = await _parceiroContext
                 .Pedidos
                 .AsNoTracking()
                 .AsQueryable()
-                .OrderByDescending(x => EF.Property<Pedido>(x, paginacaoPedidoDto.OrderBy))
+                .OrderByDescending(x => EF.Property<Pedido>(x, filterModel.OrderBy))
                 .Include(x => x.Usuario)
-                .WhereIsNotNull(paginacaoPedidoDto.GetWhereBySearch())
-                .WhereIsNotNull(paginacaoPedidoDto.GetWhereByStatusPedido())
-                .CustomFilterAsync(paginacaoPedidoDto);
+                .WhereIsNotNull(filterModel.GetWhereBySearch())
+                .CustomFilterAsync(filterModel);
 
         return new()
         {

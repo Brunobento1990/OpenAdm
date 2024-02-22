@@ -17,7 +17,7 @@ builder.Services.AddControllers(opt =>
     opt.CacheProfiles.Add("Defautl60",
         new CacheProfile()
         {
-            Duration = 60
+            Duration = 300
             
         });
 }).AddJsonOptions(opt =>

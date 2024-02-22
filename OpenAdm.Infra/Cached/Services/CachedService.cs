@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Cached.Interfaces;
-using OpenAdm.Infra.Factories.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OpenAdm.Domain.Factories.Interfaces;
 
 namespace OpenAdm.Infra.Cached.Services;
 

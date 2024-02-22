@@ -3,15 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Domain.Model.PaginateDto;
+using OpenAdm.Application.Mensageria.Interfaces;
+using OpenAdm.Application.Model.PaginateDto;
+using OpenAdm.Application.Models.Banners;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("banners")]
-public class BannerController(IBannerService bannerService) : ControllerBaseApi
+public class BannerController(IBannerService bannerService, IProducerGeneric<BannerViewModel> producerGeneric) : ControllerBaseApi
 {
     private readonly IBannerService _bannerService = bannerService;
+    private readonly IProducerGeneric<BannerViewModel> _producerGeneric = producerGeneric;
 
     [HttpGet("list")]
     [ResponseCache(CacheProfileName = "Defautl60")]
@@ -20,6 +23,11 @@ public class BannerController(IBannerService bannerService) : ControllerBaseApi
         try
         {
             var bannersViewModel = await _bannerService.GetBannersAsync();
+            var teste = bannersViewModel.FirstOrDefault();
+            if(teste != null)
+            {
+                _producerGeneric.Publish(teste, "Teste-com-header");
+            }
             return Ok(bannersViewModel);
         }
         catch (Exception ex)

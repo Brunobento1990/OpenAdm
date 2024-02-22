@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.Model.PaginateDto;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 
@@ -29,15 +28,15 @@ public class BannerRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
-    public async Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(PaginacaoBannerDto paginacaoBannerDto)
+    public async Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(FilterModel<Banner> filterModel)
     {
         var (total, values) = await _parceiroContext
                 .Banners
                 .AsNoTracking()
                 .AsQueryable()
-                .OrderByDescending(x => EF.Property<Banner>(x, paginacaoBannerDto.OrderBy))
-                .WhereIsNotNull(paginacaoBannerDto.GetWhereBySearch())
-                .CustomFilterAsync(paginacaoBannerDto);
+                .OrderByDescending(x => EF.Property<Banner>(x, filterModel.OrderBy))
+                .WhereIsNotNull(filterModel.GetWhereBySearch())
+                .CustomFilterAsync(filterModel);
 
         return new()
         {

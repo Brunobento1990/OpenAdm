@@ -2,13 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class CategoriaRepository(ParceiroContext parceiroContext) 
+public class CategoriaRepository(ParceiroContext parceiroContext)
     : GenericRepository<Categoria>(parceiroContext), ICategoriaRepository
 {
     private readonly ParceiroContext _parceiroContext = parceiroContext;
@@ -27,7 +26,7 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
         {
             categoria.Produtos = categoria
                 .Produtos
-                .Select(x => 
+                .Select(x =>
                     new Produto(
                         x.Id,
                         x.DataDeCriacao,
@@ -46,15 +45,15 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
         return categorias;
     }
 
-    public async Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(PaginacaoCategoriaDto paginacaoCategoriaDto)
+    public async Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(FilterModel<Categoria> filterModel)
     {
         var (total, values) = await _parceiroContext
                 .Categorias
                 .AsNoTracking()
                 .AsQueryable()
-                .OrderByDescending(x => EF.Property<Categoria>(x, paginacaoCategoriaDto.OrderBy))
-                .WhereIsNotNull(paginacaoCategoriaDto.GetWhereBySearch())
-                .CustomFilterAsync(paginacaoCategoriaDto);
+                .OrderByDescending(x => EF.Property<Categoria>(x, filterModel.OrderBy))
+                .WhereIsNotNull(filterModel.GetWhereBySearch())
+                .CustomFilterAsync(filterModel);
 
         return new()
         {

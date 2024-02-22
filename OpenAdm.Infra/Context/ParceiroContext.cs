@@ -1,8 +1,8 @@
 ﻿using Domain.Pkg.Entities;
 using Microsoft.EntityFrameworkCore;
+using OpenAdm.Domain.Factories.Interfaces;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.EntityConfiguration;
-using OpenAdm.Infra.Factories.Interfaces;
 
 namespace OpenAdm.Infra.Context;
 

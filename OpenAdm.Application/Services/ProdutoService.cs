@@ -1,8 +1,8 @@
 ﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
+using OpenAdm.Application.PaginateDto;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 

@@ -1,7 +1,6 @@
 ﻿using Domain.Pkg.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Domain.Model.PaginateDto;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 
@@ -66,9 +65,9 @@ public class BannerCached : IBannerRepository
         return banners;
     }
 
-    public async Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(PaginacaoBannerDto paginacaoBannerDto)
+    public async Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(FilterModel<Banner> filterModel)
     {
-        return await _bannerRepository.GetPaginacaoBannerAsync(paginacaoBannerDto);
+        return await _bannerRepository.GetPaginacaoBannerAsync(filterModel);
     }
 
     public async Task<Banner> UpdateAsync(Banner entity)
