@@ -18,6 +18,7 @@ public class ProdutoController : ControllerBaseApi
     }
 
     [HttpGet("list")]
+    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> ListProdutos([FromQuery] int page)
     {
         try
@@ -32,6 +33,7 @@ public class ProdutoController : ControllerBaseApi
     }
 
     [HttpGet("list-by-categorias")]
+    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> ListProdutosByCategorias([FromQuery] Guid categoriaId)
     {
         try

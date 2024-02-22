@@ -80,6 +80,7 @@ public class PedidoController : ControllerBaseApi
     }
 
     [HttpGet("list")]
+    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> GetPedidos([FromQuery] int statusPedido)
     {
         try

@@ -14,6 +14,7 @@ public class BannerController(IBannerService bannerService) : ControllerBaseApi
     private readonly IBannerService _bannerService = bannerService;
 
     [HttpGet("list")]
+    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> ListarBanners()
     {
         try

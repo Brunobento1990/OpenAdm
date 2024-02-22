@@ -1,4 +1,5 @@
 using dotenv.net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.IoC;
@@ -11,7 +12,15 @@ DotEnv.Load();
 
 QuestPDF.Settings.License = LicenseType.Community;
 
-builder.Services.AddControllers().AddJsonOptions(opt =>
+builder.Services.AddControllers(opt =>
+{
+    opt.CacheProfiles.Add("Defautl60",
+        new CacheProfile()
+        {
+            Duration = 60
+            
+        });
+}).AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
@@ -49,7 +58,7 @@ builder.Services.AddSwaggerGen(c =>
 var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
 var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
 var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
-
+builder.Services.AddResponseCaching();
 builder.Services.InjectJwt(key, issue, audience);
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));
 builder.Services.InjectRepositories(VariaveisDeAmbiente.GetVariavel("REDIS_URL"));
@@ -77,6 +86,8 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     });
     app.UseSwaggerUI();
 }
+
+app.UseResponseCaching();
 
 app.UseAuthentication();
 

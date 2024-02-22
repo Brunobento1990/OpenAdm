@@ -15,6 +15,7 @@ public class HomeController : ControllerBaseApi
     }
 
     [HttpGet("ecommerce")]
+    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> ListEcommerce()
     {
         try
