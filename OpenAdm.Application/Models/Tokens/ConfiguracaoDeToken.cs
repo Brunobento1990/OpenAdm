@@ -1,22 +1,25 @@
-﻿using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Models.Funcionarios;
+﻿using OpenAdm.Application.Models.Funcionarios;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace OpenAdm.Application.Models.Tokens;
 
-public class ConfiguracaoDeToken(
-    string key,
-    string issue,
-    string audience,
-    DateTime expiration)
+public static class ConfiguracaoDeToken
 {
-    public string Key { get; private set; } = key ?? throw new ExceptionApi();
-    public string Issue { get; private set; } = issue ?? throw new ExceptionApi();
-    public string Audience { get; private set; } = audience ?? throw new ExceptionApi();
-    public DateTime Expiration { get; private set; } = expiration;
+    public static string Key { get; private set; } = string.Empty;
+    public static string Issue { get; private set; } = string.Empty;
+    public static string Audience { get; private set; } = string.Empty;
+    public static DateTime Expiration { get; private set; }
 
-    public Claim[] GenerateClaimsFuncionario(object obj)
+    public static void Configure(string key, string issue, string audience, DateTime expiration)
+    {
+        Key = key;
+        Issue = issue;
+        Audience = audience;
+        Expiration = expiration;
+    }
+
+    public static Claim[] GenerateClaimsFuncionario(object obj)
     {
         var claims = new List<Claim>();
 

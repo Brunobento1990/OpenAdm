@@ -10,16 +10,15 @@ namespace OpenAdm.Test.Application.Test;
 
 public class TokenServiceTest
 {
-    private readonly ConfiguracaoDeToken _configtoken =
-        new("11782be2-2f69-4bc9-95b2-6649c726260a", "issue", "audience", DateTime.Now.AddHours(24));
 
     [Fact]
     public void DeveGerarUmToken()
     {
+        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", DateTime.Now.AddHours(2));
         var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
         var funcionario = new Funcionario(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "email@gmail.com", "123", "Test", null, null);
         var tokenService = new TokenService(httpContextAccessorMock.Object);
-        var token = tokenService.GenerateToken(funcionario, _configtoken);
+        var token = tokenService.GenerateToken(funcionario);
 
         Assert.NotNull(token);
         Assert.True(!string.IsNullOrEmpty(token));
@@ -28,6 +27,7 @@ public class TokenServiceTest
     [Fact]
     public void DeveRetornarIsFuncionario()
     {
+        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", DateTime.Now.AddHours(2));
         var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
         var funcionario = new FuncionarioViewModel()
         {
@@ -39,7 +39,7 @@ public class TokenServiceTest
             Numero = 1
         };
         var tokenService = new TokenService(httpContextAccessorMock.Object);
-        var identity = new ClaimsIdentity(_configtoken.GenerateClaimsFuncionario(funcionario));
+        var identity = new ClaimsIdentity(ConfiguracaoDeToken.GenerateClaimsFuncionario(funcionario));
         httpContextAccessorMock.Setup(x => x.HttpContext.User.Identity).Returns(identity);
 
         var isFuncionario = tokenService.IsFuncionario();

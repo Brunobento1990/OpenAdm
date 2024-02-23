@@ -20,7 +20,7 @@ public class UsuarioService : IUsuarioService
         _tokenService = tokenService;
     }
 
-    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto, ConfiguracaoDeToken configuracaoDeToken)
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
     {
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
 
@@ -32,7 +32,7 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.AddAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuarioViewModel, configuracaoDeToken);
+        var token = _tokenService.GenerateToken(usuarioViewModel);
 
         return new ResponseLoginUsuarioViewModel(usuarioViewModel, token);
     }
@@ -58,7 +58,7 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.UpdateAsync(usuario);
     }
 
-    public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto, ConfiguracaoDeToken configuracaoDeToken)
+    public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto)
     {
         var idToken = _tokenService.GetTokenUsuarioViewModel().Id;
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(idToken)
@@ -68,7 +68,7 @@ public class UsuarioService : IUsuarioService
 
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuarioViewModel, configuracaoDeToken);
+        var token = _tokenService.GenerateToken(usuarioViewModel);
 
         return new(usuarioViewModel, token);
     }

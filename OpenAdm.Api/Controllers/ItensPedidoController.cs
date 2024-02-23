@@ -17,7 +17,6 @@ public class ItensPedidoController : ControllerBaseApi
     }
 
     [HttpGet("get-pedido-id")]
-    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> GetByPedido([FromQuery] Guid pedidoId)
     {
         try

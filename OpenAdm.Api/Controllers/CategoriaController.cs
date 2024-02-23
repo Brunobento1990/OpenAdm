@@ -15,7 +15,6 @@ public class CategoriaController(ICategoriaService categoriaService)
     private readonly ICategoriaService _categoriaService = categoriaService;
 
     [HttpGet("list")]
-    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> GetCategorias()
     {
         try

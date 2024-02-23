@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
-using OpenAdm.Application.Models.Tokens;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -11,17 +10,11 @@ public class LoginController : ControllerBaseApi
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;
     private readonly ILoginUsuarioService _loginUsuarioService;
-    private readonly ConfiguracaoDeToken _configGenerateToken;
 
     public LoginController(
         ILoginFuncionarioService loginFuncionarioService, 
         ILoginUsuarioService loginUsuarioService)
     {
-        var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
-        var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
-        var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
-        var expirate = DateTime.Now.AddHours(int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION")));
-        _configGenerateToken = new ConfiguracaoDeToken(key, issue, audience, expirate);
         _loginFuncionarioService = loginFuncionarioService;
         _loginUsuarioService = loginUsuarioService;
     }
@@ -31,7 +24,7 @@ public class LoginController : ControllerBaseApi
     {
         try
         {
-            var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin, _configGenerateToken);
+            var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin);
             return Ok(responselogin);
         }
         catch (Exception ex)
@@ -45,7 +38,7 @@ public class LoginController : ControllerBaseApi
     {
         try
         {
-            var responselogin = await _loginUsuarioService.LoginAsync(requestLogin, _configGenerateToken);
+            var responselogin = await _loginUsuarioService.LoginAsync(requestLogin);
             return Ok(responselogin);
         }
         catch (Exception ex)

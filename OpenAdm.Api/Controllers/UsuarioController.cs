@@ -11,15 +11,9 @@ namespace OpenAdm.Api.Controllers;
 public class UsuarioController : ControllerBaseApi
 {
     private readonly IUsuarioService _usuarioService;
-    private readonly ConfiguracaoDeToken _configGenerateToken;
 
     public UsuarioController(IUsuarioService usuarioService)
     {
-        var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
-        var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
-        var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
-        var expirate = DateTime.Now.AddHours(int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION")));
-        _configGenerateToken = new ConfiguracaoDeToken(key, issue, audience, expirate);
         _usuarioService = usuarioService;
     }
 
@@ -28,7 +22,7 @@ public class UsuarioController : ControllerBaseApi
     {
         try
         {
-            var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto, _configGenerateToken);
+            var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto);
             return Ok(responseCreateUsuario);
         }
         catch (Exception ex)
@@ -58,7 +52,7 @@ public class UsuarioController : ControllerBaseApi
     {
         try
         {
-            var result = await _usuarioService.UpdateUsuarioAsync(updateUsuarioDto, _configGenerateToken);
+            var result = await _usuarioService.UpdateUsuarioAsync(updateUsuarioDto);
 
             return Ok(result);
         }

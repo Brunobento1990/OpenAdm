@@ -5,6 +5,7 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
 using Domain.Pkg.Enum;
 using OpenAdm.Application.Models.Pedidos;
+using QuestPDF.Infrastructure;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -52,6 +53,24 @@ public class PedidoServiceTest
         Assert.IsType<PedidoViewModel>(pedidoViewModel);
         Assert.Equal(pedido.Id, pedidoViewModel.Id);
         Assert.Equal(pedido.StatusPedido, pedidoViewModel.StatusPedido);
+    }
+
+    [Fact]
+    public async Task DeveEfetuarDownloadBase64DoPedido()
+    {
+        var pedido = PedidoBuilder.Init().Build();
+        QuestPDF.Settings.License = LicenseType.Community;
+        var pedidoRepositoryMock = new Mock<IPedidoRepository>();
+        var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
+        var tokenServiceMock = new Mock<ITokenService>();
+        var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+
+        pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
+
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tokenServiceMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
+        var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
+
+        Assert.NotNull(pdf);
     }
 
     [Fact]

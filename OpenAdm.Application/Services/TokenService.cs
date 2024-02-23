@@ -14,18 +14,18 @@ public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenServ
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
-    public string GenerateToken(object obj, ConfiguracaoDeToken configGenerateToken)
+    public string GenerateToken(object obj)
     {
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(configGenerateToken.Key));
+            Encoding.UTF8.GetBytes(ConfiguracaoDeToken.Key));
 
         var credenciais = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-          issuer: configGenerateToken.Issue,
-          audience: configGenerateToken.Audience,
-          claims: configGenerateToken.GenerateClaimsFuncionario(obj),
-          expires: configGenerateToken.Expiration,
+          issuer: ConfiguracaoDeToken.Issue,
+          audience: ConfiguracaoDeToken.Audience,
+          claims: ConfiguracaoDeToken.GenerateClaimsFuncionario(obj),
+          expires: ConfiguracaoDeToken.Expiration,
           signingCredentials: credenciais);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);

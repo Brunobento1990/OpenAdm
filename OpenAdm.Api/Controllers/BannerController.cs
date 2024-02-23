@@ -17,7 +17,6 @@ public class BannerController(IBannerService bannerService, IProducerGeneric<Ban
     private readonly IProducerGeneric<BannerViewModel> _producerGeneric = producerGeneric;
 
     [HttpGet("list")]
-    [ResponseCache(CacheProfileName = "Defautl60")]
     public async Task<IActionResult> ListarBanners()
     {
         try

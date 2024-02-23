@@ -2,7 +2,6 @@
 using Domain.Pkg.Exceptions;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
-using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
 using static BCrypt.Net.BCrypt;
@@ -15,7 +14,7 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
     private readonly ILoginUsuarioRepository _loginUsuarioRepository = loginUsuarioRepository;
     private readonly ITokenService _tokenService = tokenService;
 
-    public async Task<ResponseLoginUsuarioViewModel> LoginAsync(RequestLogin requestLogin, ConfiguracaoDeToken configuracaoDeToken)
+    public async Task<ResponseLoginUsuarioViewModel> LoginAsync(RequestLogin requestLogin)
     {
         var usuario = await _loginUsuarioRepository.LoginAsync(requestLogin.Email);
 
@@ -23,7 +22,7 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
             throw new ExceptionApi(CodigoErrors.ErrorEmailOuSenhaInvalido);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuarioViewModel, configuracaoDeToken);
+        var token = _tokenService.GenerateToken(usuarioViewModel);
 
         return new(usuarioViewModel, token);
     }

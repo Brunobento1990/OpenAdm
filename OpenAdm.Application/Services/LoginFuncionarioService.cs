@@ -15,7 +15,7 @@ public class LoginFuncionarioService(ITokenService tokenService, ILoginFuncionar
     private readonly ITokenService _tokenService = tokenService;
     private readonly ILoginFuncionarioRepository _loginFuncionarioRepository = loginFuncionarioRepository;
 
-    public async Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin, ConfiguracaoDeToken configGenerateToken)
+    public async Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin)
     {
         var funcionario = await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(requestLogin.Email);
 
@@ -23,7 +23,7 @@ public class LoginFuncionarioService(ITokenService tokenService, ILoginFuncionar
             throw new ExceptionApi(CodigoErrors.ErrorEmailOuSenhaInvalido);
 
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
-        var token = _tokenService.GenerateToken(funcionarioViewModel, configGenerateToken);
+        var token = _tokenService.GenerateToken(funcionarioViewModel);
 
         return new(token, funcionarioViewModel);
     }
