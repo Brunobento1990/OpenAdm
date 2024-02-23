@@ -12,6 +12,7 @@ public class FuncionarioTest
     [InlineData("")]
     [InlineData(" ")]
     [InlineData(_maisDe255Caracteres)]
+    [InlineData("Testetste")]
     public void NaoDeveCriarFuncionarioSemEmail(string email)
     {
         Assert.Throws<ExceptionApi>(

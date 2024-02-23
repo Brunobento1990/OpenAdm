@@ -1,5 +1,6 @@
 ﻿using Domain.Pkg.Entities;
-using ExpectedObjects;
+using Domain.Pkg.Exceptions;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Domain.Test;
 
@@ -23,5 +24,14 @@ public class CategoriaTest
         Assert.Equal(dto.Numero, categoria.Numero);
         Assert.Equal(dto.Id, categoria.Id);
         Assert.Equal(dto.Descricao, categoria.Descricao);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void NaoDeveCriarCategoriaSemDescricao(string descricao)
+    {
+        Assert.Throws<ExceptionApi>(() => CategoriaBuilder.Init().SemDescricao(descricao).Build());
     }
 }

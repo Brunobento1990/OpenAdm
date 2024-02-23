@@ -30,6 +30,30 @@ public class UsuarioBuilder
 
     public static UsuarioBuilder Init() => new();
 
+    public UsuarioBuilder SemEmail(string email)
+    {
+        _email = email;
+        return this;
+    }
+
+    public UsuarioBuilder SemSenha(string senha)
+    {
+        _senha = senha;
+        return this;
+    }
+
+    public UsuarioBuilder SemNome(string nome)
+    {
+        _nome = nome;
+        return this;
+    }
+
+    public UsuarioBuilder TelefoneInvalido()
+    {
+        _telefone = "5156165165165448484891516616516515616";
+        return this;
+    }
+
     public Usuario Build()
     {
         return new Usuario(_id, _created, _update, _numero, _email, _senha, _nome, _telefone, _cnpj);
