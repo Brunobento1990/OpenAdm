@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.PaginateDto;
+using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
 

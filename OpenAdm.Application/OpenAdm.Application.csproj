@@ -15,6 +15,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OpenAdm.Domain\OpenAdm.Domain.csproj" />
+    <ProjectReference Include="..\OpenAdm.Infra\OpenAdm.Infra.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dtos\Produtos\" />
   </ItemGroup>
 
 </Project>

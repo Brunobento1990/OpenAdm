@@ -1,5 +1,4 @@
 ﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Exceptions;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -17,12 +16,7 @@ public class CategoriaCreateDto
     {
         var date = DateTime.Now;
 
-        var byteCount = Encoding.UTF8.GetByteCount(Foto);
-        byte[] foto = new byte[byteCount];
-
-        if (string.IsNullOrWhiteSpace(Foto)
-            || !Encoding.UTF8.TryGetBytes(Foto, foto, out byteCount))
-            throw new ExceptionApi("A foto do banner é inválida!");
+        byte[]? foto = !string.IsNullOrWhiteSpace(Foto) ? Encoding.UTF8.GetBytes(Foto) : null;
 
         return new Categoria(Guid.NewGuid(), date, date, 0, Descricao, foto);
     }

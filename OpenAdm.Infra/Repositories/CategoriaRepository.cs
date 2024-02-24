@@ -12,6 +12,14 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
 {
     private readonly ParceiroContext _parceiroContext = parceiroContext;
 
+    public async Task<Categoria?> GetCategoriaAsync(Guid id)
+    {
+        return await _parceiroContext
+            .Categorias
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
     public async Task<IList<Categoria>> GetCategoriasAsync()
     {
         var categorias = await _parceiroContext

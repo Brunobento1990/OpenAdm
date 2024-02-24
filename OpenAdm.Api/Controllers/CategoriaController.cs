@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Categorias;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.PaginateDto;
+using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("categorias")]
-public class CategoriaController(ICategoriaService categoriaService) 
+public class CategoriaController(ICategoriaService categoriaService)
     : ControllerBaseApi
 {
     private readonly ICategoriaService _categoriaService = categoriaService;
@@ -47,12 +47,60 @@ public class CategoriaController(ICategoriaService categoriaService)
     [HttpGet("paginacao")]
     [IsFuncionario]
     [Authorize(AuthenticationSchemes = "Bearer")]
-    public async Task<IActionResult> PaginacaoCategoria([FromQuery]PaginacaoCategoriaDto paginacaoCategoriaDto)
+    public async Task<IActionResult> PaginacaoCategoria([FromQuery] PaginacaoCategoriaDto paginacaoCategoriaDto)
     {
         try
         {
             var paginacao = await _categoriaService.GetPaginacaoAsync(paginacaoCategoriaDto);
             return Ok(paginacao);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpGet("get-categoria")]
+    [IsFuncionario]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> GetCategoria([FromQuery] Guid id)
+    {
+        try
+        {
+            var categoriaViewModel = await _categoriaService.GetCategoriaAsync(id);
+            return Ok(categoriaViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpDelete("delete")]
+    [IsFuncionario]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> DeleteCategoria([FromQuery] Guid id)
+    {
+        try
+        {
+            await _categoriaService.DeleteCategoriaAsync(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpPut("update")]
+    [IsFuncionario]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> UpdateCategoria(UpdateCategoriaDto updateCategoriaDto)
+    {
+        try
+        {
+            var categoriaViewModel = await _categoriaService.UpdateCategoriaAsync(updateCategoriaDto);
+            return Ok(categoriaViewModel);
         }
         catch (Exception ex)
         {

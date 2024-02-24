@@ -1,25 +1,27 @@
 ﻿using Domain.Pkg.Entities;
 using Domain.Pkg.Enum;
+using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
 
-namespace OpenAdm.Application.PaginateDto;
+namespace OpenAdm.Infra.Paginacao;
 
 public class PaginacaoPedidoDto : FilterModel<Pedido>
 {
     public int? StatusPedido { get; set; }
-
     public override Expression<Func<Pedido, bool>>? GetWhereBySearch()
     {
+
         if (string.IsNullOrWhiteSpace(Search) && StatusPedido == null)
             return null;
 
         if (!string.IsNullOrWhiteSpace(Search) && StatusPedido != null)
-            return x => x.Usuario.Nome.ToLower().Contains(Search.ToLower())
+            return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Email), $"%{Search}%")
             || x.StatusPedido == (StatusPedido)StatusPedido;
 
         if (!string.IsNullOrWhiteSpace(Search) && StatusPedido == null)
-            return x => x.Usuario.Nome.ToLower().Contains(Search.ToLower());
+            return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Email), $"%{Search}%") ||
+                EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Nome), $"%{Search}%");
 
         if (StatusPedido != null && string.IsNullOrWhiteSpace(Search))
             return x => x.StatusPedido == (StatusPedido)StatusPedido;

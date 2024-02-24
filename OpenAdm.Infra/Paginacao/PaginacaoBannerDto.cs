@@ -1,8 +1,9 @@
 ﻿using Domain.Pkg.Entities;
+using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
 
-namespace OpenAdm.Application.Model.PaginateDto;
+namespace OpenAdm.Infra.Paginacao;
 
 public class PaginacaoBannerDto : FilterModel<Banner>
 {
@@ -11,6 +12,6 @@ public class PaginacaoBannerDto : FilterModel<Banner>
         if (string.IsNullOrWhiteSpace(Search))
             return null;
 
-        return x => x.Numero.ToString().ToLower().Contains(Search.ToLower());
+        return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Numero.ToString()), $"%{Search}%");
     }
 }

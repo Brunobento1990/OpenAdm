@@ -11,18 +11,15 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
-    private readonly IProducerGeneric<IList<AddOrUpdateProdutosMaisVendidosDto>> _producerGenericProdutosMaisVendidos;
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IProducerGeneric<ProcessarPedidoModel> producerGeneric,
-        IPedidoRepository pedidoRepository,
-        IProducerGeneric<IList<AddOrUpdateProdutosMaisVendidosDto>> producerGenericProdutosMaisVendidos)
+        IPedidoRepository pedidoRepository)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _producerGeneric = producerGeneric;
         _pedidoRepository = pedidoRepository;
-        _producerGenericProdutosMaisVendidos = producerGenericProdutosMaisVendidos;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId)
@@ -70,12 +67,20 @@ public class ProcessarPedidoService : IProcessarPedidoService
 
     public void ProcessarProdutosMaisVendidosAsync(Pedido pedido)
     {
-        var addOrUpdateProdutosMaisVendidos = pedido.ItensPedido.Select(x => new AddOrUpdateProdutosMaisVendidosDto()
+        var processarPedidoModel = new ProcessarPedidoModel()
         {
-            ProdutoId = x.ProdutoId,
-            QuantidadeProdutos = x.Quantidade
-        }).ToList();
+            EmailEnvio = "",
+            Pedido = pedido
+        };
 
-        _producerGenericProdutosMaisVendidos.Publish(addOrUpdateProdutosMaisVendidos, "produtos-mais-vendidos");
+        foreach(var item in pedido.ItensPedido)
+        {
+            item.Pedido = null;
+            item.Produto = null;
+            item.Peso = null;
+            item.Tamanho = null;
+        }
+
+        _producerGeneric.Publish(processarPedidoModel, "pedido-entregue");
     }
 }

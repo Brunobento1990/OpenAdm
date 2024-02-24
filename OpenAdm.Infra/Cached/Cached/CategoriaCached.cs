@@ -54,4 +54,22 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
     {
         return await _categoriaRepository.GetPaginacaoCategoriaAsync(filterModel);
     }
+
+    public async Task<Categoria?> GetCategoriaAsync(Guid id)
+    {
+        var key = id.ToString();
+        var categoria = await _cachedService.GetItemAsync(key);
+
+        if(categoria == null)
+        {
+            categoria = await _categoriaRepository.GetCategoriaAsync(id);
+
+            if(categoria != null)
+            {
+                await _cachedService.SetItemAsync(key, categoria);
+            }
+        }
+
+        return categoria;
+    }
 }

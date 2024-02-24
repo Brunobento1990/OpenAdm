@@ -5,7 +5,7 @@ using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Models.Banners;
 using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Model.PaginateDto;
+using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 

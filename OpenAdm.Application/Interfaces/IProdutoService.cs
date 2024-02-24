@@ -1,6 +1,6 @@
 ﻿using OpenAdm.Application.Models.Produtos;
-using OpenAdm.Application.PaginateDto;
 using OpenAdm.Domain.Model;
+using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Interfaces;
 
