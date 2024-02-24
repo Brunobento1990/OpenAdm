@@ -96,7 +96,7 @@ public class PedidoService(
 
         if (pedido.StatusPedido == StatusPedido.Entregue)
         {
-            await _processarPedidoService.ProcessarProdutosMaisVendidosAsync(pedido);
+            _processarPedidoService.ProcessarProdutosMaisVendidosAsync(pedido);
         }
 
         return new PedidoViewModel().ForModel(pedido);

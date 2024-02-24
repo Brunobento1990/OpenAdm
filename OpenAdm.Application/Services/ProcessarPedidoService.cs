@@ -11,15 +11,18 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
+    private readonly IProducerGeneric<IList<AddOrUpdateProdutosMaisVendidosDto>> _producerGenericProdutosMaisVendidos;
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IProducerGeneric<ProcessarPedidoModel> producerGeneric,
-        IPedidoRepository pedidoRepository)
+        IPedidoRepository pedidoRepository,
+        IProducerGeneric<IList<AddOrUpdateProdutosMaisVendidosDto>> producerGenericProdutosMaisVendidos)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _producerGeneric = producerGeneric;
         _pedidoRepository = pedidoRepository;
+        _producerGenericProdutosMaisVendidos = producerGenericProdutosMaisVendidos;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId)
@@ -65,8 +68,14 @@ public class ProcessarPedidoService : IProcessarPedidoService
         }
     }
 
-    public async Task ProcessarProdutosMaisVendidosAsync(Pedido pedido)
+    public void ProcessarProdutosMaisVendidosAsync(Pedido pedido)
     {
-        Console.WriteLine(pedido.Id.ToString());
+        var addOrUpdateProdutosMaisVendidos = pedido.ItensPedido.Select(x => new AddOrUpdateProdutosMaisVendidosDto()
+        {
+            ProdutoId = x.ProdutoId,
+            QuantidadeProdutos = x.Quantidade
+        }).ToList();
+
+        _producerGenericProdutosMaisVendidos.Publish(addOrUpdateProdutosMaisVendidos, "produtos-mais-vendidos");
     }
 }
