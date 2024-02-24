@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
-using System;
 
 namespace OpenAdm.IoC;
 
@@ -23,5 +22,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IEsqueceuSenhaService, EsqueceuSenhaService>();
         services.AddScoped<IProcessarPedidoService, ProcessarPedidoService>();
+        services.AddScoped<IPesoService, PesoService>();
+        services.AddScoped<ITamanhoService, TamanhoService>();
     }
 }

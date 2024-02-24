@@ -55,5 +55,11 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ConfiguracoesDePedidoRepository>();
         services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoCached>();
+
+        services.AddScoped<PesoRepository>();
+        services.AddScoped<IPesoRepository, PesoCached>();
+
+        services.AddScoped<TamanhoRepository>();
+        services.AddScoped<ITamanhoRepository, TamanhoCached>();
     }
 }
