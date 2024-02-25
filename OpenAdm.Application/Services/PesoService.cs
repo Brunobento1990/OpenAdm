@@ -44,6 +44,13 @@ public class PesoService : IPesoService
         };
     }
 
+    public async Task<IList<PesoViewModel>> GetPesosViewModelAsync()
+    {
+        var pesos = await _pesoRepository.GetPesosAsync();
+
+        return pesos.Select(x => new PesoViewModel().ToModel(x)).ToList();
+    }
+
     public async Task<PesoViewModel> GetPesoViewModelAsync(Guid id)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(id)

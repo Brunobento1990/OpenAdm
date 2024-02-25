@@ -12,4 +12,5 @@ public interface IPesoService
     Task<PesoViewModel> CreatePesoAsync(CreatePesoDto createPesoDto);
     Task<PesoViewModel> UpdatePesoAsync(UpdatePesoDto updatePesoDto);
     Task<PaginacaoViewModel<PesoViewModel>> GetPaginacaoAsync(PaginacaoPesoDto paginacaoPesoDto);
+    Task<IList<PesoViewModel>> GetPesosViewModelAsync();
 }

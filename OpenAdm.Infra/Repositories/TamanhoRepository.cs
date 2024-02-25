@@ -40,6 +40,14 @@ public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<IList<Tamanho>> GetTamanhosAsync()
+    {
+        return await _parceiroContext
+            .Tamanhos
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<IList<Tamanho>> GetTamanhosByIdsAsync(IList<Guid> ids)
     {
         return await _parceiroContext

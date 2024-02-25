@@ -26,6 +26,7 @@ public class TabelaDePrecoConfiguration : IEntityTypeConfiguration<TabelaDePreco
             .HasMaxLength(255);
         builder.HasMany(x => x.ItensTabelaDePreco)
             .WithOne(x => x.TabelaDePreco)
-            .HasForeignKey(x => x.TabelaDePrecoId);
+            .HasForeignKey(x => x.TabelaDePrecoId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

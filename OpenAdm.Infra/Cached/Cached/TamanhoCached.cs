@@ -65,4 +65,21 @@ public class TamanhoCached : ITamanhoRepository
         await _cachedService.RemoveCachedAsync(entity.Id.ToString());
         return await _tamanhoRepository.UpdateAsync(entity);
     }
+
+    public async Task<IList<Tamanho>> GetTamanhosAsync()
+    {
+        var tamanhos = await _cachedService.GetListItemAsync(_keyList);
+
+        if(tamanhos == null)
+        {
+            tamanhos = await _tamanhoRepository.GetTamanhosAsync();
+
+            if(tamanhos != null)
+            {
+                await _cachedService.SetListItemAsync(_keyList, tamanhos);
+            }
+        }
+
+        return tamanhos ?? new List<Tamanho>(); 
+    }
 }

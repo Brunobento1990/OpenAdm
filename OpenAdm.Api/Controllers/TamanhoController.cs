@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Services;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
@@ -18,6 +19,20 @@ public class TamanhoController : ControllerBaseApi
     public TamanhoController(ITamanhoService tamanhoService)
     {
         _tamanhoService = tamanhoService;
+    }
+
+    [HttpGet("list")]
+    public async Task<IActionResult> List()
+    {
+        try
+        {
+            var tamanhosViewModel = await _tamanhoService.GetTamanhoViewModelsAsync();
+            return Ok(tamanhosViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
     }
 
     [HttpGet("paginacao")]

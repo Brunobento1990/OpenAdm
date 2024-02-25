@@ -20,6 +20,20 @@ public class PesoController : ControllerBaseApi
         _pesoService = pesoService;
     }
 
+    [HttpGet("list")]
+    public async Task<IActionResult> List()
+    {
+        try
+        {
+            var pesosViewModel = await _pesoService.GetPesosViewModelAsync();
+            return Ok(pesosViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoPesoDto paginacaoPesoDto)
     {

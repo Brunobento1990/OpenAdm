@@ -51,7 +51,7 @@ var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
 var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
 var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
 var expirate = DateTime.Now.AddHours(int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION")));
-builder.Services.AddResponseCaching();
+
 builder.Services.InjectJwt(key, issue, audience);
 ConfiguracaoDeToken.Configure(key, issue, audience, expirate);
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));

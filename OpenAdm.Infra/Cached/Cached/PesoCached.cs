@@ -65,4 +65,21 @@ public class PesoCached : IPesoRepository
 
         return peso;
     }
+
+    public async Task<IList<Peso>> GetPesosAsync()
+    {
+        var pesos = await _cachedService.GetListItemAsync(_keyList);
+
+        if(pesos == null)
+        {
+            pesos = await _pesoRepository.GetPesosAsync();
+
+            if(pesos != null)
+            {
+                await _cachedService.SetListItemAsync(_keyList, pesos);
+            }
+        }
+
+        return pesos ?? new List<Peso>();
+    }
 }

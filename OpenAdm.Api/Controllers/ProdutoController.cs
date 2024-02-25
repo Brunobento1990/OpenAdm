@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.Paginacao;
 
@@ -54,6 +55,22 @@ public class ProdutoController : ControllerBaseApi
         {
             var paginacao = await _produtoService.GetPaginacaoAsync(paginacaoProdutoDto);
             return Ok(paginacao);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpPost("create")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
+    public async Task<IActionResult> CreateProduto([FromBody]CreateProdutoDto createProdutoDto)
+    {
+        try
+        {
+            var produtoViewModel = await _produtoService.CreateProdutoAsync(createProdutoDto);
+            return Ok(produtoViewModel);
         }
         catch (Exception ex)
         {

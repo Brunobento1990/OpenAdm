@@ -11,10 +11,9 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("banners")]
-public class BannerController(IBannerService bannerService, IProducerGeneric<BannerViewModel> producerGeneric) : ControllerBaseApi
+public class BannerController(IBannerService bannerService) : ControllerBaseApi
 {
     private readonly IBannerService _bannerService = bannerService;
-    private readonly IProducerGeneric<BannerViewModel> _producerGeneric = producerGeneric;
 
     [HttpGet("list")]
     public async Task<IActionResult> ListarBanners()
@@ -22,11 +21,6 @@ public class BannerController(IBannerService bannerService, IProducerGeneric<Ban
         try
         {
             var bannersViewModel = await _bannerService.GetBannersAsync();
-            var teste = bannersViewModel.FirstOrDefault();
-            if(teste != null)
-            {
-                _producerGeneric.Publish(teste, "Teste-com-header");
-            }
             return Ok(bannersViewModel);
         }
         catch (Exception ex)

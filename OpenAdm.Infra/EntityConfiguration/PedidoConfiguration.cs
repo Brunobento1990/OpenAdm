@@ -22,6 +22,7 @@ public class PedidoConfiguration : IEntityTypeConfiguration<Pedido>
         builder.Ignore(x => x.ValorTotal);
         builder.HasMany(x => x.ItensPedido)
             .WithOne(x => x.Pedido)
-            .HasForeignKey(x => x.PedidoId);
+            .HasForeignKey(x => x.PedidoId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

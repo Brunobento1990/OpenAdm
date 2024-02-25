@@ -61,7 +61,7 @@ public class ProdutoCached : IProdutoRepository
         return new PaginacaoViewModel<Produto>()
         {
             TotalPage = count,
-            Values = produtos
+            Values = produtos ?? new List<Produto>()
         };
     }
 
@@ -111,5 +111,15 @@ public class ProdutoCached : IProdutoRepository
     public async Task<PaginacaoViewModel<Produto>> GetPaginacaoProdutoAsync(FilterModel<Produto> filterModel)
     {
         return await _produtoRepository.GetPaginacaoProdutoAsync(filterModel);
+    }
+
+    public async Task AddRangeTamanhosProdutosAsync(IList<TamanhosProdutos> tamanhosProdutos)
+    {
+        await _produtoRepository.AddRangeTamanhosProdutosAsync(tamanhosProdutos);
+    }
+
+    public async Task AddRangePesosProdutosAsync(IList<PesosProdutos> pesosProdutos)
+    {
+        await _produtoRepository.AddRangePesosProdutosAsync(pesosProdutos);
     }
 }

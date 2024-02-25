@@ -1,4 +1,5 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Dtos.Produtos;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -13,6 +14,20 @@ public class ProdutoService : IProdutoService
     public ProdutoService(IProdutoRepository produtoRepository)
     {
         _produtoRepository = produtoRepository;
+    }
+
+    public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
+    {
+        var produto = createProdutoDto.ToEntity();
+        await _produtoRepository.AddAsync(produto);
+
+        var pesosProdutos = createProdutoDto.ToPesosProdutos(produto.Id);
+        var tamanhosProdutos = createProdutoDto.ToTamanhosProdutos(produto.Id);
+
+        await _produtoRepository.AddRangePesosProdutosAsync(pesosProdutos);
+        await _produtoRepository.AddRangeTamanhosProdutosAsync(tamanhosProdutos);
+
+        return new ProdutoViewModel().ToModel(produto);
     }
 
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto)

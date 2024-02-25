@@ -28,12 +28,15 @@ public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItensPedido>
             .HasPrecision(12, 2);
         builder.HasOne(x => x.Tamanho)
             .WithMany(x => x.ItensPedido)
-            .HasForeignKey(x => x.TamanhoId);
+            .HasForeignKey(x => x.TamanhoId)
+            .OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(x => x.Peso)
             .WithMany(x => x.ItensPedido)
-            .HasForeignKey(x => x.PesoId);
+            .HasForeignKey(x => x.PesoId)
+            .OnDelete(DeleteBehavior.NoAction);
         builder.HasOne(x => x.Produto)
             .WithMany(x => x.ItensPedido)
-            .HasForeignKey(x => x.ProdutoId);
+            .HasForeignKey(x => x.ProdutoId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

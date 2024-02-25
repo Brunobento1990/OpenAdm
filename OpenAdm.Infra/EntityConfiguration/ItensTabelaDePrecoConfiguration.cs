@@ -24,6 +24,7 @@ public class ItensTabelaDePrecoConfiguration : IEntityTypeConfiguration<ItensTab
             .HasPrecision(12, 2);
         builder.HasOne(x => x.Produto)
             .WithMany(x => x.ItensTabelaDePreco)
-            .HasForeignKey(x => x.ProdutoId);
+            .HasForeignKey(x => x.ProdutoId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

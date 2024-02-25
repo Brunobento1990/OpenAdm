@@ -40,6 +40,14 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<IList<Peso>> GetPesosAsync()
+    {
+        return await _parceiroContext
+            .Pesos
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<IList<Peso>> GetPesosByIdsAsync(IList<Guid> ids)
     {
         return await _parceiroContext

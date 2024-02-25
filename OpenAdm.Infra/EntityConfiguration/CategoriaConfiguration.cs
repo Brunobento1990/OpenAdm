@@ -25,6 +25,7 @@ public class CategoriaConfiguration : IEntityTypeConfiguration<Categoria>
         builder.HasIndex(x => x.Descricao);
         builder.HasMany(x => x.Produtos)
             .WithOne(x => x.Categoria)
-            .HasForeignKey(x => x.CategoriaId);
+            .HasForeignKey(x => x.CategoriaId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

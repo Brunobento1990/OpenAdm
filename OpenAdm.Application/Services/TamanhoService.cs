@@ -52,6 +52,12 @@ public class TamanhoService : ITamanhoService
         return new TamanhoViewModel().ToModel(tamanho);
     }
 
+    public async Task<IList<TamanhoViewModel>> GetTamanhoViewModelsAsync()
+    {
+        var tamanhos = await _tamanhoRepository.GetTamanhosAsync();
+        return tamanhos.Select(x => new TamanhoViewModel().ToModel(x)).ToList();
+    }
+
     public async Task<TamanhoViewModel> UpdateTamanhoAsync(UpdateTamanhoDto updateTamanhoDto)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(updateTamanhoDto.Id)
