@@ -25,7 +25,7 @@ public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenServ
           issuer: ConfiguracaoDeToken.Issue,
           audience: ConfiguracaoDeToken.Audience,
           claims: ConfiguracaoDeToken.GenerateClaimsFuncionario(obj),
-          expires: ConfiguracaoDeToken.Expiration,
+          expires: DateTime.Now.AddHours(ConfiguracaoDeToken.Expiration),
           signingCredentials: credenciais);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);

@@ -14,7 +14,7 @@ public class TokenServiceTest
     [Fact]
     public void DeveGerarUmToken()
     {
-        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", DateTime.Now.AddHours(2));
+        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", 2);
         var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
         var funcionario = new Funcionario(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "email@gmail.com", "123", "Test", null, null);
         var tokenService = new TokenService(httpContextAccessorMock.Object);
@@ -27,7 +27,7 @@ public class TokenServiceTest
     [Fact]
     public void DeveRetornarIsFuncionario()
     {
-        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", DateTime.Now.AddHours(2));
+        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", 2);
         var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
         var funcionario = new FuncionarioViewModel()
         {

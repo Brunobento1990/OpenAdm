@@ -50,7 +50,7 @@ builder.Services.AddSwaggerGen(c =>
 var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
 var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
 var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
-var expirate = DateTime.Now.AddHours(int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION")));
+var expirate = int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION"));
 
 builder.Services.InjectJwt(key, issue, audience);
 ConfiguracaoDeToken.Configure(key, issue, audience, expirate);

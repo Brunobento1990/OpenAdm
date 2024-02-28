@@ -14,7 +14,7 @@ public class CarrinhoServiceTest
     [Fact]
     public async void DeveAdicionarProdutoNoCarrinho()
     {
-        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", DateTime.Now.AddHours(2));
+        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", 2);
 
         var usuario = UsuarioBuilder.Init().Build();
         var carrinho = new CarrinhoModel()
