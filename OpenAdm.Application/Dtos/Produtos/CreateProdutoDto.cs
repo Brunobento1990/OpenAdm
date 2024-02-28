@@ -23,14 +23,15 @@ public class CreateProdutoDto
     {
         var date = DateTime.Now;
 
-        //if (Foto == null || Foto.Length == 0)
-        //    throw new ExceptionApi("Informe uma imagem");
-
-        //using var memoryStream = new MemoryStream();
-
-        //await Foto.CopyToAsync(memoryStream);
-
-        return new Produto(Guid.NewGuid(), date, date, 0, Descricao, EspecificacaoTecnica, Encoding.UTF8.GetBytes(Foto), CategoriaId, Referencia);
+        return new Produto(
+            Guid.NewGuid(),
+            date,
+            date,
+            0,
+            Descricao, EspecificacaoTecnica,
+            Encoding.UTF8.GetBytes(Foto),
+            CategoriaId,
+            Referencia);
     }
 
     public IList<TamanhosProdutos> ToTamanhosProdutos(Guid produtoId)

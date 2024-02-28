@@ -2,6 +2,7 @@
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using Domain.Pkg.Entities;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -59,9 +60,16 @@ public class TabelaDePrecoCached : ITabelaDePrecoRepository
 
     public async Task<TabelaDePreco> UpdateAsync(TabelaDePreco entity)
     {
+
         await _cachedService.RemoveCachedAsync(_keyList);
         await _cachedService.RemoveCachedAsync(_keyTabelaAtiva);
         await _cachedService.RemoveCachedAsync(entity.Id.ToString());
         return await _tabelaDePrecoRepository.UpdateAsync(entity);
+    }
+
+    public async Task<PaginacaoViewModel<TabelaDePreco>> GetPaginacaoAsync(FilterModel<TabelaDePreco> filterModel)
+    {
+
+        return await _tabelaDePrecoRepository.GetPaginacaoAsync(filterModel);
     }
 }
