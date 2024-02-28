@@ -10,8 +10,8 @@ public interface IPedidoService
     Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto);
     Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto);
     Task<bool> DeletePedidoAsync(Guid id);
-    Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido);
-    Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto);
+    Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
+    Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, Guid usuarioId);
     Task ReenviarPedidoViaEmailAsync(Guid pedidoId);
     Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId);
 }

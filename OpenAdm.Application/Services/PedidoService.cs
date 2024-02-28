@@ -15,21 +15,18 @@ namespace OpenAdm.Application.Services;
 
 public class PedidoService(
     IPedidoRepository pedidoRepository,
-    ITokenService tokenService,
     ITabelaDePrecoRepository tabelaDePrecoRepository,
     IProcessarPedidoService processarPedidoService)
     : IPedidoService
 {
     private readonly ITabelaDePrecoRepository _tabelaDePrecoRepository = tabelaDePrecoRepository;
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
-    private readonly ITokenService _tokenService = tokenService;
     private readonly IProcessarPedidoService _processarPedidoService = processarPedidoService;
 
-    public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
+    public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, Guid clienteId)
     {
         var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync()
         ?? throw new Exception(CodigoErrors.RegistroNotFound);
-        var clienteId = _tokenService.GetTokenUsuarioViewModel().Id;
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, clienteId);
 
@@ -71,9 +68,8 @@ public class PedidoService(
         };
     }
 
-    public async Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido)
+    public async Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId)
     {
-        var usuarioId = _tokenService.GetTokenUsuarioViewModel().Id;
         var pedidos = await _pedidoRepository.GetPedidosByUsuarioIdAsync(usuarioId, statusPedido);
         return pedidos
             .Select(x => new PedidoViewModel().ForModel(x))

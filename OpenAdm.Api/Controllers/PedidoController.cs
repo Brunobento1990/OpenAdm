@@ -13,10 +13,12 @@ namespace OpenAdm.Api.Controllers;
 public class PedidoController : ControllerBaseApi
 {
     private readonly IPedidoService _pedidoService;
+    private readonly ITokenService _tokenService;
 
-    public PedidoController(IPedidoService pedidoService)
+    public PedidoController(IPedidoService pedidoService, ITokenService tokenService)
     {
         _pedidoService = pedidoService;
+        _tokenService = tokenService;
     }
 
     [HttpPost("create")]
@@ -24,7 +26,8 @@ public class PedidoController : ControllerBaseApi
     {
         try
         {
-            var result = await _pedidoService.CreatePedidoAsync(pedidoCreateDto);
+            var usuarioId = _tokenService.GetTokenUsuarioViewModel().Id;
+            var result = await _pedidoService.CreatePedidoAsync(pedidoCreateDto, usuarioId);
 
             return Ok(new { message = "Pedido criado com sucesso!" });
         }
@@ -84,7 +87,8 @@ public class PedidoController : ControllerBaseApi
     {
         try
         {
-            var pedidos = await _pedidoService.GetPedidosUsuarioAsync(statusPedido);
+            var usuarioId = _tokenService.GetTokenUsuarioViewModel().Id;
+            var pedidos = await _pedidoService.GetPedidosUsuarioAsync(statusPedido, usuarioId);
             return Ok(pedidos);
         }
         catch (Exception ex)

@@ -2,6 +2,8 @@
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 using Domain.Pkg.Entities;
+using OpenAdm.Domain.Model;
+using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -11,6 +13,23 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
     public TabelaDePrecoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
         _parceiroContext = parceiroContext;
+    }
+
+    public async Task<PaginacaoViewModel<TabelaDePreco>> GetPaginacaoAsync(FilterModel<TabelaDePreco> filterModel)
+    {
+        var (total, values) = await _parceiroContext
+                .TabelaDePreco
+                .AsNoTracking()
+                .AsQueryable()
+                .OrderByDescending(x => EF.Property<TabelaDePreco>(x, filterModel.OrderBy))
+                .WhereIsNotNull(filterModel.GetWhereBySearch())
+                .CustomFilterAsync(filterModel);
+
+        return new()
+        {
+            TotalPage = total,
+            Values = values
+        };
     }
 
     public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync()

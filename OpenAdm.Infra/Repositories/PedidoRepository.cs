@@ -19,6 +19,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
                 .Pedidos
                 .AsNoTracking()
                 .AsQueryable()
+                .AsSplitQuery()
                 .OrderByDescending(x => EF.Property<Pedido>(x, filterModel.OrderBy))
                 .Include(x => x.Usuario)
                 .WhereIsNotNull(filterModel.GetWhereBySearch())

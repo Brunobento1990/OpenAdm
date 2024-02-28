@@ -195,7 +195,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 .Produtos
                 .AsNoTracking()
                 .AsQueryable()
-                .OrderByDescending(x => EF.Property<Categoria>(x, filterModel.OrderBy))
+                .OrderByDescending(x => EF.Property<Produto>(x, filterModel.OrderBy))
                 .WhereIsNotNull(filterModel.GetWhereBySearch())
                 .CustomFilterAsync(filterModel);
 
