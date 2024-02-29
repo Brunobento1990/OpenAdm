@@ -221,4 +221,48 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         await _parceiroContext.AddRangeAsync(pesosProdutos);
         await _parceiroContext.SaveChangesAsync();
     }
+
+    public async Task<Produto?> GetProdutoByIdAsync(Guid id)
+    {
+        var produto = await _parceiroContext
+            .Produtos
+            .AsNoTracking()
+            .Include(x => x.Categoria)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (produto != null)
+        {
+            var tamanhos = await _parceiroContext
+            .TamanhosProdutos
+            .AsNoTracking()
+            .Include(x => x.Tamanho)
+            .Where(x => x.ProdutoId == produto.Id)
+            .ToListAsync();
+
+            var pesos = await _parceiroContext
+                .PesosProdutos
+                .AsNoTracking()
+                .Include(x => x.Peso)
+                .Where(x => x.ProdutoId == produto.Id)
+                .ToListAsync();
+
+
+            produto.Categoria.Produtos = new();
+            produto.Tamanhos = tamanhos
+                .Where(x => x.ProdutoId == produto.Id)
+                .Select(tm =>
+                    new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao)
+                 )
+                .ToList();
+
+            produto.Pesos = pesos
+                .Where(x => x.ProdutoId == produto.Id)
+                .Select(tm =>
+                    new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao)
+                 )
+                .ToList();
+        }
+
+        return produto;
+    }
 }

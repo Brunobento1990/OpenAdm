@@ -122,4 +122,22 @@ public class ProdutoCached : IProdutoRepository
     {
         await _produtoRepository.AddRangePesosProdutosAsync(pesosProdutos);
     }
+
+    public async Task<Produto?> GetProdutoByIdAsync(Guid id)
+    {
+        var key = id.ToString();
+        var produto = await _cachedService.GetItemAsync(key);
+
+        if(produto == null)
+        {
+            produto = await _produtoRepository.GetProdutoByIdAsync(id);
+
+            if(produto != null)
+            {
+                await _cachedService.SetItemAsync(key, produto);
+            }
+        }
+
+        return produto;
+    }
 }

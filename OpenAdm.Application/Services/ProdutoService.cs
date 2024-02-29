@@ -1,4 +1,6 @@
-﻿using OpenAdm.Application.Dtos.Produtos;
+﻿using Domain.Pkg.Errors;
+using Domain.Pkg.Exceptions;
+using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Interfaces;
@@ -57,5 +59,13 @@ public class ProdutoService : IProdutoService
         var produtos = await _produtoRepository.GetProdutosByCategoriaIdAsync(categoriaId);
 
         return produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
+    }
+
+    public async Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id)
+    {
+        var produto = await _produtoRepository.GetProdutoByIdAsync(id)
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+
+        return new ProdutoViewModel().ToModel(produto);
     }
 }

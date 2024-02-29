@@ -77,4 +77,18 @@ public class ProdutoController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [HttpGet("get-produto")]
+    public async Task<IActionResult> GetProduto([FromQuery] Guid id)
+    {
+        try
+        {
+            var produtoViewModel = await _produtoService.GetProdutoViewModelByIdAsync(id);
+            return Ok(produtoViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }
