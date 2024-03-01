@@ -206,22 +206,6 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         };
     }
 
-    public async Task AddRangeTamanhosProdutosAsync(IList<TamanhosProdutos> tamanhosProdutos)
-    {
-        if (tamanhosProdutos.Count == 0) return;
-
-        await _parceiroContext.AddRangeAsync(tamanhosProdutos);
-        await _parceiroContext.SaveChangesAsync();
-    }
-
-    public async Task AddRangePesosProdutosAsync(IList<PesosProdutos> pesosProdutos)
-    {
-        if (pesosProdutos.Count == 0) return;
-
-        await _parceiroContext.AddRangeAsync(pesosProdutos);
-        await _parceiroContext.SaveChangesAsync();
-    }
-
     public async Task<Produto?> GetProdutoByIdAsync(Guid id)
     {
         var produto = await _parceiroContext

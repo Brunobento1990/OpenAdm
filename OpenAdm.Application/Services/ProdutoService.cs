@@ -12,10 +12,17 @@ namespace OpenAdm.Application.Services;
 public class ProdutoService : IProdutoService
 {
     private readonly IProdutoRepository _produtoRepository;
+    private readonly IPesosProdutosRepository _pesosProdutosRepository;
+    private readonly ITamanhosProdutoRepository _tamanhosProdutoRepository;
 
-    public ProdutoService(IProdutoRepository produtoRepository)
+    public ProdutoService(
+        IProdutoRepository produtoRepository, 
+        IPesosProdutosRepository pesosProdutosRepository, 
+        ITamanhosProdutoRepository tamanhosProdutoRepository)
     {
         _produtoRepository = produtoRepository;
+        _pesosProdutosRepository = pesosProdutosRepository;
+        _tamanhosProdutoRepository = tamanhosProdutoRepository;
     }
 
     public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
@@ -26,10 +33,24 @@ public class ProdutoService : IProdutoService
         var pesosProdutos = createProdutoDto.ToPesosProdutos(produto.Id);
         var tamanhosProdutos = createProdutoDto.ToTamanhosProdutos(produto.Id);
 
-        await _produtoRepository.AddRangePesosProdutosAsync(pesosProdutos);
-        await _produtoRepository.AddRangeTamanhosProdutosAsync(tamanhosProdutos);
+        await _pesosProdutosRepository.AddRangeAsync(pesosProdutos);
+        await _tamanhosProdutoRepository.AddRangeAsync(tamanhosProdutos);
 
         return new ProdutoViewModel().ToModel(produto);
+    }
+
+    public async Task DeleteProdutoAsync(Guid id)
+    {
+        var produto = await _produtoRepository.GetProdutoByIdAsync(id)
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+
+        var resultPesos = await _pesosProdutosRepository.DeleteRangeAsync(produto.Id);
+        var resultTamanhos = await _tamanhosProdutoRepository.RemoveRangeAsync(produto.Id);
+
+        if(resultPesos && resultTamanhos)
+        {
+            await _produtoRepository.DeleteAsync(produto);
+        }
     }
 
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto)

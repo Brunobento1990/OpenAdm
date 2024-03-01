@@ -91,4 +91,20 @@ public class ProdutoController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [HttpDelete("delete")]
+    [IsFuncionario]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> DeleteProduto([FromQuery] Guid id)
+    {
+        try
+        {
+            await _produtoService.DeleteProdutoAsync(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }

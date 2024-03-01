@@ -113,16 +113,6 @@ public class ProdutoCached : IProdutoRepository
         return await _produtoRepository.GetPaginacaoProdutoAsync(filterModel);
     }
 
-    public async Task AddRangeTamanhosProdutosAsync(IList<TamanhosProdutos> tamanhosProdutos)
-    {
-        await _produtoRepository.AddRangeTamanhosProdutosAsync(tamanhosProdutos);
-    }
-
-    public async Task AddRangePesosProdutosAsync(IList<PesosProdutos> pesosProdutos)
-    {
-        await _produtoRepository.AddRangePesosProdutosAsync(pesosProdutos);
-    }
-
     public async Task<Produto?> GetProdutoByIdAsync(Guid id)
     {
         var key = id.ToString();

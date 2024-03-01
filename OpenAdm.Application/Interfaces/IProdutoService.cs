@@ -12,4 +12,5 @@ public interface IProdutoService
     Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto);
     Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto);
     Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id);
+    Task DeleteProdutoAsync(Guid id);
 }
