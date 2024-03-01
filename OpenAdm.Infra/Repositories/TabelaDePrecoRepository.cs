@@ -40,4 +40,14 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
             .Include(x => x.ItensTabelaDePreco)
             .FirstOrDefaultAsync(x => x.AtivaEcommerce);
     }
+
+    public async Task<TabelaDePreco?> GetTabelaDePrecoByIdAsync(Guid id)
+    {
+        return await _parceiroContext
+            .TabelaDePreco
+            .AsNoTracking()
+            .Include(x => x.ItensTabelaDePreco)
+                .ThenInclude(x => x.Produto)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 }

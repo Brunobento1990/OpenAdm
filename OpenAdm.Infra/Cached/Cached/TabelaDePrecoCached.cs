@@ -72,4 +72,22 @@ public class TabelaDePrecoCached : ITabelaDePrecoRepository
 
         return await _tabelaDePrecoRepository.GetPaginacaoAsync(filterModel);
     }
+
+    public async Task<TabelaDePreco?> GetTabelaDePrecoByIdAsync(Guid id)
+    {
+        var key = id.ToString();
+        var tabelaDePreco = await _cachedService.GetItemAsync(key);
+
+        if(tabelaDePreco == null)
+        {
+            tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoByIdAsync(id);
+
+            if(tabelaDePreco != null)
+            {
+                await _cachedService.SetItemAsync(key, tabelaDePreco);
+            }
+        }
+
+        return tabelaDePreco;
+    }
 }
