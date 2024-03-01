@@ -82,6 +82,7 @@ public class PedidoController : ControllerBaseApi
         }
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     public async Task<IActionResult> GetPedidos([FromQuery] int statusPedido)
     {

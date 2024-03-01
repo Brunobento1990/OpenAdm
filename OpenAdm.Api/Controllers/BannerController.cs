@@ -5,6 +5,7 @@ using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Mensageria.Interfaces;
 using OpenAdm.Application.Models.Banners;
+
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
@@ -16,6 +17,7 @@ public class BannerController(IBannerService bannerService) : ControllerBaseApi
     private readonly IBannerService _bannerService = bannerService;
 
     [HttpGet("list")]
+    [ResponseCache(CacheProfileName = "Default300")]
     public async Task<IActionResult> ListarBanners()
     {
         try
@@ -61,6 +63,7 @@ public class BannerController(IBannerService bannerService) : ControllerBaseApi
         }
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [Authorize(AuthenticationSchemes = "Bearer")]
     [IsFuncionario]
     [HttpGet("get-banner")]

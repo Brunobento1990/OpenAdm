@@ -14,6 +14,7 @@ public class CategoriaController(ICategoriaService categoriaService)
 {
     private readonly ICategoriaService _categoriaService = categoriaService;
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     public async Task<IActionResult> GetCategorias()
     {
@@ -60,6 +61,7 @@ public class CategoriaController(ICategoriaService categoriaService)
         }
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-categoria")]
     [IsFuncionario]
     [Authorize(AuthenticationSchemes = "Bearer")]

@@ -20,6 +20,7 @@ public class PesoController : ControllerBaseApi
         _pesoService = pesoService;
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     public async Task<IActionResult> List()
     {
@@ -48,6 +49,7 @@ public class PesoController : ControllerBaseApi
         }
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-peso")]
     public async Task<IActionResult> GetPeso([FromQuery] Guid id)
     {

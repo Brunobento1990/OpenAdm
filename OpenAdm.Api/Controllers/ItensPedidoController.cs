@@ -16,6 +16,7 @@ public class ItensPedidoController : ControllerBaseApi
         _itensPedidoService = itensPedidoService;
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-pedido-id")]
     public async Task<IActionResult> GetByPedido([FromQuery] Guid pedidoId)
     {

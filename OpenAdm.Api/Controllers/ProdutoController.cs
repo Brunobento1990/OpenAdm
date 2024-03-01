@@ -18,6 +18,7 @@ public class ProdutoController : ControllerBaseApi
         _produtoService = produtoService;
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     public async Task<IActionResult> ListProdutos([FromQuery] int page)
     {
@@ -32,6 +33,7 @@ public class ProdutoController : ControllerBaseApi
         }
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list-by-categorias")]
     public async Task<IActionResult> ListProdutosByCategorias([FromQuery] Guid categoriaId)
     {
@@ -78,6 +80,7 @@ public class ProdutoController : ControllerBaseApi
         }
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-produto")]
     public async Task<IActionResult> GetProduto([FromQuery] Guid id)
     {

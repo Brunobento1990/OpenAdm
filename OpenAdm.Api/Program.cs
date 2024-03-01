@@ -1,4 +1,5 @@
 using dotenv.net;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.Application.Models.Tokens;
@@ -12,10 +13,19 @@ DotEnv.Load();
 
 QuestPDF.Settings.License = LicenseType.Community;
 
-builder.Services.AddControllers().AddJsonOptions(opt =>
+builder.Services.AddControllers(opt =>
+{
+    opt.CacheProfiles.Add("Default300",
+        new CacheProfile()
+        {
+            Duration = 300,
+            VaryByHeader = "Referer"
+        });
+}).AddJsonOptions(opt =>
 {
     opt.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
+builder.Services.AddResponseCaching();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -80,6 +90,7 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     });
     app.UseSwaggerUI();
 }
+app.UseResponseCaching();
 
 app.UseAuthentication();
 

@@ -14,6 +14,7 @@ public class HomeController : ControllerBaseApi
         _homeEcommerSevice = homeEcommerSevice;
     }
 
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("ecommerce")]
     public async Task<IActionResult> ListEcommerce()
     {
