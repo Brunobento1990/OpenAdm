@@ -1,21 +1,10 @@
 ﻿using OpenAdm.Infra.HttpService.Services;
+using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Test.Infra.Test;
 
 public class DiscordHttpServiceTest
 {
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
-    public async Task NaoDeveNotificarDiscordSemMensage(string message)
-    {
-        var httpClientFactory = new Mock<IHttpClientFactory>();
-        var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
-
-        await Assert.ThrowsAnyAsync<Exception>(
-            async () => await discordHttpService.NotifyExceptionAsync(message, "", ""));
-    }
 
     [Theory]
     [InlineData(null)]
@@ -26,8 +15,23 @@ public class DiscordHttpServiceTest
         var httpClientFactory = new Mock<IHttpClientFactory>();
         var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
 
+        var discordModel = new DiscordModel()
+        {
+            Content = "Error expeptions",
+            Username = "Error",
+            Embeds =
+            [
+                new()
+                {
+                    Description = "Error",
+                    Title = "Error api",
+                    Color = 0xFF0000
+                }
+            ]
+        };
+
         await Assert.ThrowsAnyAsync<Exception>(
-            async () => await discordHttpService.NotifyExceptionAsync("Teste", webHookId, ""));
+            async () => await discordHttpService.NotifyExceptionAsync(discordModel, webHookId, ""));
     }
 
     [Theory]
@@ -39,7 +43,22 @@ public class DiscordHttpServiceTest
         var httpClientFactory = new Mock<IHttpClientFactory>();
         var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
 
+        var discordModel = new DiscordModel()
+        {
+            Content = "Error expeptions",
+            Username = "Error",
+            Embeds =
+            [
+                new()
+                {
+                    Description = "Error",
+                    Title = "Error api",
+                    Color = 0xFF0000
+                }
+            ]
+        };
+
         await Assert.ThrowsAnyAsync<Exception>(
-            async () => await discordHttpService.NotifyExceptionAsync("Teste", "123", webHookToken));
+            async () => await discordHttpService.NotifyExceptionAsync(discordModel, "123", webHookToken));
     }
 }

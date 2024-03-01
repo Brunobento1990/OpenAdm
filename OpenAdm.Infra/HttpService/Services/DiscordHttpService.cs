@@ -10,11 +10,8 @@ public class DiscordHttpService(IHttpClientFactory httpClientFactory)
 {
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
-    public async Task NotifyExceptionAsync(string message, string webHookId, string webHookToken)
+    public async Task NotifyExceptionAsync(DiscordModel discordModel, string webHookId, string webHookToken)
     {
-        if (string.IsNullOrWhiteSpace(message))
-            throw new Exception(CodigoErrors.MessageDiscordInvalida);
-
         if (string.IsNullOrWhiteSpace(webHookId))
             throw new Exception(CodigoErrors.WebHookIdDiscordInvalido);
 
@@ -24,26 +21,6 @@ public class DiscordHttpService(IHttpClientFactory httpClientFactory)
         var url = $"{webHookId}/{webHookToken}";
         var httpClient = _httpClientFactory.CreateClient("Discord");
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        await httpClient.PostAsync(url, BodyErrorDiscord(message));
-    }
-
-    private static StringContent BodyErrorDiscord(string message)
-    {
-        var discordModel = new DiscordModel()
-        {
-            Content = "Error expeptions",
-            Username = "Error",
-            Embeds =
-            [
-                new()
-                {
-                    Description = message,
-                    Title = "Error api",
-                    Color = 0xFF0000
-                }
-            ]
-        };
-
-        return discordModel.ToJson();
+        await httpClient.PostAsync(url, discordModel.ToJson());
     }
 }

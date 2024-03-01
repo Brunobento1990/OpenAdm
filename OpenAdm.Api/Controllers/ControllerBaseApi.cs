@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.HttpService.Interfaces;
+using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -17,7 +18,22 @@ public abstract class ControllerBaseApi : ControllerBase
         var webHookId = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_ID");
         var webHookToken = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_TOKEN");
 
-        await discordHttpService.NotifyExceptionAsync(ex.Message, webHookId, webHookToken);
+        var discordModel = new DiscordModel()
+        {
+            Content = "Error expeptions",
+            Username = "Error",
+            Embeds =
+            [
+                new()
+                {
+                    Description = ex.Message,
+                    Title = "Error api",
+                    Color = 0xFF0000
+                }
+            ]
+        };
+
+        await discordHttpService.NotifyExceptionAsync(discordModel, webHookId, webHookToken);
 
         return BadRequest(new { Message = "Ocorreu um erro interno, tente novamente mais tarde, ou entre em contato com o suporte!" });
     }

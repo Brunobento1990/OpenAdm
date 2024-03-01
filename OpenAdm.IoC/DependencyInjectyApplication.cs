@@ -25,5 +25,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IPesoService, PesoService>();
         services.AddScoped<ITamanhoService, TamanhoService>();
         services.AddScoped<ITabelaDePrecoService, TabelaDePrecoService>();
+        services.AddScoped<IConfiguracoesDePedidoService, ConfiguracoesDePedidoService>();
+        services.AddScoped<IConfiguracoesDeEmailService, ConfiguracoesDeEmailService>();
     }
 }

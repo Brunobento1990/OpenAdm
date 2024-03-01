@@ -6,8 +6,10 @@ public class TabelaDePrecoViewModel : BaseModel
 {
     public string Descricao { get; set; } = string.Empty;
     public bool AtivaEcommerce { get; set; }
+    public IList<ItensTabelaDePrecoViewModel> ItensTabelaDePreco { get; set; }
+        = new List<ItensTabelaDePrecoViewModel>();
 
-    public TabelaDePrecoViewModel ToEntity(TabelaDePreco tabelaDePreco)
+    public TabelaDePrecoViewModel ToModel(TabelaDePreco tabelaDePreco)
     {
         Id = tabelaDePreco.Id;
         DataDeCriacao = tabelaDePreco.DataDeCriacao;

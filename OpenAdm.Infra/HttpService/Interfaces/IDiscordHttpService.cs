@@ -1,6 +1,8 @@
-﻿namespace OpenAdm.Infra.HttpService.Interfaces;
+﻿using OpenAdm.Infra.Model;
+
+namespace OpenAdm.Infra.HttpService.Interfaces;
 
 public interface IDiscordHttpService
 {
-    Task NotifyExceptionAsync(string message, string webHookId, string webHookToken);
+    Task NotifyExceptionAsync(DiscordModel discordModel, string webHookId, string webHookToken);
 }

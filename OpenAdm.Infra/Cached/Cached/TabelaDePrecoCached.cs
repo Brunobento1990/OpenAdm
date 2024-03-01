@@ -84,10 +84,29 @@ public class TabelaDePrecoCached : ITabelaDePrecoRepository
 
             if(tabelaDePreco != null)
             {
+                tabelaDePreco.ItensTabelaDePreco.ForEach(item =>
+                {
+                    if (item.TabelaDePreco != null)
+                    {
+                        item.TabelaDePreco = null;
+                    }
+
+                    if(item.Produto != null)
+                    {
+                        item.Produto.ItensTabelaDePreco = new();
+                        item.Produto.Categoria = null;
+                    }
+                });
+
                 await _cachedService.SetItemAsync(key, tabelaDePreco);
             }
         }
 
         return tabelaDePreco;
+    }
+
+    public async Task<int> GetCountTabelaDePrecoAsync()
+    {
+        return await _tabelaDePrecoRepository.GetCountTabelaDePrecoAsync();
     }
 }

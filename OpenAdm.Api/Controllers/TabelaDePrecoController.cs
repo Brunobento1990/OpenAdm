@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.Paginacao;
 
@@ -26,6 +27,48 @@ public class TabelaDePrecoController : ControllerBaseApi
         {
             var paginacao = await _tabelaDePrecoService.GetPaginacaoTabelaViewModelAsync(paginacaoTabelaDePrecoDto);
             return Ok(paginacao);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpGet("get-tabela")]
+    public async Task<IActionResult> TabelaViewMode([FromQuery] Guid id)
+    {
+        try
+        {
+            var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetPrecoTabelaViewModelAsync(id);
+            return Ok(tabelaDePrecoViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateTabelaDePreco(CreateTabelaDePrecoDto createTabelaDePrecoDto)
+    {
+        try
+        {
+            var tabelaDePrecoViewModel = await _tabelaDePrecoService.CreateTabelaDePrecoAsync(createTabelaDePrecoDto);
+            return Ok(tabelaDePrecoViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpDelete("delete")]
+    public async Task<IActionResult> DeleteTabelaDePreco([FromQuery] Guid id)
+    {
+        try
+        {
+            await _tabelaDePrecoService.DeleteTabelaDePrecoAsync(id);
+            return Ok();
         }
         catch (Exception ex)
         {

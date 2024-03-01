@@ -1,6 +1,5 @@
 ﻿using Domain.Pkg.Entities;
 using ExpectedObjects;
-using Moq;
 using OpenAdm.Application.Models.Banners;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Interfaces;

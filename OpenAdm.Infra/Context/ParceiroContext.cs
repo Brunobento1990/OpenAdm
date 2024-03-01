@@ -1,4 +1,5 @@
-﻿using Domain.Pkg.Entities;
+﻿using Domain.Pkg.Cryptography;
+using Domain.Pkg.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Factories.Interfaces;
 using OpenAdm.Domain.Interfaces;
@@ -31,8 +32,8 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var dominio = _domainFactory.GetDomainParceiro();
-        var connectionString = _configuracaoParceiroRepository.GetConexaoDbByDominioAsync(dominio).Result;
-
+        var encrypt = _configuracaoParceiroRepository.GetConexaoDbByDominioAsync(dominio).Result;
+        var connectionString = CryptographyGeneric.Decrypt(encrypt);
         optionsBuilder.UseNpgsql(connectionString);
 
         base.OnConfiguring(optionsBuilder);
