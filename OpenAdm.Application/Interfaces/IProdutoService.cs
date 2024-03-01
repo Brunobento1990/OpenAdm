@@ -13,4 +13,5 @@ public interface IProdutoService
     Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto);
     Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id);
     Task DeleteProdutoAsync(Guid id);
+    Task<ProdutoViewModel> UpdateProdutoAsync(UpdateProdutoDto updateProdutoDto);
 }

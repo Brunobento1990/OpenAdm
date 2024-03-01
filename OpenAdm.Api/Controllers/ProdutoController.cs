@@ -107,4 +107,20 @@ public class ProdutoController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [HttpPut("update")]
+    [IsFuncionario]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    public async Task<IActionResult> UpdateProduto(UpdateProdutoDto updateProdutoDto)
+    {
+        try
+        {
+            var produtoViewlModel = await _produtoService.UpdateProdutoAsync(updateProdutoDto);
+            return Ok(produtoViewlModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }

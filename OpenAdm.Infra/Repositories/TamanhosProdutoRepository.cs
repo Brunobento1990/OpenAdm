@@ -19,7 +19,7 @@ public class TamanhosProdutoRepository : GenericRepository<TamanhosProdutos>, IT
         return tamanhosProdutos;
     }
 
-    public async Task<bool> RemoveRangeAsync(Guid produtoId)
+    public async Task<bool> DeleteRangeAsync(Guid produtoId)
     {
         try
         {

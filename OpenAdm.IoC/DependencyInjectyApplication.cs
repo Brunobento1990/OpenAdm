@@ -24,5 +24,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<IProcessarPedidoService, ProcessarPedidoService>();
         services.AddScoped<IPesoService, PesoService>();
         services.AddScoped<ITamanhoService, TamanhoService>();
+        services.AddScoped<ITabelaDePrecoService, TabelaDePrecoService>();
     }
 }
