@@ -28,6 +28,11 @@ public class TabelaDePrecoService : ITabelaDePrecoService
 
     public async Task<TabelaDePrecoViewModel> CreateTabelaDePrecoAsync(CreateTabelaDePrecoDto createTabelaDePrecoDto)
     {
+        var tabelaDePrecoAtiva = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync(true);
+
+        if (tabelaDePrecoAtiva != null && createTabelaDePrecoDto.AtivaEcommerce)
+            throw new ExceptionApi("Uma tabela de preço já está ativa, desative a mesma, ou inative esta!");
+
         var tabelaDePreco = createTabelaDePrecoDto.ToEntity();
 
         await _tabelaDePrecoRepository.AddAsync(tabelaDePreco);
@@ -113,9 +118,10 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoByIdUpdateAsync(updateTabelaDePrecoDto.Id)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        var tabelaDePrecoAtiva = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync();
+        var tabelaDePrecoAtiva = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync(true);
 
-        if (tabelaDePrecoAtiva == null && !updateTabelaDePrecoDto.AtivaEcommerce)
+        if (tabelaDePrecoAtiva == null && !updateTabelaDePrecoDto.AtivaEcommerce 
+            || (!updateTabelaDePrecoDto.AtivaEcommerce && updateTabelaDePrecoDto.Id == tabelaDePrecoAtiva?.Id))
             throw new ExceptionApi("Não é possível ficar sem tabela de preço para o e-commerce, ativa a mesma e efetue o processo novamente!");
 
         tabelaDePreco.Update(updateTabelaDePrecoDto.Descricao, updateTabelaDePrecoDto.AtivaEcommerce);

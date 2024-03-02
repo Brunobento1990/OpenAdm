@@ -8,6 +8,7 @@ public class CreateTabelaDePrecoDto
     [Required]
     [MaxLength(255)]
     public string Descricao { get; set; } = string.Empty;
+    public bool AtivaEcommerce { get; set; }
     public IList<CreateItensTabelaDePrecoDto> ItensTabelaDePreco { get; set; }
         = new List<CreateItensTabelaDePrecoDto>();
 

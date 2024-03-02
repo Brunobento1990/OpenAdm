@@ -34,8 +34,24 @@ public class TabelaDePrecoCached : ITabelaDePrecoRepository
         return await _tabelaDePrecoRepository.DeleteAsync(entity);
     }
 
-    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync()
+    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync(bool noCached = false)
     {
+        if (noCached)
+        {
+            var tabelaDePrecoNoCached = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync();
+            if (tabelaDePrecoNoCached != null)
+            {
+                tabelaDePrecoNoCached.ItensTabelaDePreco.ForEach(item =>
+                {
+                    if (item.TabelaDePreco != null)
+                    {
+                        item.TabelaDePreco = null;
+                    }
+                });
+            }
+
+            return tabelaDePrecoNoCached;
+        }
         var tabelaDePreco = await _cachedService.GetItemAsync(_keyTabelaAtiva);
 
         if(tabelaDePreco == null)

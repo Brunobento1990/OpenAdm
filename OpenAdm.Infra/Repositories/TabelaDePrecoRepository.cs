@@ -40,7 +40,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
         };
     }
 
-    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync()
+    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync(bool noCached = false)
     {
         return await _parceiroContext
             .TabelaDePreco
