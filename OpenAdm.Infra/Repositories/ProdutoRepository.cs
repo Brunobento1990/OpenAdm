@@ -249,4 +249,13 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
         return produto;
     }
+
+    public async Task<IList<Produto>> GetAllProdutosAsync()
+    {
+        return await _parceiroContext
+            .Produtos
+            .AsNoTracking()
+            .OrderByDescending(x => x.Numero)
+            .ToListAsync();
+    }
 }

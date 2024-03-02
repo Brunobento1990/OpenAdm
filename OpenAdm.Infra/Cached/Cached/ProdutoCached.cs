@@ -118,16 +118,33 @@ public class ProdutoCached : IProdutoRepository
         var key = id.ToString();
         var produto = await _cachedService.GetItemAsync(key);
 
-        if(produto == null)
+        if (produto == null)
         {
             produto = await _produtoRepository.GetProdutoByIdAsync(id);
 
-            if(produto != null)
+            if (produto != null)
             {
                 await _cachedService.SetItemAsync(key, produto);
             }
         }
 
         return produto;
+    }
+
+    public async Task<IList<Produto>> GetAllProdutosAsync()
+    {
+        var produtos = await _cachedService.GetListItemAsync(_keyList);
+
+        if (produtos == null)
+        {
+            produtos = await _produtoRepository.GetAllProdutosAsync();
+
+            if (produtos.Count > 0)
+            {
+                await _cachedService.SetListItemAsync(_keyList, produtos);
+            }
+        }
+
+        return produtos ?? new List<Produto>();
     }
 }

@@ -62,6 +62,20 @@ public class TabelaDePrecoController : ControllerBaseApi
         }
     }
 
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateTabela(UpdateTabelaDePrecoDto updateTabelaDePrecoDto)
+    {
+        try
+        {
+            var tabelaDePrecoViewModel = await _tabelaDePrecoService.UpdateTabelaDePrecoAsync(updateTabelaDePrecoDto);
+            return Ok(tabelaDePrecoViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteTabelaDePreco([FromQuery] Guid id)
     {

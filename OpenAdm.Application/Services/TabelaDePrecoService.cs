@@ -108,9 +108,21 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         return tabelaDePrecoViewModel;
     }
 
-    public Task<TabelaDePrecoViewModel> UpdateTabelaDePrecoAsync(UpdateTabelaDePrecoDto updateTabelaDePrecoDto)
+    public async Task<TabelaDePrecoViewModel> UpdateTabelaDePrecoAsync(UpdateTabelaDePrecoDto updateTabelaDePrecoDto)
     {
-        throw new NotImplementedException();
+        var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoByIdUpdateAsync(updateTabelaDePrecoDto.Id)
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+
+        var tabelaDePrecoAtiva = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync();
+
+        if (tabelaDePrecoAtiva == null && !updateTabelaDePrecoDto.AtivaEcommerce)
+            throw new ExceptionApi("Não é possível ficar sem tabela de preço para o e-commerce, ativa a mesma e efetue o processo novamente!");
+
+        tabelaDePreco.Update(updateTabelaDePrecoDto.Descricao, updateTabelaDePrecoDto.AtivaEcommerce);
+
+        await _tabelaDePrecoRepository.UpdateAsync(tabelaDePreco);
+
+        return new TabelaDePrecoViewModel().ToModel(tabelaDePreco);
     }
 
     private async Task<TabelaDePreco> GetTabelaAsync(Guid id)

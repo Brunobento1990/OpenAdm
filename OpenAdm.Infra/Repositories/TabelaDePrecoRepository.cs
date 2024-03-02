@@ -58,4 +58,12 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
                 .ThenInclude(x => x.Produto)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<TabelaDePreco?> GetTabelaDePrecoByIdUpdateAsync(Guid id)
+    {
+        return await _parceiroContext
+            .TabelaDePreco
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 }

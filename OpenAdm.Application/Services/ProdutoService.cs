@@ -56,6 +56,13 @@ public class ProdutoService : IProdutoService
         }
     }
 
+    public async Task<IList<ProdutoViewModel>> GetAllProdutosAsync()
+    {
+        var produtos = await _produtoRepository.GetAllProdutosAsync();
+
+        return produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
+    }
+
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto)
     {
         var paginacao = await _produtoRepository.GetPaginacaoProdutoAsync(paginacaoProdutoDto);

@@ -9,6 +9,7 @@ public interface IProdutoService
 {
     Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(int page);
     Task<IList<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
+    Task<IList<ProdutoViewModel>> GetAllProdutosAsync();
     Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto);
     Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto);
     Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id);

@@ -33,6 +33,20 @@ public class ProdutoController : ControllerBaseApi
         }
     }
 
+    [HttpGet("all-list")]
+    public async Task<IActionResult> ListAllProdutos()
+    {
+        try
+        {
+            var result = await _produtoService.GetAllProdutosAsync();
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
     [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list-by-categorias")]
     public async Task<IActionResult> ListProdutosByCategorias([FromQuery] Guid categoriaId)

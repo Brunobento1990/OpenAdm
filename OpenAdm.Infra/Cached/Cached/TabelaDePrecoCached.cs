@@ -109,4 +109,9 @@ public class TabelaDePrecoCached : ITabelaDePrecoRepository
     {
         return await _tabelaDePrecoRepository.GetCountTabelaDePrecoAsync();
     }
+
+    public async Task<TabelaDePreco?> GetTabelaDePrecoByIdUpdateAsync(Guid id)
+    {
+        return await _tabelaDePrecoRepository.GetTabelaDePrecoByIdUpdateAsync(id);
+    }
 }
