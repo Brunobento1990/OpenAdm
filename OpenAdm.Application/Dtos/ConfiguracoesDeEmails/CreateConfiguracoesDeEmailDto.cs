@@ -17,7 +17,7 @@ public class CreateConfiguracoesDeEmailDto
     public string Servidor { get; set; } = string.Empty;
     [Required]
     public int Porta { get; set; }
-    public bool? Ativo { get; set; }
+    public bool? Ativo { get; set; } = true;
 
     public ConfiguracaoDeEmail ToEntity()
     {

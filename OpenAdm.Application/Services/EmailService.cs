@@ -3,6 +3,7 @@ using OpenAdm.Application.Models.Emails;
 using OpenAdm.Domain.Interfaces;
 using System.Net.Mail;
 using System.Net;
+using Domain.Pkg.Cryptography;
 
 namespace OpenAdm.Application.Services;
 
@@ -39,7 +40,7 @@ public class EmailService : IEmailService
             var smtp = new SmtpClient(configuracao.Servidor, configuracao.Porta);
             smtp.EnableSsl = true;
             smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential(configuracao.Email, configuracao.Senha);
+            smtp.Credentials = new NetworkCredential(configuracao.Email, CryptographyGeneric.Decrypt(configuracao.Senha));
             smtp.Send(mail);
 
             return true;

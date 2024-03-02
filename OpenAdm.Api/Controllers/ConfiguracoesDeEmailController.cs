@@ -34,4 +34,20 @@ public class ConfiguracoesDeEmailController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [HttpGet("get-configuracao")]
+    public async Task<IActionResult> GetConfiguracao()
+    {
+        try
+        {
+            var configuracaoDeEmailViewModel = await _configuracoesDeEmailService
+                .GetConfiguracaoDeEmailAsync();
+
+            return Ok(configuracaoDeEmailViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }

@@ -6,4 +6,5 @@ namespace OpenAdm.Application.Interfaces;
 public interface IConfiguracoesDeEmailService
 {
     Task<ConfiguracaoDeEmailViewModel> CreateConfiguracoesDeEmailAsync(CreateConfiguracoesDeEmailDto createConfiguracoesDeEmailDto);
+    Task<ConfiguracaoDeEmailViewModel> GetConfiguracaoDeEmailAsync();
 }
