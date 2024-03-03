@@ -34,6 +34,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
             var processarPedidoModel = new ProcessarPedidoModel()
             {
                 EmailEnvio = configuracoesDePedido.EmailDeEnvio,
+                Logo = configuracoesDePedido.Logo,
                 Pedido = pedido
             };
 

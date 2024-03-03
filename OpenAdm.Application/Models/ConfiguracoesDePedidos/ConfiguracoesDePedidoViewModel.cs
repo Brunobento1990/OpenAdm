@@ -1,4 +1,5 @@
 ﻿using Domain.Pkg.Entities;
+using System.Text;
 
 namespace OpenAdm.Application.Models.ConfiguracoesDePedidos;
 
@@ -14,6 +15,7 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
         DataDeAtualizacao = configuracoesDePedido.DataDeAtualizacao;
         Numero = configuracoesDePedido.Numero;
         EmailDeEnvio = configuracoesDePedido.EmailDeEnvio;
+        Logo = configuracoesDePedido.Logo == null ? null : Encoding.UTF8.GetString(configuracoesDePedido.Logo);
 
         return this;
     }

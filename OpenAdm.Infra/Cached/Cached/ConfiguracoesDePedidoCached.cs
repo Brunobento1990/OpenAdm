@@ -21,6 +21,7 @@ public class ConfiguracoesDePedidoCached : IConfiguracoesDePedidoRepository
 
     public async Task<ConfiguracoesDePedido> AddAsync(ConfiguracoesDePedido entity)
     {
+        await _cachedService.RemoveCachedAsync(_key);
         return await _configuracoesDePedidoRepository.AddAsync(entity);
     }
 

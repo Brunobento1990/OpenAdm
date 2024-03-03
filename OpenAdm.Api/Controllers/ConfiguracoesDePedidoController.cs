@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Application.Dtos.ConfiguracoesDePedidos;
 using OpenAdm.Application.Interfaces;
 
 namespace OpenAdm.Api.Controllers;
@@ -27,6 +28,22 @@ public class ConfiguracoesDePedidoController : ControllerBaseApi
                 _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
             
             return Ok(configuracoesDePedidoViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateConfiguracao(UpdateConfiguracoesDePedidoDto updateConfiguracoesDePedidoDto)
+    {
+        try
+        {
+            var configuracaoDePedidoViewModel = await _configuracoesDePedidoService
+                .CreateConfiguracoesDePedidoAsync(updateConfiguracoesDePedidoDto);
+
+            return Ok(configuracaoDePedidoViewModel);
         }
         catch (Exception ex)
         {
