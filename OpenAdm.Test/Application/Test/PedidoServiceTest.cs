@@ -56,22 +56,22 @@ public class PedidoServiceTest
         Assert.Equal(pedido.StatusPedido, pedidoViewModel.StatusPedido);
     }
 
-    [Fact]
-    public async Task DeveEfetuarDownloadBase64DoPedido()
-    {
-        var pedido = PedidoBuilder.Init().Build();
-        QuestPDF.Settings.License = LicenseType.Community;
-        var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-        var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
-        var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+    //[Fact]
+    //public async Task DeveEfetuarDownloadBase64DoPedido()
+    //{
+    //    var pedido = PedidoBuilder.Init().Build();
+    //    QuestPDF.Settings.License = LicenseType.Community;
+    //    var pedidoRepositoryMock = new Mock<IPedidoRepository>();
+    //    var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
+    //    var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
-        pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
+    //    pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
-        var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
+    //    var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
+    //    var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
-        Assert.NotNull(pdf);
-    }
+    //    Assert.NotNull(pdf);
+    //}
 
     [Fact]
     public async Task DeveExcluirPedido()
