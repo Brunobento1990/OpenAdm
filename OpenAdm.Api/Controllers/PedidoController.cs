@@ -14,11 +14,13 @@ public class PedidoController : ControllerBaseApi
 {
     private readonly IPedidoService _pedidoService;
     private readonly ITokenService _tokenService;
+    private readonly IProcessarPedidoService _processarPedidoService;
 
-    public PedidoController(IPedidoService pedidoService, ITokenService tokenService)
+    public PedidoController(IPedidoService pedidoService, ITokenService tokenService, IProcessarPedidoService processarPedidoService)
     {
         _pedidoService = pedidoService;
         _tokenService = tokenService;
+        _processarPedidoService = processarPedidoService;
     }
 
     [HttpPost("create")]
@@ -119,7 +121,7 @@ public class PedidoController : ControllerBaseApi
     {
         try
         {
-            var pdf = await _pedidoService.DownloadPedidoPdfAsync(pedidoId);
+            var pdf = await _processarPedidoService.DownloadPedidoPdfAsync(pedidoId);
             return Ok(new { pdf });
         }
         catch (Exception ex)

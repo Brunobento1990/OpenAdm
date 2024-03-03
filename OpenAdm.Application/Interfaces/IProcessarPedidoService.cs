@@ -6,4 +6,5 @@ public interface IProcessarPedidoService
 {
     Task ProcessarCreateAsync(Guid pedidoId);
     void ProcessarProdutosMaisVendidosAsync(Pedido pedido);
+    Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId);
 }

@@ -13,5 +13,4 @@ public interface IPedidoService
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
     Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, Guid usuarioId);
     Task ReenviarPedidoViaEmailAsync(Guid pedidoId);
-    Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId);
 }

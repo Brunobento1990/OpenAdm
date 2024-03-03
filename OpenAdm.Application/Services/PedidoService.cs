@@ -47,16 +47,6 @@ public class PedidoService(
         return await _pedidoRepository.DeleteAsync(pedido);
     }
 
-    public async Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId)
-    {
-        var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
-
-        var pdf = PedidoPdfService.GeneratePdfAsync(pedido);
-
-        return pdf;
-    }
-
     public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto)
     {
         var paginacao = await _pedidoRepository.GetPaginacaoPedidoAsync(paginacaoPedidoDto);
