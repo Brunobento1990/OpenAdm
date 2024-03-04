@@ -23,6 +23,6 @@ public class PedidoConfiguration : IEntityTypeConfiguration<Pedido>
         builder.HasMany(x => x.ItensPedido)
             .WithOne(x => x.Pedido)
             .HasForeignKey(x => x.PedidoId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
