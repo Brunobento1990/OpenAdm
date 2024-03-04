@@ -8,6 +8,7 @@ public class UsuarioViewModel : BaseModel
     public string Email { get; set; } = string.Empty;
     public string? Telefone { get; set; }
     public string? Cnpj { get; set; }
+    public string? Cpf { get; set; }
 
     public UsuarioViewModel ToModel(Usuario entity)
     {
@@ -19,6 +20,7 @@ public class UsuarioViewModel : BaseModel
         Telefone = entity.Telefone;
         Nome = entity.Nome;
         Cnpj = entity.Cnpj;
+        Cpf = entity.Cpf;
 
         return this;
     }

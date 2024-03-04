@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
-using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Application.Models.Usuarios;
 using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
@@ -64,7 +63,7 @@ public class UsuarioService : IUsuarioService
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(idToken)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        usuario.Update(updateUsuarioDto.Email, updateUsuarioDto.Nome, updateUsuarioDto.Telefone, updateUsuarioDto.Cnpj);
+        usuario.Update(updateUsuarioDto.Email, updateUsuarioDto.Nome, updateUsuarioDto.Telefone, updateUsuarioDto.Cnpj, updateUsuarioDto.Cpf);
 
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);

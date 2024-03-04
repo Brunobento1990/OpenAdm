@@ -25,6 +25,8 @@ public class CreateUsuarioDto : BaseModel
     public string? Telefone { get; set; } = string.Empty;
     [MaxLength(20)]
     public string? Cnpj { get; set; } = string.Empty;
+    [MaxLength(20)]
+    public string? Cpf { get; set; } = string.Empty;
 
     public Usuario ToEntity()
     {
@@ -40,6 +42,7 @@ public class CreateUsuarioDto : BaseModel
             senha,
             Nome,
             Telefone,
-            Cnpj);
+            Cnpj,
+            Cpf);
     }
 }

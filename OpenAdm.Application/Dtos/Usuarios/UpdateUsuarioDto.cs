@@ -15,4 +15,6 @@ public class UpdateUsuarioDto
     public string? Telefone { get; set; }
     [MaxLength(20)]
     public string? Cnpj { get; set; }
+    [MaxLength(20)]
+    public string? Cpf { get; set; }
 }
