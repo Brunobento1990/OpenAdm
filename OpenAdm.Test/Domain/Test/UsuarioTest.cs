@@ -19,7 +19,8 @@ public class UsuarioTest
             usuarioDto.Senha, 
             usuarioDto.Nome, 
             usuarioDto.Telefone, 
-            usuarioDto.Cnpj);
+            usuarioDto.Cnpj,
+            usuarioDto.Cpf);
 
         Assert.NotNull(usuario);
         Assert.Equal(usuarioDto.Id, usuario.Id);

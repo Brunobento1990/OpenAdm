@@ -13,6 +13,7 @@ public class UsuarioBuilder
     private string _nome;
     private string? _telefone;
     private string? _cnpj;
+    private string? _cpf;
 
     public UsuarioBuilder()
     {
@@ -26,6 +27,7 @@ public class UsuarioBuilder
         _nome = faker.Person.FirstName;
         _telefone = "12345678911";
         _cnpj = faker.Person.Cpf();
+        _cpf = faker.Person.Cpf();
     }
 
     public static UsuarioBuilder Init() => new();
@@ -56,6 +58,6 @@ public class UsuarioBuilder
 
     public Usuario Build()
     {
-        return new Usuario(_id, _created, _update, _numero, _email, _senha, _nome, _telefone, _cnpj);
+        return new Usuario(_id, _created, _update, _numero, _email, _senha, _nome, _telefone, _cnpj, _cpf);
     }
 }
