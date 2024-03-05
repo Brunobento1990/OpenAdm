@@ -40,7 +40,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
         };
     }
 
-    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync(bool noCached = false)
+    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync()
     {
         return await _parceiroContext
             .TabelaDePreco
@@ -51,12 +51,24 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
 
     public async Task<TabelaDePreco?> GetTabelaDePrecoByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        var tabelaDePreco = await _parceiroContext
             .TabelaDePreco
             .AsNoTracking()
+            .AsSingleQuery()
             .Include(x => x.ItensTabelaDePreco)
                 .ThenInclude(x => x.Produto)
             .FirstOrDefaultAsync(x => x.Id == id);
+    
+        if(tabelaDePreco != null)
+        {
+            foreach (var item in tabelaDePreco.ItensTabelaDePreco)
+            {
+                item.TabelaDePreco = null;
+                item.Produto.ItensTabelaDePreco = new();
+            }
+        }
+
+        return tabelaDePreco;
     }
 
     public async Task<TabelaDePreco?> GetTabelaDePrecoByIdUpdateAsync(Guid id)
