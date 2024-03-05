@@ -94,7 +94,6 @@ public class ProdutoController : ControllerBaseApi
         }
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-produto")]
     public async Task<IActionResult> GetProduto([FromQuery] Guid id)
     {

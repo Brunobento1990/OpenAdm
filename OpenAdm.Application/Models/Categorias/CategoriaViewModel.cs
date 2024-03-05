@@ -17,7 +17,7 @@ public class CategoriaViewModel : BaseModel
         DataDeAtualizacao = entity.DataDeAtualizacao;
         Numero = entity.Numero;
         Descricao = entity.Descricao;
-        Foto = entity.Foto != null ? Encoding.UTF8.GetString(entity.Foto) : null;
+        Foto = entity.Foto;
         Produtos = entity.Produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
 
         return this;

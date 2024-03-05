@@ -26,8 +26,8 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
         builder.Property(x => x.EspecificacaoTecnica)
             .HasDefaultValue(null)
             .HasMaxLength(500);
-        builder.Property(x => x.Foto)
-            .IsRequired();
+        builder.Property(x => x.UrlFoto)
+            .HasMaxLength(500);
         builder.Property(x => x.Referencia)
             .HasMaxLength(255)
             .HasDefaultValue(null);

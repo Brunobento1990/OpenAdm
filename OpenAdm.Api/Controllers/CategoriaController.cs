@@ -61,7 +61,6 @@ public class CategoriaController(ICategoriaService categoriaService)
         }
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-categoria")]
     [IsFuncionario]
     [Authorize(AuthenticationSchemes = "Bearer")]

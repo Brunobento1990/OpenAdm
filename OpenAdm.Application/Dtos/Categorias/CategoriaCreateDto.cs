@@ -12,12 +12,10 @@ public class CategoriaCreateDto
 
     public string? Foto { get; set; }
 
-    public Categoria ToEntity()
+    public Categoria ToEntity(string? nomeFoto)
     {
         var date = DateTime.Now;
 
-        byte[]? foto = !string.IsNullOrWhiteSpace(Foto) ? Encoding.UTF8.GetBytes(Foto) : null;
-
-        return new Categoria(Guid.NewGuid(), date, date, 0, Descricao, foto);
+        return new Categoria(Guid.NewGuid(), date, date, 0, Descricao, Foto, nomeFoto);
     }
 }

@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Domain.Factories.Interfaces;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Infra.Azure.Interfaces;
+using OpenAdm.Infra.Azure.Storage;
 using OpenAdm.Infra.Cached.Cached;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Cached.Services;
@@ -67,5 +69,6 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ItemTabelaDePrecoRepository>();
         services.AddScoped<IItemTabelaDePrecoRepository, ItemTabelaDePrecoCached>();
+        services.AddScoped<IUploadImageBlobClient, UploadImageBlobClient>();
     }
 }

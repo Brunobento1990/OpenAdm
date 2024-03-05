@@ -14,7 +14,7 @@ public class BannerViewModel : BaseModel
         DataDeCriacao = entity.DataDeCriacao;
         DataDeAtualizacao = entity.DataDeAtualizacao;
         Numero = entity.Numero;
-        Foto = Encoding.UTF8.GetString(entity.Foto);
+        Foto = entity.Foto;
         Ativo = entity.Ativo;
 
         return this;

@@ -93,7 +93,6 @@ public class CarrinhoService : ICarrinhoService
                 CategoriaId = produto.CategoriaId,
                 Descricao = produto.Descricao,
                 EspecificacaoTecnica = produto.EspecificacaoTecnica,
-                Foto = Encoding.UTF8.GetString(produto.Foto),
                 Id = produto.Id,
                 Referencia = produto.Referencia,
                 Numero = produto.Numero

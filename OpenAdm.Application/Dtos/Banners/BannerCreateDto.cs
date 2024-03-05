@@ -12,14 +12,7 @@ public class BannerCreateDto
 
     public Banner ToEntity()
     {
-        var byteCount = Encoding.UTF8.GetByteCount(Foto);
-        byte[] foto = new byte[byteCount];
-
-        if (string.IsNullOrWhiteSpace(Foto)
-            || !Encoding.UTF8.TryGetBytes(Foto, foto, out byteCount))
-            throw new ExceptionApi("A foto do banner é inválida!");
-
         var date = DateTime.Now;
-        return new Banner(Guid.NewGuid(), date, date, 0, foto, true);
+        return new Banner(Guid.NewGuid(), date, date, 0, Foto, true);
     }
 }

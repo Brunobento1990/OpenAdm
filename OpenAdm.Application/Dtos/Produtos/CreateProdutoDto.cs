@@ -19,7 +19,7 @@ public class CreateProdutoDto
     public IList<Guid>? TamanhosIds { get; set; }
     public IList<Guid>? PesosIds { get; set; }
 
-    public Produto ToEntity()
+    public Produto ToEntity(string nomeFoto)
     {
         var date = DateTime.Now;
 
@@ -29,9 +29,10 @@ public class CreateProdutoDto
             date,
             0,
             Descricao, EspecificacaoTecnica,
-            Encoding.UTF8.GetBytes(Foto),
             CategoriaId,
-            Referencia);
+            Referencia,
+            Foto,
+            nomeFoto);
     }
 
     public IList<TamanhosProdutos> ToTamanhosProdutos(Guid produtoId)
