@@ -11,7 +11,8 @@ public class ProdutoBuilder
     private string _descricao;
     private string? _especificacaoTecnica;
     private string? _referencia;
-    private readonly byte[] _foto;
+    private readonly string _foto;
+    private readonly string _nomeFoto;
     private readonly Guid _categoriaId;
 
     public ProdutoBuilder()
@@ -23,7 +24,8 @@ public class ProdutoBuilder
         _numero = faker.Random.Long(1, 10000);
         _descricao = faker.Name.JobDescriptor();
         _categoriaId = Guid.NewGuid();
-        _foto = new byte[10];
+        _foto = "foto";
+        _nomeFoto = "nomefoto";
     }
 
     public static ProdutoBuilder Init() => new();
@@ -53,6 +55,6 @@ public class ProdutoBuilder
 
     public Produto Build()
     {
-        return new Produto(_id, _created, _update, _numero, _descricao, _especificacaoTecnica, _foto, _categoriaId, _referencia);
+        return new Produto(_id, _created, _update, _numero, _descricao, _especificacaoTecnica, _categoriaId, _referencia, _foto, _nomeFoto);
     }
 }

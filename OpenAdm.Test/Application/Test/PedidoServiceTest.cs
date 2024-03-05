@@ -133,7 +133,7 @@ public class PedidoServiceTest
         var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
-        tabelaDePrecoRepositoryMock.Setup((tb) => tb.GetTabelaDePrecoAtivaAsync(false)).ReturnsAsync(tabelaDePreco);
+        tabelaDePrecoRepositoryMock.Setup((tb) => tb.GetTabelaDePrecoAtivaAsync()).ReturnsAsync(tabelaDePreco);
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,
@@ -162,7 +162,7 @@ public class PedidoServiceTest
 
         var tabelaDePreco = TabelaDePrecoBuilder.Init().Build();
 
-        tabelaDePrecoRepositoryMock.Setup((tb) => tb.GetTabelaDePrecoAtivaAsync(false)).ReturnsAsync(tabelaDePreco);
+        tabelaDePrecoRepositoryMock.Setup((tb) => tb.GetTabelaDePrecoAtivaAsync()).ReturnsAsync(tabelaDePreco);
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,

@@ -11,7 +11,7 @@ public class ProdutoTest
     {
         var dto = ProdutoBuilder.Init().Build();
 
-        var produto = new Produto(dto.Id, dto.DataDeCriacao, dto.DataDeAtualizacao, dto.Numero, dto.Descricao, dto.EspecificacaoTecnica, dto.Foto, dto.CategoriaId, dto.Referencia);
+        var produto = new Produto(dto.Id, dto.DataDeCriacao, dto.DataDeAtualizacao, dto.Numero, dto.Descricao, dto.EspecificacaoTecnica, dto.CategoriaId, dto.Referencia, dto.UrlFoto, dto.NomeFoto);
 
         Assert.NotNull(produto);
         Assert.Equal(dto.Id, produto.Id);   
@@ -20,7 +20,6 @@ public class ProdutoTest
         Assert.Equal(dto.Numero, produto.Numero);   
         Assert.Equal(dto.Descricao, produto.Descricao);   
         Assert.Equal(dto.EspecificacaoTecnica, produto.EspecificacaoTecnica);   
-        Assert.Equal(dto.Foto, produto.Foto);   
         Assert.Equal(dto.CategoriaId, produto.CategoriaId);   
         Assert.Equal(dto.Referencia, produto.Referencia);   
     }

@@ -13,7 +13,7 @@ public class BannerServiceTest
     {
         var banners = new List<Banner>()
         {
-            new(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1 ,new byte[10], true)
+            new(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1 ,"teste", true)
         };
 
         var repositoryBannerMock = new Mock<IBannerRepository>();

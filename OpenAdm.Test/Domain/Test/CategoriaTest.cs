@@ -18,7 +18,7 @@ public class CategoriaTest
             Descricao = "Teste 123"
         };
 
-        var categoria = new Categoria(dto.Id, dto.DataDeCriacao, dto.DataDeAtualizacao, dto.Numero, dto.Descricao, null);
+        var categoria = new Categoria(dto.Id, dto.DataDeCriacao, dto.DataDeAtualizacao, dto.Numero, dto.Descricao, null, null);
 
         Assert.NotNull(categoria);
         Assert.Equal(dto.Numero, categoria.Numero);
