@@ -95,7 +95,8 @@ public class CarrinhoService : ICarrinhoService
                 EspecificacaoTecnica = produto.EspecificacaoTecnica,
                 Id = produto.Id,
                 Referencia = produto.Referencia,
-                Numero = produto.Numero
+                Numero = produto.Numero,
+                Foto = produto.UrlFoto ?? ""
             };
 
             carrinhoViewModel.Tamanhos = produto.Tamanhos.OrderBy(x => x.Numero).Select(x => new TamanhoCarrinhoViewModel()
