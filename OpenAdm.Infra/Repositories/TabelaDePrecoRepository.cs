@@ -15,6 +15,14 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
         _parceiroContext = parceiroContext;
     }
 
+    public async Task<IList<TabelaDePreco>> GetAllTabelaDePrecoAsync()
+    {
+        return await _parceiroContext
+            .TabelaDePreco
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<int> GetCountTabelaDePrecoAsync()
     {
         return await _parceiroContext

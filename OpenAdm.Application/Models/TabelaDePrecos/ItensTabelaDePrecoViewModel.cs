@@ -7,7 +7,8 @@ namespace OpenAdm.Application.Models.TabelaDePrecos;
 
 public class ItensTabelaDePrecoViewModel : BaseModel
 {
-    public decimal ValorUnitario { get; set; }
+    public decimal ValorUnitarioAtacado { get; set; }
+    public decimal ValorUnitarioVarejo { get; set; }
     public Guid TabelaDePrecoId { get; set; }
     public Guid ProdutoId { get; set; }
     public ProdutoViewModel Produto { get; set; } = new();
@@ -22,7 +23,8 @@ public class ItensTabelaDePrecoViewModel : BaseModel
         DataDeCriacao = itensTabelaDePreco.DataDeCriacao;
         DataDeAtualizacao = itensTabelaDePreco.DataDeAtualizacao;
         Numero = itensTabelaDePreco.Numero;
-        ValorUnitario = itensTabelaDePreco.ValorUnitario;
+        ValorUnitarioAtacado = itensTabelaDePreco.ValorUnitarioAtacado;
+        ValorUnitarioVarejo = itensTabelaDePreco.ValorUnitarioVarejo;
         TabelaDePrecoId = itensTabelaDePreco.TabelaDePrecoId;
         ProdutoId = itensTabelaDePreco.ProdutoId;
 

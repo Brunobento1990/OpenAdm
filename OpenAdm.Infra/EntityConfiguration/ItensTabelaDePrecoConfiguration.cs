@@ -19,7 +19,10 @@ public class ItensTabelaDePrecoConfiguration : IEntityTypeConfiguration<ItensTab
             .HasDefaultValueSql("now()");
         builder.Property(x => x.Numero)
             .ValueGeneratedOnAdd();
-        builder.Property(x => x.ValorUnitario)
+        builder.Property(x => x.ValorUnitarioAtacado)
+            .IsRequired()
+            .HasPrecision(12, 2);
+        builder.Property(x => x.ValorUnitarioVarejo)
             .IsRequired()
             .HasPrecision(12, 2);
         builder.HasOne(x => x.Produto)

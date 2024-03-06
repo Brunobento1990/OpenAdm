@@ -73,6 +73,13 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         await _tabelaDePrecoRepository.DeleteAsync(tabelaDePreco);
     }
 
+    public async Task<IList<TabelaDePrecoViewModel>> GetAllTabelaDePrecoViewModelAsync()
+    {
+        var tabelaDePrecos = await _tabelaDePrecoRepository.GetAllTabelaDePrecoAsync();
+
+        return tabelaDePrecos.Select(x => new TabelaDePrecoViewModel().ToModel(x)).ToList();
+    }
+
     public async Task<PaginacaoViewModel<TabelaDePrecoViewModel>> GetPaginacaoTabelaViewModelAsync(
         PaginacaoTabelaDePrecoDto paginacaoTabelaDePrecoDto)
     {

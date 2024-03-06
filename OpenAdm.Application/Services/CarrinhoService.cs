@@ -12,12 +12,18 @@ public class CarrinhoService : ICarrinhoService
     private readonly ICarrinhoRepository _carrinhoRepository;
     private readonly IProdutoRepository _produtoRepository;
     private readonly ITokenService _tokenService;
+    private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
 
-    public CarrinhoService(ICarrinhoRepository carrinhoRepository, IProdutoRepository produtoRepository, ITokenService tokenService)
+    public CarrinhoService(
+        ICarrinhoRepository carrinhoRepository, 
+        IProdutoRepository produtoRepository, 
+        ITokenService tokenService, 
+        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
     {
         _carrinhoRepository = carrinhoRepository;
         _produtoRepository = produtoRepository;
         _tokenService = tokenService;
+        _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     }
 
     public async Task<bool> AdicionarProdutoAsync(AddCarrinhoModel addCarrinhoModel)
@@ -83,6 +89,7 @@ public class CarrinhoService : ICarrinhoService
 
         var produtosIds = carrinho.Produtos.Select(x => x.ProdutoId).ToList();
 
+        var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
         var produtos = await _produtoRepository.GetProdutosByListIdAsync(produtosIds);
 
         foreach (var produto in produtos)
@@ -110,7 +117,12 @@ public class CarrinhoService : ICarrinhoService
                         .Produtos?
                         .FirstOrDefault(pr => pr.ProdutoId == produto.Id)?
                             .Tamanhos.FirstOrDefault(ps => ps.TamanhoId == x.Id)?
-                                .Quantidade ?? 0)
+                                .Quantidade ?? 0),
+
+                    ValorUnitarioVarejo = itensTabelaDePreco
+                        .FirstOrDefault(item => item.ProdutoId == produto.Id && item.TamanhoId == x.Id)?.ValorUnitarioVarejo,
+                    ValorUnitarioAtacado = itensTabelaDePreco
+                        .FirstOrDefault(item => item.ProdutoId == produto.Id && item.TamanhoId == x.Id)?.ValorUnitarioAtacado
                 }
             }).ToList();
 
@@ -125,7 +137,11 @@ public class CarrinhoService : ICarrinhoService
                         .Produtos?
                         .FirstOrDefault(pr => pr.ProdutoId == produto.Id)?
                             .Pesos.FirstOrDefault(ps => ps.PesoId == x.Id)?
-                                .Quantidade ?? 0)
+                                .Quantidade ?? 0),
+                    ValorUnitarioAtacado = itensTabelaDePreco
+                        .FirstOrDefault(item => item.ProdutoId == produto.Id && item.PesoId == x.Id)?.ValorUnitarioAtacado,
+                    ValorUnitarioVarejo = itensTabelaDePreco
+                        .FirstOrDefault(item => item.PesoId == x.Id && item.ProdutoId == produto.Id)?.ValorUnitarioVarejo
                 }
             }).ToList();
 

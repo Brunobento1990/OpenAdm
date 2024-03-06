@@ -29,11 +29,12 @@ public class CarrinhoServiceTest
         var identity = new ClaimsIdentity(ConfiguracaoDeToken.GenerateClaimsFuncionario(usuario));
         var carrinhoRepository = new Mock<ICarrinhoRepository>();
         var produtoRepository = new Mock<IProdutoRepository>();
+        var itensTabelaDePrecoRepository = new Mock<IItemTabelaDePrecoRepository>();
         carrinhoRepository.Setup(x => x.GetCarrinhoAsync(usuario.Id.ToString())).ReturnsAsync(carrinho);
 
         httpContextAccessorMock.Setup(x => x.HttpContext.User.Identity).Returns(identity);
 
-        var carrinhoService = new CarrinhoService(carrinhoRepository.Object, produtoRepository.Object, tokenService);
+        var carrinhoService = new CarrinhoService(carrinhoRepository.Object, produtoRepository.Object, tokenService, itensTabelaDePrecoRepository.Object);
 
         var addCarrinho = new AddCarrinhoModel()
         {

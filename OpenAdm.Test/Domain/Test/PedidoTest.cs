@@ -1,6 +1,7 @@
 ﻿using Domain.Pkg.Entities;
 using Domain.Pkg.Exceptions;
 using Domain.Pkg.Model;
+using OpenAdm.Application.Services;
 using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Domain.Test;
@@ -30,6 +31,7 @@ public class PedidoTest
                 0,
                 pedidoPorPesoModel.ProdutoId,
                 2,
+                3,
                 tabelaDePreco.Id,
                 null,
                 pedidoPorPesoModel.PesoId),
@@ -40,6 +42,7 @@ public class PedidoTest
                 0,
                 pedidoPorTamanhoModel.ProdutoId,
                 2,
+                3,
                 tabelaDePreco.Id,
                 pedidoPorTamanhoModel.TamanhoId,
                 null)
@@ -47,10 +50,12 @@ public class PedidoTest
 
         var pedido = PedidoBuilder.Init().Build();
 
+        var calcularValorUnitarioPedidoAtacado = new CalcularValorUnitarioPedidoAtacado(tabelaDePreco.ItensTabelaDePreco);
+
         pedido.ProcessarItensPedido(
             new List<PedidoPorPesoModel>() { pedidoPorPesoModel }, 
-            new List<PedidoPorTamanhoModel>() { pedidoPorTamanhoModel }, 
-            tabelaDePreco);
+            new List<PedidoPorTamanhoModel>() { pedidoPorTamanhoModel },
+            calcularValorUnitarioPedidoAtacado);
 
         var item1 = pedido
             .ItensPedido
@@ -63,11 +68,11 @@ public class PedidoTest
 
         var vlrUnitario1 = tabelaDePreco
             .ItensTabelaDePreco
-            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId && x.PesoId == pedidoPorPesoModel.PesoId)?.ValorUnitario ?? 0;
+            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId && x.PesoId == pedidoPorPesoModel.PesoId)?.ValorUnitarioAtacado ?? 0;
 
         var vlrUnitario2 = tabelaDePreco
             .ItensTabelaDePreco
-            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId && x.PesoId == pedidoPorPesoModel.PesoId)?.ValorUnitario ?? 0;
+            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId && x.PesoId == pedidoPorPesoModel.PesoId)?.ValorUnitarioAtacado ?? 0;
 
 
         Assert.NotNull(item1);
@@ -97,6 +102,7 @@ public class PedidoTest
                 0,
                 pedidoPorPesoModel.ProdutoId,
                 2,
+                3,
                 tabelaDePreco.Id,
                 null,
                 null),
@@ -107,17 +113,20 @@ public class PedidoTest
                 0,
                 pedidoPorTamanhoModel.ProdutoId,
                 2,
+                3,
                 tabelaDePreco.Id,
                 null,
                 null)
         });
+
+        var calcularValorUnitarioPedidoAtacado = new CalcularValorUnitarioPedidoAtacado(tabelaDePreco.ItensTabelaDePreco);
 
         var pedido = PedidoBuilder.Init().Build();
 
         pedido.ProcessarItensPedido(
             new List<PedidoPorPesoModel>() { pedidoPorPesoModel },
             new List<PedidoPorTamanhoModel>() { pedidoPorTamanhoModel },
-            tabelaDePreco);
+            calcularValorUnitarioPedidoAtacado);
 
         var item1 = pedido
             .ItensPedido
@@ -130,11 +139,11 @@ public class PedidoTest
 
         var vlrUnitario1 = tabelaDePreco
             .ItensTabelaDePreco
-            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId)?.ValorUnitario ?? 0;
+            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId)?.ValorUnitarioAtacado ?? 0;
 
         var vlrUnitario2 = tabelaDePreco
             .ItensTabelaDePreco
-            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId)?.ValorUnitario ?? 0;
+            .FirstOrDefault(x => x.ProdutoId == pedidoPorPesoModel.ProdutoId)?.ValorUnitarioAtacado ?? 0;
 
 
         Assert.NotNull(item1);

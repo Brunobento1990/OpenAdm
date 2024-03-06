@@ -5,7 +5,8 @@ namespace OpenAdm.Application.Dtos.TabelasDePrecos;
 
 public class CreateItensTabelaDePrecoDto
 {
-    public decimal ValorUnitario { get; set; }
+    public decimal ValorUnitarioAtacado { get; set; }
+    public decimal ValorUnitarioVarejo { get; set; }
     public Guid? TamanhoId { get; set; }
     public Guid ProdutoId { get; set; }
     public Guid TabelaDePrecoId { get; set; }
@@ -21,7 +22,8 @@ public class CreateItensTabelaDePrecoDto
                 date,
                 0,
                 ProdutoId,
-                ValorUnitario,
+                ValorUnitarioAtacado,
+                ValorUnitarioVarejo,
                 TabelaDePrecoId,
                 TamanhoId,
                 PesoId);

@@ -13,11 +13,26 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItensTabelaDePreco>
         _parceiroContext = parceiroContext;
     }
 
+    public async Task AddRangeAsync(IList<ItensTabelaDePreco> itensTabelaDePrecos)
+    {
+        await _parceiroContext.AddRangeAsync(itensTabelaDePrecos);
+        await _parceiroContext.SaveChangesAsync();
+    }
+
     public async Task<ItensTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)
     {
         return await _parceiroContext
             .ItensTabelaDePreco
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<IList<ItensTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds)
+    {
+        return await _parceiroContext
+            .ItensTabelaDePreco
+            .AsNoTracking()
+            .Where(x => produtosIds.Contains(x.ProdutoId))
+            .ToListAsync();
     }
 }

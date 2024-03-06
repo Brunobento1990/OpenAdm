@@ -2,10 +2,11 @@
 using Domain.Pkg.Enum;
 using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
-using Domain.Pkg.Pdfs.Services;
+using Domain.Pkg.Interfaces;
 using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
@@ -23,14 +24,18 @@ public class PedidoService(
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly IProcessarPedidoService _processarPedidoService = processarPedidoService;
 
-    public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, Guid clienteId)
+    public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, UsuarioViewModel usuarioViewModel)
     {
         var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync()
         ?? throw new Exception(CodigoErrors.RegistroNotFound);
         var date = DateTime.Now;
-        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, clienteId);
+        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuarioViewModel.Id);
 
-        pedido.ProcessarItensPedido(pedidoCreateDto.PedidosPorPeso, pedidoCreateDto.PedidosPorTamanho, tabelaDePreco);
+        ICalcularValorUnitarioPedido calcularValorUnitario = !string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj) ?
+            new CalcularValorUnitarioPedidoAtacado(tabelaDePreco.ItensTabelaDePreco) :
+            new CalcularValorUnitarioPedidoVarejo(tabelaDePreco.ItensTabelaDePreco);
+
+        pedido.ProcessarItensPedido(pedidoCreateDto.PedidosPorPeso, pedidoCreateDto.PedidosPorTamanho, calcularValorUnitario);
 
         await _pedidoRepository.AddAsync(pedido);
 

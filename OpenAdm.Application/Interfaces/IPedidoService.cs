@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
 
@@ -11,6 +12,6 @@ public interface IPedidoService
     Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto);
     Task<bool> DeletePedidoAsync(Guid id);
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
-    Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, Guid usuarioId);
+    Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, UsuarioViewModel usuarioViewModel);
     Task ReenviarPedidoViaEmailAsync(Guid pedidoId);
 }

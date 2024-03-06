@@ -1,5 +1,4 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Errors;
+﻿using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
 using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
@@ -8,7 +7,6 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Azure.Interfaces;
 using OpenAdm.Infra.Paginacao;
-using System.Text;
 
 namespace OpenAdm.Application.Services;
 
@@ -18,17 +16,20 @@ public class ProdutoService : IProdutoService
     private readonly IPesosProdutosRepository _pesosProdutosRepository;
     private readonly ITamanhosProdutoRepository _tamanhosProdutoRepository;
     private readonly IUploadImageBlobClient _uploadImageBlobClient;
+    private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
 
     public ProdutoService(
         IProdutoRepository produtoRepository,
         IPesosProdutosRepository pesosProdutosRepository,
         ITamanhosProdutoRepository tamanhosProdutoRepository,
-        IUploadImageBlobClient uploadImageBlobClient)
+        IUploadImageBlobClient uploadImageBlobClient,
+        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
     {
         _produtoRepository = produtoRepository;
         _pesosProdutosRepository = pesosProdutosRepository;
         _tamanhosProdutoRepository = tamanhosProdutoRepository;
         _uploadImageBlobClient = uploadImageBlobClient;
+        _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     }
 
     public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
@@ -44,6 +45,13 @@ public class ProdutoService : IProdutoService
         await _tamanhosProdutoRepository.AddRangeAsync(tamanhosProdutos);
 
         await _produtoRepository.AddAsync(produto);
+
+        var vinculoItensTabelaDePreco = createProdutoDto.ProcessarVinculoTabelaDePreco(produto.Id);
+
+        if(vinculoItensTabelaDePreco != null)
+        {
+            await _itemTabelaDePrecoRepository.AddRangeAsync(vinculoItensTabelaDePreco);
+        }
 
         return new ProdutoViewModel().ToModel(produto);
     }

@@ -18,4 +18,8 @@
     <ProjectReference Include="..\OpenAdm.Infra\OpenAdm.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dtos\Precos\" />
+  </ItemGroup>
+
 </Project>

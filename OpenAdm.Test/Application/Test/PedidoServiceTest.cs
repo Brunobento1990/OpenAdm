@@ -9,6 +9,7 @@ using QuestPDF.Infrastructure;
 using OpenAdm.Application.Dtos.Pedidos;
 using Domain.Pkg.Model;
 using Domain.Pkg.Entities;
+using OpenAdm.Application.Models.Usuarios;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -114,6 +115,7 @@ public class PedidoServiceTest
                 0,
                 pedidoPorPesoModel.ProdutoId,
                 2,
+                3,
                 tabelaDePreco.Id,
                 null,
                 pedidoPorPesoModel.PesoId),
@@ -124,6 +126,7 @@ public class PedidoServiceTest
                 0,
                 pedidoPorTamanhoModel.ProdutoId,
                 2,
+                3,
                 tabelaDePreco.Id,
                 pedidoPorTamanhoModel.TamanhoId,
                 null)
@@ -140,8 +143,15 @@ public class PedidoServiceTest
             tabelaDePrecoRepositoryMock.Object,
             processarPedidoServiceMock.Object);
 
-        var usuarioId = Guid.NewGuid();
-        var pedidoModel = await service.CreatePedidoAsync(pedidoCreateDto, usuarioId);
+        var usuario = new UsuarioViewModel() 
+        {
+            Cnpj = "123",
+            Cpf = "123",
+            DataDeAtualizacao = DateTime.Now,
+            DataDeCriacao = DateTime.Now,
+            Id = Guid.NewGuid()
+        };
+        var pedidoModel = await service.CreatePedidoAsync(pedidoCreateDto, usuario);
 
         Assert.NotNull(pedidoModel);
         Assert.Equal(StatusPedido.Aberto, pedidoModel.StatusPedido);
@@ -168,8 +178,16 @@ public class PedidoServiceTest
             pedidoRepositoryMock.Object,
             tabelaDePrecoRepositoryMock.Object,
             processarPedidoServiceMock.Object);
-        var usuarioId = Guid.NewGuid();
 
-        await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(pedidoCreateDto, usuarioId));
+        var usuario = new UsuarioViewModel()
+        {
+            Cnpj = "123",
+            Cpf = "123",
+            DataDeAtualizacao = DateTime.Now,
+            DataDeCriacao = DateTime.Now,
+            Id = Guid.NewGuid()
+        };
+
+        await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(pedidoCreateDto, usuario));
     }
 }

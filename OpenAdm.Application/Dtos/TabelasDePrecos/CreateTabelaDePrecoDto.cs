@@ -32,7 +32,8 @@ public class CreateTabelaDePrecoDto
                     date,
                     0,
                     x.ProdutoId,
-                    x.ValorUnitario,
+                    x.ValorUnitarioAtacado,
+                    x.ValorUnitarioVarejo,
                     tabelaDePreco.Id,
                     x.TamanhoId,
                     x.PesoId))

@@ -15,14 +15,6 @@ public class ItensPedidoTest
         Assert.Throws<ExceptionApi>(() => ItensPedidoBuilder.Init().SemQuantidade(quantidade).Build());
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(0)]
-    public void NaoDeveCriarItemPedidoSemValorUnitario(int? valorUnitario)
-    {
-        Assert.Throws<ExceptionApi>(() => ItensPedidoBuilder.Init().SemValorUnitario(valorUnitario).Build());
-    }
-
     [Fact]
     public void NaoDeveCriarItemPedidoSemPedidoId()
     {

@@ -35,13 +35,15 @@ public class TabelaDePrecoServiceTest
                 {
                     PesoId = pesoId,
                     ProdutoId = Guid.NewGuid(),
-                    ValorUnitario = 5
+                    ValorUnitarioAtacado = 5,
+                    ValorUnitarioVarejo = 2
                 },
                 new()
                 {
                     ProdutoId = Guid.NewGuid(),
                     TamanhoId = tamanhoId,
-                    ValorUnitario = 15
+                    ValorUnitarioAtacado = 15,
+                    ValorUnitarioVarejo = 2
                 }
             }
         };

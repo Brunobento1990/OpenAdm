@@ -35,11 +35,25 @@ public class TabelaDePrecoController : ControllerBaseApi
     }
 
     [HttpGet("get-tabela")]
-    public async Task<IActionResult> TabelaViewMode([FromQuery] Guid id)
+    public async Task<IActionResult> TabelaViewModel([FromQuery] Guid id)
     {
         try
         {
             var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetPrecoTabelaViewModelAsync(id);
+            return Ok(tabelaDePrecoViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpGet("list")]
+    public async Task<IActionResult> TabelasViewModel()
+    {
+        try
+        {
+            var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetAllTabelaDePrecoViewModelAsync();
             return Ok(tabelaDePrecoViewModel);
         }
         catch (Exception ex)

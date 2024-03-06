@@ -29,6 +29,11 @@ public class ItemTabelaDePrecoCached : IItemTabelaDePrecoRepository
         return await _itemTabelaDePrecoRepository.AddAsync(entity);
     }
 
+    public async Task AddRangeAsync(IList<ItensTabelaDePreco> itensTabelaDePrecos)
+    {
+        await _itemTabelaDePrecoRepository.AddRangeAsync(itensTabelaDePrecos);
+    }
+
     public async Task<bool> DeleteAsync(ItensTabelaDePreco entity)
     {
         var key = entity.TabelaDePrecoId.ToString();
@@ -53,6 +58,11 @@ public class ItemTabelaDePrecoCached : IItemTabelaDePrecoRepository
         }
 
         return item;
+    }
+
+    public async Task<IList<ItensTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds)
+    {
+        return await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
     }
 
     public async Task<ItensTabelaDePreco> UpdateAsync(ItensTabelaDePreco entity)

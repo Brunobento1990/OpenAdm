@@ -28,8 +28,8 @@ public class PedidoController : ControllerBaseApi
     {
         try
         {
-            var usuarioId = _tokenService.GetTokenUsuarioViewModel().Id;
-            var result = await _pedidoService.CreatePedidoAsync(pedidoCreateDto, usuarioId);
+            var usuario = _tokenService.GetTokenUsuarioViewModel();
+            var result = await _pedidoService.CreatePedidoAsync(pedidoCreateDto, usuario);
 
             return Ok(new { message = "Pedido criado com sucesso!" });
         }
