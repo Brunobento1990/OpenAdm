@@ -16,26 +16,18 @@ namespace OpenAdm.Application.Services;
 
 public class PedidoService(
     IPedidoRepository pedidoRepository,
-    ITabelaDePrecoRepository tabelaDePrecoRepository,
     IProcessarPedidoService processarPedidoService)
     : IPedidoService
 {
-    private readonly ITabelaDePrecoRepository _tabelaDePrecoRepository = tabelaDePrecoRepository;
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly IProcessarPedidoService _processarPedidoService = processarPedidoService;
 
     public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, UsuarioViewModel usuarioViewModel)
     {
-        var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync()
-        ?? throw new Exception(CodigoErrors.RegistroNotFound);
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuarioViewModel.Id);
 
-        ICalcularValorUnitarioPedido calcularValorUnitario = !string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj) ?
-            new CalcularValorUnitarioPedidoAtacado(tabelaDePreco.ItensTabelaDePreco) :
-            new CalcularValorUnitarioPedidoVarejo(tabelaDePreco.ItensTabelaDePreco);
-
-        pedido.ProcessarItensPedido(pedidoCreateDto.PedidosPorPeso, pedidoCreateDto.PedidosPorTamanho, calcularValorUnitario);
+        pedido.ProcessarItensPedido(pedidoCreateDto.PedidosPorPeso, pedidoCreateDto.PedidosPorTamanho);
 
         await _pedidoRepository.AddAsync(pedido);
 

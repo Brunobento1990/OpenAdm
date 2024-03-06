@@ -23,12 +23,11 @@ public class PedidoServiceTest
         var pedidoUpdateStatus = builder.BuildStatusPedidoDto();
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-        var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
 
         await Assert
             .ThrowsAnyAsync<ExceptionApi>(
@@ -43,12 +42,11 @@ public class PedidoServiceTest
         var pedidoUpdateStatus = builder.BuildStatusPedidoDto();
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-        var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
         var pedidoViewModel = await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus);
 
         Assert.NotNull(pedidoViewModel);
@@ -80,13 +78,12 @@ public class PedidoServiceTest
         var pedido = PedidoBuilder.Init().Build();
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-        var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
         pedidoRepositoryMock.Setup(x => x.DeleteAsync(pedido)).ReturnsAsync(true);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
         var result = await pedidoService.DeletePedidoAsync(pedido.Id);
 
         Assert.IsType<bool>(result);
@@ -96,51 +93,20 @@ public class PedidoServiceTest
     [Fact]
     public async Task DeveCriarPedido()
     {
-        var pedidoPorPesoModel = new PedidoPorPesoModel(Guid.NewGuid(), Guid.NewGuid(), 1);
-        var pedidoPorTamanhoModel = new PedidoPorTamanhoModel(Guid.NewGuid(), Guid.NewGuid(), 1);
+        var pedidoPorPesoModel = new PedidoPorPesoModel(Guid.NewGuid(), Guid.NewGuid(), 1, 8);
+        var pedidoPorTamanhoModel = new PedidoPorTamanhoModel(Guid.NewGuid(), Guid.NewGuid(), 1, 9);
         var pedidoCreateDto = new PedidoCreateDto()
         {
             PedidosPorPeso = new List<PedidoPorPesoModel>() { pedidoPorPesoModel },
             PedidosPorTamanho = new List<PedidoPorTamanhoModel>() { pedidoPorTamanhoModel }
         };
 
-        var tabelaDePreco = TabelaDePrecoBuilder.Init().Build();
-
-        tabelaDePreco.ItensTabelaDePreco.AddRange(new List<ItensTabelaDePreco>()
-        {
-            new (
-                Guid.NewGuid(),
-                tabelaDePreco.DataDeCriacao,
-                tabelaDePreco.DataDeAtualizacao,
-                0,
-                pedidoPorPesoModel.ProdutoId,
-                2,
-                3,
-                tabelaDePreco.Id,
-                null,
-                pedidoPorPesoModel.PesoId),
-            new (
-                Guid.NewGuid(),
-                tabelaDePreco.DataDeCriacao,
-                tabelaDePreco.DataDeAtualizacao,
-                0,
-                pedidoPorTamanhoModel.ProdutoId,
-                2,
-                3,
-                tabelaDePreco.Id,
-                pedidoPorTamanhoModel.TamanhoId,
-                null)
-        });
-
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-        var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
 
-        tabelaDePrecoRepositoryMock.Setup((tb) => tb.GetTabelaDePrecoAtivaAsync()).ReturnsAsync(tabelaDePreco);
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,
-            tabelaDePrecoRepositoryMock.Object,
             processarPedidoServiceMock.Object);
 
         var usuario = new UsuarioViewModel() 
@@ -167,16 +133,10 @@ public class PedidoServiceTest
         };
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-        var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
-
-        var tabelaDePreco = TabelaDePrecoBuilder.Init().Build();
-
-        tabelaDePrecoRepositoryMock.Setup((tb) => tb.GetTabelaDePrecoAtivaAsync()).ReturnsAsync(tabelaDePreco);
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,
-            tabelaDePrecoRepositoryMock.Object,
             processarPedidoServiceMock.Object);
 
         var usuario = new UsuarioViewModel()
