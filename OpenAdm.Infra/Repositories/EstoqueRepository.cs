@@ -15,6 +15,14 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
         _parceiroContext = parceiroContext;
     }
 
+    public async Task<Estoque?> GetEstoqueByIdAsync(Guid Id)
+    {
+        return await _parceiroContext
+            .Estoques
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == Id);
+    }
+
     public async Task<Estoque?> GetEstoqueByProdutoIdAsync(Guid produtoId)
     {
         return await _parceiroContext

@@ -9,4 +9,6 @@ public interface IEstoqueService
 {
     Task<bool> MovimentacaoDeProdutoAsync(MovimentacaoDeProdutoDto movimentacaoDeProdutoDto);
     Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(PaginacaoEstoqueDto paginacaoEstoqueDto);
+    Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto);
+    Task<EstoqueViewModel> GetEstoqueViewModelAsync(Guid id);
 }

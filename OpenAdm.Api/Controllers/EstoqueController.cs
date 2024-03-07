@@ -39,6 +39,37 @@ public class EstoqueController : ControllerBaseApi
         }
     }
 
+    [HttpGet("get-estoque")]
+    public async Task<IActionResult> GetEstoque([FromQuery] Guid id)
+    {
+        try
+        {
+            var estoqueViewModel = await _estoqueservice.GetEstoqueViewModelAsync(id);
+            return Ok(estoqueViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateEstoque(UpdateEstoqueDto updateEstoqueDto)
+    {
+        try
+        {
+            var result = await _estoqueservice.UpdateEstoqueAsync(updateEstoqueDto);
+
+            if (!result) return BadRequest(new { message = CodigoErrors.ErrorGeneric });
+
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoEstoqueDto paginacaoEstoqueDto)
     {

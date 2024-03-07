@@ -1,4 +1,7 @@
 ﻿using Domain.Pkg.Entities;
+using Domain.Pkg.Enum;
+using Domain.Pkg.Errors;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Application.Dtos.Estoques;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Estoques;
@@ -19,6 +22,16 @@ public class EstoqueService : IEstoqueService
         _estoqueRepository = estoqueRepository;
         _movimentacaoDeProdutoRepository = movimentacaoDeProdutoRepository;
         _produtoRepository = produtoRepository;
+    }
+
+    public async Task<EstoqueViewModel> GetEstoqueViewModelAsync(Guid id)
+    {
+        var estoque = await _estoqueRepository.GetEstoqueByIdAsync(id)
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+
+        var produto = await _produtoRepository.GetProdutoByIdAsync(estoque.ProdutoId);
+
+        return new EstoqueViewModel().ToModel(estoque, produto?.Descricao);
     }
 
     public async Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(PaginacaoEstoqueDto paginacaoEstoqueDto)
@@ -74,6 +87,18 @@ public class EstoqueService : IEstoqueService
             movimentacaoDeProdutoDto.ProdutoId);
 
         await _movimentacaoDeProdutoRepository.AddAsync(movimento);
+
+        return true;
+    }
+
+    public async Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto)
+    {
+        var estoque = await _estoqueRepository.GetEstoqueByProdutoIdAsync(updateEstoqueDto.ProdutoId)
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+
+        estoque.UpdateEstoqueAtual(updateEstoqueDto.Quantidade);
+
+        await _estoqueRepository.UpdateAsync(estoque);
 
         return true;
     }

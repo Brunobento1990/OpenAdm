@@ -15,6 +15,7 @@ public class EstoqueViewModel : BaseModel
         DataDeAtualizacao = estoque.DataDeAtualizacao;
         Produto = produto;
         Quantidade = estoque.Quantidade;
+        ProdutoId = estoque.ProdutoId;
 
         return this;
     }
