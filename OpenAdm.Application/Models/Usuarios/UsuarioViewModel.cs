@@ -9,9 +9,11 @@ public class UsuarioViewModel : BaseModel
     public string? Telefone { get; set; }
     public string? Cnpj { get; set; }
     public string? Cpf { get; set; }
+    public int? QuantidadeDePedido { get; set; }
 
-    public UsuarioViewModel ToModel(Usuario entity)
+    public UsuarioViewModel ToModel(Usuario entity, int? quantidadeDePedido = null)
     {
+        QuantidadeDePedido = quantidadeDePedido;
         Id = entity.Id;
         DataDeCriacao = entity.DataDeCriacao;
         DataDeAtualizacao = entity.DataDeAtualizacao;

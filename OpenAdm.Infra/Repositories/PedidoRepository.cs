@@ -67,4 +67,13 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Where(x => x.UsuarioId == usuarioId && x.StatusPedido == (StatusPedido)statusPedido)
             .ToListAsync();
     }
+
+    public async Task<int> GetQuantidadeDePedidoPorUsuarioAsync(Guid usuarioId)
+    {
+        return await _parceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .Where(x => x.UsuarioId == usuarioId)
+            .CountAsync();
+    }
 }

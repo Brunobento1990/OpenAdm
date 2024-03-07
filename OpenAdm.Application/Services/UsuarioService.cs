@@ -12,11 +12,16 @@ public class UsuarioService : IUsuarioService
 {
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly ITokenService _tokenService;
+    private readonly IPedidoRepository _pedidoRepository;
 
-    public UsuarioService(IUsuarioRepository usuarioRepository, ITokenService tokenService)
+    public UsuarioService(
+        IUsuarioRepository usuarioRepository, 
+        ITokenService tokenService, 
+        IPedidoRepository pedidoRepository)
     {
         _usuarioRepository = usuarioRepository;
         _tokenService = tokenService;
+        _pedidoRepository = pedidoRepository;
     }
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
@@ -42,7 +47,9 @@ public class UsuarioService : IUsuarioService
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(idToken)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        return new UsuarioViewModel().ToModel(usuario);
+        var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(idToken);
+
+        return new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
     }
 
     public async Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
