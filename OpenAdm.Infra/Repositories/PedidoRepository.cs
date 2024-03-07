@@ -61,6 +61,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await _parceiroContext.Pedidos
             .AsNoTracking()
+            .Include(x => x.ItensPedido)
             .OrderByDescending(x => x.Numero)
             .AsQueryable()
             .Where(x => x.UsuarioId == usuarioId && x.StatusPedido == (StatusPedido)statusPedido)

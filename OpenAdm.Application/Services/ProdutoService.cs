@@ -97,9 +97,9 @@ public class ProdutoService : IProdutoService
         };
     }
 
-    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(int page)
+    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(int page, Guid? categoriaId)
     {
-        var paginacao = await _produtoRepository.GetProdutosAsync(page);
+        var paginacao = await _produtoRepository.GetProdutosAsync(page, categoriaId);
 
         return new PaginacaoViewModel<ProdutoViewModel>()
         {

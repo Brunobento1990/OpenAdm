@@ -4,6 +4,7 @@ using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 using Domain.Pkg.Entities;
+using System.Linq.Expressions;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -13,9 +14,13 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     private readonly ParceiroContext _parceiroContext = parceiroContext;
     private const int _take = 5;
 
-    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page)
+    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page, Guid? categoriaId)
     {
         var newPage = page == 0 ? page : page - 1;
+
+        Expression<Func<Produto, bool>>? where = 
+            categoriaId == null && categoriaId != Guid.Empty ? null : 
+            x => x.CategoriaId == categoriaId.Value;
 
         var totalPages = await _parceiroContext
             .Produtos
@@ -28,6 +33,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsQueryable()
             .OrderBy(x => x.Numero)
             .Include(x => x.Categoria)
+            .WhereIsNotNull(where)
             .Skip(newPage * _take)
             .Take(_take)
             .ToListAsync();

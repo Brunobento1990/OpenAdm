@@ -20,11 +20,11 @@ public class ProdutoController : ControllerBaseApi
 
     [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
-    public async Task<IActionResult> ListProdutos([FromQuery] int page)
+    public async Task<IActionResult> ListProdutos([FromQuery] int page, Guid? categoriaId)
     {
         try
         {
-            var result = await _produtoService.GetProdutosAsync(page);
+            var result = await _produtoService.GetProdutosAsync(page, categoriaId);
             return Ok(result);
         }
         catch (Exception ex)

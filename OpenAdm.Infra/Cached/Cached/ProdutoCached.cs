@@ -34,8 +34,13 @@ public class ProdutoCached : IProdutoRepository
         return produtosMaisVendidos;
     }
 
-    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page)
+    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page, Guid? categoriaId)
     {
+        if(categoriaId != null && categoriaId != Guid.Empty)
+        {
+            return await _produtoRepository.GetProdutosAsync(page, categoriaId);
+        }
+
         var key = $"produtos-{page}";
 
         var produtos = await _cachedService.GetListItemAsync(key);
@@ -43,7 +48,7 @@ public class ProdutoCached : IProdutoRepository
 
         if (produtos == null)
         {
-            var paginacao = await _produtoRepository.GetProdutosAsync(page);
+            var paginacao = await _produtoRepository.GetProdutosAsync(page, categoriaId);
             if (paginacao.Values?.Count > 0)
             {
                 produtos = paginacao.Values;

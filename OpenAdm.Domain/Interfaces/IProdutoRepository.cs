@@ -9,7 +9,7 @@ public interface IProdutoRepository : IGenericRepository<Produto>
     Task<IList<Produto>> GetAllProdutosAsync();
     Task<IList<Produto>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
     Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids);
-    Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page);
+    Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page, Guid? categoriaId);
     Task<PaginacaoViewModel<Produto>> GetPaginacaoProdutoAsync(FilterModel<Produto> filterModel);
     Task<Produto?> GetProdutoByIdAsync(Guid id);
 }
