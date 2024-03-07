@@ -68,5 +68,7 @@ public static class DependencyInjectRepositories
         services.AddScoped<ItemTabelaDePrecoRepository>();
         services.AddScoped<IItemTabelaDePrecoRepository, ItemTabelaDePrecoCached>();
         services.AddScoped<IUploadImageBlobClient, UploadImageBlobClient>();
+        services.AddScoped<IEstoqueRepository, EstoqueRepository>();
+        services.AddScoped<IMovimentacaoDeProdutoRepository, MovimentacaoDeProdutoRepository>();
     }
 }

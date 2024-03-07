@@ -28,6 +28,8 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
     public DbSet<ProdutosMaisVendidos> ProdutosMaisVendidos { get; set; }
     public DbSet<ConfiguracaoDeEmail> ConfiguracoesDeEmail { get; set; }
     public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
+    public DbSet<Estoque> Estoques { get; set; }
+    public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -57,5 +59,7 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
         modelBuilder.ApplyConfiguration(new ProdutosMaisVendidosConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeEmailConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracoesDePedidoConfiguration());
+        modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
+        modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
     }
 }
