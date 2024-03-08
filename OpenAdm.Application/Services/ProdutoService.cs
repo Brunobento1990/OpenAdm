@@ -5,6 +5,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Azure.Interfaces;
 using OpenAdm.Infra.Paginacao;
 
@@ -97,9 +98,9 @@ public class ProdutoService : IProdutoService
         };
     }
 
-    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(int page, Guid? categoriaId)
+    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
-        var paginacao = await _produtoRepository.GetProdutosAsync(page, categoriaId);
+        var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
 
         return new PaginacaoViewModel<ProdutoViewModel>()
         {

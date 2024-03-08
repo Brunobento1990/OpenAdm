@@ -3,15 +3,12 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Services;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("tamanhos")]
-[Authorize(AuthenticationSchemes = "Bearer")]
-[IsFuncionario]
 public class TamanhoController : ControllerBaseApi
 {
     private readonly ITamanhoService _tamanhoService;
@@ -36,6 +33,8 @@ public class TamanhoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoTamanhoDto paginacaoTamanhoDto)
     {
@@ -50,6 +49,8 @@ public class TamanhoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-tamanho")]
     public async Task<IActionResult> GetById([FromQuery] Guid id)
@@ -65,6 +66,8 @@ public class TamanhoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteTamanho([FromQuery] Guid id)
     {
@@ -79,6 +82,8 @@ public class TamanhoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateTamanho(UpdateTamanhoDto updateTamanhoDto)
     {
@@ -93,6 +98,8 @@ public class TamanhoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpPost("create")]
     public async Task<IActionResult> CreateTamanho(CreateTamanhoDto createTamanhoDto)
     {

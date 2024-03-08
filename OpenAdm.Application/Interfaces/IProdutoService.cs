@@ -1,13 +1,14 @@
 ﻿using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Interfaces;
 
 public interface IProdutoService
 {
-    Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(int page, Guid? categoriaId);
+    Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto);
     Task<IList<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
     Task<IList<ProdutoViewModel>> GetAllProdutosAsync();
     Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto);

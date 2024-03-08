@@ -5,6 +5,7 @@ using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 using Domain.Pkg.Entities;
 using System.Linq.Expressions;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -14,18 +15,21 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     private readonly ParceiroContext _parceiroContext = parceiroContext;
     private const int _take = 5;
 
-    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page, Guid? categoriaId)
+    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
-        var newPage = page == 0 ? page : page - 1;
+        var newPage = paginacaoProdutoEcommerceDto.Page == 0 ? paginacaoProdutoEcommerceDto.Page : paginacaoProdutoEcommerceDto.Page - 1;
 
         Expression<Func<Produto, bool>>? where =
-            categoriaId == null && categoriaId != Guid.Empty ? null :
-            x => x.CategoriaId == categoriaId.Value;
+            paginacaoProdutoEcommerceDto.CategoriaId == null || paginacaoProdutoEcommerceDto.CategoriaId == Guid.Empty ? null :
+            x => x.CategoriaId == paginacaoProdutoEcommerceDto.CategoriaId.Value;
 
-        var totalPages = await _parceiroContext
-            .Produtos
-            .AsQueryable()
-            .TotalPage(_take);
+        Expression<Func<Produto, bool>>? wherePesos =
+            paginacaoProdutoEcommerceDto.PesoId == null || paginacaoProdutoEcommerceDto.PesoId == Guid.Empty ? null :
+            x => x.Pesos.Any(p => p.Id == paginacaoProdutoEcommerceDto.PesoId.Value);
+
+        Expression<Func<Produto, bool>>? whereTamanhos =
+            paginacaoProdutoEcommerceDto.TamanhoId == null || paginacaoProdutoEcommerceDto.TamanhoId == Guid.Empty ? null :
+            x => x.Tamanhos.Any(p => p.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value);
 
         var produtos = await _parceiroContext
             .Produtos
@@ -33,44 +37,49 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsQueryable()
             .OrderBy(x => x.Numero)
             .Include(x => x.Categoria)
+            .Include(x => x.Tamanhos)
+            .Include(x => x.Pesos)
             .WhereIsNotNull(where)
+            .WhereIsNotNull(wherePesos)
+            .WhereIsNotNull(whereTamanhos)
             .Skip(newPage * _take)
             .Take(_take)
-            .ToListAsync();
-
-        var produtosIds = produtos.Select(x => x.Id).ToList();
-        var tamanhos = await _parceiroContext
-            .TamanhosProdutos
-            .AsNoTracking()
-            .Where(x => produtosIds.Contains(x.ProdutoId))
-            .Include(x => x.Tamanho)
-            .ToListAsync();
-
-        var pesos = await _parceiroContext
-            .PesosProdutos
-            .AsNoTracking()
-            .Include(x => x.Peso)
-            .Where(x => produtosIds.Contains(x.ProdutoId))
             .ToListAsync();
 
         if (produtos.Count > 0)
         {
             produtos.ForEach(produto =>
             {
-                produto.Categoria.Produtos = new();
-                produto.Tamanhos = tamanhos
-                    .Where(x => x.ProdutoId == produto.Id)
-                    .Select(tm => new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao))
-                    .ToList();
+                if(paginacaoProdutoEcommerceDto.PesoId != null && paginacaoProdutoEcommerceDto.PesoId != Guid.Empty)
+                {
+                    produto.Pesos = produto.Pesos.Where(peso => peso.Id == paginacaoProdutoEcommerceDto.PesoId.Value).ToList();
+                }
 
-                produto.Pesos = pesos
-                    .Where(x => x.ProdutoId == produto.Id)
-                    .Select(tm =>
-                        new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao)
-                     )
-                    .ToList();
+                if(paginacaoProdutoEcommerceDto.TamanhoId != null && paginacaoProdutoEcommerceDto.TamanhoId != Guid.Empty)
+                {
+                    produto.Tamanhos = produto.Tamanhos.Where(tamanho => tamanho.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value).ToList();
+                }
+
+                produto.Categoria.Produtos = new();
+                produto.Tamanhos.ForEach(tamanho =>
+                {
+                    tamanho.Produtos = new();
+                });
+
+                produto.Pesos.ForEach(peso =>
+                {
+                    peso.Produtos = new();
+                });
             });
         }
+
+        var totalPages = await _parceiroContext
+            .Produtos
+            .AsQueryable()
+            .WhereIsNotNull(where)
+            .WhereIsNotNull(wherePesos)
+            .WhereIsNotNull(whereTamanhos)
+            .TotalPage(_take);
 
         return new PaginacaoViewModel<Produto>()
         {

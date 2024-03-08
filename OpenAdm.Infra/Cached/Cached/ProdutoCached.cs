@@ -3,6 +3,7 @@ using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using Domain.Pkg.Entities;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -34,21 +35,31 @@ public class ProdutoCached : IProdutoRepository
         return produtosMaisVendidos;
     }
 
-    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(int page, Guid? categoriaId)
+    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
-        if(categoriaId != null && categoriaId != Guid.Empty)
+        if(paginacaoProdutoEcommerceDto.CategoriaId != null && paginacaoProdutoEcommerceDto.CategoriaId != Guid.Empty)
         {
-            return await _produtoRepository.GetProdutosAsync(page, categoriaId);
+            return await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
         }
 
-        var key = $"produtos-{page}";
+        if (paginacaoProdutoEcommerceDto.PesoId != null && paginacaoProdutoEcommerceDto.PesoId != Guid.Empty)
+        {
+            return await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
+        }
+
+        if (paginacaoProdutoEcommerceDto.TamanhoId != null && paginacaoProdutoEcommerceDto.TamanhoId != Guid.Empty)
+        {
+            return await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
+        }
+
+        var key = $"produtos-{paginacaoProdutoEcommerceDto.Page}";
 
         var produtos = await _cachedService.GetListItemAsync(key);
         var count = 0;
 
         if (produtos == null)
         {
-            var paginacao = await _produtoRepository.GetProdutosAsync(page, categoriaId);
+            var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
             if (paginacao.Values?.Count > 0)
             {
                 produtos = paginacao.Values;

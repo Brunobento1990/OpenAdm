@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
@@ -18,13 +19,12 @@ public class ProdutoController : ControllerBaseApi
         _produtoService = produtoService;
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
-    public async Task<IActionResult> ListProdutos([FromQuery] int page, Guid? categoriaId)
+    public async Task<IActionResult> ListProdutos([FromQuery] PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         try
         {
-            var result = await _produtoService.GetProdutosAsync(page, categoriaId);
+            var result = await _produtoService.GetProdutosAsync(paginacaoProdutoEcommerceDto);
             return Ok(result);
         }
         catch (Exception ex)

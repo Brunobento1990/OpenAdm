@@ -9,8 +9,6 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("pesos")]
-[Authorize(AuthenticationSchemes = "Bearer")]
-[IsFuncionario]
 public class PesoController : ControllerBaseApi
 {
     private readonly IPesoService _pesoService;
@@ -35,6 +33,8 @@ public class PesoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoPesoDto paginacaoPesoDto)
     {
@@ -49,8 +49,9 @@ public class PesoController : ControllerBaseApi
         }
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-peso")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     public async Task<IActionResult> GetPeso([FromQuery] Guid id)
     {
         try
@@ -65,6 +66,8 @@ public class PesoController : ControllerBaseApi
     }
 
     [HttpPost("create")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     public async Task<IActionResult> CreatePeso(CreatePesoDto createPesoDto)
     {
         try
@@ -78,6 +81,8 @@ public class PesoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpDelete("delete")]
     public async Task<IActionResult> DeletePeso([FromQuery] Guid id)
     {
@@ -92,6 +97,8 @@ public class PesoController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpPut("update")]
     public async Task<IActionResult> UpdatePeso(UpdatePesoDto updatePesoDto)
     {
