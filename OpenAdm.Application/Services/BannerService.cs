@@ -7,9 +7,6 @@ using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Paginacao;
 using OpenAdm.Infra.Azure.Interfaces;
-using OpenAdm.Application.Dtos.Categorias;
-using Domain.Pkg.Entities;
-using OpenAdm.Application.Dtos.Produtos;
 
 namespace OpenAdm.Application.Services;
 
