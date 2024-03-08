@@ -70,5 +70,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<IUploadImageBlobClient, UploadImageBlobClient>();
         services.AddScoped<IEstoqueRepository, EstoqueRepository>();
         services.AddScoped<IMovimentacaoDeProdutoRepository, MovimentacaoDeProdutoRepository>();
+        services.AddScoped<ILojasParceirasRepository, LojasParceirasRepository>();
     }
 }

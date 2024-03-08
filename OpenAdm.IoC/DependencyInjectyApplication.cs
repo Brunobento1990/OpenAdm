@@ -30,5 +30,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<IItemTabelaDePrecoService, ItemTabelaDePrecoService>();
         services.AddScoped<IMovimentacaoDeProdutosService, MovimentacaoDeProdutosService>();
         services.AddScoped<IEstoqueService, EstoqueService>();
+        services.AddScoped<ILojasParceirasService, LojasParceirasService>();
     }
 }

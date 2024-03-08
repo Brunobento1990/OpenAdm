@@ -30,6 +30,7 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
     public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
+    public DbSet<LojasParceiras> LojasParceiras { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -61,5 +62,6 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
         modelBuilder.ApplyConfiguration(new ConfiguracoesDePedidoConfiguration());
         modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
+        modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());
     }
 }
