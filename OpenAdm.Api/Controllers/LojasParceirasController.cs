@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.LojaParceira;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.Paginacao;
@@ -30,6 +32,8 @@ public class LojasParceirasController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpPost("create")]
     public async Task<IActionResult> Create(CreateLojaParceiraDto createLojaParceiraDto)
     {
@@ -44,6 +48,8 @@ public class LojasParceirasController : ControllerBaseApi
         }
     }
 
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpPut("update")]
     public async Task<IActionResult> Update(UpdateLojaParceiraDto updateLojaParceiraDto)
     {
@@ -71,6 +77,8 @@ public class LojasParceirasController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteLoja([FromQuery] Guid id)
     {
