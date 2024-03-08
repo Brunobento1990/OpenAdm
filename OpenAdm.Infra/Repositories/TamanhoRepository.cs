@@ -15,6 +15,15 @@ public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
         _parceiroContext = parceiroContext;
     }
 
+    public async Task<IDictionary<Guid, string>> GetDescricaoTamanhosAsync(IList<Guid> ids)
+    {
+        return await _parceiroContext
+            .Tamanhos
+            .AsNoTracking()
+            .Where(x => ids.Contains(x.Id))
+            .ToDictionaryAsync(x => x.Id, x => x.Descricao);
+    }
+
     public async Task<PaginacaoViewModel<Tamanho>> GetPaginacaoTamanhoAsync(FilterModel<Tamanho> filterModel)
     {
         var (total, values) = await _parceiroContext

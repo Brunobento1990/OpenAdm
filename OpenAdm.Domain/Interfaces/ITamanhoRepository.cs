@@ -9,4 +9,5 @@ public interface ITamanhoRepository : IGenericRepository<Tamanho>
     Task<IList<Tamanho>> GetTamanhosAsync();
     Task<PaginacaoViewModel<Tamanho>> GetPaginacaoTamanhoAsync(FilterModel<Tamanho> filterModel);
     Task<Tamanho?> GetTamanhoByIdAsync(Guid id);
+    Task<IDictionary<Guid, string>> GetDescricaoTamanhosAsync(IList<Guid> ids);
 }

@@ -152,4 +152,9 @@ public class ProdutoCached : IProdutoRepository
 
         return produtos ?? new List<Produto>();
     }
+
+    public async Task<IDictionary<Guid, string>> GetDescricaoDeProdutosAsync(IList<Guid> ids)
+    {
+        return await _produtoRepository.GetDescricaoDeProdutosAsync(ids);
+    }
 }

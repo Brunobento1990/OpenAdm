@@ -18,8 +18,8 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     {
         var newPage = page == 0 ? page : page - 1;
 
-        Expression<Func<Produto, bool>>? where = 
-            categoriaId == null && categoriaId != Guid.Empty ? null : 
+        Expression<Func<Produto, bool>>? where =
+            categoriaId == null && categoriaId != Guid.Empty ? null :
             x => x.CategoriaId == categoriaId.Value;
 
         var totalPages = await _parceiroContext
@@ -263,5 +263,14 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .OrderByDescending(x => x.Numero)
             .ToListAsync();
+    }
+
+    public async Task<IDictionary<Guid, string>> GetDescricaoDeProdutosAsync(IList<Guid> ids)
+    {
+        return await _parceiroContext
+            .Produtos
+            .AsNoTracking()
+            .Where(x => ids.Contains(x.Id))
+            .ToDictionaryAsync(x => x.Id, x => x.Descricao);
     }
 }

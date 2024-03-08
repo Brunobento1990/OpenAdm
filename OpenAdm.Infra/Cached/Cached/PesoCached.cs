@@ -82,4 +82,9 @@ public class PesoCached : IPesoRepository
 
         return pesos ?? new List<Peso>();
     }
+
+    public async Task<IDictionary<Guid, string>> GetDescricaoPesosAsync(IList<Guid> ids)
+    {
+        return await _pesoRepository.GetDescricaoPesosAsync(ids);
+    }
 }

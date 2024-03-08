@@ -82,4 +82,9 @@ public class TamanhoCached : ITamanhoRepository
 
         return tamanhos ?? new List<Tamanho>(); 
     }
+
+    public async Task<IDictionary<Guid, string>> GetDescricaoTamanhosAsync(IList<Guid> ids)
+    {
+        return await _tamanhoRepository.GetDescricaoTamanhosAsync(ids);
+    }
 }

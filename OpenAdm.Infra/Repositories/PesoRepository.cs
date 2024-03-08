@@ -15,6 +15,14 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
         _parceiroContext = parceiroContext;
     }
 
+    public async Task<IDictionary<Guid, string>> GetDescricaoPesosAsync(IList<Guid> ids)
+    {
+        return await _parceiroContext
+            .Pesos
+            .AsNoTracking()
+            .ToDictionaryAsync(x => x.Id, x => x.Descricao);
+    }
+
     public async Task<PaginacaoViewModel<Peso>> GetPaginacaoPesoAsync(FilterModel<Peso> filterModel)
     {
         var (total, values) = await _parceiroContext

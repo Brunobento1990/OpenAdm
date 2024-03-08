@@ -8,9 +8,13 @@ public class MovimentacaoDeProdutoViewModel : BaseModel
     public decimal QuantidadeMovimentada { get; set; }
     public TipoMovimentacaoDeProduto TipoMovimentacaoDeProduto { get; set; }
     public string? Produto { get; set; }
+    public string? Tamanho { get; set; }
+    public string? Peso { get; set; }
 
-    public MovimentacaoDeProdutoViewModel ToModel(MovimentacaoDeProduto movimentacaoDeProduto, string? produto)
+    public MovimentacaoDeProdutoViewModel ToModel(MovimentacaoDeProduto movimentacaoDeProduto, string? produto, string? peso, string? tamanho)
     {
+        Tamanho = tamanho;
+        Peso = peso;
         Id = movimentacaoDeProduto.Id;
         DataDeCriacao = movimentacaoDeProduto.DataDeCriacao;
         DataDeAtualizacao = movimentacaoDeProduto.DataDeAtualizacao;

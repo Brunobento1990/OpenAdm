@@ -4,6 +4,7 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
+using System.Linq.Expressions;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -15,12 +16,28 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
         _parceiroContext = parceiroContext;
     }
 
-    public async Task<Estoque?> GetEstoqueByIdAsync(Guid Id)
+    public async Task<Estoque?> GetEstoqueAsync(Expression<Func<Estoque, bool>> where)
     {
         return await _parceiroContext
             .Estoques
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == Id);
+            .FirstOrDefaultAsync(where);
+    }
+
+    public async Task<Estoque?> GetEstoqueByProdutoIdAndPesoIdAsync(Guid produtoId, Guid pesoId)
+    {
+        return await _parceiroContext
+            .Estoques
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.PesoId == pesoId);
+    }
+
+    public async Task<Estoque?> GetEstoqueByProdutoIdAndTamanhoIdAsync(Guid produtoId, Guid tamanhoId)
+    {
+        return await _parceiroContext
+            .Estoques
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.TamanhoId == tamanhoId);
     }
 
     public async Task<Estoque?> GetEstoqueByProdutoIdAsync(Guid produtoId)
