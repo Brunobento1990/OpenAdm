@@ -6,17 +6,25 @@ using OpenAdm.Application.Models.Banners;
 using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Paginacao;
+using OpenAdm.Infra.Azure.Interfaces;
+using OpenAdm.Application.Dtos.Categorias;
+using Domain.Pkg.Entities;
+using OpenAdm.Application.Dtos.Produtos;
 
 namespace OpenAdm.Application.Services;
 
-public class BannerService(IBannerRepository bannerRepository)
+public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobClient uploadImageBlobClient)
     : IBannerService
 {
     private readonly IBannerRepository _bannerRepository = bannerRepository;
+    private readonly IUploadImageBlobClient _uploadImageBlobClient = uploadImageBlobClient;
 
     public async Task<BannerViewModel> CreateBannerAsync(BannerCreateDto bannerCreateDto)
     {
-        var banner = bannerCreateDto.ToEntity();
+        var nomeFoto = $"{Guid.NewGuid()}.jpg";
+        var foto = await _uploadImageBlobClient.UploadImageAsync(bannerCreateDto.Foto, nomeFoto);
+
+        var banner = bannerCreateDto.ToEntity(nomeFoto, foto);
 
         await _bannerRepository.AddAsync(banner);
 
@@ -28,6 +36,11 @@ public class BannerService(IBannerRepository bannerRepository)
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
+        var resultBlobDelete = await _uploadImageBlobClient.DeleteImageAsync(banner.NomeFoto);
+
+        if (!resultBlobDelete)
+            throw new ExceptionApi("Não foi possível excluir a foto do banner, tente novamente mais tarde, ou entre em contato com o suporte!");
+
         var result = await _bannerRepository.DeleteAsync(banner);
 
         if (!result) throw new ExceptionApi();
@@ -38,7 +51,23 @@ public class BannerService(IBannerRepository bannerRepository)
         var banner = await _bannerRepository.GetBannerByIdAsync(bannerEditDto.Id)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        banner.Update(bannerEditDto.Foto, bannerEditDto.Ativo);
+        var foto = banner.Foto;
+        var nomeFoto = banner.NomeFoto;
+
+        if (!bannerEditDto.Foto.StartsWith("https://") && !string.IsNullOrWhiteSpace(bannerEditDto.Foto))
+        {
+            if (!string.IsNullOrWhiteSpace(banner.NomeFoto))
+            {
+                var resultBlobDelete = await _uploadImageBlobClient.DeleteImageAsync(banner.NomeFoto);
+                if (!resultBlobDelete)
+                    throw new ExceptionApi("Não foi possível excluir a foto do banner, tente novamente mais tarde, ou entre em contato com o suporte!");
+            }
+
+            nomeFoto = $"{Guid.NewGuid()}.jpg";
+            foto = await _uploadImageBlobClient.UploadImageAsync(bannerEditDto.Foto, nomeFoto);
+        }
+
+        banner.Update(foto, nomeFoto, bannerEditDto.Ativo);
 
         await _bannerRepository.UpdateAsync(banner);
 
