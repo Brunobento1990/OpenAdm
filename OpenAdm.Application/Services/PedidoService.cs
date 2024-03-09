@@ -3,6 +3,7 @@ using Domain.Pkg.Enum;
 using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
 using Domain.Pkg.Interfaces;
+using Domain.Pkg.Model;
 using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
@@ -22,12 +23,12 @@ public class PedidoService(
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly IProcessarPedidoService _processarPedidoService = processarPedidoService;
 
-    public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto, UsuarioViewModel usuarioViewModel)
+    public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItensPedidoModel> itensPedidoModels, UsuarioViewModel usuarioViewModel)
     {
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuarioViewModel.Id);
 
-        pedido.ProcessarItensPedido(pedidoCreateDto.PedidosPorPeso, pedidoCreateDto.PedidosPorTamanho);
+        pedido.ProcessarItensPedido(itensPedidoModels);
 
         await _pedidoRepository.AddAsync(pedido);
 

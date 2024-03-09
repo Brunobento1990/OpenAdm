@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domain.Pkg.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Pedidos;
@@ -24,12 +25,12 @@ public class PedidoController : ControllerBaseApi
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreatePedido(PedidoCreateDto pedidoCreateDto)
+    public async Task<IActionResult> CreatePedido(IList<ItensPedidoModel> itensPedidoModels)
     {
         try
         {
             var usuario = _tokenService.GetTokenUsuarioViewModel();
-            var result = await _pedidoService.CreatePedidoAsync(pedidoCreateDto, usuario);
+            var result = await _pedidoService.CreatePedidoAsync(itensPedidoModels, usuario);
 
             return Ok(new { message = "Pedido criado com sucesso!" });
         }

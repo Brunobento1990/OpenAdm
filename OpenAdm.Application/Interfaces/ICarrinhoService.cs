@@ -5,7 +5,7 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface ICarrinhoService
 {
-    Task<bool> AdicionarProdutoAsync(AddCarrinhoModel addCarrinhoModel);
+    Task<bool> AdicionarProdutoAsync(IList<AddCarrinhoModel> addCarrinhoModel);
     Task<IList<CarrinhoViewModel>> GetCarrinhoAsync();
     Task<int> GetCountCarrinhoAsync();
     Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId);

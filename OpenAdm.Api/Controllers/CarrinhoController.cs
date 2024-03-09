@@ -19,7 +19,7 @@ public class CarrinhoController : ControllerBaseApi
     }
 
     [HttpPut("adicionar")]
-    public async Task<IActionResult> AdicionarCarinho(AddCarrinhoModel addCarrinhoDto)
+    public async Task<IActionResult> AdicionarCarinho(IList<AddCarrinhoModel> addCarrinhoDto)
     {
         try
         {

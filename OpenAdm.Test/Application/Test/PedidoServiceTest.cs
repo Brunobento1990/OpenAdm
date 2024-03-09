@@ -93,12 +93,23 @@ public class PedidoServiceTest
     [Fact]
     public async Task DeveCriarPedido()
     {
-        var pedidoPorPesoModel = new PedidoPorPesoModel(Guid.NewGuid(), Guid.NewGuid(), 1, 8);
-        var pedidoPorTamanhoModel = new PedidoPorTamanhoModel(Guid.NewGuid(), Guid.NewGuid(), 1, 9);
-        var pedidoCreateDto = new PedidoCreateDto()
+        var primeiroProduto = new ItensPedidoModel()
         {
-            PedidosPorPeso = new List<PedidoPorPesoModel>() { pedidoPorPesoModel },
-            PedidosPorTamanho = new List<PedidoPorTamanhoModel>() { pedidoPorTamanhoModel }
+            ProdutoId = Guid.NewGuid(),
+            Quantidade = 5,
+            ValorUnitario = 187
+        };
+        var segundoProduto = new ItensPedidoModel()
+        {
+            ProdutoId = Guid.NewGuid(),
+            Quantidade = 2,
+            ValorUnitario = 947
+        };
+
+        var itensPedidoModel = new List<ItensPedidoModel>()
+        {
+           primeiroProduto,
+           segundoProduto
         };
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
@@ -109,7 +120,7 @@ public class PedidoServiceTest
             pedidoRepositoryMock.Object,
             processarPedidoServiceMock.Object);
 
-        var usuario = new UsuarioViewModel() 
+        var usuario = new UsuarioViewModel()
         {
             Cnpj = "123",
             Cpf = "123",
@@ -117,7 +128,7 @@ public class PedidoServiceTest
             DataDeCriacao = DateTime.Now,
             Id = Guid.NewGuid()
         };
-        var pedidoModel = await service.CreatePedidoAsync(pedidoCreateDto, usuario);
+        var pedidoModel = await service.CreatePedidoAsync(itensPedidoModel, usuario);
 
         Assert.NotNull(pedidoModel);
         Assert.Equal(StatusPedido.Aberto, pedidoModel.StatusPedido);
@@ -126,11 +137,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task NaoDeveCriarPedidoSemItens()
     {
-        var pedidoCreateDto = new PedidoCreateDto()
-        {
-            PedidosPorPeso = new List<PedidoPorPesoModel>(),
-            PedidosPorTamanho = new List<PedidoPorTamanhoModel>()
-        };
+        var itensPedido = new List<ItensPedidoModel>();
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
@@ -148,6 +155,6 @@ public class PedidoServiceTest
             Id = Guid.NewGuid()
         };
 
-        await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(pedidoCreateDto, usuario));
+        await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(itensPedido, usuario));
     }
 }

@@ -36,17 +36,14 @@ public class CarrinhoServiceTest
 
         var carrinhoService = new CarrinhoService(carrinhoRepository.Object, produtoRepository.Object, tokenService, itensTabelaDePrecoRepository.Object);
 
-        var addCarrinho = new AddCarrinhoModel()
+        var addCarrinho = new List<AddCarrinhoModel>()
         {
-            ProdutoId = produto.Id,
-            Tamanhos =
-            [
-                new()
-                {
-                    TamanhoId = tamanho.Id,
-                    Quantidade = 3
-                }
-            ]
+            new()
+            {
+                TamanhoId = tamanho.Id,
+                Quantidade = 3,
+                ProdutoId = produto.Id
+            }
         };
 
         var result = await carrinhoService.AdicionarProdutoAsync(addCarrinho);

@@ -3,7 +3,6 @@ using OpenAdm.Application.Models.Carrinhos;
 using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Carrinho;
-using System.Text;
 
 namespace OpenAdm.Application.Services;
 
@@ -15,9 +14,9 @@ public class CarrinhoService : ICarrinhoService
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
 
     public CarrinhoService(
-        ICarrinhoRepository carrinhoRepository, 
-        IProdutoRepository produtoRepository, 
-        ITokenService tokenService, 
+        ICarrinhoRepository carrinhoRepository,
+        IProdutoRepository produtoRepository,
+        ITokenService tokenService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
     {
         _carrinhoRepository = carrinhoRepository;
@@ -26,7 +25,7 @@ public class CarrinhoService : ICarrinhoService
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     }
 
-    public async Task<bool> AdicionarProdutoAsync(AddCarrinhoModel addCarrinhoModel)
+    public async Task<bool> AdicionarProdutoAsync(IList<AddCarrinhoModel> addCarrinhoModel)
     {
         var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
@@ -34,25 +33,31 @@ public class CarrinhoService : ICarrinhoService
         if (carrinho.UsuarioId == Guid.Empty)
             carrinho.UsuarioId = Guid.Parse(_key);
 
-        var addProduto = carrinho?
+        foreach (var item in addCarrinhoModel)
+        {
+            var addProduto = carrinho?
             .Produtos
-            .FirstOrDefault(x => x.ProdutoId == addCarrinhoModel.ProdutoId);
+            .FirstOrDefault(x =>
+                x.ProdutoId == item.ProdutoId &&
+                x.PesoId == item.PesoId &&
+                x.TamanhoId == item.TamanhoId);
 
-        if (addProduto == null)
-        {
-            addProduto = new()
+            if (addProduto == null)
             {
-                ProdutoId = addCarrinhoModel.ProdutoId,
-                Pesos = addCarrinhoModel.Pesos,
-                Tamanhos = addCarrinhoModel.Tamanhos
-            };
+                addProduto = new()
+                {
+                    ProdutoId = item.ProdutoId,
+                    TamanhoId = item.TamanhoId,
+                    PesoId = item.PesoId,
+                    Quantidade = item.Quantidade
+                };
 
-            carrinho?.Produtos.Add(addProduto);
-        }
-        else
-        {
-            AddPesosCarrinho(addCarrinhoModel.Pesos, addProduto);
-            AddTamanhosCarrinho(addCarrinhoModel.Tamanhos, addProduto);
+                carrinho?.Produtos.Add(addProduto);
+            }
+            else
+            {
+                addProduto.Quantidade += item.Quantidade;
+            }
         }
 
         await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
@@ -115,8 +120,7 @@ public class CarrinhoService : ICarrinhoService
                 {
                     Quantidade = (decimal)(carrinho?
                         .Produtos?
-                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id)?
-                            .Tamanhos.FirstOrDefault(ps => ps.TamanhoId == x.Id)?
+                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.TamanhoId == x.Id)?
                                 .Quantidade ?? 0),
 
                     ValorUnitarioVarejo = itensTabelaDePreco
@@ -135,8 +139,7 @@ public class CarrinhoService : ICarrinhoService
                 {
                     Quantidade = (decimal)(carrinho?
                         .Produtos?
-                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id)?
-                            .Pesos.FirstOrDefault(ps => ps.PesoId == x.Id)?
+                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.PesoId == x.Id)?
                                 .Quantidade ?? 0),
                     ValorUnitarioAtacado = itensTabelaDePreco
                         .FirstOrDefault(item => item.ProdutoId == produto.Id && item.PesoId == x.Id)?.ValorUnitarioAtacado,
@@ -156,54 +159,6 @@ public class CarrinhoService : ICarrinhoService
         var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
         return await _carrinhoRepository.GetCountCarrinhoAsync(_key);
     }
-
-    private static void AddPesosCarrinho(List<AddPesoCarrinho> pesos, AddCarrinhoModel addProduto)
-    {
-        foreach (var pesoCarrinho in pesos)
-        {
-            var peso = addProduto
-                .Pesos
-                .FirstOrDefault(ps => ps.PesoId == pesoCarrinho.PesoId);
-
-            if (peso == null)
-            {
-                peso = new()
-                {
-                    PesoId = pesoCarrinho.PesoId,
-                    Quantidade = pesoCarrinho.Quantidade
-                };
-
-                addProduto.Pesos.Add(peso);
-            }
-            else
-            {
-                peso.Quantidade += pesoCarrinho.Quantidade;
-            }
-        }
-    }
-    private static void AddTamanhosCarrinho(List<AddTamanhoCarrinho> tamanhos, AddCarrinhoModel addProduto)
-    {
-        foreach (var tamanhoCarrinho in tamanhos)
-        {
-            var tamanho = addProduto.Tamanhos.FirstOrDefault(tm => tm.TamanhoId == tamanhoCarrinho.TamanhoId);
-
-            if (tamanho == null)
-            {
-                tamanho = new()
-                {
-                    TamanhoId = tamanhoCarrinho.TamanhoId,
-                    Quantidade = tamanhoCarrinho.Quantidade
-                };
-
-                addProduto.Tamanhos.Add(tamanho);
-            }
-            else
-            {
-                tamanho.Quantidade += tamanhoCarrinho.Quantidade;
-            }
-        }
-    }
-
     public async Task LimparCarrinhoDoUsuarioAsync(Guid usuarioId)
     {
         await _carrinhoRepository.DeleteCarrinhoAsync(usuarioId.ToString());
