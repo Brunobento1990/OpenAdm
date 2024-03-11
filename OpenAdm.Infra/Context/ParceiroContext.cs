@@ -31,6 +31,7 @@ public class ParceiroContext(DbContextOptions options, IDomainFactory domainFact
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
     public DbSet<LojasParceiras> LojasParceiras { get; set; }
+    public DbSet<TopUsuarios> TopUsuarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

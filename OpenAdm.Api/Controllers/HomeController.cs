@@ -28,4 +28,19 @@ public class HomeController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [ResponseCache(CacheProfileName = "Default300")]
+    [HttpGet("adm")]
+    public async Task<IActionResult> ListAdm()
+    {
+        try
+        {
+            var home = await _homeEcommerSevice.GetHomeAdmAsync();
+            return Ok(home);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }
