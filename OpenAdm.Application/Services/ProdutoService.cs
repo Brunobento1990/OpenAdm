@@ -101,11 +101,64 @@ public class ProdutoService : IProdutoService
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
+        var itensTabelaDePreco = await _itemTabelaDePrecoRepository
+            .GetItensTabelaDePrecoByIdProdutosAsync(paginacao.Values.Select(x => x.Id).ToList());
+
+        var produtosViewModel = new List<ProdutoViewModel>();
+
+        foreach (var produto in paginacao.Values)
+        {
+            var produtoViewModel = new ProdutoViewModel().ToModel(produto);
+
+            if(produtoViewModel.Tamanhos != null)
+            {
+                foreach (var tamanho in produtoViewModel.Tamanhos)
+                {
+                    var preco = itensTabelaDePreco.FirstOrDefault(
+                        x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
+
+                    if(preco != null)
+                    {
+                        tamanho.PrecoProdutoView = new PrecoProdutoViewModel()
+                        {
+                            ProdutoId = produto.Id,
+                            TamanhoId = tamanho.Id,
+                            ValorUnitarioAtacado = preco.ValorUnitarioAtacado,
+                            ValorUnitarioVarejo = preco.ValorUnitarioVarejo
+                        };
+                    }
+                }
+            }
+
+            if(produtoViewModel.Pesos != null)
+            {
+                foreach (var peso in produtoViewModel.Pesos)
+                {
+                    var preco = itensTabelaDePreco.FirstOrDefault(
+                       x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
+
+                    if (preco != null)
+                    {
+                        peso.PrecoProdutoView = new PrecoProdutoViewModel()
+                        {
+                            ProdutoId = produto.Id,
+                            PesoId = peso.Id,
+                            ValorUnitarioAtacado = preco.ValorUnitarioAtacado,
+                            ValorUnitarioVarejo = preco.ValorUnitarioVarejo
+                        };
+                    }
+                }
+            }
+
+
+
+            produtosViewModel.Add(produtoViewModel);
+        }
 
         return new PaginacaoViewModel<ProdutoViewModel>()
         {
             TotalPage = paginacao.TotalPage,
-            Values = paginacao.Values.Select(x => new ProdutoViewModel().ToModel(x)).ToList()
+            Values = produtosViewModel
         };
     }
 

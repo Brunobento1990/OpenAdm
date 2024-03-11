@@ -53,8 +53,8 @@ public class UploadImageBlobClient : IUploadImageBlobClient
 
         using var image = Image.Load(inStream);
 
-        int maxWidth = 700;
-        int maxHeight = 250;
+        int maxWidth = 1200;
+        int maxHeight = 1200;
         if (image.Width > maxWidth || image.Height > maxHeight)
         {
             if (image.Width > maxWidth && image.Height > maxHeight)
