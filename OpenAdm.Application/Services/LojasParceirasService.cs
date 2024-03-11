@@ -27,7 +27,7 @@ public class LojasParceirasService : ILojasParceirasService
         var nomeFoto = string.Empty;
         if (!string.IsNullOrWhiteSpace(createLojaParceiraDto.Foto))
         {
-            nomeFoto = $"{Guid.NewGuid()}.jpg";
+            nomeFoto = $"{Guid.NewGuid()}.jpeg";
             createLojaParceiraDto.Foto = await _uploadImageBlobClient.UploadImageAsync(createLojaParceiraDto.Foto, nomeFoto);
         }
 
@@ -87,7 +87,7 @@ public class LojasParceirasService : ILojasParceirasService
                 if (!resultDeleteFoto)
                     throw new ExceptionApi("Não foi possível excluir a foto da loja, tente novamente mais tarde, ou entre em contato com o suporte!");
 
-                nomeFoto = $"{Guid.NewGuid()}.jpg";
+                nomeFoto = $"{Guid.NewGuid()}.jpeg";
 
                 foto = await _uploadImageBlobClient.UploadImageAsync(updateLojaParceiraDto.Foto, nomeFoto);
             }

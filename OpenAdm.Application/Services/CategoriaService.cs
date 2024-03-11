@@ -21,7 +21,7 @@ public class CategoriaService : ICategoriaService
 
     public async Task<CategoriaViewModel> CreateCategoriaAsync(CategoriaCreateDto categoriaCreateDto)
     {
-        var nomeFoto = !string.IsNullOrWhiteSpace(categoriaCreateDto.Foto) ? $"{Guid.NewGuid()}.jpg" : null;
+        var nomeFoto = !string.IsNullOrWhiteSpace(categoriaCreateDto.Foto) ? $"{Guid.NewGuid()}.jpeg" : null;
 
         if (!string.IsNullOrWhiteSpace(nomeFoto) && categoriaCreateDto.Foto != null)
         {
@@ -95,7 +95,7 @@ public class CategoriaService : ICategoriaService
                     throw new ExceptionApi();
             }
 
-            nomeFoto = $"{Guid.NewGuid()}.jpg";
+            nomeFoto = $"{Guid.NewGuid()}.jpeg";
             foto = await _uploadImageBlobClient.UploadImageAsync(updateCategoriaDto.Foto, nomeFoto);
         }
 

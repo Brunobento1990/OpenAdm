@@ -18,7 +18,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 
     public async Task<BannerViewModel> CreateBannerAsync(BannerCreateDto bannerCreateDto)
     {
-        var nomeFoto = $"{Guid.NewGuid()}.jpg";
+        var nomeFoto = $"{Guid.NewGuid()}.jpeg";
         var foto = await _uploadImageBlobClient.UploadImageAsync(bannerCreateDto.Foto, nomeFoto);
 
         var banner = bannerCreateDto.ToEntity(nomeFoto, foto);
@@ -60,7 +60,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
                     throw new ExceptionApi("Não foi possível excluir a foto do banner, tente novamente mais tarde, ou entre em contato com o suporte!");
             }
 
-            nomeFoto = $"{Guid.NewGuid()}.jpg";
+            nomeFoto = $"{Guid.NewGuid()}.jpeg";
             foto = await _uploadImageBlobClient.UploadImageAsync(bannerEditDto.Foto, nomeFoto);
         }
 

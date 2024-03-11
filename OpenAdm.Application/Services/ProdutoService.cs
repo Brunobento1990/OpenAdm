@@ -35,7 +35,7 @@ public class ProdutoService : IProdutoService
 
     public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
     {
-        var nomeFoto = $"{Guid.NewGuid()}.jpg";
+        var nomeFoto = $"{Guid.NewGuid()}.jpeg";
         createProdutoDto.Foto = await _uploadImageBlobClient.UploadImageAsync(createProdutoDto.Foto, nomeFoto);
         var produto = createProdutoDto.ToEntity(nomeFoto);
 
@@ -141,7 +141,7 @@ public class ProdutoService : IProdutoService
                     throw new ExceptionApi();
             }
 
-            nomeFoto = $"{Guid.NewGuid()}.jpg";
+            nomeFoto = $"{Guid.NewGuid()}.jpeg";
             foto = await _uploadImageBlobClient.UploadImageAsync(updateProdutoDto.Foto, nomeFoto);
         }
 

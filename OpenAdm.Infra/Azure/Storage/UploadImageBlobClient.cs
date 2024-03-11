@@ -1,6 +1,9 @@
 ﻿using Azure.Storage.Blobs;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.Infra.Azure.Interfaces;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 namespace OpenAdm.Infra.Azure.Storage;
 
@@ -25,7 +28,12 @@ public class UploadImageBlobClient : IUploadImageBlobClient
 
     public async Task<string> UploadImageAsync(string base64, string nomeFoto)
     {
-        var fotoBytes = Convert.FromBase64String(base64);
+        if (string.IsNullOrWhiteSpace(base64))
+        {
+            throw new ExceptionApi("A imagem selecionada é inválida!");
+        }
+
+        var fotoBytes = ComprimirImagem(base64);
 
         using var foto = new MemoryStream(fotoBytes);
 
@@ -34,5 +42,46 @@ public class UploadImageBlobClient : IUploadImageBlobClient
         await blobCliente.UploadAsync(foto);
 
         return blobCliente.Uri.AbsoluteUri;
+    }
+
+    internal static byte[] ComprimirImagem(string base64)
+    {
+
+        byte[] imageBytes = Convert.FromBase64String(base64);
+
+        using var inStream = new MemoryStream(imageBytes);
+
+        using var image = Image.Load(inStream);
+
+        int maxWidth = 700;
+        int maxHeight = 250;
+        if (image.Width > maxWidth || image.Height > maxHeight)
+        {
+            if (image.Width > maxWidth && image.Height > maxHeight)
+            {
+                image.Mutate(x => x.Resize(maxWidth, maxHeight));
+            }
+
+            if(image.Width > maxWidth && image.Height <= maxHeight)
+            {
+                image.Mutate(x => x.Resize(maxWidth, image.Height));
+            }
+
+            if (image.Height > maxHeight && image.Width <= maxWidth)
+            {
+                image.Mutate(x => x.Resize(image.Width, maxHeight));
+            }
+        }
+
+        var encoder = new SixLabors.ImageSharp.Formats.Jpeg.JpegEncoder
+        {
+            Quality = 100
+        };
+
+        using var outputStream = new MemoryStream();
+
+        image.Save(outputStream, encoder);
+
+        return outputStream.ToArray();
     }
 }
