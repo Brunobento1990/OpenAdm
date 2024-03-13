@@ -7,4 +7,5 @@ public interface ILojasParceirasRepository : IGenericRepository<LojasParceiras>
 {
     Task<PaginacaoViewModel<LojasParceiras>> GetPaginacaoLojasParceirasAsync(FilterModel<LojasParceiras> filterModel);
     Task<LojasParceiras?> GetLojaParceiraByIdAsync(Guid id);
+    Task<IList<string?>> GetFotosLojasParceirasAsync();
 }

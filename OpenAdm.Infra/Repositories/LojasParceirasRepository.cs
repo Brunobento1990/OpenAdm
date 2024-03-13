@@ -15,6 +15,15 @@ public class LojasParceirasRepository : GenericRepository<LojasParceiras>, ILoja
         _parceiroContext = parceiroContext;
     }
 
+    public async Task<IList<string?>> GetFotosLojasParceirasAsync()
+    {
+        return await _parceiroContext
+            .LojasParceiras
+            .Where(x => x.Foto != null)
+            .Select(x => x.Foto)
+            .ToListAsync();
+    }
+
     public async Task<LojasParceiras?> GetLojaParceiraByIdAsync(Guid id)
     {
         return await _parceiroContext

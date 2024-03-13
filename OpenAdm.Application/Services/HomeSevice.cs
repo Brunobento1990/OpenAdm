@@ -14,17 +14,19 @@ public class HomeSevice : IHomeSevice
     private readonly IProdutoRepository _produtoRepository;
     private readonly IBannerRepository _bannerRepository;
     private readonly ITopUsuariosRepository _topUsuariosRepository;
-
+    private readonly ILojasParceirasRepository _lojasParceirasRepository;
     public HomeSevice(
         ICategoriaRepository categoryRepository,
         IProdutoRepository produtoRepository,
         IBannerRepository bannerRepository,
-        ITopUsuariosRepository topUsuariosRepository)
+        ITopUsuariosRepository topUsuariosRepository,
+        ILojasParceirasRepository lojasParceirasRepository)
     {
         _categoryRepository = categoryRepository;
         _produtoRepository = produtoRepository;
         _bannerRepository = bannerRepository;
         _topUsuariosRepository = topUsuariosRepository;
+        _lojasParceirasRepository = lojasParceirasRepository;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
@@ -44,12 +46,14 @@ public class HomeSevice : IHomeSevice
         var banners = await _bannerRepository.GetBannersAsync();
         var categorias = await _categoryRepository.GetCategoriasAsync();
         var produtosMaisVendidos = await _produtoRepository.GetProdutosMaisVendidosAsync();
+        var fotosLojasParceiras = await _lojasParceirasRepository.GetFotosLojasParceirasAsync();
 
         return new HomeECommerceViewModel()
         {
             Banners = banners.Select(x => new BannerViewModel().ToModel(x)).ToList(),
             Categorias = categorias.Select(x => new CategoriaViewModel().ToModel(x)).ToList(),
             ProdutosMaisVendidos = produtosMaisVendidos.Select(x => new ProdutoViewModel().ToModel(x)).ToList(),
+            LojasParceiras = fotosLojasParceiras
         };
     }
 }

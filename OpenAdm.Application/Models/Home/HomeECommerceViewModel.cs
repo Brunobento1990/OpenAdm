@@ -9,4 +9,5 @@ public class HomeECommerceViewModel
     public IList<BannerViewModel> Banners { get; set; } = new List<BannerViewModel>();
     public IList<CategoriaViewModel> Categorias { get; set; } = new List<CategoriaViewModel>();
     public IList<ProdutoViewModel> ProdutosMaisVendidos { get; set; } = new List<ProdutoViewModel>();
+    public IList<string?> LojasParceiras { get; set; } = new List<string?>();
 }
