@@ -5,8 +5,6 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
 using Domain.Pkg.Enum;
 using OpenAdm.Application.Models.Pedidos;
-using QuestPDF.Infrastructure;
-using OpenAdm.Application.Dtos.Pedidos;
 using Domain.Pkg.Model;
 using Domain.Pkg.Entities;
 using OpenAdm.Application.Models.Usuarios;
@@ -24,10 +22,11 @@ public class PedidoServiceTest
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+        var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object, itemTabelaDePrecoRepositoryMock.Object);
 
         await Assert
             .ThrowsAnyAsync<ExceptionApi>(
@@ -43,10 +42,11 @@ public class PedidoServiceTest
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+        var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object, itemTabelaDePrecoRepositoryMock.Object);
         var pedidoViewModel = await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus);
 
         Assert.NotNull(pedidoViewModel);
@@ -79,11 +79,12 @@ public class PedidoServiceTest
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+        var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
         pedidoRepositoryMock.Setup(x => x.DeleteAsync(pedido)).ReturnsAsync(true);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
+        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object, itemTabelaDePrecoRepositoryMock.Object);
         var result = await pedidoService.DeletePedidoAsync(pedido.Id);
 
         Assert.IsType<bool>(result);
@@ -114,11 +115,13 @@ public class PedidoServiceTest
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+        var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
 
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,
-            processarPedidoServiceMock.Object);
+            processarPedidoServiceMock.Object,
+            itemTabelaDePrecoRepositoryMock.Object);
 
         var usuario = new UsuarioViewModel()
         {
@@ -141,10 +144,12 @@ public class PedidoServiceTest
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+        var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,
-            processarPedidoServiceMock.Object);
+            processarPedidoServiceMock.Object,
+            itemTabelaDePrecoRepositoryMock.Object);
 
         var usuario = new UsuarioViewModel()
         {
@@ -156,5 +161,64 @@ public class PedidoServiceTest
         };
 
         await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(itensPedido, usuario));
+    }
+
+    [Fact]
+    public async Task NaoDeveCriarPedidoDeUsuarioJuridicoComValorUnitarioVarejo()
+    {
+        var item = new ItensPedidoModel()
+        {
+            PesoId = Guid.NewGuid(),
+            ProdutoId = Guid.NewGuid(),
+            Quantidade = 5,
+            ValorUnitario = 5
+        };
+
+        var itens = new List<ItensPedidoModel>()
+        {
+            item
+        };
+
+        var usuarioViewModel = new UsuarioViewModel()
+        {
+            Cnpj = "6165165165",
+            DataDeAtualizacao = DateTime.Now,
+            DataDeCriacao = DateTime.Now,
+            Email = "teste@gmail.com",
+            Id = Guid.NewGuid(),
+            Nome = "Teste jurídico",
+            Numero = 5
+        };
+
+        var pedidoRepositoryMock = new Mock<IPedidoRepository>();
+        var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+        var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
+
+        var itensTabelaDePreco = new List<ItensTabelaDePreco>()
+        {
+            new (Guid.NewGuid(), 
+                DateTime.Now, 
+                DateTime.Now, 
+                1,
+                item.ProdutoId, 
+                1,
+                2, 
+                Guid.NewGuid(), 
+                item.TamanhoId, 
+                item.PesoId)
+        };
+
+        var produtosIds = itens.Select(x => x.ProdutoId).ToList();
+
+        itemTabelaDePrecoRepositoryMock.Setup((x) =>
+            x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
+            .ReturnsAsync(itensTabelaDePreco);
+
+        var service = new PedidoService(
+            pedidoRepositoryMock.Object,
+            processarPedidoServiceMock.Object,
+            itemTabelaDePrecoRepositoryMock.Object);
+
+        await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(itens, usuarioViewModel));
     }
 }

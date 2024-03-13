@@ -17,9 +17,11 @@ namespace OpenAdm.Application.Services;
 
 public class PedidoService(
     IPedidoRepository pedidoRepository,
-    IProcessarPedidoService processarPedidoService)
+    IProcessarPedidoService processarPedidoService,
+    IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
     : IPedidoService
 {
+    private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly IProcessarPedidoService _processarPedidoService = processarPedidoService;
 
@@ -27,6 +29,30 @@ public class PedidoService(
     {
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuarioViewModel.Id);
+
+        var produtosIds = itensPedidoModels.Select(x => x.ProdutoId).ToList();
+        var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
+        var isVarejo = !string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj);
+
+        foreach (var itemTabelaDePreco in itensTabelaDePreco)
+        {
+            var preco = itensPedidoModels
+                .FirstOrDefault(itemPedido =>
+                    itemPedido.ProdutoId == itemTabelaDePreco.ProdutoId &&
+                    itemPedido.PesoId == itemTabelaDePreco.PesoId &&
+                    itemPedido.TamanhoId == itemTabelaDePreco.TamanhoId);
+
+
+            if (preco != null)
+            {
+
+                if (isVarejo && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
+                {
+                    throw new ExceptionApi();
+                }
+
+            }
+        }
 
         pedido.ProcessarItensPedido(itensPedidoModels);
 
