@@ -8,6 +8,7 @@ using OpenAdm.Application.Models.Pedidos;
 using Domain.Pkg.Model;
 using Domain.Pkg.Entities;
 using OpenAdm.Application.Models.Usuarios;
+using Xunit.Abstractions;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -98,13 +99,13 @@ public class PedidoServiceTest
         {
             ProdutoId = Guid.NewGuid(),
             Quantidade = 5,
-            ValorUnitario = 187
+            ValorUnitario = 1
         };
         var segundoProduto = new ItensPedidoModel()
         {
             ProdutoId = Guid.NewGuid(),
             Quantidade = 2,
-            ValorUnitario = 947
+            ValorUnitario = 1
         };
 
         var itensPedidoModel = new List<ItensPedidoModel>()
@@ -117,6 +118,37 @@ public class PedidoServiceTest
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
         var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
 
+        var itensTabelaDePreco = new List<ItensTabelaDePreco>()
+        {
+            new (Guid.NewGuid(),
+                DateTime.Now,
+                DateTime.Now,
+                1,
+                primeiroProduto.ProdutoId,
+                1,
+                2,
+                Guid.NewGuid(),
+                primeiroProduto.TamanhoId,
+                primeiroProduto.PesoId),
+             new (Guid.NewGuid(),
+                DateTime.Now,
+                DateTime.Now,
+                1,
+                segundoProduto.ProdutoId,
+                1,
+                2,
+                Guid.NewGuid(),
+                segundoProduto.TamanhoId,
+                segundoProduto.PesoId),
+
+        };
+
+        var produtosIds = itensTabelaDePreco.Select(x => x.ProdutoId).ToList();
+
+        itemTabelaDePrecoRepositoryMock.Setup((x) =>
+            x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
+            .ReturnsAsync(itensTabelaDePreco);
+
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,
@@ -125,7 +157,6 @@ public class PedidoServiceTest
 
         var usuario = new UsuarioViewModel()
         {
-            Cnpj = "123",
             Cpf = "123",
             DataDeAtualizacao = DateTime.Now,
             DataDeCriacao = DateTime.Now,
@@ -145,6 +176,26 @@ public class PedidoServiceTest
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
         var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
         var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
+
+        var itensTabelaDePreco = new List<ItensTabelaDePreco>()
+        {
+            new (Guid.NewGuid(),
+                DateTime.Now,
+                DateTime.Now,
+                1,
+                Guid.NewGuid(),
+                1,
+                2,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid())
+        };
+
+        var produtosIds = itensPedido.Select(x => x.ProdutoId).ToList();
+
+        itemTabelaDePrecoRepositoryMock.Setup((x) =>
+            x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
+            .ReturnsAsync(itensTabelaDePreco);
 
         var service = new PedidoService(
             pedidoRepositoryMock.Object,
@@ -196,15 +247,15 @@ public class PedidoServiceTest
 
         var itensTabelaDePreco = new List<ItensTabelaDePreco>()
         {
-            new (Guid.NewGuid(), 
-                DateTime.Now, 
-                DateTime.Now, 
+            new (Guid.NewGuid(),
+                DateTime.Now,
+                DateTime.Now,
                 1,
-                item.ProdutoId, 
+                item.ProdutoId,
                 1,
-                2, 
-                Guid.NewGuid(), 
-                item.TamanhoId, 
+                2,
+                Guid.NewGuid(),
+                item.TamanhoId,
                 item.PesoId)
         };
 
