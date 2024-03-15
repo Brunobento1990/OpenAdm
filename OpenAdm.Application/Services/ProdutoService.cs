@@ -47,13 +47,6 @@ public class ProdutoService : IProdutoService
 
         await _produtoRepository.AddAsync(produto);
 
-        var vinculoItensTabelaDePreco = createProdutoDto.ProcessarVinculoTabelaDePreco(produto.Id);
-
-        if(vinculoItensTabelaDePreco != null)
-        {
-            await _itemTabelaDePrecoRepository.AddRangeAsync(vinculoItensTabelaDePreco);
-        }
-
         return new ProdutoViewModel().ToModel(produto);
     }
 

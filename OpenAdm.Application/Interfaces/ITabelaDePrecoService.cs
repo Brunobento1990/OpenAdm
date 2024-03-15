@@ -14,4 +14,5 @@ public interface ITabelaDePrecoService
     Task<TabelaDePrecoViewModel> CreateTabelaDePrecoAsync(CreateTabelaDePrecoDto createTabelaDePrecoDto);
     Task DeleteTabelaDePrecoAsync(Guid id);
     Task<IList<TabelaDePrecoViewModel>> GetAllTabelaDePrecoViewModelAsync();
+    Task<TabelaDePrecoViewModel> GetTabelaDePrecoViewModelAtivaAsync();
 }

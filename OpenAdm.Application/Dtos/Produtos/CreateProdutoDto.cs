@@ -15,7 +15,6 @@ public class CreateProdutoDto
     public Guid CategoriaId { get; set; }
     public IList<Guid>? TamanhosIds { get; set; }
     public IList<Guid>? PesosIds { get; set; }
-    public VinculoProdutoTabelaDePrecoDto? VinculoProdutoTabelaDePreco { get; set; }
 
     public Produto ToEntity(string nomeFoto)
     {
@@ -62,29 +61,5 @@ public class CreateProdutoDto
         }
 
         return pesosProdutos;
-    }
-
-    public IList<ItensTabelaDePreco>? ProcessarVinculoTabelaDePreco(Guid produtoId)
-    {
-        if(VinculoProdutoTabelaDePreco == null || VinculoProdutoTabelaDePreco.Itens.Count == 0) 
-            return null;
-
-        var data = DateTime.Now;
-
-        return VinculoProdutoTabelaDePreco
-            .Itens
-            .Select(x => 
-                new ItensTabelaDePreco(
-                    Guid.NewGuid(),
-                    data,
-                    data,
-                    0, 
-                    produtoId,
-                    x.ValorUnitarioAtacado,
-                    x.ValorUnitarioVarejo,
-                    VinculoProdutoTabelaDePreco.TabelaDePrecoId,
-                    x.TamanhoId,
-                    x.PesoId))
-            .ToList();  
     }
 }

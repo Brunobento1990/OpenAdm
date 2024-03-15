@@ -120,6 +120,15 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         return tabelaDePrecoViewModel;
     }
 
+    public async Task<TabelaDePrecoViewModel> GetTabelaDePrecoViewModelAtivaAsync()
+    {
+        var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync();
+
+        if (tabelaDePreco == null) return new TabelaDePrecoViewModel();
+
+        return new TabelaDePrecoViewModel().ToModel(tabelaDePreco);
+    }
+
     public async Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid produtoId)
     {
         var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaByProdutoIdAsync(produtoId);
