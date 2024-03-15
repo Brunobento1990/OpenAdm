@@ -53,6 +53,7 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
         return await _parceiroContext
             .Pesos
             .AsNoTracking()
+            .OrderByDescending(x => x.Numero)
             .ToListAsync();
     }
 

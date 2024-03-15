@@ -7,4 +7,5 @@ public interface IItemTabelaDePrecoRepository : IGenericRepository<ItensTabelaDe
     Task<ItensTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id);
     Task<IList<ItensTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds);
     Task AddRangeAsync(IList<ItensTabelaDePreco> itensTabelaDePrecos);
+    Task DeleteItensTabelaDePrecoByProdutoIdAsync(Guid produtoId);
 }

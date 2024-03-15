@@ -18,6 +18,11 @@ public class TabelaDePrecoViewModel : BaseModel
         Descricao = tabelaDePreco.Descricao;
         AtivaEcommerce = tabelaDePreco.AtivaEcommerce;
 
+        if(tabelaDePreco.ItensTabelaDePreco != null && tabelaDePreco.ItensTabelaDePreco.Count > 0)
+        {
+            ItensTabelaDePreco = tabelaDePreco.ItensTabelaDePreco.Select(x => new ItensTabelaDePrecoViewModel().ToModel(x, new List<Peso>(), new List<Tamanho>())).ToList();
+        }
+
         return this;
     }
 }

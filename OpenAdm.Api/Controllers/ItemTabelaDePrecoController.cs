@@ -33,6 +33,20 @@ public class ItemTabelaDePrecoController : ControllerBaseApi
         }
     }
 
+    [HttpPost("create-list")]
+    public async Task<IActionResult> CreateListItemTabelaDePreco(IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto)
+    {
+        try
+        {
+            await _itemTabelaDePrecoService.CreateListItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
     {

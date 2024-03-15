@@ -42,6 +42,11 @@ public class ItemTabelaDePrecoCached : IItemTabelaDePrecoRepository
         return await _itemTabelaDePrecoRepository.DeleteAsync(entity);
     }
 
+    public async Task DeleteItensTabelaDePrecoByProdutoIdAsync(Guid produtoId)
+    {
+        await _itemTabelaDePrecoRepository.DeleteItensTabelaDePrecoByProdutoIdAsync(produtoId);
+    }
+
     public async Task<ItensTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)
     {
         var key = id.ToString();

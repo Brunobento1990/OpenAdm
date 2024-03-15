@@ -19,6 +19,18 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItensTabelaDePreco>
         await _parceiroContext.SaveChangesAsync();
     }
 
+    public async Task DeleteItensTabelaDePrecoByProdutoIdAsync(Guid produtoId)
+    {
+        var itensTabelaDePreco = await _parceiroContext
+            .ItensTabelaDePreco
+            .Where(x => x.ProdutoId == produtoId)
+            .ToListAsync();
+
+        _parceiroContext.RemoveRange(itensTabelaDePreco);
+
+        await _parceiroContext.SaveChangesAsync();
+    }
+
     public async Task<ItensTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)
     {
         return await _parceiroContext

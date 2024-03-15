@@ -57,6 +57,24 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
             .FirstOrDefaultAsync(x => x.AtivaEcommerce);
     }
 
+    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaByProdutoIdAsync(Guid produtoId)
+    {
+        var tabelaDePreco = await _parceiroContext
+            .TabelaDePreco
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.AtivaEcommerce);
+
+        if(tabelaDePreco != null)
+        {
+            tabelaDePreco.ItensTabelaDePreco = await _parceiroContext
+                .ItensTabelaDePreco
+                .Where(x => x.ProdutoId == produtoId)
+                .ToListAsync();
+        }
+
+        return tabelaDePreco;
+    }
+
     public async Task<TabelaDePreco?> GetTabelaDePrecoByIdAsync(Guid id)
     {
         var tabelaDePreco = await _parceiroContext

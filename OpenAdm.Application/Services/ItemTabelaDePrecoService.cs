@@ -22,6 +22,17 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
         await _itemTabelaDePrecoRepository.AddAsync(itemTabelaDePreco);
     }
 
+    public async Task CreateListItemTabelaDePrecoAsync(IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto)
+    {
+        if (createItensTabelaDePrecoDto.Count == 0) return;
+
+        var itensTabelaDePreco = createItensTabelaDePrecoDto.Select(x => x.ToEntity()).ToList();
+
+        await _itemTabelaDePrecoRepository.DeleteItensTabelaDePrecoByProdutoIdAsync(createItensTabelaDePrecoDto.First().ProdutoId);
+
+        await _itemTabelaDePrecoRepository.AddRangeAsync(itensTabelaDePreco);
+    }
+
     public async Task DeleteItemAsync(Guid id)
     {
         var item = await _itemTabelaDePrecoRepository.GetItemTabelaDePrecoByIdAsync(id)
