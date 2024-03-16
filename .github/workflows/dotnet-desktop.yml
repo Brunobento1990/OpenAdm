@@ -23,8 +23,8 @@ jobs:
     - name: Test
       run: dotnet test ./OpenAdm.Test
     - name: Build-Image-Docker
-      run: docker build ./ -t brunobentocaina/open-adm-api:latest
+      run: docker build ./ -t brunobentocaina/open-adm-api:staging
     - name: Push
       run: |
         docker login -u brunobentocaina -p ${{ secrets.DOCKER_HUB_KEY }}
-        docker push brunobentocaina/open-adm-api:latest
+        docker push brunobentocaina/open-adm-api:staging
