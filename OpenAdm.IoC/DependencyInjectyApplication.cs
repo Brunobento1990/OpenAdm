@@ -19,7 +19,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<ICarrinhoService, CarrinhoService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<IItensPedidoService, ItensPedidoService>();
-        services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IEsqueceuSenhaService, EsqueceuSenhaService>();
         services.AddScoped<IProcessarPedidoService, ProcessarPedidoService>();
         services.AddScoped<IPesoService, PesoService>();

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Domain.Pkg.Interfaces;
+using Domain.Pkg.Services;
+using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Infra.HttpService.Interfaces;
 using OpenAdm.Infra.HttpService.Services;
 
@@ -13,5 +15,6 @@ public static class DependencyInjectIHttpClient
         {
             x.BaseAddress = new Uri(url);
         });
+        services.AddScoped<IEmailService, EmailService>();
     }
 }
