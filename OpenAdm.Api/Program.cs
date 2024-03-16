@@ -1,3 +1,4 @@
+using Domain.Pkg.Cryptography;
 using dotenv.net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -58,16 +59,19 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var key = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
+var keyJwt = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
 var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
 var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
 var expirate = int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION"));
 var azureKey = VariaveisDeAmbiente.GetVariavel("AZURE_KEY");
 var azureContainer = VariaveisDeAmbiente.GetVariavel("AZURE_CONTAINER");
 
-builder.Services.InjectJwt(key, issue, audience);
-ConfiguracaoDeToken.Configure(key, issue, audience, expirate);
+builder.Services.InjectJwt(keyJwt, issue, audience);
+ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
 ConfigAzure.Configure(azureKey, azureContainer);
+var key = VariaveisDeAmbiente.GetVariavel("CRYP_KEY");
+var iv = VariaveisDeAmbiente.GetVariavel("CRYP_IV");
+CryptographyGeneric.Configure(key, iv);
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));
 builder.Services.InjectRepositories(VariaveisDeAmbiente.GetVariavel("REDIS_URL"));
 builder.Services.InjectServices();
