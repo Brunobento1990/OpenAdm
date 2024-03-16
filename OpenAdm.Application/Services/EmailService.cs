@@ -37,11 +37,13 @@ public class EmailService : IEmailService
                 mail.Attachments.Add(anexo);
             }
 
-            var smtp = new SmtpClient(configuracao.Servidor, configuracao.Porta);
-            smtp.EnableSsl = true;
-            smtp.UseDefaultCredentials = false;
-            smtp.Credentials = new NetworkCredential(configuracao.Email, CryptographyGeneric.Decrypt(configuracao.Senha));
-            smtp.Send(mail);
+            var smtp = new SmtpClient(configuracao.Servidor, configuracao.Porta)
+            {
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(configuracao.Email, CryptographyGeneric.Decrypt(configuracao.Senha))
+            };
+            await smtp.SendMailAsync(mail);
 
             return true;
         }

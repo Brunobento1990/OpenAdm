@@ -63,15 +63,18 @@ var keyJwt = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
 var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
 var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
 var expirate = int.Parse(VariaveisDeAmbiente.GetVariavel("JWT_EXPIRATION"));
-var azureKey = VariaveisDeAmbiente.GetVariavel("AZURE_KEY");
-var azureContainer = VariaveisDeAmbiente.GetVariavel("AZURE_CONTAINER");
 
 builder.Services.InjectJwt(keyJwt, issue, audience);
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
+
+var azureKey = VariaveisDeAmbiente.GetVariavel("AZURE_KEY");
+var azureContainer = VariaveisDeAmbiente.GetVariavel("AZURE_CONTAINER");
 ConfigAzure.Configure(azureKey, azureContainer);
+
 var key = VariaveisDeAmbiente.GetVariavel("CRYP_KEY");
 var iv = VariaveisDeAmbiente.GetVariavel("CRYP_IV");
 CryptographyGeneric.Configure(key, iv);
+
 builder.Services.InjectContext(VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION"));
 builder.Services.InjectRepositories(VariaveisDeAmbiente.GetVariavel("REDIS_URL"));
 builder.Services.InjectServices();
