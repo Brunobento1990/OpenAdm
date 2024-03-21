@@ -3,6 +3,5 @@
 public class QuantidadeProdutoCarrinhoViewModel
 {
     public decimal Quantidade { get; set; }
-    public decimal? ValorUnitarioAtacado { get; set; }
-    public decimal? ValorUnitarioVarejo { get; set; }
+    public decimal? ValorUnitario { get; set; }
 }
