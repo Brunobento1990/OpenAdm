@@ -32,7 +32,7 @@ public class PedidoService(
 
         var produtosIds = itensPedidoModels.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
-        var isVarejo = !string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj);
+        var isAtacado = !string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj);
 
         foreach (var itemTabelaDePreco in itensTabelaDePreco)
         {
@@ -46,7 +46,7 @@ public class PedidoService(
             if (preco != null)
             {
 
-                if (isVarejo && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
+                if (isAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
                 {
                     throw new ExceptionApi();
                 }
