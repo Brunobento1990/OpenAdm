@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models.Usuarios;
+using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
@@ -16,12 +18,18 @@ public class PedidoController : ControllerBaseApi
     private readonly IPedidoService _pedidoService;
     private readonly ITokenService _tokenService;
     private readonly IProcessarPedidoService _processarPedidoService;
+    private readonly IUsuarioRepository _usuarioRepository;
 
-    public PedidoController(IPedidoService pedidoService, ITokenService tokenService, IProcessarPedidoService processarPedidoService)
+    public PedidoController(
+        IPedidoService pedidoService,
+        ITokenService tokenService,
+        IProcessarPedidoService processarPedidoService,
+        IUsuarioRepository usuarioRepository)
     {
         _pedidoService = pedidoService;
         _tokenService = tokenService;
         _processarPedidoService = processarPedidoService;
+        _usuarioRepository = usuarioRepository;
     }
 
     [HttpPost("create")]
@@ -29,8 +37,14 @@ public class PedidoController : ControllerBaseApi
     {
         try
         {
-            var usuario = _tokenService.GetTokenUsuarioViewModel();
-            var result = await _pedidoService.CreatePedidoAsync(itensPedidoModels, usuario);
+            var id = _tokenService.GetTokenUsuarioViewModel().Id;
+            var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id);
+            if(usuario == null)
+            {
+                return Unauthorized();
+            }
+            var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
+            var result = await _pedidoService.CreatePedidoAsync(itensPedidoModels, usuarioViewModel);
 
             return Ok(new { message = "Pedido criado com sucesso!" });
         }

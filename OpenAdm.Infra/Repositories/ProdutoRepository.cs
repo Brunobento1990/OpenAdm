@@ -13,7 +13,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     : GenericRepository<Produto>(parceiroContext), IProdutoRepository
 {
     private readonly ParceiroContext _parceiroContext = parceiroContext;
-    private const int _take = 5;
+    private const int _take = 6;
 
     public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {

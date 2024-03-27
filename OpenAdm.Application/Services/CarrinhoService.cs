@@ -26,46 +26,6 @@ public class CarrinhoService : ICarrinhoService
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     }
 
-    public async Task<bool> AdicionarProdutoAsync(IList<AddCarrinhoModel> addCarrinhoModel)
-    {
-        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
-        var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
-
-        if (carrinho.UsuarioId == Guid.Empty)
-            carrinho.UsuarioId = Guid.Parse(_key);
-
-        foreach (var item in addCarrinhoModel)
-        {
-            var addProduto = carrinho?
-            .Produtos
-            .FirstOrDefault(x =>
-                x.ProdutoId == item.ProdutoId &&
-                x.PesoId == item.PesoId &&
-                x.TamanhoId == item.TamanhoId);
-
-            if (addProduto == null)
-            {
-                addProduto = new()
-                {
-                    ProdutoId = item.ProdutoId,
-                    TamanhoId = item.TamanhoId,
-                    PesoId = item.PesoId,
-                    Quantidade = item.Quantidade
-                };
-
-                carrinho?.Produtos.Add(addProduto);
-            }
-            else
-            {
-                addProduto.Quantidade += item.Quantidade;
-            }
-        }
-
-        await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
-
-        return true;
-    }
-
     public async Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId)
     {
         var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
@@ -74,13 +34,16 @@ public class CarrinhoService : ICarrinhoService
         if (carrinho.UsuarioId == Guid.Empty)
             carrinho.UsuarioId = Guid.Parse(_key);
 
-        var produto = carrinho.Produtos.FirstOrDefault(x => x.ProdutoId == produtoId);
-
-        if (produto != null)
+        var produtos = carrinho.Produtos.Where(x => x.ProdutoId == produtoId).ToList();
+        foreach (var produto in produtos)
         {
-            carrinho.Produtos.Remove(produto);
-            await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
+            if (produto != null)
+            {
+                carrinho.Produtos.Remove(produto);
+            }
         }
+
+        await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
 
         return true;
     }
@@ -169,7 +132,7 @@ public class CarrinhoService : ICarrinhoService
         await _carrinhoRepository.DeleteCarrinhoAsync(usuarioId.ToString());
     }
 
-    private decimal GetValorUnitarioProduto(string? cnpj, decimal? valorUnitarioAtacado, decimal? valorUnitarioVarejo)
+    private static decimal GetValorUnitarioProduto(string? cnpj, decimal? valorUnitarioAtacado, decimal? valorUnitarioVarejo)
     {
         var isAtacado = !string.IsNullOrWhiteSpace(cnpj);
 

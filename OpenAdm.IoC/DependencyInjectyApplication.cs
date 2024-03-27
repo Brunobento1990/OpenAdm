@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Application.Services;
+using OpenAdm.Application.Services.Carrinhos;
 
 namespace OpenAdm.IoC;
 
@@ -30,5 +32,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IMovimentacaoDeProdutosService, MovimentacaoDeProdutosService>();
         services.AddScoped<IEstoqueService, EstoqueService>();
         services.AddScoped<ILojasParceirasService, LojasParceirasService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<IAddCarrinhoService, AddCarrinhoService>();
     }
 }

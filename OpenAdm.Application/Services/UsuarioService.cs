@@ -37,8 +37,9 @@ public class UsuarioService : IUsuarioService
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
 
-        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token);
+        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
     }
 
     public async Task<UsuarioViewModel> GetUsuarioByIdAsync()
@@ -75,7 +76,8 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
 
-        return new(usuarioViewModel, token);
+        return new(usuarioViewModel, token, refreshToken);
     }
 }
