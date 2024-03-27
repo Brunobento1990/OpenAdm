@@ -23,7 +23,8 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
 
-        return new(usuarioViewModel, token);
+        return new(usuarioViewModel, token, refreshToken);
     }
 }

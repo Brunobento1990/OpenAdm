@@ -74,13 +74,16 @@ public class CarrinhoService : ICarrinhoService
         if (carrinho.UsuarioId == Guid.Empty)
             carrinho.UsuarioId = Guid.Parse(_key);
 
-        var produto = carrinho.Produtos.FirstOrDefault(x => x.ProdutoId == produtoId);
-
-        if (produto != null)
+        var produtos = carrinho.Produtos.Where(x => x.ProdutoId == produtoId).ToList();
+        foreach (var produto in produtos)
         {
-            carrinho.Produtos.Remove(produto);
-            await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
+            if (produto != null)
+            {
+                carrinho.Produtos.Remove(produto);
+            }
         }
+
+        await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
 
         return true;
     }
