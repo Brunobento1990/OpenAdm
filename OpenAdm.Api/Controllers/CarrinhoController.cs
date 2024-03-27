@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Domain.Model.Carrinho;
 
 namespace OpenAdm.Api.Controllers;
@@ -12,10 +13,12 @@ namespace OpenAdm.Api.Controllers;
 public class CarrinhoController : ControllerBaseApi
 {
     private readonly ICarrinhoService _carrinhoService;
+    private readonly IAddCarrinhoService _addCarrinhoSerice;
 
-    public CarrinhoController(ICarrinhoService carrinhoService)
+    public CarrinhoController(ICarrinhoService carrinhoService, IAddCarrinhoService addCarrinhoSerice)
     {
         _carrinhoService = carrinhoService;
+        _addCarrinhoSerice = addCarrinhoSerice;
     }
 
     [HttpPut("adicionar")]
@@ -23,7 +26,7 @@ public class CarrinhoController : ControllerBaseApi
     {
         try
         {
-            await _carrinhoService.AdicionarProdutoAsync(addCarrinhoDto);
+            await _addCarrinhoSerice.AddCarrinhoAsync(addCarrinhoDto);
             return Ok(new { message = "Produto adicionado com sucesso!" });
         }
         catch (Exception ex)
