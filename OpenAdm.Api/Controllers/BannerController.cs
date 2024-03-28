@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Mensageria.Interfaces;
-using OpenAdm.Application.Models.Banners;
 
 using OpenAdm.Infra.Paginacao;
 

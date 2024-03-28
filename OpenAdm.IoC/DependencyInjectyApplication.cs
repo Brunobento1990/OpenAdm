@@ -34,6 +34,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IEstoqueService, EstoqueService>();
         services.AddScoped<ILojasParceirasService, LojasParceirasService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<IProdutosMaisVendidosService, ProdutosMaisVendidosService>();
 
         services.AddScoped<IGetCountCarrinhoService, GetCountCarrinhoService>();
         services.AddScoped<IAddCarrinhoService, AddCarrinhoService>();

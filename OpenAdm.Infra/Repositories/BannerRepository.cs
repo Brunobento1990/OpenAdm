@@ -24,6 +24,8 @@ public class BannerRepository(ParceiroContext parceiroContext)
     {
         return await _parceiroContext
             .Banners
+            .OrderBy(x => Guid.NewGuid())
+            .Take(5)
             .Where(x => x.Ativo)
             .ToListAsync();
     }

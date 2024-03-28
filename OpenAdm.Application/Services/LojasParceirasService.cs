@@ -72,6 +72,11 @@ public class LojasParceirasService : ILojasParceirasService
         };
     }
 
+    public async Task<IList<string?>> ListLojasParceirasViewModelAsync()
+    {
+        return await _lojasParceirasRepository.GetFotosLojasParceirasAsync();
+    }
+
     public async Task<LojasParceirasViewModel> UpdateLojaParceiraAsync(UpdateLojaParceiraDto updateLojaParceiraDto)
     {
         var lojaParceira = await GetLojaAsync(updateLojaParceiraDto.Id);

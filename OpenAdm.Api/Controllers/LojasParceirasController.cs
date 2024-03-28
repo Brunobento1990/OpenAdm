@@ -92,4 +92,19 @@ public class LojasParceirasController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [HttpGet("list")]
+    [ResponseCache(CacheProfileName = "Default300")]
+    public async Task<IActionResult> List()
+    {
+        try
+        {
+            var response = await _lojasParceirasService.ListLojasParceirasViewModelAsync();
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }
