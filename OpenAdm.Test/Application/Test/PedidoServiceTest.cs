@@ -8,7 +8,8 @@ using OpenAdm.Application.Models.Pedidos;
 using Domain.Pkg.Model;
 using Domain.Pkg.Entities;
 using OpenAdm.Application.Models.Usuarios;
-using Xunit.Abstractions;
+using QuestPDF.Infrastructure;
+using OpenAdm.Application.Services.Pedidos;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -27,7 +28,7 @@ public class PedidoServiceTest
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object, itemTabelaDePrecoRepositoryMock.Object);
+        var pedidoService = new UpdateStatusPedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
 
         await Assert
             .ThrowsAnyAsync<ExceptionApi>(
@@ -47,7 +48,7 @@ public class PedidoServiceTest
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object, itemTabelaDePrecoRepositoryMock.Object);
+        var pedidoService = new UpdateStatusPedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object);
         var pedidoViewModel = await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus);
 
         Assert.NotNull(pedidoViewModel);
@@ -56,22 +57,21 @@ public class PedidoServiceTest
         Assert.Equal(pedido.StatusPedido, pedidoViewModel.StatusPedido);
     }
 
-    //[Fact]
-    //public async Task DeveEfetuarDownloadBase64DoPedido()
-    //{
-    //    var pedido = PedidoBuilder.Init().Build();
-    //    QuestPDF.Settings.License = LicenseType.Community;
-    //    var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-    //    var tabelaDePrecoRepositoryMock = new Mock<ITabelaDePrecoRepository>();
-    //    var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
+    [Fact]
+    public async Task DeveEfetuarDownloadBase64DoPedido()
+    {
+        var pedido = PedidoBuilder.Init().Build();
+        QuestPDF.Settings.License = LicenseType.Community;
+        var pedidoRepositoryMock = new Mock<IPedidoRepository>();
+        var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
 
-    //    pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
+        pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-    //    var pedidoService = new PedidoService(pedidoRepositoryMock.Object, tabelaDePrecoRepositoryMock.Object, processarPedidoServiceMock.Object);
-    //    var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
+        var pedidoService = new PedidoDownloadService(pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object);
+        var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
-    //    Assert.NotNull(pdf);
-    //}
+        Assert.NotNull(pdf);
+    }
 
     [Fact]
     public async Task DeveExcluirPedido()
@@ -79,13 +79,11 @@ public class PedidoServiceTest
         var pedido = PedidoBuilder.Init().Build();
 
         var pedidoRepositoryMock = new Mock<IPedidoRepository>();
-        var processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
-        var itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
 
         pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
         pedidoRepositoryMock.Setup(x => x.DeleteAsync(pedido)).ReturnsAsync(true);
 
-        var pedidoService = new PedidoService(pedidoRepositoryMock.Object, processarPedidoServiceMock.Object, itemTabelaDePrecoRepositoryMock.Object);
+        var pedidoService = new DeletePedidoService(pedidoRepositoryMock.Object);
         var result = await pedidoService.DeletePedidoAsync(pedido.Id);
 
         Assert.IsType<bool>(result);
@@ -149,8 +147,7 @@ public class PedidoServiceTest
             x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
             .ReturnsAsync(itensTabelaDePreco);
 
-
-        var service = new PedidoService(
+        var service = new CreatePedidoService(
             pedidoRepositoryMock.Object,
             processarPedidoServiceMock.Object,
             itemTabelaDePrecoRepositoryMock.Object);
@@ -197,7 +194,7 @@ public class PedidoServiceTest
             x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
             .ReturnsAsync(itensTabelaDePreco);
 
-        var service = new PedidoService(
+        var service = new CreatePedidoService(
             pedidoRepositoryMock.Object,
             processarPedidoServiceMock.Object,
             itemTabelaDePrecoRepositoryMock.Object);
@@ -265,7 +262,7 @@ public class PedidoServiceTest
             x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
             .ReturnsAsync(itensTabelaDePreco);
 
-        var service = new PedidoService(
+        var service = new CreatePedidoService(
             pedidoRepositoryMock.Object,
             processarPedidoServiceMock.Object,
             itemTabelaDePrecoRepositoryMock.Object);

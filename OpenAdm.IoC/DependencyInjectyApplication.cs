@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Carrinhos;
+using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Services;
 using OpenAdm.Application.Services.Carrinhos;
+using OpenAdm.Application.Services.Pedidos;
 
 namespace OpenAdm.IoC;
 
@@ -18,7 +20,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<ICategoriaService, CategoriaService>();
         services.AddScoped<IProdutoService, ProdutoService>();
         services.AddScoped<ILoginUsuarioService, LoginUsuarioService>();
-        services.AddScoped<ICarrinhoService, CarrinhoService>();
         services.AddScoped<IUsuarioService, UsuarioService>();
         services.AddScoped<IItensPedidoService, ItensPedidoService>();
         services.AddScoped<IEsqueceuSenhaService, EsqueceuSenhaService>();
@@ -33,6 +34,16 @@ public static class DependencyInjectyApplication
         services.AddScoped<IEstoqueService, EstoqueService>();
         services.AddScoped<ILojasParceirasService, LojasParceirasService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<IProdutosMaisVendidosService, ProdutosMaisVendidosService>();
+
+        services.AddScoped<IGetCountCarrinhoService, GetCountCarrinhoService>();
         services.AddScoped<IAddCarrinhoService, AddCarrinhoService>();
+        services.AddScoped<IGetCarrinhoService, GetCarrinhoService>();
+        services.AddScoped<IDeleteProdutoCarrinhoService, DeleteProdutoCarrinhoService>();
+
+        services.AddScoped<IPedidoDownloadService, PedidoDownloadService>();
+        services.AddScoped<ICreatePedidoService, CreatePedidoService>();
+        services.AddScoped<IUpdateStatusPedidoService, UpdateStatusPedidoService>();
+        services.AddScoped<IDeletePedidoService, DeletePedidoService>();
     }
 }

@@ -2,10 +2,10 @@
 using OpenAdm.Application.Interfaces;
 using Domain.Pkg.Errors;
 using OpenAdm.Domain.Interfaces;
-using static BCrypt.Net.BCrypt;
 using Domain.Pkg.Interfaces;
 using Domain.Pkg.Model;
 using Domain.Pkg.Cryptography;
+using OpenAdm.Application.Adapters;
 
 namespace OpenAdm.Application.Services;
 
@@ -59,7 +59,7 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
 
         if (result)
         {
-            var newSenha = HashPassword(senha, 10);
+            var newSenha = PasswordAdapter.GenerateHash(senha);
             usuario.UpdateSenha(newSenha);
             await _usuarioRepository.UpdateAsync(usuario);
         }

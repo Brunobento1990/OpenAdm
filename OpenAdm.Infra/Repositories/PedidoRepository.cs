@@ -44,7 +44,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        var pedido = await _parceiroContext
             .Pedidos
             .AsNoTracking()
             .Include(x => x.ItensPedido)
@@ -55,6 +55,35 @@ public class PedidoRepository(ParceiroContext parceiroContext)
                 .ThenInclude(x => x.Peso)
             .Include(x => x.Usuario)
             .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (pedido != null)
+        {
+            foreach (var item in pedido.ItensPedido)
+            {
+                if (item.Pedido != null)
+                    item.Pedido = null;
+
+                if (item.Produto != null)
+                {
+                    item.Produto.Tamanhos = new();
+                    item.Produto.Pesos = new();
+                    item.Produto.ItensPedido = new();
+                    item.Produto.ItensTabelaDePreco = new();
+                }
+
+                if (item.Tamanho != null)
+                {
+                    item.Tamanho.ItensPedido = new();
+                }
+
+                if (item.Peso != null)
+                {
+                    item.Peso.ItensPedido = new();
+                }
+            }
+        }
+
+        return pedido;
     }
 
     public async Task<List<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido)

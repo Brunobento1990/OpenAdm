@@ -26,8 +26,8 @@ public class UsuarioBuilder
         _senha = "12345678";
         _nome = faker.Person.FirstName;
         _telefone = "12345678911";
-        _cnpj = faker.Person.Cpf();
-        _cpf = faker.Person.Cpf();
+        _cnpj = "12345678910";
+        _cpf = "12345678910";
     }
 
     public static UsuarioBuilder Init() => new();

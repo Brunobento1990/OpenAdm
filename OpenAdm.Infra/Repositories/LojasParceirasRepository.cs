@@ -20,6 +20,8 @@ public class LojasParceirasRepository : GenericRepository<LojasParceiras>, ILoja
         return await _parceiroContext
             .LojasParceiras
             .Where(x => x.Foto != null)
+            .OrderBy(x => Guid.NewGuid())
+            .Take(5)
             .Select(x => x.Foto)
             .ToListAsync();
     }

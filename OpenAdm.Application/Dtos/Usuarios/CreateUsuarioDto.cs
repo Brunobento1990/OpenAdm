@@ -1,7 +1,7 @@
 ﻿using Domain.Pkg.Entities;
+using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Models;
 using System.ComponentModel.DataAnnotations;
-using static BCrypt.Net.BCrypt;
 
 namespace OpenAdm.Application.Dtos.Usuarios;
 
@@ -30,7 +30,7 @@ public class CreateUsuarioDto : BaseModel
 
     public Usuario ToEntity()
     {
-        var senha = HashPassword(Senha, 10);
+        var senha = PasswordAdapter.GenerateHash(Senha);
 
         var date = DateTime.Now;
         return new Usuario(
