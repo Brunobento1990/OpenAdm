@@ -17,9 +17,24 @@ public class LojasParceirasRepository : GenericRepository<LojasParceiras>, ILoja
 
     public async Task<IList<string?>> GetFotosLojasParceirasAsync()
     {
+        //var count = await _parceiroContext
+        //    .LojasParceiras
+        //    .AsNoTracking()
+        //    .CountAsync();
+
+        //var randNum = new Random();
+        //var numeros = new List<long>();
+
+        //for (int i = 0; i < 5; i++)
+        //{
+        //    numeros.Add(randNum.Next(count));
+        //}
+
         return await _parceiroContext
             .LojasParceiras
             .Where(x => x.Foto != null)
+            .OrderBy(x => Guid.NewGuid())
+            .Take(5)
             .Select(x => x.Foto)
             .ToListAsync();
     }

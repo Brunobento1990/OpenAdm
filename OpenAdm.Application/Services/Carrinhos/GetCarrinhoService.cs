@@ -1,57 +1,29 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Application.Models.Carrinhos;
 using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model.Carrinho;
 
-namespace OpenAdm.Application.Services;
+namespace OpenAdm.Application.Services.Carrinhos;
 
-public class CarrinhoService : ICarrinhoService
+public sealed class GetCarrinhoService : IGetCarrinhoService
 {
     private readonly ICarrinhoRepository _carrinhoRepository;
     private readonly IProdutoRepository _produtoRepository;
-    private readonly ITokenService _tokenService;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
 
-    public CarrinhoService(
-        ICarrinhoRepository carrinhoRepository,
-        IProdutoRepository produtoRepository,
-        ITokenService tokenService,
+    public GetCarrinhoService(
+        ICarrinhoRepository carrinhoRepository, 
+        IProdutoRepository produtoRepository, 
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
     {
         _carrinhoRepository = carrinhoRepository;
         _produtoRepository = produtoRepository;
-        _tokenService = tokenService;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     }
 
-    public async Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId)
+    public async Task<IList<CarrinhoViewModel>> GetCarrinhoAsync(UsuarioViewModel usuarioViewModel)
     {
-        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
-        var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
-
-        if (carrinho.UsuarioId == Guid.Empty)
-            carrinho.UsuarioId = Guid.Parse(_key);
-
-        var produtos = carrinho.Produtos.Where(x => x.ProdutoId == produtoId).ToList();
-        foreach (var produto in produtos)
-        {
-            if (produto != null)
-            {
-                carrinho.Produtos.Remove(produto);
-            }
-        }
-
-        await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
-
-        return true;
-    }
-
-    public async Task<IList<CarrinhoViewModel>> GetCarrinhoAsync()
-    {
-        var usuarioViewModel = _tokenService.GetTokenUsuarioViewModel();
-
         var carrinhosViewModels = new List<CarrinhoViewModel>();
 
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(usuarioViewModel.Id.ToString());
@@ -120,16 +92,6 @@ public class CarrinhoService : ICarrinhoService
         }
 
         return carrinhosViewModels;
-    }
-
-    public async Task<int> GetCountCarrinhoAsync()
-    {
-        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
-        return await _carrinhoRepository.GetCountCarrinhoAsync(_key);
-    }
-    public async Task LimparCarrinhoDoUsuarioAsync(Guid usuarioId)
-    {
-        await _carrinhoRepository.DeleteCarrinhoAsync(usuarioId.ToString());
     }
 
     private static decimal GetValorUnitarioProduto(string? cnpj, decimal? valorUnitarioAtacado, decimal? valorUnitarioVarejo)

@@ -1,14 +1,10 @@
 ﻿using Domain.Pkg.Entities;
-using ExpectedObjects;
-using Microsoft.AspNetCore.Http;
-using OpenAdm.Application.Models.Tokens;
-using OpenAdm.Application.Services;
+using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Application.Services.Carrinhos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Carrinho;
 using OpenAdm.Test.Domain.Builder;
 using OpenAdm.Test.Memory;
-using System.Security.Claims;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -44,14 +40,10 @@ public class CarrinhoServiceTest
 
         var produtoRepository = new Mock<IProdutoRepository>();
         var itemTabelaDePrecoRepository = new Mock<IItemTabelaDePrecoRepository>();
-        var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        var tokenService = new TokenService(httpContextAccessorMock.Object);
-        var identity = new ClaimsIdentity(ConfiguracaoDeToken.GenerateClaimsFuncionario(usuario));
-        httpContextAccessorMock.Setup(x => x.HttpContext.User.Identity).Returns(identity);
         produtoRepository.Setup(x => x.GetProdutosByListIdAsync(new List<Guid>() { produto.Id })).ReturnsAsync(new List<Produto>() { produto });
         itemTabelaDePrecoRepository.Setup(x => x.GetItensTabelaDePrecoByIdProdutosAsync(new List<Guid>() { produto.Id })).ReturnsAsync(new List<ItensTabelaDePreco>() { itemTabelaDePreco });
-        var carrinhoService = new CarrinhoService(carrinhoRepository, produtoRepository.Object, tokenService, itemTabelaDePrecoRepository.Object);
-        var carrinhoReturn = await carrinhoService.GetCarrinhoAsync();
+        var carrinhoService = new GetCarrinhoService(carrinhoRepository, produtoRepository.Object, itemTabelaDePrecoRepository.Object);
+        var carrinhoReturn = await carrinhoService.GetCarrinhoAsync(new UsuarioViewModel().ToModel(usuario));
 
         var produtoCarrinho = carrinhoReturn.FirstOrDefault(x => x.Id == produto.Id);
 
@@ -61,28 +53,43 @@ public class CarrinhoServiceTest
     }
 
     [Fact]
-    public async void DeveAdicionarProdutoNoCarrinho()
+    public async Task DeveAdicionarProdutoNoCarrinho()
     {
-        ConfiguracaoDeToken.Configure("86c3fb1e-6b8b-42d0-922f-5c0fcd4b042c", "issue", "audience", 2);
-
         var usuario = UsuarioBuilder.Init().Build();
+        var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho");
+        var produto = ProdutoBuilder.Init().Build();
+        var addCarrinho = new List<AddCarrinhoModel>()
+        {
+            new()
+            {
+                TamanhoId = tamanho.Id,
+                Quantidade = 3,
+                ProdutoId = produto.Id
+            }
+        };
         var carrinho = new CarrinhoModel()
         {
             UsuarioId = usuario.Id,
-            Produtos = new()
+            Produtos = addCarrinho
         };
+
+        var carrinhoRepository = new CarrinhoRepositoryMemory();
+        var carrinhoService = new AddCarrinhoService(carrinhoRepository);
+        var result = await carrinhoService.AddCarrinhoAsync(addCarrinho, new UsuarioViewModel().ToModel(usuario));
+
+        var carrinhoCount = new GetCountCarrinhoService(carrinhoRepository);
+        var count = await carrinhoCount.GetCountCarrinhoAsync(usuario.Id);
+
+        Assert.Equal(carrinho.Produtos.Count, count);
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task DeveDeletarProdutoDoCarrinho()
+    {
+        var usuario = UsuarioBuilder.Init().Build();
         var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho");
         var produto = ProdutoBuilder.Init().Build();
-        var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-        var tokenService = new TokenService(httpContextAccessorMock.Object);
-        var identity = new ClaimsIdentity(ConfiguracaoDeToken.GenerateClaimsFuncionario(usuario));
-        var carrinhoRepository = new Mock<ICarrinhoRepository>();
-        carrinhoRepository.Setup(x => x.GetCarrinhoAsync(usuario.Id.ToString())).ReturnsAsync(carrinho);
-
-        httpContextAccessorMock.Setup(x => x.HttpContext.User.Identity).Returns(identity);
-
-        var carrinhoService = new AddCarrinhoService(carrinhoRepository.Object, tokenService);
-
         var addCarrinho = new List<AddCarrinhoModel>()
         {
             new()
@@ -93,8 +100,14 @@ public class CarrinhoServiceTest
             }
         };
 
-        var result = await carrinhoService.AddCarrinhoAsync(addCarrinho);
+        var carrinhoRepository = new CarrinhoRepositoryMemory();
+        var carrinhoService = new AddCarrinhoService(carrinhoRepository);
+        var result = await carrinhoService.AddCarrinhoAsync(addCarrinho, new UsuarioViewModel().ToModel(usuario));
 
+        var deleteCarrinho = new DeleteProdutoCarrinhoService(carrinhoRepository);
+        var resultDelete = await deleteCarrinho.DeleteProdutoCarrinhoAsync(produto.Id, usuario.Id);
+
+        Assert.True(resultDelete);
         Assert.True(result);
     }
 }

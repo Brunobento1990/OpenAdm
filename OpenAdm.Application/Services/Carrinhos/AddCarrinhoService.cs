@@ -1,5 +1,5 @@
-﻿using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Interfaces.Carrinhos;
+﻿using OpenAdm.Application.Interfaces.Carrinhos;
+using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Carrinho;
 
@@ -8,17 +8,15 @@ namespace OpenAdm.Application.Services.Carrinhos;
 public sealed class AddCarrinhoService : IAddCarrinhoService
 {
     private readonly ICarrinhoRepository _carrinhoRepository;
-    private readonly ITokenService _tokenService;
 
-    public AddCarrinhoService(ICarrinhoRepository carrinhoRepository, ITokenService tokenService)
+    public AddCarrinhoService(ICarrinhoRepository carrinhoRepository)
     {
         _carrinhoRepository = carrinhoRepository;
-        _tokenService = tokenService;
     }
 
-    public async Task<bool> AddCarrinhoAsync(IList<AddCarrinhoModel> addCarrinhoModel)
+    public async Task<bool> AddCarrinhoAsync(IList<AddCarrinhoModel> addCarrinhoModel, UsuarioViewModel usuarioViewModel)
     {
-        var _key = _tokenService.GetTokenUsuarioViewModel().Id.ToString();
+        var _key = usuarioViewModel.Id.ToString();
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
 
         if (carrinho.UsuarioId == Guid.Empty)

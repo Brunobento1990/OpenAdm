@@ -2,8 +2,7 @@
 using RabbitMQ.Client;
 using System.Text.Json;
 using System.Text;
-using OpenAdm.Domain.Factories.Interfaces;
-using System.Threading.Channels;
+using Microsoft.AspNetCore.Http;
 
 namespace OpenAdm.Application.Mensageria.Producer;
 
@@ -12,9 +11,13 @@ public class ProducerGeneric<T> : IProducerGeneric<T> where T : class
 
     private readonly IModel _channel;
     private readonly string _referer;
-    public ProducerGeneric(IModel channel, IDomainFactory domainFactory)
+    public ProducerGeneric(IModel channel, IHttpContextAccessor httpContextAccessor)
     {
-        _referer = domainFactory.GetDomainParceiro();
+        _referer = httpContextAccessor?
+           .HttpContext?
+           .Request?
+           .Headers?
+           .FirstOrDefault(x => x.Key == "Referer").Value.ToString() ?? throw new Exception();
         _channel = channel;
     }
     public void Publish(T obj, string exchange)

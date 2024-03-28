@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using static BCrypt.Net.BCrypt;
+﻿using OpenAdm.Application.Adapters;
+using System.ComponentModel.DataAnnotations;
 
 namespace OpenAdm.Application.Dtos.Usuarios;
 
@@ -15,6 +15,6 @@ public class UpdateSenhaUsuarioDto
 
     public string HashSenha()
     {
-        return HashPassword(Senha, 10);
+        return PasswordAdapter.GenerateHash(Senha);
     }
 }

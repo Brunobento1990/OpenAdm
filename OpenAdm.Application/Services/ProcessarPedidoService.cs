@@ -3,10 +3,6 @@ using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Application.Mensageria.Interfaces;
 using Domain.Pkg.Entities;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using Domain.Pkg.Pdfs.Services;
-using System.Text;
 
 namespace OpenAdm.Application.Services;
 
@@ -26,19 +22,6 @@ public class ProcessarPedidoService : IProcessarPedidoService
         _pedidoRepository = pedidoRepository;
     }
 
-    public async Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId)
-    {
-        var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
-
-        var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
-        var logo = configuracoesDePedido?.Logo != null ? Encoding.UTF8.GetString(configuracoesDePedido.Logo) : null;
-
-        var pdf = PedidoPdfService.GeneratePdfAsync(pedido, logo);
-
-        return pdf;
-    }
-
     public async Task ProcessarCreateAsync(Guid pedidoId)
     {
         var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync()
@@ -54,31 +37,6 @@ public class ProcessarPedidoService : IProcessarPedidoService
                 Logo = configuracoesDePedido.Logo,
                 Pedido = pedido
             };
-
-            foreach (var item in pedido.ItensPedido)
-            {
-                if (item.Pedido != null)
-                    item.Pedido = null;
-
-                if(item.Produto != null)
-                {
-                    item.Produto.Tamanhos = new();
-                    item.Produto.Pesos = new();
-                    item.Produto.ItensPedido = new();
-                    item.Produto.ItensTabelaDePreco = new();
-                }
-
-                if(item.Tamanho != null)
-                {
-                    item.Tamanho.ItensPedido = new();
-                }
-
-                if (item.Peso != null)
-                {
-                    item.Peso.ItensPedido = new();
-                }
-            }
-
             _producerGeneric.Publish(processarPedidoModel, "pedido-create");
         }
     }

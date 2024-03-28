@@ -3,7 +3,7 @@ using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Cached.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using OpenAdm.Domain.Factories.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace OpenAdm.Infra.Cached.Services;
 
@@ -14,10 +14,10 @@ public class CachedService<T> : ICachedService<T> where T : class
     private readonly JsonSerializerOptions _serializerOptions;
     private static readonly double _absolutExpiration = 60;
     private static readonly double _slidingExpiration = 30;
-    private readonly IDomainFactory _domainFactory;
+    private readonly string _dominimo;
 
     public CachedService(IDistributedCache distributedCache,
-        IDomainFactory domainFactory)
+        IHttpContextAccessor httpContextAccessor)
     {
         _serializerOptions = new()
         {
@@ -30,7 +30,11 @@ public class CachedService<T> : ICachedService<T> where T : class
                       .SetSlidingExpiration(TimeSpan.FromMinutes(_slidingExpiration));
 
         _distributedCache = distributedCache;
-        _domainFactory = domainFactory;
+        _dominimo = httpContextAccessor?
+           .HttpContext?
+           .Request?
+           .Headers?
+           .FirstOrDefault(x => x.Key == "Referer").Value.ToString() ?? throw new Exception();
     }
 
     public async Task<T?> GetItemAsync(string key)
@@ -75,6 +79,6 @@ public class CachedService<T> : ICachedService<T> where T : class
 
     private string GetNewKey(string key)
     {
-        return $"{_domainFactory.GetDomainParceiro()}-{key}";
+        return $"{_dominimo}-{key}";
     }
 }

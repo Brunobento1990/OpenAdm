@@ -39,7 +39,7 @@ public class TokenServiceTest
             Numero = 1
         };
         var tokenService = new TokenService(httpContextAccessorMock.Object);
-        var identity = new ClaimsIdentity(ConfiguracaoDeToken.GenerateClaimsFuncionario(funcionario));
+        var identity = new ClaimsIdentity(TokenService.GenerateClaims(funcionario));
         httpContextAccessorMock.Setup(x => x.HttpContext.User.Identity).Returns(identity);
 
         var isFuncionario = tokenService.IsFuncionario();

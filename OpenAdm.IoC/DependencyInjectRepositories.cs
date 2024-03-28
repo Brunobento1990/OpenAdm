@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using OpenAdm.Domain.Factories.Interfaces;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Azure.Interfaces;
 using OpenAdm.Infra.Azure.Storage;
 using OpenAdm.Infra.Cached.Cached;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Cached.Services;
-using OpenAdm.Infra.Factories.Factory;
 using OpenAdm.Infra.Repositories;
 
 
@@ -24,7 +22,6 @@ public static class DependencyInjectRepositories
         services.AddTransient(typeof(ICachedService<>), typeof(CachedService<>));
 
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddTransient<IDomainFactory, DomainFactory>();
 
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
         services.AddScoped<ILoginUsuarioRepository, LoginUsuarioRepository>();

@@ -2,5 +2,5 @@
 
 public interface IConfiguracaoParceiroRepository
 {
-    Task<string> GetConexaoDbByDominioAsync(string dominio);
+    Task<string> GetConexaoDbByDominioAsync();
 }

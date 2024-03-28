@@ -1,10 +1,10 @@
 ﻿using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
+using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
-using static BCrypt.Net.BCrypt;
 
 namespace OpenAdm.Application.Services;
 
@@ -18,7 +18,7 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
     {
         var usuario = await _loginUsuarioRepository.LoginAsync(requestLogin.Email);
 
-        if (usuario == null || !Verify(requestLogin.Senha, usuario.Senha))
+        if (usuario == null || !PasswordAdapter.VerifyPassword(requestLogin.Senha, usuario.Senha))
             throw new ExceptionApi(CodigoErrors.ErrorEmailOuSenhaInvalido);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);

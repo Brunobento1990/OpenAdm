@@ -1,11 +1,10 @@
 ﻿using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
+using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Funcionarios;
 using OpenAdm.Application.Models.Logins;
-using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Interfaces;
-using static BCrypt.Net.BCrypt;
 
 namespace OpenAdm.Application.Services;
 
@@ -19,7 +18,7 @@ public class LoginFuncionarioService(ITokenService tokenService, ILoginFuncionar
     {
         var funcionario = await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(requestLogin.Email);
 
-        if (funcionario == null || !Verify(requestLogin.Senha, funcionario.Senha))
+        if (funcionario == null || !PasswordAdapter.VerifyPassword(requestLogin.Senha, funcionario.Senha))
             throw new ExceptionApi(CodigoErrors.ErrorEmailOuSenhaInvalido);
 
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
