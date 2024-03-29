@@ -4,6 +4,5 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IHomeSevice
 {
-    Task<HomeECommerceViewModel> GetHomeEcommerceAsync();
     Task<HomeAdmViewModel> GetHomeAdmAsync();
 }
