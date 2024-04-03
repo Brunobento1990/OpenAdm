@@ -1,4 +1,5 @@
 using Domain.Pkg.Cryptography;
+using Domain.Pkg.Pdfs.Configure;
 using dotenv.net;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
@@ -6,13 +7,10 @@ using OpenAdm.Api.Configure;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
-using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
-
-QuestPDF.Settings.License = LicenseType.Community;
 
 var keyJwt = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
 var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
@@ -43,6 +41,7 @@ builder.Services.InjectRepositories(redisString);
 builder.Services.InjectHttpClient(urlDiscord);
 builder.Services.InjectMensageria(rabbitMqString);
 
+ConfigurePdfQuest.ConfigureQuest();
 
 var app = builder.Build();
 

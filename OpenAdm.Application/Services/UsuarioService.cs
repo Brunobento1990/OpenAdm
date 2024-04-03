@@ -42,6 +42,12 @@ public class UsuarioService : IUsuarioService
         return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
     }
 
+    public async Task<IList<UsuarioViewModel>> GetAllUsuariosAsync()
+    {
+        var usuarios = await _usuarioRepository.GetAllUsuariosAsync();
+        return usuarios.Select(x => new UsuarioViewModel().ToModel(x)).ToList();
+    }
+
     public async Task<UsuarioViewModel> GetUsuarioByIdAsync()
     {
         var idToken = _tokenService.GetTokenUsuarioViewModel().Id;

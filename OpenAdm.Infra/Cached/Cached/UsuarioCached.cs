@@ -60,4 +60,21 @@ public class UsuarioCached : IUsuarioRepository
     {
         return await _usuarioRepository.GetUsuarioByEmailAsync(email);
     }
+
+    public async Task<IList<Usuario>> GetAllUsuariosAsync()
+    {
+        var usuarios = await _cachedService.GetListItemAsync(_keyList);
+
+        if(usuarios is null)
+        {
+            usuarios = await _usuarioRepository.GetAllUsuariosAsync();
+
+            if(usuarios?.Count > 0)
+            {
+                await _cachedService.SetListItemAsync(_keyList, usuarios);
+            }
+        }
+
+        return usuarios ?? new List<Usuario>();
+    }
 }

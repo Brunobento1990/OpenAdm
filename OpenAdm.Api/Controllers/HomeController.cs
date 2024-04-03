@@ -15,21 +15,6 @@ public class HomeController : ControllerBaseApi
     }
 
     [ResponseCache(CacheProfileName = "Default300")]
-    [HttpGet("ecommerce")]
-    public async Task<IActionResult> ListEcommerce()
-    {
-        try
-        {
-            var home = await _homeEcommerSevice.GetHomeEcommerceAsync();
-            return Ok(home);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
-    }
-
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("adm")]
     public async Task<IActionResult> ListAdm()
     {
