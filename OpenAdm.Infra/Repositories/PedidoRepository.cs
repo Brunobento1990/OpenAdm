@@ -5,6 +5,7 @@ using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 using Domain.Pkg.Entities;
 using Domain.Pkg.Enum;
+using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -84,6 +85,26 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         }
 
         return pedido;
+    }
+
+    public async Task<IList<Pedido>> GetPedidosByRelatorioPorPeriodoAsync(RelatorioPedidoDto relatorioPedidoDto)
+    {
+        return await _parceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .OrderByDescending(x => x.DataDeCriacao)
+            .Include(x => x.ItensPedido)
+                .ThenInclude(x => x.Produto)
+            .Include(x => x.ItensPedido)
+                .ThenInclude(x => x.Tamanho)
+            .Include(x => x.ItensPedido)
+                .ThenInclude(x => x.Peso)
+            .Include(x => x.Usuario)
+            .Where(x => x.DataDeCriacao.Date <= relatorioPedidoDto.DataFinal.Date &&
+                x.DataDeCriacao.Date >= relatorioPedidoDto.DataInicial.Date &&
+                x.StatusPedido == StatusPedido.Entregue)
+            .WhereIsNotNull(relatorioPedidoDto.WhereUsuarioId())
+            .ToListAsync();
     }
 
     public async Task<List<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido)

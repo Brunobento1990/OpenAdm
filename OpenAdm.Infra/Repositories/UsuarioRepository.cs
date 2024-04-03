@@ -10,6 +10,14 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
 {
     private readonly ParceiroContext _parceiroContext = parceiroContext;
 
+    public async Task<IList<Usuario>> GetAllUsuariosAsync()
+    {
+        return await _parceiroContext
+            .Usuarios
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public async Task<Usuario?> GetUsuarioByEmailAsync(string email)
     {
         return await _parceiroContext

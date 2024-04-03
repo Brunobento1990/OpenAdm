@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Tokens;
@@ -39,6 +40,22 @@ public class UsuarioController : ControllerBaseApi
         {
             var usuarioViewModel = await _usuarioService.GetUsuarioByIdAsync();
             return Ok(usuarioViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [IsFuncionario]
+    [HttpGet("list")]
+    public async Task<IActionResult> GetUsuarios()
+    {
+        try
+        {
+            var usuariosViewModel = await _usuarioService.GetAllUsuariosAsync();
+            return Ok(usuariosViewModel);
         }
         catch (Exception ex)
         {
