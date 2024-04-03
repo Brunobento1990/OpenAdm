@@ -27,4 +27,4 @@ jobs:
     - name: Push
       run: |
         docker login -u brunobentocaina -p ${{ secrets.DOCKER_HUB_KEY }}
-        docker push brunobentocaina/open-adm-api:latest
+        docker push brunobentocaina/open-adm-api:staging
