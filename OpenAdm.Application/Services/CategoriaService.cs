@@ -1,6 +1,7 @@
 ﻿using Domain.Pkg.Exceptions;
 using OpenAdm.Application.Dtos.Categorias;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Mappers;
 using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -29,7 +30,7 @@ public class CategoriaService : ICategoriaService
         }
 
 
-        var categoria = categoriaCreateDto.ToEntity(nomeFoto);
+        var categoria = EntityMapper.ToCategoriaCreate(categoriaCreateDto, nomeFoto);
 
         await _categoriaRepository.AddAsync(categoria);
 
@@ -86,7 +87,7 @@ public class CategoriaService : ICategoriaService
         var nomeFoto = categoria.NomeFoto;
         var foto = categoria.Foto;
 
-        if(!string.IsNullOrWhiteSpace(updateCategoriaDto.Foto) && !updateCategoriaDto.Foto.StartsWith("https://"))
+        if (!string.IsNullOrWhiteSpace(updateCategoriaDto.Foto) && !updateCategoriaDto.Foto.StartsWith("https://"))
         {
             if (!string.IsNullOrWhiteSpace(categoria.NomeFoto))
             {
