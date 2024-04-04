@@ -21,6 +21,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
                 .AsNoTracking()
                 .AsQueryable()
                 .AsSplitQuery()
+                .IgnoreQueryFilters()
                 .OrderByDescending(x => EF.Property<Pedido>(x, filterModel.OrderBy))
                 .Include(x => x.Usuario)
                 .WhereIsNotNull(filterModel.GetWhereBySearch())
@@ -38,6 +39,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await _parceiroContext
             .Pedidos
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .Include(x => x.Usuario)
             .Include(x => x.ItensPedido)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -48,6 +50,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         var pedido = await _parceiroContext
             .Pedidos
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
                 .ThenInclude(x => x.Produto)
             .Include(x => x.ItensPedido)
@@ -92,6 +95,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await _parceiroContext
             .Pedidos
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .OrderByDescending(x => x.DataDeCriacao)
             .Include(x => x.ItensPedido)
                 .ThenInclude(x => x.Produto)
@@ -111,6 +115,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await _parceiroContext.Pedidos
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
             .OrderByDescending(x => x.Numero)
             .AsQueryable()
@@ -123,6 +128,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await _parceiroContext
             .Pedidos
             .AsNoTracking()
+            .IgnoreQueryFilters()
             .Where(x => x.UsuarioId == usuarioId)
             .CountAsync();
     }

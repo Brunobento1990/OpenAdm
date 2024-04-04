@@ -43,6 +43,7 @@ public class CreateUsuarioDto : BaseModel
             Nome,
             Telefone,
             Cnpj,
-            Cpf);
+            Cpf,
+            true);
     }
 }

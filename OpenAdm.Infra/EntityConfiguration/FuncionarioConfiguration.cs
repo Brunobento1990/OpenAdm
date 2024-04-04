@@ -8,6 +8,7 @@ public class FuncionarioConfiguration : IEntityTypeConfiguration<Funcionario>
 {
     public void Configure(EntityTypeBuilder<Funcionario> builder)
     {
+        builder.HasQueryFilter(x => x.Ativo);
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)
             .IsRequired()
