@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Interfaces;
 
 namespace OpenAdm.Api.Controllers;
@@ -16,7 +17,6 @@ public class ItensPedidoController : ControllerBaseApi
         _itensPedidoService = itensPedidoService;
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-pedido-id")]
     public async Task<IActionResult> GetByPedido([FromQuery] Guid pedidoId)
     {
@@ -24,6 +24,19 @@ public class ItensPedidoController : ControllerBaseApi
         {
             var itens = await _itensPedidoService.GetItensPedidoByPedidoIdAsync(pedidoId);
             return Ok(itens);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+    [HttpPut("update-quantidade")]
+    public async Task<IActionResult> UpdateQuantidade(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto)
+    {
+        try
+        {
+            await _itensPedidoService.EditarQuantidadeDoItemAsync(updateQuantidadeItemPedidoDto);
+            return Ok(new { message = "Item editado com sucesso!" });
         }
         catch (Exception ex)
         {
