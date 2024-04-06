@@ -52,23 +52,17 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ConfiguracoesDePedidoRepository>();
         services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoCached>();
-
         services.AddScoped<PesoRepository>();
         services.AddScoped<IPesoRepository, PesoCached>();
-
         services.AddScoped<TamanhoRepository>();
         services.AddScoped<ITamanhoRepository, TamanhoCached>();
-
         services.AddScoped<IPesosProdutosRepository, PesosProdutosRepository>();
         services.AddScoped<ITamanhosProdutoRepository, TamanhosProdutoRepository>();
-
-        services.AddScoped<ItemTabelaDePrecoRepository>();
-        services.AddScoped<IItemTabelaDePrecoRepository, ItemTabelaDePrecoCached>();
+        services.AddScoped<IItemTabelaDePrecoRepository, ItemTabelaDePrecoRepository>();
         services.AddScoped<IUploadImageBlobClient, UploadImageBlobClient>();
         services.AddScoped<IEstoqueRepository, EstoqueRepository>();
         services.AddScoped<IMovimentacaoDeProdutoRepository, MovimentacaoDeProdutoRepository>();
         services.AddScoped<ILojasParceirasRepository, LojasParceirasRepository>();
-
         services.AddScoped<TopUsuariosRepository>();
         services.AddScoped<ITopUsuariosRepository, TopUsuariosCached>();
     }

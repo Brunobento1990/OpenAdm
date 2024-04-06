@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
-using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Api.Controllers.Pedidos;
@@ -38,8 +37,7 @@ public class CreatePedidoController : ControllerBaseApi
             {
                 return Unauthorized();
             }
-            var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-            var result = await _createPedidoService.CreatePedidoAsync(itensPedidoModels, usuarioViewModel);
+            var result = await _createPedidoService.CreatePedidoAsync(itensPedidoModels, usuario);
 
             return Ok(new { message = "Pedido criado com sucesso!" });
         }

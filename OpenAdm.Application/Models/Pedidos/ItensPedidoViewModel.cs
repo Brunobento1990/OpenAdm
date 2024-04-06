@@ -37,7 +37,11 @@ public class ItensPedidoViewModel : BaseModel
             Tamanho = new TamanhoViewModel().ToModel(entity.Tamanho);
         }
 
-        Produto = new ProdutoViewModel().ToModel(entity.Produto) ?? new();
+        if(entity.Produto != null)
+        {
+            Produto = new ProdutoViewModel().ToModel(entity.Produto) ?? new();
+        }
+
         ValorUnitario = entity.ValorUnitario;
         ValorTotal = entity.ValorTotal;
         Quantidade = entity.Quantidade;

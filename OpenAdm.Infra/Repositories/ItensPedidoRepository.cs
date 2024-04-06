@@ -5,13 +5,21 @@ using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class ItensPedidoRepository : IItensPedidoRepository
+public class ItensPedidoRepository : GenericRepository<ItensPedido>, IItensPedidoRepository
 {
     private readonly ParceiroContext _parceiroContext;
 
-    public ItensPedidoRepository(ParceiroContext parceiroContext)
+    public ItensPedidoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
         _parceiroContext = parceiroContext;
+    }
+
+    public async Task<ItensPedido?> GetItemPedidoByIdAsync(Guid id)
+    {
+        return await _parceiroContext
+            .ItensPedidos
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<IList<ItensPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId)
