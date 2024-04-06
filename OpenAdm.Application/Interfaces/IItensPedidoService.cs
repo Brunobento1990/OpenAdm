@@ -6,5 +6,6 @@ namespace OpenAdm.Application.Interfaces;
 public interface IItensPedidoService
 {
     Task<IList<ItensPedidoViewModel>> GetItensPedidoByPedidoIdAsync(Guid pedidoId);
-    Task EditarQuantidadeDoItemAsync(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto);
+    Task<ItensPedidoViewModel> EditarQuantidadeDoItemAsync(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto);
+    Task<bool> DeleteItemPedidoAsync(Guid id);
 }

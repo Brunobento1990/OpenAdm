@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domain.Pkg.Errors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Interfaces;
@@ -30,6 +31,25 @@ public class ItensPedidoController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [HttpDelete("delete")]
+    public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
+    {
+        try
+        {
+            var result = await _itensPedidoService.DeleteItemPedidoAsync(id);
+            if (!result)
+            {
+                return BadRequest(new { message = CodigoErrors.ErrorGeneric });
+            }
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
     [HttpPut("update-quantidade")]
     public async Task<IActionResult> UpdateQuantidade(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto)
     {

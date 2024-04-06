@@ -26,14 +26,13 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     }
 
-    public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItensPedidoModel> itensPedidoModels, UsuarioViewModel usuarioViewModel)
+    public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItensPedidoModel> itensPedidoModels, Usuario usuario)
     {
         var date = DateTime.Now;
-        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuarioViewModel.Id);
+        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id);
 
         var produtosIds = itensPedidoModels.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
-        var isAtacado = !string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj);
 
         foreach (var itemTabelaDePreco in itensTabelaDePreco)
         {
@@ -46,9 +45,9 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
             if (preco != null)
             {
-                if (isAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
+                if (usuario.IsAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
                 {
-                    throw new ExceptionApi();
+                    throw new Exception($"Os valores unitários do pedido estão incorretos: usuarioId: {usuario.Id}");
                 }
             }
         }
