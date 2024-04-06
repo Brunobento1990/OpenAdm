@@ -139,7 +139,8 @@ public class EstoqueService : IEstoqueService
             movimentacaoDeProdutoDto.TipoMovimentacaoDeProduto,
             movimentacaoDeProdutoDto.ProdutoId,
             movimentacaoDeProdutoDto.TamanhoId,
-            movimentacaoDeProdutoDto.PesoId);
+            movimentacaoDeProdutoDto.PesoId,
+            movimentacaoDeProdutoDto.Observacao);
 
         await _movimentacaoDeProdutoRepository.AddAsync(movimento);
 

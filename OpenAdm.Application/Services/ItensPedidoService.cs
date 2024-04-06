@@ -12,13 +12,16 @@ public class ItensPedidoService : IItensPedidoService
 {
     private readonly IItensPedidoRepository _itensPedidoRepository;
     private readonly IPedidoRepository _pedidoRepository;
+    private readonly INotificarPedidoEditadoService _notificarPedidoEditadoService;
 
     public ItensPedidoService(
         IItensPedidoRepository itensPedidoRepository,
-        IPedidoRepository pedidoRepository)
+        IPedidoRepository pedidoRepository,
+        INotificarPedidoEditadoService notificarPedidoEditadoService)
     {
         _itensPedidoRepository = itensPedidoRepository;
         _pedidoRepository = pedidoRepository;
+        _notificarPedidoEditadoService = notificarPedidoEditadoService;
     }
 
     public async Task<bool> DeleteItemPedidoAsync(Guid id)
@@ -29,7 +32,7 @@ public class ItensPedidoService : IItensPedidoService
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(item.PedidoId)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        if(pedido.ItensPedido.Count == 1)
+        if (pedido.ItensPedido.Count == 1)
         {
             throw new ExceptionApi("Não é possível excluir o último item do pedido!");
         }
@@ -38,8 +41,12 @@ public class ItensPedidoService : IItensPedidoService
         {
             throw new ExceptionApi("Este pedido já está entregue!");
         }
-
-        return await _itensPedidoRepository.DeleteAsync(item);
+        var result = await _itensPedidoRepository.DeleteAsync(item);
+        if (result)
+        {
+            await _notificarPedidoEditadoService.NotificarAsync(pedido);
+        }
+        return result;
     }
 
     public async Task<ItensPedidoViewModel> EditarQuantidadeDoItemAsync(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto)
@@ -50,13 +57,15 @@ public class ItensPedidoService : IItensPedidoService
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(item.PedidoId)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        if(pedido.StatusPedido != StatusPedido.Aberto)
+        if (pedido.StatusPedido != StatusPedido.Aberto)
         {
             throw new ExceptionApi("Este pedido já está entregue!");
         }
 
         item.EditarQuantidade(updateQuantidadeItemPedidoDto.Quantidade);
         await _itensPedidoRepository.UpdateAsync(item);
+
+        await _notificarPedidoEditadoService.NotificarAsync(pedido);
 
         return new ItensPedidoViewModel().ToModel(item);
     }
