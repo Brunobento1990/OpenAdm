@@ -7,4 +7,5 @@ public interface IConfiguracoesDePedidoService
 {
     Task<ConfiguracoesDePedidoViewModel> GetConfiguracoesDePedidoAsync();
     Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(UpdateConfiguracoesDePedidoDto updateConfiguracoesDePedidoDto);
+    Task<PedidoMinimoViewModel> GetPedidoMinimoAsync();
 }

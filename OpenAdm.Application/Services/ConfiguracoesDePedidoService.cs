@@ -12,10 +12,14 @@ namespace OpenAdm.Application.Services;
 public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 {
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly ITokenService _tokenService;
 
-    public ConfiguracoesDePedidoService(IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
+    public ConfiguracoesDePedidoService(
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        ITokenService tokenService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+        _tokenService = tokenService;
     }
 
     public async Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(
@@ -27,26 +31,30 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
             null :
             Encoding.UTF8.GetBytes(updateConfiguracoesDePedidoDto.Logo);
 
-        if(configuracaoDePedido == null)
+        if (configuracaoDePedido == null)
         {
             var date = DateTime.Now;
             configuracaoDePedido = new ConfiguracoesDePedido(
-                Guid.NewGuid(),
-                date,
-                date,
-                0,
-                updateConfiguracoesDePedidoDto.EmailDeEnvio,
-                logo,
-                true);
+                id: Guid.NewGuid(),
+                dataDeCriacao: date,
+                dataDeAtualizacao: date,
+                numero: 0,
+                emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
+                logo: logo,
+                ativo: true,
+                pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
+                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
         else
         {
             configuracaoDePedido.Update(
-                updateConfiguracoesDePedidoDto.EmailDeEnvio,
-                true,
-                logo);
+                emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
+                ativo: true,
+                logo: logo,
+                pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
+                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
 
             await _configuracoesDePedidoRepository.UpdateAsync(configuracaoDePedido);
         }
@@ -59,6 +67,22 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         var configuracaoDePedido = await GetAsync();
 
         return new ConfiguracoesDePedidoViewModel().ToModel(configuracaoDePedido);
+    }
+
+    public async Task<PedidoMinimoViewModel> GetPedidoMinimoAsync()
+    {
+        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
+        if (configuracaoDePedido is null) return new();
+
+        var usuarioViewModel = _tokenService.GetTokenUsuarioViewModel();
+        var pedidoMinimo = string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj) ? 
+            configuracaoDePedido.PedidoMinimoVarejo : 
+            configuracaoDePedido.PedidoMinimoAtacado;
+
+        return new PedidoMinimoViewModel()
+        {
+            PedidoMinimo = pedidoMinimo
+        };
     }
 
     private async Task<ConfiguracoesDePedido> GetAsync()
