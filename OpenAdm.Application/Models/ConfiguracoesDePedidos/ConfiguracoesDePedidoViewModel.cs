@@ -7,6 +7,8 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
 {
     public string EmailDeEnvio { get; set; } = string.Empty;
     public string? Logo { get; set; }
+    public decimal? PedidoMinimoAtacado { get; set; }
+    public decimal? PedidoMinimoVarejo { get; set; }
 
     public ConfiguracoesDePedidoViewModel ToModel(ConfiguracoesDePedido configuracoesDePedido)
     {
@@ -16,6 +18,8 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
         Numero = configuracoesDePedido.Numero;
         EmailDeEnvio = configuracoesDePedido.EmailDeEnvio;
         Logo = configuracoesDePedido.Logo == null ? null : Encoding.UTF8.GetString(configuracoesDePedido.Logo);
+        PedidoMinimoAtacado = configuracoesDePedido.PedidoMinimoAtacado;
+        PedidoMinimoVarejo = configuracoesDePedido.PedidoMinimoVarejo;
 
         return this;
     }

@@ -27,26 +27,30 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
             null :
             Encoding.UTF8.GetBytes(updateConfiguracoesDePedidoDto.Logo);
 
-        if(configuracaoDePedido == null)
+        if (configuracaoDePedido == null)
         {
             var date = DateTime.Now;
             configuracaoDePedido = new ConfiguracoesDePedido(
-                Guid.NewGuid(),
-                date,
-                date,
-                0,
-                updateConfiguracoesDePedidoDto.EmailDeEnvio,
-                logo,
-                true);
+                id: Guid.NewGuid(),
+                dataDeCriacao: date,
+                dataDeAtualizacao: date,
+                numero: 0,
+                emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
+                logo: logo,
+                ativo: true,
+                pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
+                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
         else
         {
             configuracaoDePedido.Update(
-                updateConfiguracoesDePedidoDto.EmailDeEnvio,
-                true,
-                logo);
+                emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
+                ativo: true,
+                logo: logo,
+                pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
+                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
 
             await _configuracoesDePedidoRepository.UpdateAsync(configuracaoDePedido);
         }
