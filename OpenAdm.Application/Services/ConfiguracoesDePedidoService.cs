@@ -12,10 +12,14 @@ namespace OpenAdm.Application.Services;
 public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 {
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly ITokenService _tokenService;
 
-    public ConfiguracoesDePedidoService(IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
+    public ConfiguracoesDePedidoService(
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        ITokenService tokenService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+        _tokenService = tokenService;
     }
 
     public async Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(
@@ -63,6 +67,22 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         var configuracaoDePedido = await GetAsync();
 
         return new ConfiguracoesDePedidoViewModel().ToModel(configuracaoDePedido);
+    }
+
+    public async Task<PedidoMinimoViewModel> GetPedidoMinimoAsync()
+    {
+        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
+        if (configuracaoDePedido is null) return new();
+
+        var usuarioViewModel = _tokenService.GetTokenUsuarioViewModel();
+        var pedidoMinimo = string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj) ? 
+            configuracaoDePedido.PedidoMinimoVarejo : 
+            configuracaoDePedido.PedidoMinimoAtacado;
+
+        return new PedidoMinimoViewModel()
+        {
+            PedidoMinimo = pedidoMinimo
+        };
     }
 
     private async Task<ConfiguracoesDePedido> GetAsync()

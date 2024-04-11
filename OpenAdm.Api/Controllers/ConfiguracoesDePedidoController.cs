@@ -8,25 +8,26 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("configuracoes-de-pedido")]
-[IsFuncionario]
 [Authorize(AuthenticationSchemes = "Bearer")]
 public class ConfiguracoesDePedidoController : ControllerBaseApi
 {
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
 
-    public ConfiguracoesDePedidoController(IConfiguracoesDePedidoService configuracoesDePedidoService)
+    public ConfiguracoesDePedidoController(
+        IConfiguracoesDePedidoService configuracoesDePedidoService)
     {
         _configuracoesDePedidoService = configuracoesDePedidoService;
     }
 
+    [IsFuncionario]
     [HttpGet("get-configuracoes")]
     public async Task<IActionResult> GetConfiguracoes()
     {
         try
         {
-            var configuracoesDePedidoViewModel = await 
+            var configuracoesDePedidoViewModel = await
                 _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
-            
+
             return Ok(configuracoesDePedidoViewModel);
         }
         catch (Exception ex)
@@ -35,6 +36,7 @@ public class ConfiguracoesDePedidoController : ControllerBaseApi
         }
     }
 
+    [IsFuncionario]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateConfiguracao(UpdateConfiguracoesDePedidoDto updateConfiguracoesDePedidoDto)
     {
@@ -44,6 +46,20 @@ public class ConfiguracoesDePedidoController : ControllerBaseApi
                 .CreateConfiguracoesDePedidoAsync(updateConfiguracoesDePedidoDto);
 
             return Ok(configuracaoDePedidoViewModel);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
+
+    [HttpGet("pedido-minimo")]
+    public async Task<IActionResult> GetPedidoMinimo()
+    {
+        try
+        {
+            var pedidoMinimoViewModl = await _configuracoesDePedidoService.GetPedidoMinimoAsync();
+            return Ok(pedidoMinimoViewModl);
         }
         catch (Exception ex)
         {
