@@ -1,11 +1,9 @@
 ﻿using Domain.Pkg.Entities;
 using Domain.Pkg.Enum;
-using Domain.Pkg.Exceptions;
 using Domain.Pkg.Model;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
-using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services.Pedidos;
@@ -17,8 +15,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
 
     public CreatePedidoService(
-        IPedidoRepository pedidoRepository, 
-        IProcessarPedidoService processarPedidoService, 
+        IPedidoRepository pedidoRepository,
+        IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
     {
         _pedidoRepository = pedidoRepository;
@@ -54,8 +52,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
         pedido.ProcessarItensPedido(itensPedidoModels);
 
-        await _pedidoRepository.AddAsync(pedido);
         await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
+        await _pedidoRepository.AddAsync(pedido);
 
         return new PedidoViewModel().ForModel(pedido);
     }
