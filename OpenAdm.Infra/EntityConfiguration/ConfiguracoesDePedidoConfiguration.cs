@@ -22,5 +22,9 @@ public class ConfiguracoesDePedidoConfiguration : IEntityTypeConfiguration<Confi
         builder.Property(x => x.EmailDeEnvio)
             .IsRequired()
             .HasMaxLength(255);
+        builder.Property(x => x.PedidoMinimoAtacado)
+            .HasPrecision(12, 2);
+        builder.Property(x => x.PedidoMinimoVarejo)
+            .HasPrecision(12, 2);
     }
 }

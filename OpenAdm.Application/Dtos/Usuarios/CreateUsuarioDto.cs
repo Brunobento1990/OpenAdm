@@ -22,7 +22,8 @@ public class CreateUsuarioDto : BaseModel
     [Compare("Senha", ErrorMessage = "As senhas não conferem!")]
     public string ReSenha { get; set; } = string.Empty;
     [MaxLength(15)]
-    public string? Telefone { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Informe o seu telefone.")]
+    public string Telefone { get; set; } = string.Empty;
     [MaxLength(20)]
     public string? Cnpj { get; set; } = string.Empty;
     [MaxLength(20)]
