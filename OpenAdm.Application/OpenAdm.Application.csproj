@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dtos\Precos\**" />
+    <EmbeddedResource Remove="Dtos\Precos\**" />
+    <None Remove="Dtos\Precos\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
@@ -16,10 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\OpenAdm.Domain\OpenAdm.Domain.csproj" />
     <ProjectReference Include="..\OpenAdm.Infra\OpenAdm.Infra.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Dtos\Precos\" />
   </ItemGroup>
 
 </Project>
