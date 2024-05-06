@@ -15,6 +15,14 @@ public class PedidoService(
 {
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
 
+    public async Task<PedidoViewModel> GetAsync(Guid pedidoId)
+    {
+        var pedido = await _pedidoRepository.GetPedidoByIdAsync(pedidoId)
+            ?? throw new Exception($"Pedido não localizado: {pedidoId}");
+
+        return new PedidoViewModel().ForModel(pedido);
+    }
+
     public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto)
     {
         var paginacao = await _pedidoRepository.GetPaginacaoPedidoAsync(paginacaoPedidoDto);
