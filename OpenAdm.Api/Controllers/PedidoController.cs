@@ -51,4 +51,18 @@ public class PedidoController : ControllerBaseApi
             return await HandleErrorAsync(ex);
         }
     }
+
+    [HttpGet("get")]
+    public async Task<IActionResult> Get([FromQuery] Guid pedidoId)
+    {
+        try
+        {
+            var pedido = await _pedidoService.GetAsync(pedidoId);
+            return Ok(pedido);
+        }
+        catch (Exception ex)
+        {
+            return await HandleErrorAsync(ex);
+        }
+    }
 }

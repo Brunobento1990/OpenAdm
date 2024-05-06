@@ -17,8 +17,8 @@ public class CreatePedidoController : ControllerBaseApi
     private readonly IUsuarioRepository _usuarioRepository;
 
     public CreatePedidoController(
-        ICreatePedidoService createPedidoService, 
-        ITokenService tokenService, 
+        ICreatePedidoService createPedidoService,
+        ITokenService tokenService,
         IUsuarioRepository usuarioRepository)
     {
         _createPedidoService = createPedidoService;
@@ -39,7 +39,7 @@ public class CreatePedidoController : ControllerBaseApi
             }
             var result = await _createPedidoService.CreatePedidoAsync(itensPedidoModels, usuario);
 
-            return Ok(new { message = "Pedido criado com sucesso!" });
+            return Ok(new { message = "Pedido criado com sucesso!", pedido = result });
         }
         catch (Exception ex)
         {
