@@ -46,6 +46,7 @@ public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenServ
 
         var telefone = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Telefone")?.Value;
         var cnpj = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Cnpj")?.Value;
+        var cpf = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Cpf")?.Value;
 
         if (!DateTime.TryParse(dataDeCriacao, out DateTime newDataDeCriacao))
             throw new ExceptionApi("token inválido");
@@ -62,7 +63,8 @@ public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenServ
             DataDeCriacao = newDataDeCriacao,
             DataDeAtualizacao = newDataDeAtualizacao,
             Telefone = telefone,
-            Cnpj = cnpj
+            Cnpj = cnpj,
+            Cpf = cpf
         };
     }
     public bool IsFuncionario()
