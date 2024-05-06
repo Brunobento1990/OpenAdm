@@ -52,8 +52,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
         pedido.ProcessarItensPedido(itensPedidoModels);
 
-        await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
         await _pedidoRepository.AddAsync(pedido);
+        await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
 
         return new PedidoViewModel().ForModel(pedido);
     }
