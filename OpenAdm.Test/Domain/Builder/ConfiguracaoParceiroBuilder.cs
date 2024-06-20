@@ -49,6 +49,6 @@ public class ConfiguracaoParceiroBuilder
 
     public ConfiguracaoParceiro Build()
     {
-        return new(_id, _created, _update, _numero, _conexaoDb, _dominioSiteAdm, _dominioSiteEcommerce, _ativo, Guid.NewGuid());
+        return new(_id, _created, _update, _numero, _conexaoDb, _dominioSiteAdm, _dominioSiteEcommerce, _ativo, Guid.NewGuid(), null, null);
     }
 }

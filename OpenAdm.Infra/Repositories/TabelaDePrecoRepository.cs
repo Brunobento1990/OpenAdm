@@ -89,7 +89,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
         {
             foreach (var item in tabelaDePreco.ItensTabelaDePreco)
             {
-                item.TabelaDePreco = null;
+                item.TabelaDePreco = null!;
                 item.Produto.ItensTabelaDePreco = new();
             }
         }

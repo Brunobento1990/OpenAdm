@@ -1,9 +1,11 @@
 using Domain.Pkg.Cryptography;
 using Domain.Pkg.Pdfs.Configure;
 using dotenv.net;
+using Microsoft.AspNetCore.Builder.Extensions;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.Api.Configure;
+using OpenAdm.Api.Midlewares;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
@@ -63,6 +65,8 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     app.UseSwaggerUI();
 }
 app.UseResponseCaching();
+
+app.AddLogMain();
 
 app.UseAuthentication();
 

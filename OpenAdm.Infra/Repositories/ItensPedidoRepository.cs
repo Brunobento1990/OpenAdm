@@ -43,7 +43,7 @@ public class ItensPedidoRepository : GenericRepository<ItensPedido>, IItensPedid
             if (item.Peso != null)
                 item.Peso.ItensPedido = new();
 
-            item.Pedido = null;
+            item.Pedido = null!;
         }
 
         return itens;
