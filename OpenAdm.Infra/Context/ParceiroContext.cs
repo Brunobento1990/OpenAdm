@@ -5,10 +5,10 @@ using OpenAdm.Infra.EntityConfiguration;
 
 namespace OpenAdm.Infra.Context;
 
-public class ParceiroContext(DbContextOptions options, IConfiguracaoParceiroRepository configuracaoParceiroRepository)
+public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parceiroAutenticado)
     : DbContext(options)
 {
-    private readonly IConfiguracaoParceiroRepository _configuracaoParceiroRepository = configuracaoParceiroRepository;
+    private readonly IParceiroAutenticado _parceiroAutenticado = parceiroAutenticado;
     public DbSet<Banner> Banners { get; set; }
     public DbSet<Funcionario> Funcionarios { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
@@ -32,9 +32,7 @@ public class ParceiroContext(DbContextOptions options, IConfiguracaoParceiroRepo
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connectionString = _configuracaoParceiroRepository.GetConexaoDbByDominioAsync().Result;
-        optionsBuilder.UseNpgsql(connectionString);
-
+        optionsBuilder.UseNpgsql(_parceiroAutenticado.StringConnection);
         base.OnConfiguring(optionsBuilder);
     }
 

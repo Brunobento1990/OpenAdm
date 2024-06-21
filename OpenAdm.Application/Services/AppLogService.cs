@@ -29,7 +29,8 @@ public sealed class AppLogService : IAppLogService
             statusCode: createAppLog.StatusCode,
             logLevel: createAppLog.LogLevel,
             latitude: createAppLog.Latitude,
-            longitude: createAppLog.Longitude);
+            longitude: createAppLog.Longitude,
+            xApi: createAppLog.XApi);
 
         await _appLogRepository.AddAsync(appLog);
     }

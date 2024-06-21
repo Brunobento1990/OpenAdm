@@ -9,18 +9,18 @@ using OpenAdm.Infra.Context;
 
 #nullable disable
 
-namespace OpenAdm.Infra.Migrations
+namespace OpenAdm.Infra.Migrations.Parceiro
 {
     [DbContext(typeof(ParceiroContext))]
-    [Migration("20240413115416_Init")]
-    partial class Init
+    [Migration("20240621003728_InitParceiroContextMigration")]
+    partial class InitParceiroContextMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

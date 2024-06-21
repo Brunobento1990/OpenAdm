@@ -1,4 +1,5 @@
 ﻿using Domain.Pkg.Cryptography;
+using Domain.Pkg.Entities;
 using Domain.Pkg.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -36,5 +37,13 @@ public class ConfiguracaoParceiroRepository
                 ?? throw new ExceptionApi();
 
         return CryptographyGeneric.Decrypt(encrypt);
+    }
+
+    public async Task<ConfiguracaoParceiro?> GetConexaoDbByXApiAsync(Guid xApi)
+    {
+        return await _context
+            .ConfiguracoesParceiro
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.XApi == xApi);
     }
 }

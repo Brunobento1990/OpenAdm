@@ -2,6 +2,7 @@
 
 public class CreateAppLog
 {
+    public Guid XApi { get; set; }
     public string Host { get; set; } = string.Empty;
     public string Origem { get; set; } = string.Empty;
     public string? Latitude { get; set; } = string.Empty;
