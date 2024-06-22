@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Model;
@@ -14,6 +15,7 @@ public static class DependencyInjectContext
         services.AddDbContext<OpenAdmContext>(opt => opt.UseNpgsql(connectionString));
         services.AddDbContext<ParceiroContext>();
         services.AddScoped<IParceiroAutenticado, ParceiroAutenticado>();
+        services.AddScoped<IUsuarioAutenticado, UsuarioAutenticado>();
 
         return services;
     }

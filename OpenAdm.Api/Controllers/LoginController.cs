@@ -12,7 +12,7 @@ public class LoginController : ControllerBaseApi
     private readonly ILoginUsuarioService _loginUsuarioService;
 
     public LoginController(
-        ILoginFuncionarioService loginFuncionarioService, 
+        ILoginFuncionarioService loginFuncionarioService,
         ILoginUsuarioService loginUsuarioService)
     {
         _loginFuncionarioService = loginFuncionarioService;
@@ -22,15 +22,8 @@ public class LoginController : ControllerBaseApi
     [HttpPost("funcionario")]
     public async Task<IActionResult> LoginFuncionario(RequestLogin requestLogin)
     {
-        try
-        {
-            var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin);
-            return Ok(responselogin);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin);
+        return Ok(responselogin);
     }
 
     [HttpPost("usuario")]

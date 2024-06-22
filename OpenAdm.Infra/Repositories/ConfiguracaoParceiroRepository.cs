@@ -1,7 +1,4 @@
-﻿using Domain.Pkg.Cryptography;
-using Domain.Pkg.Entities;
-using Domain.Pkg.Exceptions;
-using Microsoft.AspNetCore.Http;
+﻿using Domain.Pkg.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
@@ -12,34 +9,22 @@ public class ConfiguracaoParceiroRepository
     : IConfiguracaoParceiroRepository
 {
     private readonly OpenAdmContext _context;
-    private readonly string _dominio;
-
+    
     public ConfiguracaoParceiroRepository(
-        OpenAdmContext context,
-        IHttpContextAccessor httpContextAccessor)
+        OpenAdmContext context)
     {
         _context = context;
-        _dominio = httpContextAccessor?
-           .HttpContext?
-           .Request?
-           .Headers?
-           .FirstOrDefault(x => x.Key == "Referer").Value.ToString() ?? throw new Exception();
     }
 
-    public async Task<string> GetConexaoDbByDominioAsync()
+    public async Task<ConfiguracaoParceiro?> GetParceiroByDominioAdmAsync(string dominio)
     {
-        var encrypt = await _context
+        return await _context
             .ConfiguracoesParceiro
             .AsNoTracking()
-            .Where(x => x.Ativo && (x.DominioSiteAdm == _dominio || x.DominioSiteEcommerce == _dominio))
-            .Select(x => x.ConexaoDb)
-            .FirstOrDefaultAsync()
-                ?? throw new ExceptionApi();
-
-        return CryptographyGeneric.Decrypt(encrypt);
+            .FirstOrDefaultAsync(x => x.DominioSiteAdm == dominio);
     }
 
-    public async Task<ConfiguracaoParceiro?> GetConexaoDbByXApiAsync(Guid xApi)
+    public async Task<ConfiguracaoParceiro?> GetParceiroByXApiAsync(Guid xApi)
     {
         return await _context
             .ConfiguracoesParceiro

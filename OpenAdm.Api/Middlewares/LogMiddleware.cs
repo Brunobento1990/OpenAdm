@@ -1,5 +1,6 @@
 ﻿using Domain.Pkg.Exceptions;
 using OpenAdm.Application.Dtos.Logs;
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.HttpService.Interfaces;
 using OpenAdm.Infra.Model;
@@ -7,7 +8,7 @@ using System.Text.Json;
 
 namespace OpenAdm.Api.Midlewares;
 
-public class LogMidleware
+public class LogMiddleware
 {
     private readonly RequestDelegate _next;
     private CreateAppLog _createAppLog;
@@ -16,7 +17,7 @@ public class LogMidleware
     private readonly bool _development = VariaveisDeAmbiente.IsDevelopment();
     private int _statusCode = 200;
 
-    public LogMidleware(RequestDelegate next)
+    public LogMiddleware(RequestDelegate next)
     {
         _createAppLog = new();
         _next = next;
@@ -114,22 +115,13 @@ public class LogMidleware
 
     public async Task HandleError(HttpContext httpContext, string mensagem)
     {
+        httpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
         httpContext.Response.ContentType = "application/json";
         httpContext.Response.StatusCode = _statusCode;
-        var errorResponse = new
+        var errorResponse = new ErrorResponse()
         {
             Mensagem = mensagem
         };
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
-    }
-}
-
-
-public static class AddLog
-{
-    public static void AddLogMain(this WebApplication app)
-    {
-        app.UseMiddleware<LogMidleware>();
-        app.UseMiddleware<ParceiroMidleware>();
     }
 }

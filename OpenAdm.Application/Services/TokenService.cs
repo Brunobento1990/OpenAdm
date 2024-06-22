@@ -1,4 +1,5 @@
-﻿using Domain.Pkg.Exceptions;
+﻿using Domain.Pkg.Cryptography;
+using Domain.Pkg.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Application.Interfaces;
@@ -67,16 +68,6 @@ public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenServ
             Cpf = cpf
         };
     }
-    public bool IsFuncionario()
-    {
-        if (_httpContextAccessor?.HttpContext?.User.Identity is not ClaimsIdentity claimsIdentity
-            || !claimsIdentity.Claims.Any())
-            throw new ExceptionApi(nameof(claimsIdentity));
-
-        var isFuncionario = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "IsFuncionario")?.Value;
-
-        return !string.IsNullOrWhiteSpace(isFuncionario) && isFuncionario == "TRUE";
-    }
     private static string Genereate(object obj, DateTime expires)
     {
         var key = new SymmetricSecurityKey(
@@ -91,7 +82,7 @@ public class TokenService(IHttpContextAccessor httpContextAccessor) : ITokenServ
           expires: expires,
           signingCredentials: credenciais);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return CryptographyGeneric.Encrypt(new JwtSecurityTokenHandler().WriteToken(token));
     }
     public static Claim[] GenerateClaims(object obj)
     {
