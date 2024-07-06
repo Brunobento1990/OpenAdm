@@ -9,7 +9,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("pesos")]
-public class PesoController : ControllerBaseApi
+public class PesoController : ControllerBase
 {
     private readonly IPesoService _pesoService;
 
@@ -22,94 +22,52 @@ public class PesoController : ControllerBaseApi
     [HttpGet("list")]
     public async Task<IActionResult> List()
     {
-        try
-        {
-            var pesosViewModel = await _pesoService.GetPesosViewModelAsync();
-            return Ok(pesosViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var pesosViewModel = await _pesoService.GetPesosViewModelAsync();
+        return Ok(pesosViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoPesoDto paginacaoPesoDto)
     {
-        try
-        {
-            var paginacao = await _pesoService.GetPaginacaoAsync(paginacaoPesoDto);
-            return Ok(paginacao);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var paginacao = await _pesoService.GetPaginacaoAsync(paginacaoPesoDto);
+        return Ok(paginacao);
     }
 
     [HttpGet("get-peso")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     public async Task<IActionResult> GetPeso([FromQuery] Guid id)
     {
-        try
-        {
-            var pesoViewModel = await _pesoService.GetPesoViewModelAsync(id);
-            return Ok(pesoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var pesoViewModel = await _pesoService.GetPesoViewModelAsync(id);
+        return Ok(pesoViewModel);
     }
 
     [HttpPost("create")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     public async Task<IActionResult> CreatePeso(CreatePesoDto createPesoDto)
     {
-        try
-        {
-            var pesoViewModel = await _pesoService.CreatePesoAsync(createPesoDto);
-            return Ok(pesoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var pesoViewModel = await _pesoService.CreatePesoAsync(createPesoDto);
+        return Ok(pesoViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpDelete("delete")]
     public async Task<IActionResult> DeletePeso([FromQuery] Guid id)
     {
-        try
-        {
-            await _pesoService.DeletePesoAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _pesoService.DeletePesoAsync(id);
+        return Ok();
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpPut("update")]
     public async Task<IActionResult> UpdatePeso(UpdatePesoDto updatePesoDto)
     {
-        try
-        {
-            var pesoViewlModel = await _pesoService.UpdatePesoAsync(updatePesoDto);
-            return Ok(pesoViewlModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var pesoViewlModel = await _pesoService.UpdatePesoAsync(updatePesoDto);
+        return Ok(pesoViewlModel);
     }
 }

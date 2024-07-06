@@ -9,8 +9,8 @@ namespace OpenAdm.Api.Controllers;
 [ApiController]
 [Route("configuracoes-de-email")]
 [IsFuncionario]
-[Authorize(AuthenticationSchemes = "Bearer")]
-public class ConfiguracoesDeEmailController : ControllerBaseApi
+[Autentica]
+public class ConfiguracoesDeEmailController : ControllerBase
 {
     private readonly IConfiguracoesDeEmailService _configuracoesDeEmailService;
 
@@ -22,32 +22,18 @@ public class ConfiguracoesDeEmailController : ControllerBaseApi
     [HttpPost("create")]
     public async Task<IActionResult> CreateConfiguracoesDeEmail(CreateConfiguracoesDeEmailDto createConfiguracoesDeEmailDto)
     {
-        try
-        {
-            var configuracoaDeEmailViewModel = await _configuracoesDeEmailService
-                .CreateConfiguracoesDeEmailAsync(createConfiguracoesDeEmailDto);
-            
-            return Ok(configuracoaDeEmailViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var configuracoaDeEmailViewModel = await _configuracoesDeEmailService
+            .CreateConfiguracoesDeEmailAsync(createConfiguracoesDeEmailDto);
+
+        return Ok(configuracoaDeEmailViewModel);
     }
 
     [HttpGet("get-configuracao")]
     public async Task<IActionResult> GetConfiguracao()
     {
-        try
-        {
-            var configuracaoDeEmailViewModel = await _configuracoesDeEmailService
-                .GetConfiguracaoDeEmailAsync();
+        var configuracaoDeEmailViewModel = await _configuracoesDeEmailService
+            .GetConfiguracaoDeEmailAsync();
 
-            return Ok(configuracaoDeEmailViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        return Ok(configuracaoDeEmailViewModel);
     }
 }

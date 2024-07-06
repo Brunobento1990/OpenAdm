@@ -8,9 +8,9 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 
 [ApiController]
 [Route("pedidos")]
-[Authorize(AuthenticationSchemes = "Bearer")]
+[Autentica]
 [IsFuncionario]
-public class UpdateStatusPedidoController : ControllerBaseApi
+public class UpdateStatusPedidoController : ControllerBase
 {
     private readonly IUpdateStatusPedidoService _updateStatusPedidoService;
 
@@ -22,14 +22,7 @@ public class UpdateStatusPedidoController : ControllerBaseApi
     [HttpPut("update-status")]
     public async Task<IActionResult> UpdateStatusPedido(UpdateStatusPedidoDto updateStatusPedidoDto)
     {
-        try
-        {
-            await _updateStatusPedidoService.UpdateStatusPedidoAsync(updateStatusPedidoDto);
-            return Ok(new { message = "Pedido atualizado com sucesso!" });
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _updateStatusPedidoService.UpdateStatusPedidoAsync(updateStatusPedidoDto);
+        return Ok(new { message = "Pedido atualizado com sucesso!" });
     }
 }

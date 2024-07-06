@@ -6,7 +6,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("login")]
-public class LoginController : ControllerBaseApi
+public class LoginController : ControllerBase
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;
     private readonly ILoginUsuarioService _loginUsuarioService;
@@ -29,14 +29,7 @@ public class LoginController : ControllerBaseApi
     [HttpPost("usuario")]
     public async Task<IActionResult> LoginUsuario(RequestLogin requestLogin)
     {
-        try
-        {
-            var responselogin = await _loginUsuarioService.LoginAsync(requestLogin);
-            return Ok(responselogin);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var responselogin = await _loginUsuarioService.LoginAsync(requestLogin);
+        return Ok(responselogin);
     }
 }

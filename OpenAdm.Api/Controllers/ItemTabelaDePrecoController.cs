@@ -8,9 +8,9 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("item-tabela-de-preco")]
-[Authorize(AuthenticationSchemes = "Bearer")]
+[Autentica]
 [IsFuncionario]
-public class ItemTabelaDePrecoController : ControllerBaseApi
+public class ItemTabelaDePrecoController : ControllerBase
 {
     private readonly IItemTabelaDePrecoService _itemTabelaDePrecoService;
 
@@ -22,42 +22,21 @@ public class ItemTabelaDePrecoController : ControllerBaseApi
     [HttpPost("create")]
     public async Task<IActionResult> CreateItemTabelaDePreco(CreateItensTabelaDePrecoDto createItensTabelaDePrecoDto)
     {
-        try
-        {
-            await _itemTabelaDePrecoService.CreateItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _itemTabelaDePrecoService.CreateItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
+        return Ok();
     }
 
     [HttpPost("create-list")]
     public async Task<IActionResult> CreateListItemTabelaDePreco(IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto)
     {
-        try
-        {
-            await _itemTabelaDePrecoService.CreateListItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _itemTabelaDePrecoService.CreateListItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
+        return Ok();
     }
 
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
     {
-        try
-        {
-            await _itemTabelaDePrecoService.DeleteItemAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _itemTabelaDePrecoService.DeleteItemAsync(id);
+        return Ok();
     }
 }

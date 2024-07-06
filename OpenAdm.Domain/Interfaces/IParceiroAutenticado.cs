@@ -2,6 +2,6 @@
 
 public interface IParceiroAutenticado
 {
-    Guid XApi { get; set; }
     string StringConnection { get; set; }   
+    string Referer { get; set; }   
 }

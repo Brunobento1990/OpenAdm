@@ -21,14 +21,6 @@ public class ConfiguracaoParceiroRepository
         return await _context
             .ConfiguracoesParceiro
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.DominioSiteAdm == dominio);
-    }
-
-    public async Task<ConfiguracaoParceiro?> GetParceiroByXApiAsync(Guid xApi)
-    {
-        return await _context
-            .ConfiguracoesParceiro
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.XApi == xApi);
+            .FirstOrDefaultAsync(x => x.DominioSiteAdm == dominio || x.DominioSiteEcommerce == dominio);
     }
 }

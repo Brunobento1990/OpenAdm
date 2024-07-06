@@ -45,7 +45,8 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
                         x.CategoriaId,
                         x.Referencia,
                         x.UrlFoto,
-                        x.NomeFoto))
+                        x.NomeFoto,
+                        x.Peso))
                 .OrderByDescending(x => x.Numero)
                 .Take(3)
                 .ToList();

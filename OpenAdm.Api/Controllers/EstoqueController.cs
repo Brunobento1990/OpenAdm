@@ -10,10 +10,10 @@ using OpenAdm.Infra.Paginacao;
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
-[Authorize(AuthenticationSchemes = "Bearer")]
+[Autentica]
 [IsFuncionario]
 [Route("estoques")]
-public class EstoqueController : ControllerBaseApi
+public class EstoqueController : ControllerBase
 {
     private readonly IEstoqueService _estoqueservice;
 
@@ -25,62 +25,34 @@ public class EstoqueController : ControllerBaseApi
     [HttpPut("movimentar-estoque")]
     public async Task<IActionResult> MovimentarEstoque(MovimentacaoDeProdutoDto movimentacaoDeProduto)
     {
-        try
-        {
-            var result = await _estoqueservice.MovimentacaoDeProdutoAsync(movimentacaoDeProduto);
+        var result = await _estoqueservice.MovimentacaoDeProdutoAsync(movimentacaoDeProduto);
 
-            if (!result) return BadRequest(new { message = CodigoErrors.ErrorGeneric });
+        if (!result) return BadRequest(new { message = CodigoErrors.ErrorGeneric });
 
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        return Ok();
     }
 
     [HttpGet("get-estoque")]
     public async Task<IActionResult> GetEstoque([FromQuery] Guid id)
     {
-        try
-        {
-            var estoqueViewModel = await _estoqueservice.GetEstoqueViewModelAsync(id);
-            return Ok(estoqueViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var estoqueViewModel = await _estoqueservice.GetEstoqueViewModelAsync(id);
+        return Ok(estoqueViewModel);
     }
 
     [HttpPut("update")]
     public async Task<IActionResult> UpdateEstoque(UpdateEstoqueDto updateEstoqueDto)
     {
-        try
-        {
-            var result = await _estoqueservice.UpdateEstoqueAsync(updateEstoqueDto);
+        var result = await _estoqueservice.UpdateEstoqueAsync(updateEstoqueDto);
 
-            if (!result) return BadRequest(new { message = CodigoErrors.ErrorGeneric });
+        if (!result) return BadRequest(new { message = CodigoErrors.ErrorGeneric });
 
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        return Ok();
     }
 
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoEstoqueDto paginacaoEstoqueDto)
     {
-        try
-        {
-            var paginacao = await _estoqueservice.GetPaginacaoAsync(paginacaoEstoqueDto);
-            return Ok(paginacao);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var paginacao = await _estoqueservice.GetPaginacaoAsync(paginacaoEstoqueDto);
+        return Ok(paginacao);
     }
 }

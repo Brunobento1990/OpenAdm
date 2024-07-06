@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 [ApiController]
 [Route("categorias")]
 public class CategoriaController(ICategoriaService categoriaService)
-    : ControllerBaseApi
+    : ControllerBase
 {
     private readonly ICategoriaService _categoriaService = categoriaService;
 
@@ -18,94 +18,52 @@ public class CategoriaController(ICategoriaService categoriaService)
     [HttpGet("list")]
     public async Task<IActionResult> GetCategorias()
     {
-        try
-        {
-            var categoriasViewModel = await _categoriaService.GetCategoriasAsync();
-            return Ok(categoriasViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var categoriasViewModel = await _categoriaService.GetCategoriasAsync();
+        return Ok(categoriasViewModel);
     }
 
     [HttpPost("create")]
     [IsFuncionario]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     public async Task<IActionResult> CreateCategoria(CategoriaCreateDto categoriaCreateDto)
     {
-        try
-        {
-            var categoriaVieqModel = await _categoriaService.CreateCategoriaAsync(categoriaCreateDto);
-            return Ok(categoriaVieqModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var categoriaVieqModel = await _categoriaService.CreateCategoriaAsync(categoriaCreateDto);
+        return Ok(categoriaVieqModel);
     }
 
     [HttpGet("paginacao")]
     [IsFuncionario]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     public async Task<IActionResult> PaginacaoCategoria([FromQuery] PaginacaoCategoriaDto paginacaoCategoriaDto)
     {
-        try
-        {
-            var paginacao = await _categoriaService.GetPaginacaoAsync(paginacaoCategoriaDto);
-            return Ok(paginacao);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var paginacao = await _categoriaService.GetPaginacaoAsync(paginacaoCategoriaDto);
+        return Ok(paginacao);
     }
 
     [HttpGet("get-categoria")]
     [IsFuncionario]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     public async Task<IActionResult> GetCategoria([FromQuery] Guid id)
     {
-        try
-        {
-            var categoriaViewModel = await _categoriaService.GetCategoriaAsync(id);
-            return Ok(categoriaViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var categoriaViewModel = await _categoriaService.GetCategoriaAsync(id);
+        return Ok(categoriaViewModel);
     }
 
     [HttpDelete("delete")]
     [IsFuncionario]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     public async Task<IActionResult> DeleteCategoria([FromQuery] Guid id)
     {
-        try
-        {
-            await _categoriaService.DeleteCategoriaAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _categoriaService.DeleteCategoriaAsync(id);
+        return Ok();
     }
 
     [HttpPut("update")]
     [IsFuncionario]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     public async Task<IActionResult> UpdateCategoria(UpdateCategoriaDto updateCategoriaDto)
     {
-        try
-        {
-            var categoriaViewModel = await _categoriaService.UpdateCategoriaAsync(updateCategoriaDto);
-            return Ok(categoriaViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var categoriaViewModel = await _categoriaService.UpdateCategoriaAsync(updateCategoriaDto);
+        return Ok(categoriaViewModel);
     }
 }

@@ -66,5 +66,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<TopUsuariosRepository>();
         services.AddScoped<ITopUsuariosRepository, TopUsuariosCached>();
         services.AddScoped<IAppLogRepository, AppLogRepository>();
+        services.AddScoped<IConfiguracaoDeFreteRepository, ConfiguracaoDeFreteRepository>();
     }
 }

@@ -1,8 +1,10 @@
-﻿namespace OpenAdm.Domain.Interfaces;
+﻿using Domain.Pkg.Entities;
+
+namespace OpenAdm.Domain.Interfaces;
 
 public interface IUsuarioAutenticado
 {
     Guid Id { get; set; }
-    DateTime DataDeAtualizacao { get; set; }
     bool IsFuncionario { get; set; }
+    Task<Usuario> GetUsuarioAutenticadoAsync();
 }

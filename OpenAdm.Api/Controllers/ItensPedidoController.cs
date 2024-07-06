@@ -1,6 +1,7 @@
 ﻿using Domain.Pkg.Errors;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Interfaces;
 
@@ -8,8 +9,8 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("itens-pedidos")]
-[Authorize(AuthenticationSchemes = "Bearer")]
-public class ItensPedidoController : ControllerBaseApi
+[Autentica]
+public class ItensPedidoController : ControllerBase
 {
     private readonly IItensPedidoService _itensPedidoService;
 
@@ -21,46 +22,25 @@ public class ItensPedidoController : ControllerBaseApi
     [HttpGet("get-pedido-id")]
     public async Task<IActionResult> GetByPedido([FromQuery] Guid pedidoId)
     {
-        try
-        {
-            var itens = await _itensPedidoService.GetItensPedidoByPedidoIdAsync(pedidoId);
-            return Ok(itens);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var itens = await _itensPedidoService.GetItensPedidoByPedidoIdAsync(pedidoId);
+        return Ok(itens);
     }
 
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
     {
-        try
+        var result = await _itensPedidoService.DeleteItemPedidoAsync(id);
+        if (!result)
         {
-            var result = await _itensPedidoService.DeleteItemPedidoAsync(id);
-            if (!result)
-            {
-                return BadRequest(new { message = CodigoErrors.ErrorGeneric });
-            }
-            return Ok();
+            return BadRequest(new { message = CodigoErrors.ErrorGeneric });
         }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        return Ok();
     }
 
     [HttpPut("update-quantidade")]
     public async Task<IActionResult> UpdateQuantidade(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto)
     {
-        try
-        {
-            await _itensPedidoService.EditarQuantidadeDoItemAsync(updateQuantidadeItemPedidoDto);
-            return Ok(new { message = "Item editado com sucesso!" });
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _itensPedidoService.EditarQuantidadeDoItemAsync(updateQuantidadeItemPedidoDto);
+        return Ok(new { message = "Item editado com sucesso!" });
     }
 }

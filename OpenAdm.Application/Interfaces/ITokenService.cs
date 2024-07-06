@@ -6,5 +6,5 @@ public interface ITokenService
 {
     string GenerateToken(object obj);
     string GenerateRefreshToken(Guid id);
-    UsuarioViewModel GetTokenUsuarioViewModel();
+    //UsuarioViewModel GetTokenUsuarioViewModel();
 }

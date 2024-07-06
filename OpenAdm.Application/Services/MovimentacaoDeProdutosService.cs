@@ -40,14 +40,14 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         var tamanhosIds = paginacao
             .Values.Where(x => x.TamanhoId != null)
             .DistinctBy(x => x.TamanhoId)
-            .Select(x => x.TamanhoId.Value)
+            .Select(x => x.TamanhoId!.Value)
             .ToList();
 
         var pesosIds = paginacao
             .Values
             .Where(x => x.PesoId != null)
             .DistinctBy(x => x.PesoId)
-            .Select(x => x.PesoId.Value)
+            .Select(x => x.PesoId!.Value)
             .ToList();
 
         var produtos = await _produtoRepository.GetDescricaoDeProdutosAsync(produtosids);

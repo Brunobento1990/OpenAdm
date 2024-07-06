@@ -1,36 +1,29 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using OpenAdm.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces.Carrinhos;
+using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Api.Controllers.Carrinhos;
 
 [ApiController]
 [Route("carrinho")]
-[Authorize(AuthenticationSchemes = "Bearer")]
-public class CoutCarrinhoController : ControllerBaseApi
+[Autentica]
+public class CoutCarrinhoController : ControllerBase
 {
     private readonly IGetCountCarrinhoService _carrinhoService;
     private readonly Guid _usuarioId;
 
     public CoutCarrinhoController(IGetCountCarrinhoService carrinhoService,
-        ITokenService tokenService)
+        IUsuarioAutenticado usuarioAutenticado)
     {
-        _usuarioId = tokenService.GetTokenUsuarioViewModel().Id;
+        _usuarioId = usuarioAutenticado.Id;
         _carrinhoService = carrinhoService;
     }
 
     [HttpGet("get-carrinho-count")]
     public async Task<IActionResult> GetCarrinhoCount()
     {
-        try
-        {
-            var result = await _carrinhoService.GetCountCarrinhoAsync(_usuarioId);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var result = await _carrinhoService.GetCountCarrinhoAsync(_usuarioId);
+        return Ok(result);
     }
 }

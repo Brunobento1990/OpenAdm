@@ -12,20 +12,20 @@ namespace OpenAdm.Application.Services;
 public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 {
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
-    private readonly ITokenService _tokenService;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
     public ConfiguracoesDePedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
-        ITokenService tokenService)
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
-        _tokenService = tokenService;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     public async Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(
         UpdateConfiguracoesDePedidoDto updateConfiguracoesDePedidoDto)
     {
-        var configuracaoDePedido = await GetAsync();
+        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
 
         var logo = updateConfiguracoesDePedidoDto.Logo == null ?
             null :
@@ -64,8 +64,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 
     public async Task<ConfiguracoesDePedidoViewModel> GetConfiguracoesDePedidoAsync()
     {
-        var configuracaoDePedido = await GetAsync();
-
+        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
+        if (configuracaoDePedido == null) return new();
         return new ConfiguracoesDePedidoViewModel().ToModel(configuracaoDePedido);
     }
 
@@ -74,7 +74,7 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
         if (configuracaoDePedido is null) return new();
 
-        var usuarioViewModel = _tokenService.GetTokenUsuarioViewModel();
+        var usuarioViewModel = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
         var pedidoMinimo = string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj) ? 
             configuracaoDePedido.PedidoMinimoVarejo : 
             configuracaoDePedido.PedidoMinimoAtacado;

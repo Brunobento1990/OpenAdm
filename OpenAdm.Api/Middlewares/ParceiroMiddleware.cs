@@ -17,27 +17,22 @@ public class ParceiroMiddleware
         IConfiguracaoParceiroRepository configuracaoParceiroRepository,
         IParceiroAutenticado parceiroAutenticado)
     {
-        if(httpContext.Request.Path != "/login/funcionario")
+        var referer = (string?)httpContext.Request.Headers.FirstOrDefault(x => x.Key == "Referer").Value;
+
+        if (string.IsNullOrWhiteSpace(referer))
         {
-            var xApiHeader = (string?)httpContext.Request.Headers.FirstOrDefault(x => x.Key == "X-Api").Value;
-
-            var tryParseXApi = Guid.TryParse(xApiHeader, out Guid xApi);
-
-            if (!tryParseXApi)
-            {
-                throw new ExceptionUnauthorize("X-Api não localizada!");
-            }
-
-            var parceiro = await configuracaoParceiroRepository.GetParceiroByXApiAsync(xApi);
-
-            if (parceiro == null || !parceiro.Ativo)
-            {
-                throw new ExceptionUnauthorize("Parceiro não autenticado!");
-            }
-
-            parceiroAutenticado.XApi = xApi;
-            parceiroAutenticado.StringConnection = CryptographyGeneric.Decrypt(parceiro.ConexaoDb);
+            throw new ExceptionUnauthorize("Referencia não localizada!!");
         }
+
+        var parceiro = await configuracaoParceiroRepository.GetParceiroByDominioAdmAsync(referer);
+
+        if (parceiro == null || !parceiro.Ativo)
+        {
+            throw new ExceptionUnauthorize("Parceiro não autenticado!");
+        }
+
+        parceiroAutenticado.Referer = referer;
+        parceiroAutenticado.StringConnection = CryptographyGeneric.Decrypt(parceiro.ConexaoDb);
 
         await _next(httpContext);
     }

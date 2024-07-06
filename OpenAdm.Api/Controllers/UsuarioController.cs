@@ -1,15 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.Tokens;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("usuarios")]
-public class UsuarioController : ControllerBaseApi
+public class UsuarioController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
 
@@ -21,76 +19,40 @@ public class UsuarioController : ControllerBaseApi
     [HttpPost("create")]
     public async Task<IActionResult> CretaeUsuario(CreateUsuarioDto createUsuarioDto)
     {
-        try
-        {
-            var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto);
-            return Ok(responseCreateUsuario);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto);
+        return Ok(responseCreateUsuario);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [HttpGet("get-conta")]
     public async Task<IActionResult> GetConta()
     {
-        try
-        {
-            var usuarioViewModel = await _usuarioService.GetUsuarioByIdAsync();
-            return Ok(usuarioViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var usuarioViewModel = await _usuarioService.GetUsuarioByIdAsync();
+        return Ok(usuarioViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpGet("list")]
     public async Task<IActionResult> GetUsuarios()
     {
-        try
-        {
-            var usuariosViewModel = await _usuarioService.GetAllUsuariosAsync();
-            return Ok(usuariosViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var usuariosViewModel = await _usuarioService.GetAllUsuariosAsync();
+        return Ok(usuariosViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateUsuario(UpdateUsuarioDto updateUsuarioDto)
     {
-        try
-        {
-            var result = await _usuarioService.UpdateUsuarioAsync(updateUsuarioDto);
-
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var result = await _usuarioService.UpdateUsuarioAsync(updateUsuarioDto);
+        return Ok(result);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [HttpPut("update-senha")]
     public async Task<IActionResult> UpdateSenha(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
-        try
-        {
-            await _usuarioService.TrocarSenhaAsync(updateSenhaUsuarioDto);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _usuarioService.TrocarSenhaAsync(updateSenhaUsuarioDto);
+        return Ok();
     }
 }

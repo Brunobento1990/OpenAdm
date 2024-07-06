@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Interfaces;
@@ -9,7 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("tamanhos")]
-public class TamanhoController : ControllerBaseApi
+public class TamanhoController : ControllerBase
 {
     private readonly ITamanhoService _tamanhoService;
 
@@ -22,95 +21,53 @@ public class TamanhoController : ControllerBaseApi
     [HttpGet("list")]
     public async Task<IActionResult> List()
     {
-        try
-        {
-            var tamanhosViewModel = await _tamanhoService.GetTamanhoViewModelsAsync();
-            return Ok(tamanhosViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tamanhosViewModel = await _tamanhoService.GetTamanhoViewModelsAsync();
+        return Ok(tamanhosViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoTamanhoDto paginacaoTamanhoDto)
     {
-        try
-        {
-            var paginacao = await _tamanhoService.GetPaginacaoAsync(paginacaoTamanhoDto);
-            return Ok(paginacao);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var paginacao = await _tamanhoService.GetPaginacaoAsync(paginacaoTamanhoDto);
+        return Ok(paginacao);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-tamanho")]
     public async Task<IActionResult> GetById([FromQuery] Guid id)
     {
-        try
-        {
-            var tamanhoViewModel = await _tamanhoService.GetTamanhoViewModelAsync(id);
-            return Ok(tamanhoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tamanhoViewModel = await _tamanhoService.GetTamanhoViewModelAsync(id);
+        return Ok(tamanhoViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteTamanho([FromQuery] Guid id)
     {
-        try
-        {
-            await _tamanhoService.DeleteTamanhoAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _tamanhoService.DeleteTamanhoAsync(id);
+        return Ok();
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpPut("update")]
     public async Task<IActionResult> UpdateTamanho(UpdateTamanhoDto updateTamanhoDto)
     {
-        try
-        {
-            var tamanhoViewlModel = await _tamanhoService.UpdateTamanhoAsync(updateTamanhoDto);
-            return Ok(tamanhoViewlModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tamanhoViewlModel = await _tamanhoService.UpdateTamanhoAsync(updateTamanhoDto);
+        return Ok(tamanhoViewlModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpPost("create")]
     public async Task<IActionResult> CreateTamanho(CreateTamanhoDto createTamanhoDto)
     {
-        try
-        {
-            var tamanhoViewModel = await _tamanhoService.CreateTamanhoAsync(createTamanhoDto);
-            return Ok(tamanhoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tamanhoViewModel = await _tamanhoService.CreateTamanhoAsync(createTamanhoDto);
+        return Ok(tamanhoViewModel);
     }
 }

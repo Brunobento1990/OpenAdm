@@ -7,10 +7,17 @@ namespace OpenAdm.Api.Controllers;
 [Route("cript")]
 public class CriptController : ControllerBase
 {
-    [HttpPost]
+    [HttpPost("Criptar")]
     public IActionResult Criptar(BodyCript bodyCript)
     {
         var conn = CryptographyGeneric.Encrypt(bodyCript.Code);
+        return Ok(conn);
+    }
+
+    [HttpPost("DeCriptar")]
+    public IActionResult DeCriptar(BodyCript bodyCript)
+    {
+        var conn = CryptographyGeneric.Decrypt(bodyCript.Code);
         return Ok(conn);
     }
 }

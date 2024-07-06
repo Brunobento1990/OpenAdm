@@ -21,7 +21,7 @@ public class ItensPedidoBuilder
         _created = DateTime.Now;
         _update = DateTime.Now;
         var faker = new Faker();
-
+        _numero = 10;
         _pesoId = null;
         _tamanhoId = null;
 

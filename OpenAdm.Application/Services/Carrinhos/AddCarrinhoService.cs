@@ -49,7 +49,7 @@ public sealed class AddCarrinhoService : IAddCarrinhoService
             }
         }
 
-        await _carrinhoRepository.AdicionarProdutoAsync(carrinho, _key);
+        await _carrinhoRepository.AdicionarProdutoAsync(carrinho!, _key);
 
         return true;
     }

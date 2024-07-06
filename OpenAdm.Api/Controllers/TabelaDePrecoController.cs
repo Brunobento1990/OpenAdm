@@ -9,9 +9,9 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [IsFuncionario]
-[Authorize(AuthenticationSchemes = "Bearer")]
+[Autentica]
 [Route("tabelas-de-precos")]
-public class TabelaDePrecoController : ControllerBaseApi
+public class TabelaDePrecoController : ControllerBase
 {
     private readonly ITabelaDePrecoService _tabelaDePrecoService;
 
@@ -23,112 +23,56 @@ public class TabelaDePrecoController : ControllerBaseApi
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoTabelaDePrecoDto paginacaoTabelaDePrecoDto)
     {
-        try
-        {
-            var paginacao = await _tabelaDePrecoService.GetPaginacaoTabelaViewModelAsync(paginacaoTabelaDePrecoDto);
-            return Ok(paginacao);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var paginacao = await _tabelaDePrecoService.GetPaginacaoTabelaViewModelAsync(paginacaoTabelaDePrecoDto);
+        return Ok(paginacao);
     }
 
     [HttpGet("get-tabela")]
     public async Task<IActionResult> TabelaViewModel([FromQuery] Guid id)
     {
-        try
-        {
-            var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetPrecoTabelaViewModelAsync(id);
-            return Ok(tabelaDePrecoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetPrecoTabelaViewModelAsync(id);
+        return Ok(tabelaDePrecoViewModel);
     }
 
     [HttpGet("get-tabela-ativa")]
     public async Task<IActionResult> TabelaViewModelAtiva()
     {
-        try
-        {
-            var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetTabelaDePrecoViewModelAtivaAsync();
-            return Ok(tabelaDePrecoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetTabelaDePrecoViewModelAtivaAsync();
+        return Ok(tabelaDePrecoViewModel);
     }
 
     [HttpGet("get-tabela-by-produtoId")]
     public async Task<IActionResult> TabelaViewModelByProdutoId([FromQuery] Guid produtoId)
     {
-        try
-        {
-            var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetTabelaViewModelByProdutoIdAsync(produtoId);
-            return Ok(tabelaDePrecoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetTabelaViewModelByProdutoIdAsync(produtoId);
+        return Ok(tabelaDePrecoViewModel);
     }
 
     [HttpGet("list")]
     public async Task<IActionResult> TabelasViewModel()
     {
-        try
-        {
-            var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetAllTabelaDePrecoViewModelAsync();
-            return Ok(tabelaDePrecoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetAllTabelaDePrecoViewModelAsync();
+        return Ok(tabelaDePrecoViewModel);
     }
 
     [HttpPost("create")]
     public async Task<IActionResult> CreateTabelaDePreco(CreateTabelaDePrecoDto createTabelaDePrecoDto)
     {
-        try
-        {
-            var tabelaDePrecoViewModel = await _tabelaDePrecoService.CreateTabelaDePrecoAsync(createTabelaDePrecoDto);
-            return Ok(tabelaDePrecoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tabelaDePrecoViewModel = await _tabelaDePrecoService.CreateTabelaDePrecoAsync(createTabelaDePrecoDto);
+        return Ok(tabelaDePrecoViewModel);
     }
 
     [HttpPut("update")]
     public async Task<IActionResult> UpdateTabela(UpdateTabelaDePrecoDto updateTabelaDePrecoDto)
     {
-        try
-        {
-            var tabelaDePrecoViewModel = await _tabelaDePrecoService.UpdateTabelaDePrecoAsync(updateTabelaDePrecoDto);
-            return Ok(tabelaDePrecoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var tabelaDePrecoViewModel = await _tabelaDePrecoService.UpdateTabelaDePrecoAsync(updateTabelaDePrecoDto);
+        return Ok(tabelaDePrecoViewModel);
     }
 
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteTabelaDePreco([FromQuery] Guid id)
     {
-        try
-        {
-            await _tabelaDePrecoService.DeleteTabelaDePrecoAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _tabelaDePrecoService.DeleteTabelaDePrecoAsync(id);
+        return Ok();
     }
 }

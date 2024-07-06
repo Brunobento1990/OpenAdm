@@ -10,6 +10,5 @@ public static class InjectMiddleware
         app.UseMiddleware<LogMiddleware>();
         app.UseMiddleware<ParceiroMiddleware>();
         app.UseMiddleware<AuthorizeMiddleware>();
-        app.UseMiddleware<LoginFuncionarioMiddleware>();
     }
 }

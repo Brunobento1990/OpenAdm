@@ -30,8 +30,6 @@ public class ConfiguracaoParceiroConfiguration : IEntityTypeConfiguration<Config
             .HasMaxLength(1000);
         builder.HasIndex(x => x.DominioSiteAdm)
             .IsUnique(true);
-        builder.HasIndex(x => x.XApi)
-            .IsUnique(true);
         builder.HasIndex(x => x.DominioSiteEcommerce)
             .IsUnique(true);
     }

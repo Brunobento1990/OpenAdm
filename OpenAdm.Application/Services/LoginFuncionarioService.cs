@@ -28,6 +28,6 @@ public class LoginFuncionarioService(
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
         var token = _tokenService.GenerateToken(funcionarioViewModel);
 
-        return new(token, funcionarioViewModel, _parceiroAutenticado.XApi);
+        return new(token, funcionarioViewModel);
     }
 }
