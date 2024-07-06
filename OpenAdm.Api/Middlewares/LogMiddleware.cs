@@ -53,7 +53,7 @@ public class LogMiddleware
         }
         catch (ExceptionApi ex)
         {
-            _statusCode = 404;
+            _statusCode = 400;
             await HandleError(httpContext, ex.Message);
             _createAppLog ??= new();
             _createAppLog.StatusCode = _statusCode;
@@ -62,7 +62,7 @@ public class LogMiddleware
         }
         catch (Exception ex)
         {
-            _statusCode = 404;
+            _statusCode = 400;
 
             if (_development)
             {
