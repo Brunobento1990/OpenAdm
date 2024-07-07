@@ -8,7 +8,7 @@ using OpenAdm.Infra.Context;
 
 #nullable disable
 
-namespace OpenAdm.Infra.Migrations
+namespace OpenAdm.Infra.Migrations.Parceiro
 {
     [DbContext(typeof(ParceiroContext))]
     partial class ParceiroContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace OpenAdm.Infra.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

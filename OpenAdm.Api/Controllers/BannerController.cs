@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("banners")]
-public class BannerController(IBannerService bannerService) : ControllerBaseApi
+public class BannerController(IBannerService bannerService) : ControllerBase
 {
     private readonly IBannerService _bannerService = bannerService;
 
@@ -18,95 +18,53 @@ public class BannerController(IBannerService bannerService) : ControllerBaseApi
     [ResponseCache(CacheProfileName = "Default300")]
     public async Task<IActionResult> ListarBanners()
     {
-        try
-        {
-            var bannersViewModel = await _bannerService.GetBannersAsync();
-            return Ok(bannersViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var bannersViewModel = await _bannerService.GetBannersAsync();
+        return Ok(bannersViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpGet("paginacao")]
     public async Task<IActionResult> Paginacao([FromQuery] PaginacaoBannerDto paginacaoBannerDto)
     {
-        try
-        {
-            var paginacaoViewModel = await _bannerService.GetPaginacaoAsync(paginacaoBannerDto);
-            return Ok(paginacaoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var paginacaoViewModel = await _bannerService.GetPaginacaoAsync(paginacaoBannerDto);
+        return Ok(paginacaoViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpPost("create")]
     public async Task<IActionResult> Create(BannerCreateDto bannerCreateDto)
     {
-        try
-        {
-            var result = await _bannerService.CreateBannerAsync(bannerCreateDto);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var result = await _bannerService.CreateBannerAsync(bannerCreateDto);
+        return Ok(result);
     }
 
     [ResponseCache(CacheProfileName = "Default300")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpGet("get-banner")]
     public async Task<IActionResult> GetBanner([FromQuery] Guid id)
     {
-        try
-        {
-            var bannerViewModel = await _bannerService.GetBannerByIdAsync(id);
-            return Ok(bannerViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var bannerViewModel = await _bannerService.GetBannerByIdAsync(id);
+        return Ok(bannerViewModel);
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteBanner([FromQuery] Guid id)
     {
-        try
-        {
-            await _bannerService.DeleteBannerAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _bannerService.DeleteBannerAsync(id);
+        return Ok();
     }
 
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     [HttpPut("update")]
     public async Task<IActionResult> EditBanner(BannerEditDto bannerEditDto)
     {
-        try
-        {
-            var bannerViewModel = await _bannerService.EditBannerAsync(bannerEditDto);
-            return Ok(bannerViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var bannerViewModel = await _bannerService.EditBannerAsync(bannerEditDto);
+        return Ok(bannerViewModel);
     }
 }

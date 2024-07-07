@@ -5,7 +5,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("home")]
-public class HomeController : ControllerBaseApi
+public class HomeController : ControllerBase
 {
     private readonly IHomeSevice _homeEcommerSevice;
 
@@ -18,14 +18,7 @@ public class HomeController : ControllerBaseApi
     [HttpGet("adm")]
     public async Task<IActionResult> ListAdm()
     {
-        try
-        {
-            var home = await _homeEcommerSevice.GetHomeAdmAsync();
-            return Ok(home);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var home = await _homeEcommerSevice.GetHomeAdmAsync();
+        return Ok(home);
     }
 }

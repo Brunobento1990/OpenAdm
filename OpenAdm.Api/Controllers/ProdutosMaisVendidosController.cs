@@ -5,7 +5,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("produtos-mais-vendidos")]
-public class ProdutosMaisVendidosController : ControllerBaseApi
+public class ProdutosMaisVendidosController : ControllerBase
 {
     private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;
 
@@ -18,14 +18,7 @@ public class ProdutosMaisVendidosController : ControllerBaseApi
     [HttpGet("list")]
     public async Task<IActionResult> List()
     {
-        try
-        {
-            var produtosMaisVendidos = await _produtosMaisVendidosService.GetProdutosMaisVendidosAsync();
-            return Ok(produtosMaisVendidos);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var produtosMaisVendidos = await _produtosMaisVendidosService.GetProdutosMaisVendidosAsync();
+        return Ok(produtosMaisVendidos);
     }
 }

@@ -4,6 +4,7 @@ using dotenv.net;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.Api.Configure;
+using OpenAdm.Api.Middlewares;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
@@ -23,6 +24,8 @@ var iv = VariaveisDeAmbiente.GetVariavel("CRYP_IV");
 var pgString = VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION");
 var redisString = VariaveisDeAmbiente.GetVariavel("REDIS_URL");
 var rabbitMqString = VariaveisDeAmbiente.GetVariavel("MENSAGERIA_URI");
+var urlFrete = VariaveisDeAmbiente.GetVariavel("URL_FRETE");
+var tokenFrete = VariaveisDeAmbiente.GetVariavel("TOKEN_FRETE");
 var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
@@ -40,6 +43,7 @@ builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString);
 builder.Services.InjectHttpClient(urlDiscord);
 builder.Services.InjectMensageria(rabbitMqString);
+builder.Services.InjectHttpClientFrete(urlFrete, tokenFrete);
 
 ConfigurePdfQuest.ConfigureQuest();
 
@@ -64,11 +68,11 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
 }
 app.UseResponseCaching();
 
-app.UseAuthentication();
+app.UseCors("base");
+
+app.AddMiddlewaresApi();
 
 app.UseAuthorization();
-
-app.UseCors("base");
 
 app.MapControllers();
 

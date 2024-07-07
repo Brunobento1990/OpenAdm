@@ -42,13 +42,13 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         var tamanhosIds = createTabelaDePrecoDto
             .ItensTabelaDePreco
             .Where(x => x.TamanhoId != null)
-            .Select(x => x.TamanhoId.Value)
+            .Select(x => x.TamanhoId!.Value)
             .ToList();
 
         var pesosIds = createTabelaDePrecoDto
             .ItensTabelaDePreco
             .Where(x => x.PesoId != null)
-            .Select(x => x.PesoId.Value)
+            .Select(x => x.PesoId!.Value)
             .ToList();
 
         var tamanhos = await _tamanhoRepository.GetTamanhosByIdsAsync(tamanhosIds);
@@ -99,13 +99,13 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         var tamanhosIds = tabelaDePreco
             .ItensTabelaDePreco
             .Where(x => x.TamanhoId != null)
-            .Select(x => x.TamanhoId.Value)
+            .Select(x => x.TamanhoId!.Value)
             .ToList();
 
         var pesosIds = tabelaDePreco
             .ItensTabelaDePreco
             .Where(x => x.PesoId != null)
-            .Select(x => x.PesoId.Value)
+            .Select(x => x.PesoId!.Value)
             .ToList();
 
         var tamanhos = await _tamanhoRepository.GetTamanhosByIdsAsync(tamanhosIds);

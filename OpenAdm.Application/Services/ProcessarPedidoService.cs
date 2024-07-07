@@ -51,8 +51,8 @@ public class ProcessarPedidoService : IProcessarPedidoService
 
         foreach(var item in pedido.ItensPedido)
         {
-            item.Pedido = null;
-            item.Produto = null;
+            item.Pedido = null!;
+            item.Produto = null!;
             item.Peso = null;
             item.Tamanho = null;
         }

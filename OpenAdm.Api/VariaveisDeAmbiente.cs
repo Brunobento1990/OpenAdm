@@ -12,4 +12,9 @@ public static class VariaveisDeAmbiente
         return Environment.GetEnvironmentVariable(key) ??
             throw new ExceptionApi($"Variável não encontrada com a Key : {key}");
     }
+
+    public static bool IsDevelopment()
+    {
+        return Environment.GetEnvironmentVariable("AMBIENTE") == "develop";
+    }
 }

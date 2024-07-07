@@ -12,6 +12,7 @@ public class CreateProdutoDto
     public string Foto { get; set; } = string.Empty;
     public string? EspecificacaoTecnica { get; set; }
     public string? Referencia { get; set; }
+    public decimal? Peso { get; set; }
     public Guid CategoriaId { get; set; }
     public IList<Guid>? TamanhosIds { get; set; }
     public IList<Guid>? PesosIds { get; set; }
@@ -29,7 +30,8 @@ public class CreateProdutoDto
             CategoriaId,
             Referencia,
             Foto,
-            nomeFoto);
+            nomeFoto,
+            Peso);
     }
 
     public IList<TamanhosProdutos> ToTamanhosProdutos(Guid produtoId)

@@ -44,8 +44,9 @@ public class ConfiguracoesDeEmailService : IConfiguracoesDeEmailService
 
     public async Task<ConfiguracaoDeEmailViewModel> GetConfiguracaoDeEmailAsync()
     {
-        var configuracaoDeEmail = await _configuracaoDeEmailRepository.GetConfiguracaoDeEmailAtivaAsync()
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+        var configuracaoDeEmail = await _configuracaoDeEmailRepository.GetConfiguracaoDeEmailAtivaAsync();
+
+        if (configuracaoDeEmail == null) return new();
 
         return new ConfiguracaoDeEmailViewModel().ToModel(configuracaoDeEmail);
     }

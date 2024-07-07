@@ -1,37 +1,31 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Carrinhos;
+using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Api.Controllers.Carrinhos;
 
 [ApiController]
 [Route("carrinho")]
-[Authorize(AuthenticationSchemes = "Bearer")]
-public class DeleteProdutoCarrinhoController : ControllerBaseApi
+[Autentica]
+public class DeleteProdutoCarrinhoController : ControllerBase
 {
     private readonly IDeleteProdutoCarrinhoService _deleteProdutoCarrinhoService;
     private readonly Guid _usuarioId;
 
     public DeleteProdutoCarrinhoController(
         IDeleteProdutoCarrinhoService deleteProdutoCarrinhoService,
-        ITokenService tokenService)
+        IUsuarioAutenticado usuarioAutenticado)
     {
-        _usuarioId = tokenService.GetTokenUsuarioViewModel().Id;
+        _usuarioId = usuarioAutenticado.Id;
         _deleteProdutoCarrinhoService = deleteProdutoCarrinhoService;
     }
 
     [HttpDelete("delete-produto-carrinho")]
     public async Task<IActionResult> DeleteProdutCarrinho([FromQuery] Guid produtoId)
     {
-        try
-        {
-            var result = await _deleteProdutoCarrinhoService.DeleteProdutoCarrinhoAsync(produtoId, _usuarioId);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var result = await _deleteProdutoCarrinhoService.DeleteProdutoCarrinhoAsync(produtoId, _usuarioId);
+        return Ok();
     }
 }

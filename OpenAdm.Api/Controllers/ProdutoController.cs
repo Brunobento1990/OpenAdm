@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("produtos")]
-public class ProdutoController : ControllerBaseApi
+public class ProdutoController : ControllerBase
 {
     private readonly IProdutoService _produtoService;
 
@@ -22,121 +22,65 @@ public class ProdutoController : ControllerBaseApi
     [HttpGet("list")]
     public async Task<IActionResult> ListProdutos([FromQuery] PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
-        try
-        {
-            var result = await _produtoService.GetProdutosAsync(paginacaoProdutoEcommerceDto);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var result = await _produtoService.GetProdutosAsync(paginacaoProdutoEcommerceDto);
+        return Ok(result);
     }
 
     [HttpGet("all-list")]
     public async Task<IActionResult> ListAllProdutos()
     {
-        try
-        {
-            var result = await _produtoService.GetAllProdutosAsync();
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var result = await _produtoService.GetAllProdutosAsync();
+        return Ok(result);
     }
 
     [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list-by-categorias")]
     public async Task<IActionResult> ListProdutosByCategorias([FromQuery] Guid categoriaId)
     {
-        try
-        {
-            var result = await _produtoService.GetProdutosByCategoriaIdAsync(categoriaId);
-            return Ok(result);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var result = await _produtoService.GetProdutosByCategoriaIdAsync(categoriaId);
+        return Ok(result);
     }
 
     [HttpGet("paginacao")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
     public async Task<IActionResult> ProdutoPaginacao([FromQuery] PaginacaoProdutoDto paginacaoProdutoDto)
     {
-        try
-        {
-            var paginacao = await _produtoService.GetPaginacaoAsync(paginacaoProdutoDto);
-            return Ok(paginacao);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var paginacao = await _produtoService.GetPaginacaoAsync(paginacaoProdutoDto);
+        return Ok(paginacao);
     }
 
     [HttpPost("create")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     [IsFuncionario]
-    public async Task<IActionResult> CreateProduto([FromBody]CreateProdutoDto createProdutoDto)
+    public async Task<IActionResult> CreateProduto([FromBody] CreateProdutoDto createProdutoDto)
     {
-        try
-        {
-            var produtoViewModel = await _produtoService.CreateProdutoAsync(createProdutoDto);
-            return Ok(produtoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var produtoViewModel = await _produtoService.CreateProdutoAsync(createProdutoDto);
+        return Ok(produtoViewModel);
     }
 
     [HttpGet("get-produto")]
     public async Task<IActionResult> GetProduto([FromQuery] Guid id)
     {
-        try
-        {
-            var produtoViewModel = await _produtoService.GetProdutoViewModelByIdAsync(id);
-            return Ok(produtoViewModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var produtoViewModel = await _produtoService.GetProdutoViewModelByIdAsync(id);
+        return Ok(produtoViewModel);
     }
 
     [HttpDelete("delete")]
     [IsFuncionario]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     public async Task<IActionResult> DeleteProduto([FromQuery] Guid id)
     {
-        try
-        {
-            await _produtoService.DeleteProdutoAsync(id);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _produtoService.DeleteProdutoAsync(id);
+        return Ok();
     }
 
     [HttpPut("update")]
     [IsFuncionario]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Autentica]
     public async Task<IActionResult> UpdateProduto(UpdateProdutoDto updateProdutoDto)
     {
-        try
-        {
-            var produtoViewlModel = await _produtoService.UpdateProdutoAsync(updateProdutoDto);
-            return Ok(produtoViewlModel);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var produtoViewlModel = await _produtoService.UpdateProdutoAsync(updateProdutoDto);
+        return Ok(produtoViewlModel);
     }
 }

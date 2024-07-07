@@ -6,13 +6,13 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("login")]
-public class LoginController : ControllerBaseApi
+public class LoginController : ControllerBase
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;
     private readonly ILoginUsuarioService _loginUsuarioService;
 
     public LoginController(
-        ILoginFuncionarioService loginFuncionarioService, 
+        ILoginFuncionarioService loginFuncionarioService,
         ILoginUsuarioService loginUsuarioService)
     {
         _loginFuncionarioService = loginFuncionarioService;
@@ -22,28 +22,14 @@ public class LoginController : ControllerBaseApi
     [HttpPost("funcionario")]
     public async Task<IActionResult> LoginFuncionario(RequestLogin requestLogin)
     {
-        try
-        {
-            var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin);
-            return Ok(responselogin);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin);
+        return Ok(responselogin);
     }
 
     [HttpPost("usuario")]
     public async Task<IActionResult> LoginUsuario(RequestLogin requestLogin)
     {
-        try
-        {
-            var responselogin = await _loginUsuarioService.LoginAsync(requestLogin);
-            return Ok(responselogin);
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        var responselogin = await _loginUsuarioService.LoginAsync(requestLogin);
+        return Ok(responselogin);
     }
 }

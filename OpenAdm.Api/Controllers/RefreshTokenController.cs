@@ -5,7 +5,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("token")]
-public class RefreshTokenController(IRefreshTokenService refreshTokenService) : ControllerBaseApi
+public class RefreshTokenController(IRefreshTokenService refreshTokenService) : ControllerBase
 {
     private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
 

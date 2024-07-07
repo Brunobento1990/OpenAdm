@@ -13,15 +13,17 @@ public class UsuarioService : IUsuarioService
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly ITokenService _tokenService;
     private readonly IPedidoRepository _pedidoRepository;
-
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
     public UsuarioService(
-        IUsuarioRepository usuarioRepository, 
-        ITokenService tokenService, 
-        IPedidoRepository pedidoRepository)
+        IUsuarioRepository usuarioRepository,
+        ITokenService tokenService,
+        IPedidoRepository pedidoRepository,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _usuarioRepository = usuarioRepository;
         _tokenService = tokenService;
         _pedidoRepository = pedidoRepository;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
@@ -50,19 +52,17 @@ public class UsuarioService : IUsuarioService
 
     public async Task<UsuarioViewModel> GetUsuarioByIdAsync()
     {
-        var idToken = _tokenService.GetTokenUsuarioViewModel().Id;
-        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(idToken)
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
-        var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(idToken);
+        var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
 
         return new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
     }
 
     public async Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
-        var id = _tokenService.GetTokenUsuarioViewModel().Id;
-        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id);
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id);
         if (usuario == null || !updateSenhaUsuarioDto.Senha.Equals(updateSenhaUsuarioDto.ReSenha))
             throw new ExceptionApi(CodigoErrors.AsSenhaNaoConferem);
 
@@ -73,8 +73,7 @@ public class UsuarioService : IUsuarioService
 
     public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto)
     {
-        var idToken = _tokenService.GetTokenUsuarioViewModel().Id;
-        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(idToken)
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id)
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
         usuario.Update(updateUsuarioDto.Email, updateUsuarioDto.Nome, updateUsuarioDto.Telefone, updateUsuarioDto.Cnpj, updateUsuarioDto.Cpf);

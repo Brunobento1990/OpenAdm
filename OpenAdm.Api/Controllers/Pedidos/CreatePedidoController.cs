@@ -1,7 +1,6 @@
 ﻿using Domain.Pkg.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OpenAdm.Application.Interfaces;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Interfaces;
 
@@ -9,41 +8,26 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 
 [ApiController]
 [Route("pedidos")]
-[Authorize(AuthenticationSchemes = "Bearer")]
-public class CreatePedidoController : ControllerBaseApi
+[Autentica]
+public class CreatePedidoController : ControllerBase
 {
     private readonly ICreatePedidoService _createPedidoService;
-    private readonly ITokenService _tokenService;
-    private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
     public CreatePedidoController(
         ICreatePedidoService createPedidoService,
-        ITokenService tokenService,
-        IUsuarioRepository usuarioRepository)
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _createPedidoService = createPedidoService;
-        _tokenService = tokenService;
-        _usuarioRepository = usuarioRepository;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     [HttpPost("create")]
     public async Task<IActionResult> CreatePedido(IList<ItensPedidoModel> itensPedidoModels)
     {
-        try
-        {
-            var id = _tokenService.GetTokenUsuarioViewModel().Id;
-            var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id);
-            if (usuario == null)
-            {
-                return Unauthorized();
-            }
-            var result = await _createPedidoService.CreatePedidoAsync(itensPedidoModels, usuario);
+        var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
+        var result = await _createPedidoService.CreatePedidoAsync(itensPedidoModels, usuario);
 
-            return Ok(new { message = "Pedido criado com sucesso!", pedido = result });
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        return Ok(new { message = "Pedido criado com sucesso!", pedido = result });
     }
 }

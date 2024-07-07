@@ -65,7 +65,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             foreach (var item in pedido.ItensPedido)
             {
                 if (item.Pedido != null)
-                    item.Pedido = null;
+                    item.Pedido = null!;
 
                 if (item.Produto != null)
                 {

@@ -6,7 +6,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("usuarios")]
-public class EsqueceuSenhaController : ControllerBaseApi
+public class EsqueceuSenhaController : ControllerBase
 {
     private readonly IEsqueceuSenhaService _esqueceuSenhaService;
 
@@ -18,14 +18,7 @@ public class EsqueceuSenhaController : ControllerBaseApi
     [HttpPut("esqueceu-senha")]
     public async Task<IActionResult> ResetarSenha(EsqueceuSenhaDto esqueceuSenhaDto)
     {
-        try
-        {
-            await _esqueceuSenhaService.RecuperarSenhaAsync(esqueceuSenhaDto);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            return await HandleErrorAsync(ex);
-        }
+        await _esqueceuSenhaService.RecuperarSenhaAsync(esqueceuSenhaDto);
+        return Ok();
     }
 }
