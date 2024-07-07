@@ -12,16 +12,13 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 public class CreatePedidoController : ControllerBase
 {
     private readonly ICreatePedidoService _createPedidoService;
-    private readonly IUsuarioRepository _usuarioRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
 
     public CreatePedidoController(
         ICreatePedidoService createPedidoService,
-        IUsuarioRepository usuarioRepository,
         IUsuarioAutenticado usuarioAutenticado)
     {
         _createPedidoService = createPedidoService;
-        _usuarioRepository = usuarioRepository;
         _usuarioAutenticado = usuarioAutenticado;
     }
 
