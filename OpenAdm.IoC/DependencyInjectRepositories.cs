@@ -23,7 +23,9 @@ public static class DependencyInjectRepositories
 
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
-        services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
+        services.AddScoped<ConfiguracaoParceiroRepository>();
+        services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroCached>();
+
         services.AddScoped<ILoginUsuarioRepository, LoginUsuarioRepository>();
         services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
 
