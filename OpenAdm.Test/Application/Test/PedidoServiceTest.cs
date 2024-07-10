@@ -6,7 +6,6 @@ using Domain.Pkg.Enum;
 using OpenAdm.Application.Models.Pedidos;
 using Domain.Pkg.Model;
 using Domain.Pkg.Entities;
-using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Application.Services.Pedidos;
 using Domain.Pkg.Pdfs.Configure;
 
@@ -65,10 +64,11 @@ public class PedidoServiceTest
         var pedido = PedidoBuilder.Init().Build();
         ConfigurePdfQuest.ConfigureQuest();
         var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
+        var enderecoEntregaPedidoRepository = new Mock<IEnderecoEntregaPedidoRepository>();
 
         _pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
-
-        var pedidoService = new PedidoDownloadService(_pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object);
+        enderecoEntregaPedidoRepository.Setup(x => x.GetEnderecoEntregaPedidoByPedidoIdAsync(pedido.Id)).ReturnsAsync((EnderecoEntregaPedido?)null);
+        var pedidoService = new PedidoDownloadService(_pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object, enderecoEntregaPedidoRepository.Object);
         var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
         Assert.NotNull(pdf);
