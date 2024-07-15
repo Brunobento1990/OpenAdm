@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
-using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Cached.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Http;
+using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Infra.Cached.Services;
 
@@ -17,7 +16,7 @@ public class CachedService<T> : ICachedService<T> where T : class
     private readonly string _dominimo;
 
     public CachedService(IDistributedCache distributedCache,
-        IHttpContextAccessor httpContextAccessor)
+        IParceiroAutenticado parceiroAutenticado)
     {
         _serializerOptions = new()
         {
@@ -30,11 +29,7 @@ public class CachedService<T> : ICachedService<T> where T : class
                       .SetSlidingExpiration(TimeSpan.FromMinutes(_slidingExpiration));
 
         _distributedCache = distributedCache;
-        _dominimo = httpContextAccessor?
-           .HttpContext?
-           .Request?
-           .Headers?
-           .FirstOrDefault(x => x.Key == "Referer").Value.ToString() ?? throw new Exception();
+        _dominimo = parceiroAutenticado.Referer;
     }
 
     public async Task<T?> GetItemAsync(string key)
@@ -74,7 +69,7 @@ public class CachedService<T> : ICachedService<T> where T : class
     private static void Valid(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
-            throw new ExceptionApi("Key do cached inválida!");
+            throw new Exception("Key do cached inválida!");
     }
 
     private string GetNewKey(string key)
