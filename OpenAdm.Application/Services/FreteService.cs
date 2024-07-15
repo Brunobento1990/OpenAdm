@@ -13,6 +13,10 @@ public class FreteService : IFreteService
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IConfiguracaoDeFreteRepository _configuracaoDeFreteRepository;
+    private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+    {
+        PropertyNameCaseInsensitive = true
+    };
     public FreteService(
         IHttpClientFactory httpClientFactory,
         IPedidoRepository pedidoRepository,
@@ -32,6 +36,7 @@ public class FreteService : IFreteService
             ?? throw new Exception("Não foi localizada a configuração de frete!");
 
         var peso = (int)pedido.ItensPedido.Sum(x => x.Produto.Peso ?? (decimal)0.1);
+        peso = peso > 30 ? 30 : peso;
         var calcularFreteDto = new CalcularFreteDto() 
         {
             CepDestino = calcularFretePedidoDto.Cep,
@@ -40,7 +45,7 @@ public class FreteService : IFreteService
             CepOrigem = configuracao.CepOrigem,
             Comprimento = configuracao.ComprimentoEmbalagem,
             Largura = configuracao.LarguraEmbalagem,
-            Peso = peso > 0 ? peso : 1,
+            Peso = (peso > 0 ? peso : 1) + (int)(configuracao.Peso ?? 0)
         };
 
         var client = _httpClientFactory.CreateClient("Frete");
@@ -50,14 +55,14 @@ public class FreteService : IFreteService
         {
             var erroJson = await response.Content.ReadAsStringAsync();
 
-            var erro = JsonSerializer.Deserialize<ErrorResponse>(erroJson, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true })
+            var erro = JsonSerializer.Deserialize<ErrorResponse>(erroJson, _jsonSerializerOptions)
                 ?? throw new Exception("Não foi possível calcular o frete!");
 
             throw new ExceptionApi(erro.Mensagem);
         }
 
         var result = await response.Content.ReadAsStringAsync();
-        return JsonSerializer.Deserialize<FreteViewModel>(result, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true})
+        return JsonSerializer.Deserialize<FreteViewModel>(result, _jsonSerializerOptions)
             ?? throw new Exception("Não foi possível calcular o frete!");
     }
 }
