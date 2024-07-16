@@ -2,6 +2,7 @@
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using Domain.Pkg.Entities;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -65,11 +66,11 @@ public class UsuarioCached : IUsuarioRepository
     {
         var usuarios = await _cachedService.GetListItemAsync(_keyList);
 
-        if(usuarios is null)
+        if (usuarios is null)
         {
             usuarios = await _usuarioRepository.GetAllUsuariosAsync();
 
-            if(usuarios?.Count > 0)
+            if (usuarios?.Count > 0)
             {
                 await _cachedService.SetListItemAsync(_keyList, usuarios);
             }
@@ -77,4 +78,7 @@ public class UsuarioCached : IUsuarioRepository
 
         return usuarios ?? new List<Usuario>();
     }
+
+    public Task<PaginacaoViewModel<Usuario>> GetPaginacaoAsync(FilterModel<Usuario> filterModel)
+        => _usuarioRepository.GetPaginacaoAsync(filterModel);
 }

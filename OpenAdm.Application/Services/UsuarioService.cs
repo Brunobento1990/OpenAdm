@@ -5,6 +5,8 @@ using OpenAdm.Application.Models.Usuarios;
 using Domain.Pkg.Errors;
 using Domain.Pkg.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
+using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
@@ -58,6 +60,17 @@ public class UsuarioService : IUsuarioService
         var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
 
         return new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
+    }
+
+    public async Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(PaginacaoUsuarioDto paginacaoUsuarioDto)
+    {
+        var paginacao = await _usuarioRepository.GetPaginacaoAsync(paginacaoUsuarioDto);
+
+        return new PaginacaoViewModel<UsuarioViewModel>()
+        {
+            TotalPage = paginacao.TotalPage,
+            Values = paginacao.Values.Select(x => new UsuarioViewModel().ToModel(x)).ToList()
+        };
     }
 
     public async Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)

@@ -2,6 +2,7 @@
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -14,6 +15,15 @@ public class UsuarioController : ControllerBase
     public UsuarioController(IUsuarioService usuarioService)
     {
         _usuarioService = usuarioService;
+    }
+
+    [Autentica]
+    [IsFuncionario]
+    [HttpGet("paginacao")]
+    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoUsuarioDto paginacaoUsuarioDto)
+    {
+        var response = await _usuarioService.PaginacaoAsync(paginacaoUsuarioDto);
+        return Ok(response);
     }
 
     [HttpPost("create")]
