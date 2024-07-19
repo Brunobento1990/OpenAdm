@@ -1,4 +1,5 @@
 ﻿using Domain.Pkg.Entities;
+using Domain.Pkg.Enum;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Pedidos;
 
@@ -11,5 +12,7 @@ public interface IPedidoRepository : IGenericRepository<Pedido>
     Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id);
     Task<List<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido);
     Task<int> GetQuantidadeDePedidoPorUsuarioAsync(Guid usuarioId);
+    Task<decimal> GetTotalPedidoPorUsuarioAsync(Guid usuarioId);
+    Task<int> GetQuantidadePorStatusUsuarioAsync(Guid usuarioId, StatusPedido statusPedido);
     Task<IList<Pedido>> GetPedidosByRelatorioPorPeriodoAsync(RelatorioPedidoDto relatorioPedidoDto);
 }

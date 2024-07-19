@@ -10,6 +10,12 @@ public class UsuarioViewModel : BaseModel
     public string? Cnpj { get; set; }
     public string? Cpf { get; set; }
     public int? QuantidadeDePedido { get; set; }
+    public int? PedidosEmAberto { get; set; }
+    public int? PedidosFaturado { get; set; }
+    public int? PedidosEmEntraga { get; set; }
+    public int? PedidosEntregue { get; set; }
+    public int? PedidosCancelados { get; set; }
+    public decimal? TotalPedido { get; set; }
 
     public UsuarioViewModel ToModel(Usuario entity, int? quantidadeDePedido = null)
     {
