@@ -132,4 +132,29 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Where(x => x.UsuarioId == usuarioId)
             .CountAsync();
     }
+
+    public async Task<int> GetQuantidadePorStatusUsuarioAsync(Guid usuarioId, StatusPedido statusPedido)
+    {
+        try
+        {
+            return await _parceiroContext
+                .Pedidos
+                .AsNoTracking()
+                .CountAsync(x => x.StatusPedido == statusPedido && x.UsuarioId == usuarioId);
+        }
+        catch (Exception)
+        {
+            return 0;
+        }
+    }
+
+    public async Task<decimal> GetTotalPedidoPorUsuarioAsync(Guid usuarioId)
+    {
+        return await _parceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .Include(x => x.ItensPedido)
+            .Where(x => x.UsuarioId == usuarioId)
+            .SumAsync(x => x.ValorTotal);
+    }
 }

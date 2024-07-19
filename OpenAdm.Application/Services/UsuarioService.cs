@@ -7,6 +7,7 @@ using Domain.Pkg.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
+using Domain.Pkg.Enum;
 
 namespace OpenAdm.Application.Services;
 
@@ -30,10 +31,15 @@ public class UsuarioService : IUsuarioService
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
     {
+        if (!createUsuarioDto.Senha.Equals(createUsuarioDto.ReSenha))
+        {
+            throw new ExceptionApi("As senha não conferem!");
+        }
+
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
 
         if (usuario != null)
-            throw new ExceptionApi(CodigoErrors.UsuarioEcommerceJaCadastrado);
+            throw new ExceptionApi("Este e-mail já se encontra cadastrado!");
 
         usuario = createUsuarioDto.ToEntity();
 
@@ -58,8 +64,27 @@ public class UsuarioService : IUsuarioService
             ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
 
         var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
 
-        return new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
+        usuarioViewModel.PedidosEmAberto = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Aberto);
+
+        usuarioViewModel.PedidosFaturado = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Faturado);
+
+        usuarioViewModel.PedidosEmEntraga = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.RotaDeEntrega);
+
+        usuarioViewModel.PedidosEntregue = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Entregue);
+
+        usuarioViewModel.PedidosCancelados = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Cancelado);
+
+        usuarioViewModel.TotalPedido = await _pedidoRepository
+            .GetTotalPedidoPorUsuarioAsync(usuario.Id);
+
+        return usuarioViewModel;
     }
 
     public async Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(PaginacaoUsuarioDto paginacaoUsuarioDto)
