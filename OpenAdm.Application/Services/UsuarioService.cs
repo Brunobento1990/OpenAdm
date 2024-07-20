@@ -87,6 +87,35 @@ public class UsuarioService : IUsuarioService
         return usuarioViewModel;
     }
 
+    public async Task<UsuarioViewModel> GetUsuarioByIdAdmAsync(Guid id)
+    {
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
+            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+
+        var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
+
+        usuarioViewModel.PedidosEmAberto = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Aberto);
+
+        usuarioViewModel.PedidosFaturado = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Faturado);
+
+        usuarioViewModel.PedidosEmEntraga = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.RotaDeEntrega);
+
+        usuarioViewModel.PedidosEntregue = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Entregue);
+
+        usuarioViewModel.PedidosCancelados = await _pedidoRepository
+            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Cancelado);
+
+        usuarioViewModel.TotalPedido = await _pedidoRepository
+            .GetTotalPedidoPorUsuarioAsync(usuario.Id);
+
+        return usuarioViewModel;
+    }
+
     public async Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(PaginacaoUsuarioDto paginacaoUsuarioDto)
     {
         var paginacao = await _usuarioRepository.GetPaginacaoAsync(paginacaoUsuarioDto);

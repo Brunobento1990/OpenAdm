@@ -150,11 +150,13 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<decimal> GetTotalPedidoPorUsuarioAsync(Guid usuarioId)
     {
-        return await _parceiroContext
+        var pedidos = await _parceiroContext
             .Pedidos
             .AsNoTracking()
             .Include(x => x.ItensPedido)
             .Where(x => x.UsuarioId == usuarioId)
-            .SumAsync(x => x.ValorTotal);
+            .ToListAsync();
+
+        return pedidos.Sum(x => x.ValorTotal);
     }
 }
