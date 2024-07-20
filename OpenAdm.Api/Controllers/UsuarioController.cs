@@ -43,6 +43,15 @@ public class UsuarioController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
+    [HttpGet("get-conta-adm")]
+    public async Task<IActionResult> GetContaAdm([FromQuery]Guid id)
+    {
+        var usuarioViewModel = await _usuarioService.GetUsuarioByIdAdmAsync(id);
+        return Ok(usuarioViewModel);
+    }
+
+    [Autentica]
+    [IsFuncionario]
     [HttpGet("list")]
     public async Task<IActionResult> GetUsuarios()
     {
