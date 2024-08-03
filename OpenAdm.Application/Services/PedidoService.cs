@@ -1,6 +1,5 @@
-﻿using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models.EnderecosEntregaPedidos;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -10,17 +9,23 @@ using System.Reactive.Linq;
 namespace OpenAdm.Application.Services;
 
 public class PedidoService(
-    IPedidoRepository pedidoRepository)
+    IPedidoRepository pedidoRepository,
+    IEnderecoEntregaPedidoRepository enderecoEntregaPedidoRepository)
     : IPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
+    private readonly IEnderecoEntregaPedidoRepository _enderecoEntregaPedidoRepository = enderecoEntregaPedidoRepository;
 
     public async Task<PedidoViewModel> GetAsync(Guid pedidoId)
     {
-        var pedido = await _pedidoRepository.GetPedidoByIdAsync(pedidoId)
+        var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
             ?? throw new Exception($"Pedido não localizado: {pedidoId}");
+        var enderecoEntrega = await _enderecoEntregaPedidoRepository.GetEnderecoEntregaPedidoByPedidoIdAsync(pedidoId);
 
-        return new PedidoViewModel().ForModel(pedido);
+        var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
+        pedidoViewModel.EnderecoEntrega = EnderecoEntregaPedidoViewModel.ToEntity(enderecoEntrega);
+
+        return pedidoViewModel;
     }
 
     public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto)
