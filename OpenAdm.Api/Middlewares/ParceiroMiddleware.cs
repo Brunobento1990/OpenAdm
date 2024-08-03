@@ -33,6 +33,7 @@ public class ParceiroMiddleware
 
         parceiroAutenticado.Referer = referer;
         parceiroAutenticado.StringConnection = CryptographyGeneric.Decrypt(parceiro.ConexaoDb);
+        parceiroAutenticado.KeyParceiro = parceiro.Id.ToString();
 
         await _next(httpContext);
     }
