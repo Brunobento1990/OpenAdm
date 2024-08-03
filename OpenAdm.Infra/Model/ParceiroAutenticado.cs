@@ -6,4 +6,5 @@ public class ParceiroAutenticado : IParceiroAutenticado
 {
     public string StringConnection { get; set; } = string.Empty;
     public string Referer { get; set; } = string.Empty;
+    public string KeyParceiro { get; set; } = string.Empty;
 }
