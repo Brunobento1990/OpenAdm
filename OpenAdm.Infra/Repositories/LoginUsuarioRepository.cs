@@ -15,6 +15,6 @@ public class LoginUsuarioRepository(ParceiroContext parceiroContext)
         return await _parceiroContext
             .Usuarios
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Email == email);
+            .FirstOrDefaultAsync(x => x.Cpf == email || x.Cnpj == email);
     }
 }
