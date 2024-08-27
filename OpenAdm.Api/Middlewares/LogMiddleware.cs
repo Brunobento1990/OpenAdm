@@ -81,13 +81,13 @@ public class LogMiddleware
             _createAppLog.Erro = ex.Message;
             _createAppLog.LogLevel = 3;
         }
-        finally
-        {
-            if (!_development)
-            {
-                await appLogService.CreateAppLogAsync(_createAppLog);
-            }
-        }
+        //finally
+        //{
+        //    if (!_development)
+        //    {
+        //        await appLogService.CreateAppLogAsync(_createAppLog);
+        //    }
+        //}
     }
 
     static async Task NotificarDiscord(HttpContext httpContext, string mensagem, IDiscordHttpService discordHttpService)
