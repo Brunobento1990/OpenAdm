@@ -1,4 +1,5 @@
 ﻿using Domain.Pkg.Entities;
+using Domain.Pkg.Exceptions;
 using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Models;
 using System.ComponentModel.DataAnnotations;
@@ -30,6 +31,12 @@ public class CreateUsuarioDto : BaseModel
 
     public Usuario ToEntity()
     {
+        if((string.IsNullOrWhiteSpace(Cnpj) && string.IsNullOrWhiteSpace(Cpf))
+            || (!string.IsNullOrWhiteSpace(Cnpj) && !string.IsNullOrWhiteSpace(Cpf)))
+        {
+            throw new ExceptionApi("Informe o CNPJ ou o CPF");
+        }
+
         var senha = PasswordAdapter.GenerateHash(Senha);
 
         var date = DateTime.Now;
