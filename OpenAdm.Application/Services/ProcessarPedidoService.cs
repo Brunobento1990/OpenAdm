@@ -3,6 +3,12 @@ using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Application.Mensageria.Interfaces;
 using Domain.Pkg.Entities;
+using Domain.Pkg.Model;
+using Domain.Pkg.Pdfs.Services;
+using System.Text;
+using OpenAdm.Application.Interfaces.Pedidos;
+using Domain.Pkg.Interfaces;
+using OpenAdm.Application.Models;
 
 namespace OpenAdm.Application.Services;
 
@@ -11,15 +17,21 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
+    private readonly IPdfPedidoService _pdfPedidoService;
+    private readonly IEmailService _emailService;
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IProducerGeneric<ProcessarPedidoModel> producerGeneric,
-        IPedidoRepository pedidoRepository)
+        IPedidoRepository pedidoRepository,
+        IPdfPedidoService pdfPedidoService,
+        IEmailService emailService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _producerGeneric = producerGeneric;
         _pedidoRepository = pedidoRepository;
+        _pdfPedidoService = pdfPedidoService;
+        _emailService = emailService;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId)
@@ -29,15 +41,31 @@ public class ProcessarPedidoService : IProcessarPedidoService
 
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId);
 
-        if(pedido != null)
+        if (pedido != null)
         {
-            var processarPedidoModel = new ProcessarPedidoModel()
+            var logo = configuracoesDePedido.Logo != null ? Encoding.UTF8.GetString(configuracoesDePedido.Logo) : null;
+            var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, null, logo);
+
+            var message = $"Que ótima noticia, mais um pedido!\nN. do pedido : {pedido.Numero}";
+            var assunto = "Novo pedido";
+
+            var emailModel = new ToEnvioEmailModel()
             {
-                EmailEnvio = configuracoesDePedido.EmailDeEnvio,
-                Logo = configuracoesDePedido.Logo,
-                Pedido = pedido
+                Assunto = assunto,
+                Email = configuracoesDePedido.EmailDeEnvio,
+                Mensagem = message,
+                Arquivo = pdf,
+                NomeDoArquivo = $"pedido-{pedido.Numero}",
+                TipoDoArquivo = "application/pdf"
             };
-            _producerGeneric.Publish(processarPedidoModel, "pedido-create");
+
+            await _emailService.SendEmail(emailModel, new FromEnvioEmailModel()
+            {
+                Email = EmailConfiguracaoModel.Email,
+                Porta = EmailConfiguracaoModel.Porta,
+                Senha = EmailConfiguracaoModel.Senha,
+                Servidor = EmailConfiguracaoModel.Servidor
+            });
         }
     }
 
@@ -49,7 +77,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
             Pedido = pedido
         };
 
-        foreach(var item in pedido.ItensPedido)
+        foreach (var item in pedido.ItensPedido)
         {
             item.Pedido = null!;
             item.Produto = null!;

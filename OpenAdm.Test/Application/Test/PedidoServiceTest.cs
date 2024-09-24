@@ -7,7 +7,7 @@ using OpenAdm.Application.Models.Pedidos;
 using Domain.Pkg.Model;
 using Domain.Pkg.Entities;
 using OpenAdm.Application.Services.Pedidos;
-using Domain.Pkg.Pdfs.Configure;
+using OpenAdm.Application.Interfaces.Pedidos;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -16,12 +16,15 @@ public class PedidoServiceTest
     private readonly Mock<IPedidoRepository> _pedidoRepositoryMock;
     private readonly Mock<IProcessarPedidoService> _processarPedidoServiceMock;
     private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepositoryMock;
-
+    private readonly Mock<IPdfPedidoService> _pdfPedidoService;
+    private readonly Mock<ICarrinhoRepository> _carrinhoRepository;
     public PedidoServiceTest()
     {
         _pedidoRepositoryMock = new();
         _processarPedidoServiceMock = new();
         _itemTabelaDePrecoRepositoryMock = new();
+        _pdfPedidoService = new();
+        _carrinhoRepository = new();
     }
 
     [Fact]
@@ -62,13 +65,12 @@ public class PedidoServiceTest
     public async Task DeveEfetuarDownloadBase64DoPedido()
     {
         var pedido = PedidoBuilder.Init().Build();
-        ConfigurePdfQuest.ConfigureQuest();
         var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
         var enderecoEntregaPedidoRepository = new Mock<IEnderecoEntregaPedidoRepository>();
 
         _pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
         enderecoEntregaPedidoRepository.Setup(x => x.GetEnderecoEntregaPedidoByPedidoIdAsync(pedido.Id)).ReturnsAsync((EnderecoEntregaPedido?)null);
-        var pedidoService = new PedidoDownloadService(_pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object, enderecoEntregaPedidoRepository.Object);
+        var pedidoService = new PedidoDownloadService(_pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object, enderecoEntregaPedidoRepository.Object, _pdfPedidoService.Object);
         var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
         Assert.NotNull(pdf);
@@ -145,7 +147,8 @@ public class PedidoServiceTest
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
-            _itemTabelaDePrecoRepositoryMock.Object);
+            _itemTabelaDePrecoRepositoryMock.Object,
+            _carrinhoRepository.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
         var pedidoModel = await service.CreatePedidoAsync(itensPedidoModel, usuario);
@@ -182,7 +185,8 @@ public class PedidoServiceTest
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
-            _itemTabelaDePrecoRepositoryMock.Object);
+            _itemTabelaDePrecoRepositoryMock.Object,
+            _carrinhoRepository.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
 
@@ -230,7 +234,8 @@ public class PedidoServiceTest
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
-            _itemTabelaDePrecoRepositoryMock.Object);
+            _itemTabelaDePrecoRepositoryMock.Object,
+            _carrinhoRepository.Object);
 
         await Assert.ThrowsAsync<Exception>(async () => await service.CreatePedidoAsync(itens, usuarioViewModel));
     }

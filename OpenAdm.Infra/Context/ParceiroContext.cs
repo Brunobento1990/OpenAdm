@@ -29,6 +29,7 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     public DbSet<EnderecoEntregaPedido> EnderecoEntregaPedido { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
+
     public DbSet<LojasParceiras> LojasParceiras { get; set; }
     public DbSet<TopUsuarios> TopUsuarios { get; set; }
 

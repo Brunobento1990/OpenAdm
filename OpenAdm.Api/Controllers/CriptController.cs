@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Cryptography;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Domain.Helpers;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -10,14 +10,14 @@ public class CriptController : ControllerBase
     [HttpPost("Criptar")]
     public IActionResult Criptar(BodyCript bodyCript)
     {
-        var conn = CryptographyGeneric.Encrypt(bodyCript.Code);
+        var conn = Criptografia.Encrypt(bodyCript.Code);
         return Ok(conn);
     }
 
     [HttpPost("DeCriptar")]
     public IActionResult DeCriptar(BodyCript bodyCript)
     {
-        var conn = CryptographyGeneric.Decrypt(bodyCript.Code);
+        var conn = Criptografia.Decrypt(bodyCript.Code);
         return Ok(conn);
     }
 }

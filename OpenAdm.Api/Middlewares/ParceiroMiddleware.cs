@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Cryptography;
-using Domain.Pkg.Exceptions;
+﻿using Domain.Pkg.Exceptions;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Api.Midlewares;
@@ -32,7 +32,7 @@ public class ParceiroMiddleware
         }
 
         parceiroAutenticado.Referer = referer;
-        parceiroAutenticado.StringConnection = CryptographyGeneric.Decrypt(parceiro.ConexaoDb);
+        parceiroAutenticado.StringConnection = Criptografia.Decrypt(parceiro.ConexaoDb);
         parceiroAutenticado.KeyParceiro = parceiro.Id.ToString();
 
         await _next(httpContext);
