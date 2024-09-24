@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Cryptography;
-using Domain.Pkg.Entities;
+﻿using Domain.Pkg.Entities;
+using OpenAdm.Domain.Helpers;
 using System.ComponentModel.DataAnnotations;
 
 namespace OpenAdm.Application.Dtos.ConfiguracoesDeEmails;
@@ -30,7 +30,7 @@ public class CreateConfiguracoesDeEmailDto
                 0,
                 Email,
                 Servidor,
-                CryptographyGeneric.Encrypt(Senha),
+                Criptografia.Encrypt(Senha),
                 Porta,
                 Ativo.HasValue);
     }

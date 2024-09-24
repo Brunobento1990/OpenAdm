@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Cryptography;
-using Domain.Pkg.Entities;
+﻿using Domain.Pkg.Entities;
+using OpenAdm.Domain.Helpers;
 
 namespace OpenAdm.Application.Models.ConfiguracoesDeEmails;
 
@@ -18,7 +18,7 @@ public class ConfiguracaoDeEmailViewModel : BaseModel
         DataDeAtualizacao = configuracaoDeEmail.DataDeAtualizacao;
         Numero = configuracaoDeEmail.Numero;
         Email = configuracaoDeEmail.Email;
-        Senha = CryptographyGeneric.Decrypt(configuracaoDeEmail.Senha);
+        Senha = Criptografia.Decrypt(configuracaoDeEmail.Senha);
         Servidor = configuracaoDeEmail.Servidor;
         Porta = configuracaoDeEmail.Porta;
         Ativo = configuracaoDeEmail.Ativo;

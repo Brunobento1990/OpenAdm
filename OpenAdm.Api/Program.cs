@@ -1,13 +1,14 @@
-using Domain.Pkg.Cryptography;
-using Domain.Pkg.Pdfs.Configure;
 using dotenv.net;
 using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.Api.Configure;
 using OpenAdm.Api.Middlewares;
+using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Tokens;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,10 +28,15 @@ var rabbitMqString = VariaveisDeAmbiente.GetVariavel("MENSAGERIA_URI");
 var urlFrete = VariaveisDeAmbiente.GetVariavel("URL_FRETE");
 var tokenFrete = VariaveisDeAmbiente.GetVariavel("TOKEN_FRETE");
 var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
+var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
+var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
+var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
+var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
 ConfigAzure.Configure(azureKey, azureContainer);
-CryptographyGeneric.Configure(key, iv);
+Criptografia.Configure(key, iv);
+EmailConfiguracaoModel.Configure(email: email, servidor: servidor, senha: senha, porta: porta);
 
 builder.Services.AddResponseCaching();
 builder.Services.AddEndpointsApiExplorer();
@@ -45,7 +51,7 @@ builder.Services.InjectHttpClient(urlDiscord);
 builder.Services.InjectMensageria(rabbitMqString);
 builder.Services.InjectHttpClientFrete(urlFrete, tokenFrete);
 
-ConfigurePdfQuest.ConfigureQuest();
+QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 

@@ -4,8 +4,8 @@ using Domain.Pkg.Errors;
 using OpenAdm.Domain.Interfaces;
 using Domain.Pkg.Interfaces;
 using Domain.Pkg.Model;
-using Domain.Pkg.Cryptography;
 using OpenAdm.Application.Adapters;
+using OpenAdm.Domain.Helpers;
 
 namespace OpenAdm.Application.Services;
 
@@ -44,7 +44,7 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
             Email = configuracao.Email,
             EnableSsl = true,
             Porta = configuracao.Porta,
-            Senha = CryptographyGeneric.Decrypt(configuracao.Senha),
+            Senha = Criptografia.Decrypt(configuracao.Senha),
             Servidor = configuracao.Servidor
         };
 

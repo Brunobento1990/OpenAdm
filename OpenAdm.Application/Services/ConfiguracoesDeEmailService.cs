@@ -1,9 +1,7 @@
-﻿using Domain.Pkg.Cryptography;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.ConfiguracoesDeEmails;
+﻿using OpenAdm.Application.Dtos.ConfiguracoesDeEmails;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ConfiguracoesDeEmails;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -28,7 +26,7 @@ public class ConfiguracoesDeEmailService : IConfiguracoesDeEmailService
         }
         else
         {
-            var newSenha = CryptographyGeneric.Encrypt(createConfiguracoesDeEmailDto.Senha);
+            var newSenha = Criptografia.Encrypt(createConfiguracoesDeEmailDto.Senha);
             configuracaoDeEmail.Update(
                 createConfiguracoesDeEmailDto.Email, 
                 createConfiguracoesDeEmailDto.Servidor, 

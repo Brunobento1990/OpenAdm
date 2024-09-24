@@ -13,15 +13,18 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IProcessarPedidoService _processarPedidoService;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
+    private readonly ICarrinhoRepository _carrinhoRepository;
 
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
-        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
+        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
+        ICarrinhoRepository carrinhoRepository)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
+        _carrinhoRepository = carrinhoRepository;
     }
 
     public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItensPedidoModel> itensPedidoModels, Usuario usuario)
@@ -53,6 +56,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         pedido.ProcessarItensPedido(itensPedidoModels);
 
         await _pedidoRepository.AddAsync(pedido);
+        await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());
         await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
 
         return new PedidoViewModel().ForModel(pedido);

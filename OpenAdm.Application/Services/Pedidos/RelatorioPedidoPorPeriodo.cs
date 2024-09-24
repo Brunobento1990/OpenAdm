@@ -1,5 +1,4 @@
-﻿using Domain.Pkg.Pdfs.Models;
-using Domain.Pkg.Pdfs.Services;
+﻿using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Pedidos;
@@ -11,13 +10,15 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
-
+    private readonly IPdfPedidoService _pdfPedidoService;
     public RelatorioPedidoPorPeriodo(
         IPedidoRepository pedidoRepository,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        IPdfPedidoService pdfPedidoService)
     {
         _pedidoRepository = pedidoRepository;
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+        _pdfPedidoService = pdfPedidoService;
     }
 
     public async Task<(byte[] pdf, int count)> GetRelatorioAsync(RelatorioPedidoDto relatorioPedidoDto)
@@ -30,16 +31,16 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
 
         var logo = configuracaoDePedido?.Logo is null ? null : Encoding.UTF8.GetString(configuracaoDePedido.Logo);
         var total = pedidos.Sum(x => x.ValorTotal);
-        var relatorioPedidoModel = new RelatorioPedidoModel(
+        var relatorioPedidoModel = new GerarRelatorioPedidoDto(
             relatorioPedidoDto.DataInicial,
             relatorioPedidoDto.DataFinal,
             logo,
             total);
 
-        relatorioPedidoModel.RelatorioItensPedidoModel = pedidos.Select(pedido =>
+        relatorioPedidoModel.RelatorioItensPedidoDto = pedidos.Select(pedido =>
         {
             var quantidade = pedido.ItensPedido.Sum(x => x.Quantidade);
-            return new RelatorioItensPedidoModel(
+            return new RelatorioItensPedidoDto(
                 pedido.Numero,
                 pedido.Usuario.Nome,
                 quantidade,
@@ -47,7 +48,7 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
                 pedido.DataDeCriacao);
         }).ToList();
 
-        var pdf = RelatorioPedidoService.GeneratePdf(relatorioPedidoModel);
+        var pdf = _pdfPedidoService.GeneratePdfPedidoRelatorio(relatorioPedidoModel);
 
         return (pdf, pedidos.Count);
     }
