@@ -3,12 +3,10 @@ using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Application.Mensageria.Interfaces;
 using Domain.Pkg.Entities;
-using Domain.Pkg.Model;
-using Domain.Pkg.Pdfs.Services;
 using System.Text;
 using OpenAdm.Application.Interfaces.Pedidos;
-using Domain.Pkg.Interfaces;
 using OpenAdm.Application.Models;
+using OpenAdm.Application.Models.Emails;
 
 namespace OpenAdm.Application.Services;
 
@@ -18,14 +16,14 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
     private readonly IPdfPedidoService _pdfPedidoService;
-    private readonly IEmailService _emailService;
+    private readonly IEmailApiService _emailService;
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IProducerGeneric<ProcessarPedidoModel> producerGeneric,
         IPedidoRepository pedidoRepository,
         IPdfPedidoService pdfPedidoService,
-        IEmailService emailService)
+        IEmailApiService emailService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _producerGeneric = producerGeneric;
@@ -49,7 +47,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
             var message = $"Que ótima noticia, mais um pedido!\nN. do pedido : {pedido.Numero}";
             var assunto = "Novo pedido";
 
-            var emailModel = new ToEnvioEmailModel()
+            var emailModel = new ToEnvioEmailApiModel()
             {
                 Assunto = assunto,
                 Email = configuracoesDePedido.EmailDeEnvio,
@@ -59,7 +57,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
                 TipoDoArquivo = "application/pdf"
             };
 
-            await _emailService.SendEmail(emailModel, new FromEnvioEmailModel()
+            await _emailService.SendEmailAsync(emailModel, new FromEnvioEmailApiModel()
             {
                 Email = EmailConfiguracaoModel.Email,
                 Porta = EmailConfiguracaoModel.Porta,

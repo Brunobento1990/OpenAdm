@@ -12,6 +12,7 @@ public static class DependencyInjectyApplication
 {
     public static void InjectServices(this IServiceCollection services)
     {
+        services.AddScoped<IEmailApiService, EmailApiService>();
         services.AddScoped<IPdfPedidoService, PdfPedidoService>();
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<ITokenService, TokenService>();
