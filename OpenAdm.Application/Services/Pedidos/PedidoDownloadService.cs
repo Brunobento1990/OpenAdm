@@ -31,8 +31,8 @@ public sealed class PedidoDownloadService : IPedidoDownloadService
 
         var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
         var logo = configuracoesDePedido?.Logo != null ? Encoding.UTF8.GetString(configuracoesDePedido.Logo) : null;
-        var enderecoPedido = await _enderecoEntregaPedidoRepository.GetEnderecoEntregaPedidoByPedidoIdAsync(pedidoId);
-        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, enderecoPedido, logo);
+        //var enderecoPedido = await _enderecoEntregaPedidoRepository.GetEnderecoEntregaPedidoByPedidoIdAsync(pedidoId);
+        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, null, logo);
 
         return pdf;
     }
