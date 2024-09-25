@@ -12,14 +12,20 @@ namespace OpenAdm.Application.Services.Pedidos;
 public class UpdateStatusPedidoService : IUpdateStatusPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository;
-    private readonly IProcessarPedidoService _processarPedidoService;
+    private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;
+    private readonly ITopUsuarioService _topUsuarioService;
+    private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
 
     public UpdateStatusPedidoService(
-        IPedidoRepository pedidoRepository, 
-        IProcessarPedidoService processarPedidoService)
+        IPedidoRepository pedidoRepository,
+        IProdutosMaisVendidosService produtosMaisVendidosService,
+        ITopUsuarioService topUsuarioService,
+        IMovimentacaoDeProdutosService movimentacaoDeProdutosService)
     {
         _pedidoRepository = pedidoRepository;
-        _processarPedidoService = processarPedidoService;
+        _produtosMaisVendidosService = produtosMaisVendidosService;
+        _topUsuarioService = topUsuarioService;
+        _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
     }
 
     public async Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto)
@@ -32,7 +38,9 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
 
         if (pedido.StatusPedido == StatusPedido.Entregue)
         {
-            _processarPedidoService.ProcessarProdutosMaisVendidosAsync(pedido);
+            await _produtosMaisVendidosService.ProcessarAsync(pedido);
+            await _topUsuarioService.AddOrUpdateTopUsuarioAsync(pedido);
+            await _movimentacaoDeProdutosService.MovimentarItensPedidoAsync(pedido.ItensPedido);
         }
 
         return new PedidoViewModel().ForModel(pedido);

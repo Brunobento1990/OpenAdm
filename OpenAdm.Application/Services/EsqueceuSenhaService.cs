@@ -2,22 +2,21 @@
 using OpenAdm.Application.Interfaces;
 using Domain.Pkg.Errors;
 using OpenAdm.Domain.Interfaces;
-using Domain.Pkg.Interfaces;
-using Domain.Pkg.Model;
 using OpenAdm.Application.Adapters;
 using OpenAdm.Domain.Helpers;
+using OpenAdm.Application.Models.Emails;
 
 namespace OpenAdm.Application.Services;
 
 public class EsqueceuSenhaService : IEsqueceuSenhaService
 {
     private readonly IUsuarioRepository _usuarioRepository;
-    private readonly IEmailService _emailService;
+    private readonly IEmailApiService _emailService;
     private readonly IConfiguracaoDeEmailRepository _configuracaoDeEmailRepository;
 
     public EsqueceuSenhaService(
         IUsuarioRepository usuarioRepository,
-        IEmailService emailService,
+        IEmailApiService emailService,
         IConfiguracaoDeEmailRepository configuracaoDeEmailRepository)
     {
         _usuarioRepository = usuarioRepository;
@@ -39,7 +38,7 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
         var message = $"Recuperação de senha efetuada com sucesso!\nSua nova senha é {senha} .\nImportante!\nNo Próximo acesso ao nosso site, efetue a troca da senha.\nCaso não tenha feito o pedido de recuperação de senha, por favor, entre em contato com o suporte!";
         var assunto = "Recuperação de senha";
 
-        var fromEnvioEmail = new FromEnvioEmailModel()
+        var fromEnvioEmail = new FromEnvioEmailApiModel()
         {
             Email = configuracao.Email,
             EnableSsl = true,
@@ -48,14 +47,14 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
             Servidor = configuracao.Servidor
         };
 
-        var emailModel = new ToEnvioEmailModel()
+        var emailModel = new ToEnvioEmailApiModel()
         {
             Assunto = assunto,
             Email = esqueceuSenhaDto.Email,
             Mensagem = message
         };
 
-        var result = await _emailService.SendEmail(emailModel, fromEnvioEmail);
+        var result = await _emailService.SendEmailAsync(emailModel, fromEnvioEmail);
 
         if (result)
         {

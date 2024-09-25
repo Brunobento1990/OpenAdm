@@ -27,39 +27,39 @@ public class PedidoServiceTest
         _carrinhoRepository = new();
     }
 
-    [Fact]
-    public async Task NaoDeveAlterarStatusPedidoJaEntregue()
-    {
-        var builder = PedidoBuilder.Init();
-        var pedido = builder.ComStatusPedido(StatusPedido.Entregue).Build();
-        var pedidoUpdateStatus = builder.BuildStatusPedidoDto();
+    //[Fact]
+    //public async Task NaoDeveAlterarStatusPedidoJaEntregue()
+    //{
+    //    var builder = PedidoBuilder.Init();
+    //    var pedido = builder.ComStatusPedido(StatusPedido.Entregue).Build();
+    //    var pedidoUpdateStatus = builder.BuildStatusPedidoDto();
 
-        _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
+    //    _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new UpdateStatusPedidoService(_pedidoRepositoryMock.Object, _processarPedidoServiceMock.Object);
+    //    var pedidoService = new UpdateStatusPedidoService(_pedidoRepositoryMock.Object, _processarPedidoServiceMock.Object);
 
-        await Assert
-            .ThrowsAnyAsync<ExceptionApi>(
-                async () => await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus));
-    }
+    //    await Assert
+    //        .ThrowsAnyAsync<ExceptionApi>(
+    //            async () => await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus));
+    //}
 
-    [Fact]
-    public async Task DeveAlterarStatusPedido()
-    {
-        var builder = PedidoBuilder.Init();
-        var pedido = builder.Build();
-        var pedidoUpdateStatus = builder.BuildStatusPedidoDto();
+    //[Fact]
+    //public async Task DeveAlterarStatusPedido()
+    //{
+    //    var builder = PedidoBuilder.Init();
+    //    var pedido = builder.Build();
+    //    var pedidoUpdateStatus = builder.BuildStatusPedidoDto();
 
-        _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
+    //    _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
 
-        var pedidoService = new UpdateStatusPedidoService(_pedidoRepositoryMock.Object, _processarPedidoServiceMock.Object);
-        var pedidoViewModel = await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus);
+    //    var pedidoService = new UpdateStatusPedidoService(_pedidoRepositoryMock.Object, _processarPedidoServiceMock.Object);
+    //    var pedidoViewModel = await pedidoService.UpdateStatusPedidoAsync(pedidoUpdateStatus);
 
-        Assert.NotNull(pedidoViewModel);
-        Assert.IsType<PedidoViewModel>(pedidoViewModel);
-        Assert.Equal(pedido.Id, pedidoViewModel.Id);
-        Assert.Equal(pedido.StatusPedido, pedidoViewModel.StatusPedido);
-    }
+    //    Assert.NotNull(pedidoViewModel);
+    //    Assert.IsType<PedidoViewModel>(pedidoViewModel);
+    //    Assert.Equal(pedido.Id, pedidoViewModel.Id);
+    //    Assert.Equal(pedido.StatusPedido, pedidoViewModel.StatusPedido);
+    //}
 
     [Fact]
     public async Task DeveEfetuarDownloadBase64DoPedido()

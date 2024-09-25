@@ -22,17 +22,17 @@ public sealed class TopUsuariosCached : ITopUsuariosRepository
     {
         var topUsuarios = await _cachedService.GetListItemAsync(_totalCompra);
 
-        if(topUsuarios == null)
+        if (topUsuarios == null)
         {
             topUsuarios = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync();
 
-            if(topUsuarios?.Count > 0)
+            if (topUsuarios.Count > 0)
             {
                 await _cachedService.SetListItemAsync(_totalCompra, topUsuarios);
             }
         }
 
-        return topUsuarios ?? new List<TopUsuarios>();
+        return topUsuarios;
     }
 
     public async Task<IList<TopUsuarios>> GetTopTresUsuariosToTalPedidosAsync()
@@ -43,12 +43,21 @@ public sealed class TopUsuariosCached : ITopUsuariosRepository
         {
             topUsuarios = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync();
 
-            if (topUsuarios?.Count > 0)
+            if (topUsuarios.Count > 0)
             {
                 await _cachedService.SetListItemAsync(_totalPedidos, topUsuarios);
             }
         }
 
-        return topUsuarios ?? new List<TopUsuarios>();
+        return topUsuarios;
     }
+
+    public Task AddAsync(TopUsuarios topUsuario)
+        => _topUsuariosRepository.AddAsync(topUsuario);
+
+    public Task UpdateAsync(TopUsuarios topUsuario)
+        => _topUsuariosRepository.UpdateAsync(topUsuario);
+
+    public Task<TopUsuarios?> GetByUsuarioIdAsync(Guid usuarioId)
+        => _topUsuariosRepository.GetByUsuarioIdAsync(usuarioId);
 }

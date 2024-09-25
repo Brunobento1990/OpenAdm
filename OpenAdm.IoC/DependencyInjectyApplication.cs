@@ -12,11 +12,13 @@ public static class DependencyInjectyApplication
 {
     public static void InjectServices(this IServiceCollection services)
     {
+        services.AddScoped<ITopUsuarioService, TopUsuarioService>();
+        services.AddScoped<IEmailApiService, EmailApiService>();
         services.AddScoped<IPdfPedidoService, PdfPedidoService>();
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ILoginFuncionarioService, LoginFuncionarioService>();
-        services.AddTransient<IPedidoService, PedidoService>();
+        services.AddScoped<IPedidoService, PedidoService>();
         services.AddScoped<IHomeSevice, HomeSevice>();
         services.AddScoped<ICategoriaService, CategoriaService>();
         services.AddScoped<IProdutoService, ProdutoService>();

@@ -1,8 +1,11 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using Domain.Pkg.Entities;
+using Domain.Pkg.Enum;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.MovimentacaoDeProdutos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
+using OpenAdm.Domain.Extensions;
 
 namespace OpenAdm.Application.Services;
 
@@ -25,7 +28,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         _tamanhoRepository = tamanhoRepository;
     }
 
-    public async Task<PaginacaoViewModel<MovimentacaoDeProdutoViewModel>> 
+    public async Task<PaginacaoViewModel<MovimentacaoDeProdutoViewModel>>
         GetPaginacaoAsync(PaginacaoMovimentacaoDeProdutoDto paginacaoMovimentacaoDeProdutoDto)
     {
         var paginacao = await _movimentacaoDeProdutorepository
@@ -67,5 +70,41 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                             tamanhos.FirstOrDefault(t => t.Key == x.TamanhoId).Value))
                 .ToList()
         };
+    }
+
+    public async Task MovimentarItensPedidoAsync(IList<ItensPedido> itens)
+    {
+        var data = DateTime.Now;
+        var movimentos = itens.Select(x => new MovimentacaoDeProduto(
+            id: Guid.NewGuid(),
+            dataDeCriacao: data,
+            dataDeAtualizacao: data,
+            numero: 0,
+            quantidadeMovimentada: x.Quantidade,
+            tipoMovimentacaoDeProduto: TipoMovimentacaoDeProduto.Saida,
+            produtoId: x.ProdutoId,
+            tamanhoId: x.TamanhoId,
+            pesoId: x.PesoId,
+            observacao: null
+            )).ToList();
+        await _movimentacaoDeProdutorepository.AddRangeAsync(movimentos);
+    }
+
+    public async Task<IList<MovimentoDeProdutoDashBoardModel>> MovimentoDashBoardAsync()
+    {
+        var movimentos = await _movimentacaoDeProdutorepository.CountTresMesesAsync();
+
+        var movimentosDash = new List<MovimentoDeProdutoDashBoardModel>();
+
+        foreach (var item in movimentos)
+        {
+            movimentosDash.Add(new MovimentoDeProdutoDashBoardModel()
+            {
+                Mes = item.Key.ConverterMesIntEmNome(),
+                Count = item.Value
+            });
+        }
+
+        return movimentosDash;
     }
 }

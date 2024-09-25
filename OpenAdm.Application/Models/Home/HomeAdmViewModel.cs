@@ -1,9 +1,11 @@
-﻿using OpenAdm.Application.Models.TopUsuario;
+﻿using OpenAdm.Application.Models.MovimentacaoDeProdutos;
+using OpenAdm.Application.Models.TopUsuario;
 
 namespace OpenAdm.Application.Models.Home;
 
 public class HomeAdmViewModel
 {
-    public IList<TopUsuariosViewModel> TopUsuariosTotalCompra { get; set; } = new List<TopUsuariosViewModel>();
-    public IList<TopUsuariosViewModel> TopUsuariosTotalPedido { get; set; } = new List<TopUsuariosViewModel>();
+    public IList<TopUsuariosViewModel> TopUsuariosTotalCompra { get; set; } = [];
+    public IList<TopUsuariosViewModel> TopUsuariosTotalPedido { get; set; } = [];
+    public IList<MovimentoDeProdutoDashBoardModel> Movimentos { get; set; } = [];
 }

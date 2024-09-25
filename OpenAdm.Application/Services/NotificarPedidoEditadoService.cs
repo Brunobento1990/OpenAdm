@@ -1,6 +1,5 @@
 ﻿using Domain.Pkg.Entities;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Mensageria.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 
@@ -9,14 +8,12 @@ namespace OpenAdm.Application.Services;
 public sealed class NotificarPedidoEditadoService : INotificarPedidoEditadoService
 {
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
-    private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
+    //private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
 
     public NotificarPedidoEditadoService(
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository, 
-        IProducerGeneric<ProcessarPedidoModel> producerGeneric)
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
-        _producerGeneric = producerGeneric;
     }
 
     public async Task NotificarAsync(Pedido pedido)
@@ -29,6 +26,6 @@ public sealed class NotificarPedidoEditadoService : INotificarPedidoEditadoServi
             EmailEnvio = configuracoesDePedido.EmailDeEnvio,
             Pedido = pedido
         };
-        _producerGeneric.Publish(processarPedidoModel, "pedido-editado");
+        //_producerGeneric.Publish(processarPedidoModel, "pedido-editado");
     }
 }
