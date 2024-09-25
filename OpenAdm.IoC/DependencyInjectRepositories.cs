@@ -19,7 +19,7 @@ public static class DependencyInjectRepositories
         {
             options.Configuration = connectionString;
         });
-        services.AddTransient(typeof(ICachedService<>), typeof(CachedService<>));
+        services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
 
         services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -70,5 +70,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<IAppLogRepository, AppLogRepository>();
         services.AddScoped<IConfiguracaoDeFreteRepository, ConfiguracaoDeFreteRepository>();
         services.AddScoped<IEnderecoEntregaPedidoRepository, EnderecoEntregaPedidoRepository>();
+        services.AddScoped<IProdutosMaisVendidosRepository, ProdutosMaisVendidosRepository>();
     }
 }

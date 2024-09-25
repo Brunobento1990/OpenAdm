@@ -32,7 +32,7 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
 
         if (pedido.StatusPedido == StatusPedido.Entregue)
         {
-            _processarPedidoService.ProcessarProdutosMaisVendidosAsync(pedido);
+            await _processarPedidoService.ProcessarProdutosMaisVendidosAsync(pedido);
         }
 
         return new PedidoViewModel().ForModel(pedido);

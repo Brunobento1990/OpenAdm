@@ -5,5 +5,5 @@ namespace OpenAdm.Application.Interfaces;
 public interface IProcessarPedidoService
 {
     Task ProcessarCreateAsync(Guid pedidoId);
-    void ProcessarProdutosMaisVendidosAsync(Pedido pedido);
+    Task ProcessarProdutosMaisVendidosAsync(Pedido pedido);
 }

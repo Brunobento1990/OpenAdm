@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Application.Mensageria.Interfaces;
 using Domain.Pkg.Entities;
 using System.Text;
 using OpenAdm.Application.Interfaces.Pedidos;
@@ -14,22 +13,25 @@ public class ProcessarPedidoService : IProcessarPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
-    private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IEmailApiService _emailService;
+    private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;
+    private readonly ITopUsuarioService _topUsuarioService;
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
-        IProducerGeneric<ProcessarPedidoModel> producerGeneric,
         IPedidoRepository pedidoRepository,
         IPdfPedidoService pdfPedidoService,
-        IEmailApiService emailService)
+        IEmailApiService emailService,
+        IProdutosMaisVendidosService produtosMaisVendidosService,
+        ITopUsuarioService topUsuarioService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
-        _producerGeneric = producerGeneric;
         _pedidoRepository = pedidoRepository;
         _pdfPedidoService = pdfPedidoService;
         _emailService = emailService;
+        _produtosMaisVendidosService = produtosMaisVendidosService;
+        _topUsuarioService = topUsuarioService;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId)
@@ -67,22 +69,9 @@ public class ProcessarPedidoService : IProcessarPedidoService
         }
     }
 
-    public void ProcessarProdutosMaisVendidosAsync(Pedido pedido)
+    public async Task ProcessarProdutosMaisVendidosAsync(Pedido pedido)
     {
-        var processarPedidoModel = new ProcessarPedidoModel()
-        {
-            EmailEnvio = "",
-            Pedido = pedido
-        };
-
-        foreach (var item in pedido.ItensPedido)
-        {
-            item.Pedido = null!;
-            item.Produto = null!;
-            item.Peso = null;
-            item.Tamanho = null;
-        }
-
-        _producerGeneric.Publish(processarPedidoModel, "pedido-entregue");
+        await _produtosMaisVendidosService.ProcessarAsync(pedido);
+        await _topUsuarioService.AddOrUpdateTopUsuarioAsync(pedido);
     }
 }

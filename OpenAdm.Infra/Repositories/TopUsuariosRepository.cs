@@ -14,6 +14,20 @@ public class TopUsuariosRepository : ITopUsuariosRepository
         _parceiroContext = parceiroContext;
     }
 
+    public async Task AddAsync(TopUsuarios topUsuario)
+    {
+        await _parceiroContext.AddAsync(topUsuario);
+        await _parceiroContext.SaveChangesAsync();
+    }
+
+    public async Task<TopUsuarios?> GetByUsuarioIdAsync(Guid usuarioId)
+    {
+        return await _parceiroContext
+            .TopUsuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId);
+    }
+
     public async Task<IList<TopUsuarios>> GetTopTresUsuariosToTalCompraAsync()
     {
         return await _parceiroContext
@@ -34,5 +48,12 @@ public class TopUsuariosRepository : ITopUsuariosRepository
             .Skip(0)
             .Take(3)
             .ToListAsync();
+    }
+
+    public async Task UpdateAsync(TopUsuarios topUsuario)
+    {
+        _parceiroContext.Attach(topUsuario);
+        _parceiroContext.Update(topUsuario);
+        await _parceiroContext.SaveChangesAsync();
     }
 }
