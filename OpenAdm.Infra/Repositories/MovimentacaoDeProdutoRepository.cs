@@ -4,6 +4,7 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
+using SkiaSharp;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -13,6 +14,28 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
     public MovimentacaoDeProdutoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
         _parceiroContext = parceiroContext;
+    }
+
+    public async Task AddRangeAsync(IList<MovimentacaoDeProduto> movimentacaoDeProdutos)
+    {
+        await _parceiroContext.AddRangeAsync(movimentacaoDeProdutos);
+        await _parceiroContext.SaveChangesAsync();
+    }
+
+    public async Task<IDictionary<int, decimal>> CountTresMesesAsync()
+    {
+        var dataInicio = DateTime.Now.AddMonths(-3);
+        var dataSplit = dataInicio.ToString("MM/dd/yyyy").Split('/');
+        var ano = int.Parse(dataSplit[2][..4]);
+        var mes = int.Parse(dataSplit[0]);
+
+        return await _parceiroContext
+            .MovimentacoesDeProdutos
+            .Where(m => m.DataDeCriacao.Month >= mes && m.DataDeCriacao.Year == ano)
+            .GroupBy(m => m.DataDeCriacao.Month)
+            .ToDictionaryAsync(
+                g => g.Key,
+                g => g.Sum(x => x.QuantidadeMovimentada));
     }
 
     public async Task<PaginacaoViewModel<MovimentacaoDeProduto>>

@@ -1,7 +1,5 @@
 ﻿using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
-using Domain.Pkg.Entities;
 using System.Text;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models;
@@ -15,23 +13,18 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IEmailApiService _emailService;
-    private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;
-    private readonly ITopUsuarioService _topUsuarioService;
+    
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IPedidoRepository pedidoRepository,
         IPdfPedidoService pdfPedidoService,
-        IEmailApiService emailService,
-        IProdutosMaisVendidosService produtosMaisVendidosService,
-        ITopUsuarioService topUsuarioService)
+        IEmailApiService emailService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _pedidoRepository = pedidoRepository;
         _pdfPedidoService = pdfPedidoService;
         _emailService = emailService;
-        _produtosMaisVendidosService = produtosMaisVendidosService;
-        _topUsuarioService = topUsuarioService;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId)
@@ -67,11 +60,5 @@ public class ProcessarPedidoService : IProcessarPedidoService
                 Servidor = EmailConfiguracaoModel.Servidor
             });
         }
-    }
-
-    public async Task ProcessarProdutosMaisVendidosAsync(Pedido pedido)
-    {
-        await _produtosMaisVendidosService.ProcessarAsync(pedido);
-        await _topUsuarioService.AddOrUpdateTopUsuarioAsync(pedido);
     }
 }

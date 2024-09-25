@@ -7,4 +7,6 @@ public interface IMovimentacaoDeProdutoRepository : IGenericRepository<Movimenta
 {
     Task<PaginacaoViewModel<MovimentacaoDeProduto>>
         GetPaginacaoMovimentacaoDeProdutoAsync(FilterModel<MovimentacaoDeProduto> filterModel);
+    Task AddRangeAsync(IList<MovimentacaoDeProduto> movimentacaoDeProdutos);
+    Task<IDictionary<int, decimal>> CountTresMesesAsync();
 }
