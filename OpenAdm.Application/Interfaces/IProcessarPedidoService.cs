@@ -1,6 +1,4 @@
-﻿using Domain.Pkg.Entities;
-
-namespace OpenAdm.Application.Interfaces;
+﻿namespace OpenAdm.Application.Interfaces;
 
 public interface IProcessarPedidoService
 {

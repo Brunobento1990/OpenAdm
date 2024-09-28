@@ -1,10 +1,10 @@
 ﻿using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
-using Domain.Pkg.Errors;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Application.Adapters;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Application.Models.Emails;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Application.Services;
 
@@ -27,10 +27,10 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
     public async Task<bool> RecuperarSenhaAsync(EsqueceuSenhaDto esqueceuSenhaDto)
     {
         var configuracao = await _configuracaoDeEmailRepository.GetConfiguracaoDeEmailAtivaAsync()
-            ?? throw new Exception("Configuração de eamil não encontrada!");
+            ?? throw new Exception("Configuração de e-mail não encontrada!");
 
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(esqueceuSenhaDto.Email)
-            ?? throw new Exception(CodigoErrors.ErrorGeneric);
+            ?? throw new ExceptionApi("Não foi possível localizar seu cadastro!");
 
         var senha = GenerateSenha.Generate();
 
@@ -64,7 +64,7 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
         }
         else
         {
-            throw new Exception(CodigoErrors.ErrorGeneric);
+            throw new ExceptionApi("Não foi possível enviar o e-mail de recuperação de senha, tente novamente!");
         }
 
         return result;

@@ -1,6 +1,6 @@
-﻿using Domain.Pkg.Entities;
-using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -20,7 +20,7 @@ public sealed class NotificarPedidoEditadoService : INotificarPedidoEditadoServi
     {
         var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync()
             ?? throw new Exception("Configurações de pedido inválida!");
-        pedido.ItensPedido = new List<ItensPedido>();
+        pedido.ItensPedido = new List<ItemPedido>();
         var processarPedidoModel = new ProcessarPedidoModel()
         {
             EmailEnvio = configuracoesDePedido.EmailDeEnvio,

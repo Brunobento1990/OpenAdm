@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItensPedido>
+public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItemPedido>
 {
-    public void Configure(EntityTypeBuilder<ItensPedido> builder)
+    public void Configure(EntityTypeBuilder<ItemPedido> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)

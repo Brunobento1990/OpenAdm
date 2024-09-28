@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -7,7 +7,7 @@ using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class LojasParceirasRepository : GenericRepository<LojasParceiras>, ILojasParceirasRepository
+public class LojasParceirasRepository : GenericRepository<LojaParceira>, ILojasParceirasRepository
 {
     private readonly ParceiroContext _parceiroContext;
     public LojasParceirasRepository(ParceiroContext parceiroContext) : base(parceiroContext)
@@ -26,7 +26,7 @@ public class LojasParceirasRepository : GenericRepository<LojasParceiras>, ILoja
             .ToListAsync();
     }
 
-    public async Task<LojasParceiras?> GetLojaParceiraByIdAsync(Guid id)
+    public async Task<LojaParceira?> GetLojaParceiraByIdAsync(Guid id)
     {
         return await _parceiroContext
             .LojasParceiras
@@ -34,13 +34,13 @@ public class LojasParceirasRepository : GenericRepository<LojasParceiras>, ILoja
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<PaginacaoViewModel<LojasParceiras>> GetPaginacaoLojasParceirasAsync(FilterModel<LojasParceiras> filterModel)
+    public async Task<PaginacaoViewModel<LojaParceira>> GetPaginacaoLojasParceirasAsync(FilterModel<LojaParceira> filterModel)
     {
         var (total, values) = await _parceiroContext
                 .LojasParceiras
                 .AsNoTracking()
                 .AsQueryable()
-                .OrderByDescending(x => EF.Property<LojasParceiras>(x, filterModel.OrderBy))
+                .OrderByDescending(x => EF.Property<LojaParceira>(x, filterModel.OrderBy))
                 .WhereIsNotNull(filterModel.GetWhereBySearch())
                 .CustomFilterAsync(filterModel);
 

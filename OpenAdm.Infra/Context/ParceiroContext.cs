@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.EntityConfiguration;
 
@@ -15,23 +15,20 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     public DbSet<Peso> Pesos { get; set; }
     public DbSet<Tamanho> Tamanhos { get; set; }
     public DbSet<Produto> Produtos { get; set; }
-    public DbSet<PesosProdutos> PesosProdutos { get; set; }
-    public DbSet<TamanhosProdutos> TamanhosProdutos { get; set; }
+    public DbSet<PesoProduto> PesosProdutos { get; set; }
+    public DbSet<TamanhoProduto> TamanhosProdutos { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Pedido> Pedidos { get; set; }
-    public DbSet<ItensPedido> ItensPedidos { get; set; }
+    public DbSet<ItemPedido> ItensPedidos { get; set; }
     public DbSet<TabelaDePreco> TabelaDePreco { get; set; }
-    public DbSet<ItensTabelaDePreco> ItensTabelaDePreco { get; set; }
-    public DbSet<ProdutosMaisVendidos> ProdutosMaisVendidos { get; set; }
+    public DbSet<ItemTabelaDePreco> ItensTabelaDePreco { get; set; }
+    public DbSet<ProdutoMaisVendido> ProdutosMaisVendidos { get; set; }
     public DbSet<ConfiguracaoDeEmail> ConfiguracoesDeEmail { get; set; }
     public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
-    public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
-    public DbSet<EnderecoEntregaPedido> EnderecoEntregaPedido { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
-
-    public DbSet<LojasParceiras> LojasParceiras { get; set; }
-    public DbSet<TopUsuarios> TopUsuarios { get; set; }
+    public DbSet<LojaParceira> LojasParceiras { get; set; }
+    public DbSet<TopUsuario> TopUsuarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

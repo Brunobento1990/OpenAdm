@@ -1,12 +1,12 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public sealed class TopUsuariosConfiguration : IEntityTypeConfiguration<TopUsuarios>
+public sealed class TopUsuariosConfiguration : IEntityTypeConfiguration<TopUsuario>
 {
-    public void Configure(EntityTypeBuilder<TopUsuarios> builder)
+    public void Configure(EntityTypeBuilder<TopUsuario> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)

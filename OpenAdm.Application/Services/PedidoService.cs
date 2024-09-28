@@ -1,5 +1,4 @@
 ﻿using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.EnderecosEntregaPedidos;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -9,21 +8,16 @@ using System.Reactive.Linq;
 namespace OpenAdm.Application.Services;
 
 public class PedidoService(
-    IPedidoRepository pedidoRepository,
-    IEnderecoEntregaPedidoRepository enderecoEntregaPedidoRepository)
+    IPedidoRepository pedidoRepository)
     : IPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
-    private readonly IEnderecoEntregaPedidoRepository _enderecoEntregaPedidoRepository = enderecoEntregaPedidoRepository;
 
     public async Task<PedidoViewModel> GetAsync(Guid pedidoId)
     {
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
             ?? throw new Exception($"Pedido não localizado: {pedidoId}");
-        var enderecoEntrega = await _enderecoEntregaPedidoRepository.GetEnderecoEntregaPedidoByPedidoIdAsync(pedidoId);
-
         var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
-        pedidoViewModel.EnderecoEntrega = EnderecoEntregaPedidoViewModel.ToEntity(enderecoEntrega);
 
         return pedidoViewModel;
     }

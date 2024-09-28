@@ -1,18 +1,16 @@
-﻿using Domain.Pkg.Errors;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Estoques;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Services;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
+[Route("estoques")]
 [Autentica]
 [IsFuncionario]
-[Route("estoques")]
+[AutenticaParceiro]
 public class EstoqueController : ControllerBase
 {
     private readonly IEstoqueService _estoqueservice;
@@ -27,7 +25,7 @@ public class EstoqueController : ControllerBase
     {
         var result = await _estoqueservice.MovimentacaoDeProdutoAsync(movimentacaoDeProduto);
 
-        if (!result) return BadRequest(new { message = CodigoErrors.ErrorGeneric });
+        if (!result) return BadRequest(new { message = "Ocorreu um erro, tente novamente" });
 
         return Ok();
     }
@@ -44,7 +42,7 @@ public class EstoqueController : ControllerBase
     {
         var result = await _estoqueservice.UpdateEstoqueAsync(updateEstoqueDto);
 
-        if (!result) return BadRequest(new { message = CodigoErrors.ErrorGeneric });
+        if (!result) return BadRequest(new { message = "Ocorreu um erro, tente novamente" });
 
         return Ok();
     }

@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Models.Pesos;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Application.Models.Tamanhos;
@@ -17,7 +17,7 @@ public class ItensTabelaDePrecoViewModel : BaseModel
     public Guid? PesoId { get; set; }
     public PesoViewModel? Peso { get; set; }
 
-    public ItensTabelaDePrecoViewModel ToModel(ItensTabelaDePreco itensTabelaDePreco, IList<Peso> pesos, IList<Tamanho> tamanhos)
+    public ItensTabelaDePrecoViewModel ToModel(ItemTabelaDePreco itensTabelaDePreco, IList<Peso> pesos, IList<Tamanho> tamanhos)
     {
         Id = itensTabelaDePreco.Id;
         DataDeCriacao = itensTabelaDePreco.DataDeCriacao;

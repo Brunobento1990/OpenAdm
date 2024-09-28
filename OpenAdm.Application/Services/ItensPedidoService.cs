@@ -1,9 +1,8 @@
-﻿using Domain.Pkg.Enum;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.ItensPedidos;
+﻿using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -27,10 +26,10 @@ public class ItensPedidoService : IItensPedidoService
     public async Task<bool> DeleteItemPedidoAsync(Guid id)
     {
         var item = await _itensPedidoRepository.GetItemPedidoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possivel localizar o item do pedido!");
 
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(item.PedidoId)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possivel localizar o pedido");
 
         if (pedido.ItensPedido.Count == 1)
         {
@@ -52,10 +51,10 @@ public class ItensPedidoService : IItensPedidoService
     public async Task<ItensPedidoViewModel> EditarQuantidadeDoItemAsync(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto)
     {
         var item = await _itensPedidoRepository.GetItemPedidoByIdAsync(updateQuantidadeItemPedidoDto.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possivel localizar o item do pedido!");
 
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(item.PedidoId)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possivel localizar o pedido!");
 
         if (pedido.StatusPedido != StatusPedido.Aberto)
         {

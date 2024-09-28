@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Application.Services.Carrinhos;
 using OpenAdm.Domain.Interfaces;
@@ -20,7 +20,7 @@ public class CarrinhoServiceTest
         var produto = ProdutoBuilder.Init().Build();
         produto.Categoria = categoria;
         produto.Tamanhos.Add(tamanho);
-        var itemTabelaDePreco = new ItensTabelaDePreco(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, produto.Id, 1, 2, Guid.NewGuid(), tamanho.Id, null);
+        var itemTabelaDePreco = new ItemTabelaDePreco(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, produto.Id, 1, 2, Guid.NewGuid(), tamanho.Id, null);
         var usuario = UsuarioBuilder.Init().Build();
         var carrinho = new CarrinhoModel()
         {
@@ -41,7 +41,7 @@ public class CarrinhoServiceTest
         var produtoRepository = new Mock<IProdutoRepository>();
         var itemTabelaDePrecoRepository = new Mock<IItemTabelaDePrecoRepository>();
         produtoRepository.Setup(x => x.GetProdutosByListIdAsync(new List<Guid>() { produto.Id })).ReturnsAsync(new List<Produto>() { produto });
-        itemTabelaDePrecoRepository.Setup(x => x.GetItensTabelaDePrecoByIdProdutosAsync(new List<Guid>() { produto.Id })).ReturnsAsync(new List<ItensTabelaDePreco>() { itemTabelaDePreco });
+        itemTabelaDePrecoRepository.Setup(x => x.GetItensTabelaDePrecoByIdProdutosAsync(new List<Guid>() { produto.Id })).ReturnsAsync(new List<ItemTabelaDePreco>() { itemTabelaDePreco });
         var carrinhoService = new GetCarrinhoService(carrinhoRepository, produtoRepository.Object, itemTabelaDePrecoRepository.Object);
         var carrinhoReturn = await carrinhoService.GetCarrinhoAsync(new UsuarioViewModel().ToModel(usuario));
 

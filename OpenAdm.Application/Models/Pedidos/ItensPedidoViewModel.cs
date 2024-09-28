@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Models.Pesos;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Application.Models.Tamanhos;
@@ -17,7 +17,7 @@ public class ItensPedidoViewModel : BaseModel
     public decimal ValorUnitario { get; set; }
     public decimal Quantidade { get; set; }
     public decimal ValorTotal { get; set; }
-    public ItensPedidoViewModel ToModel(ItensPedido entity)
+    public ItensPedidoViewModel ToModel(ItemPedido entity)
     {
         Id = entity.Id;
         DataDeCriacao = entity.DataDeCriacao;

@@ -1,6 +1,6 @@
-﻿using Domain.Pkg.Entities;
-using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -30,8 +30,8 @@ public sealed class ProdutosMaisVendidosService : IProdutosMaisVendidosService
 
         var produtosMaisVendidos = await _produtosMaisVendidosRepository.GetProdutosMaisVendidosAsync(produtosIds);
 
-        var add = new List<ProdutosMaisVendidos>();
-        var updates = new List<ProdutosMaisVendidos>();
+        var add = new List<ProdutoMaisVendido>();
+        var updates = new List<ProdutoMaisVendido>();
         var date = DateTime.Now;
 
         foreach (var itens in pedido.ItensPedido)
@@ -45,7 +45,7 @@ public sealed class ProdutosMaisVendidosService : IProdutosMaisVendidosService
 
                 if (insert == null)
                 {
-                    addOrUpdate = new ProdutosMaisVendidos(
+                    addOrUpdate = new ProdutoMaisVendido(
                         Guid.NewGuid(),
                         date,
                         date,

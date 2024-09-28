@@ -1,11 +1,10 @@
-﻿using Domain.Pkg.Exceptions;
-using Domain.Pkg.Errors;
-using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pesos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
 using OpenAdm.Application.Dtos.Pesos;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Application.Services;
 
@@ -28,7 +27,7 @@ public class PesoService : IPesoService
     public async Task DeletePesoAsync(Guid id)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
         await _pesoRepository.DeleteAsync(peso);
     }
@@ -54,7 +53,7 @@ public class PesoService : IPesoService
     public async Task<PesoViewModel> GetPesoViewModelAsync(Guid id)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
         return new PesoViewModel().ToModel(peso);
     }
@@ -62,7 +61,7 @@ public class PesoService : IPesoService
     public async Task<PesoViewModel> UpdatePesoAsync(UpdatePesoDto updatePesoDto)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(updatePesoDto.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
         peso.Update(updatePesoDto.Descricao);
 

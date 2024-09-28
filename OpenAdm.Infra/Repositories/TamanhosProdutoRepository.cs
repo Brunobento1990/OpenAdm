@@ -1,11 +1,11 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class TamanhosProdutoRepository : GenericRepository<TamanhosProdutos>, ITamanhosProdutoRepository
+public class TamanhosProdutoRepository : GenericRepository<TamanhoProduto>, ITamanhosProdutoRepository
 {
     private readonly ParceiroContext _parceiroContext;
     public TamanhosProdutoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
@@ -13,7 +13,7 @@ public class TamanhosProdutoRepository : GenericRepository<TamanhosProdutos>, IT
         _parceiroContext = parceiroContext;
     }
 
-    public async Task<IList<TamanhosProdutos>> AddRangeAsync(IList<TamanhosProdutos> tamanhosProdutos)
+    public async Task<IList<TamanhoProduto>> AddRangeAsync(IList<TamanhoProduto> tamanhosProdutos)
     {
         await _parceiroContext.AddRangeAsync(tamanhosProdutos);
         return tamanhosProdutos;

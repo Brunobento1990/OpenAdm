@@ -1,4 +1,5 @@
-﻿using Domain.Pkg.Exceptions;
+﻿
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Api;
 

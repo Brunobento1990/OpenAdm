@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
@@ -33,9 +33,9 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
             .HasDefaultValue(null);
         builder.HasMany(x => x.Pesos)
             .WithMany(x => x.Produtos)
-            .UsingEntity<PesosProdutos>();
+            .UsingEntity<PesoProduto>();
         builder.HasMany(x => x.Tamanhos)
             .WithMany(x => x.Produtos)
-            .UsingEntity<TamanhosProdutos>();
+            .UsingEntity<TamanhoProduto>();
     }
 }

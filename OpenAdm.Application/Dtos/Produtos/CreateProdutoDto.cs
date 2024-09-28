@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace OpenAdm.Application.Dtos.Produtos;
@@ -34,24 +34,24 @@ public class CreateProdutoDto
             Peso);
     }
 
-    public IList<TamanhosProdutos> ToTamanhosProdutos(Guid produtoId)
+    public IList<TamanhoProduto> ToTamanhosProdutos(Guid produtoId)
     {
-        var tamanhosProdutos = new List<TamanhosProdutos>();
+        var tamanhosProdutos = new List<TamanhoProduto>();
 
         if (TamanhosIds == null || TamanhosIds.Count == 0)
             return tamanhosProdutos;
 
         foreach (var tamanhoId in TamanhosIds)
         {
-            tamanhosProdutos.Add(new TamanhosProdutos(Guid.NewGuid(), produtoId, tamanhoId));
+            tamanhosProdutos.Add(new TamanhoProduto(Guid.NewGuid(), produtoId, tamanhoId));
         }
 
         return tamanhosProdutos;
     }
 
-    public IList<PesosProdutos> ToPesosProdutos(Guid produtoId)
+    public IList<PesoProduto> ToPesosProdutos(Guid produtoId)
     {
-        var pesosProdutos = new List<PesosProdutos>();
+        var pesosProdutos = new List<PesoProduto>();
 
         if (PesosIds?.Count == 0 || PesosIds == null)
             return pesosProdutos;
@@ -59,7 +59,7 @@ public class CreateProdutoDto
 
         foreach (var pesoId in PesosIds)
         {
-            pesosProdutos.Add(new PesosProdutos(Guid.NewGuid(), produtoId, pesoId));
+            pesosProdutos.Add(new PesoProduto(Guid.NewGuid(), produtoId, pesoId));
         }
 
         return pesosProdutos;

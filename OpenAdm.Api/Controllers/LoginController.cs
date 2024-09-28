@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 
@@ -6,6 +7,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("login")]
+[AutenticaParceiro]
 public class LoginController : ControllerBase
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;

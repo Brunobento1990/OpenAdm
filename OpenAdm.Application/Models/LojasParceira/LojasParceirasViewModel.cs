@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Models.LojasParceira;
 
@@ -11,7 +11,7 @@ public class LojasParceirasViewModel : BaseModel
     public string? Endereco { get; set; }
     public string? Contato { get; set; }
 
-    public LojasParceirasViewModel ToModel(LojasParceiras lojasParceiras)
+    public LojasParceirasViewModel ToModel(LojaParceira lojasParceiras)
     {
         Id = lojasParceiras.Id;
         DataDeAtualizacao = lojasParceiras.DataDeAtualizacao;

@@ -13,7 +13,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IEmailApiService _emailService;
-    
+
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
@@ -37,7 +37,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
         if (pedido != null)
         {
             var logo = configuracoesDePedido.Logo != null ? Encoding.UTF8.GetString(configuracoesDePedido.Logo) : null;
-            var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, null, logo);
+            var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, "teste", logo);
 
             var message = $"Que ótima noticia, mais um pedido!\nN. do pedido : {pedido.Numero}";
             var assunto = "Novo pedido";

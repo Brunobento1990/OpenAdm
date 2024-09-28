@@ -16,14 +16,4 @@ public static class DependencyInjectIHttpClient
             x.BaseAddress = new Uri(url);
         });
     }
-
-    public static void InjectHttpClientFrete(this IServiceCollection services, string url, string token)
-    {
-        services.AddScoped<IFreteService, FreteService>();
-        services.AddHttpClient("Frete", x =>
-        {
-            x.BaseAddress = new Uri(url);
-            x.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-        });
-    }
 }

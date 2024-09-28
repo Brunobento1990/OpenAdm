@@ -1,10 +1,9 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
-using SkiaSharp;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -54,5 +53,35 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
             TotalPage = total,
             Values = values
         };
+    }
+
+    public async Task<IList<MovimentacaoDeProduto>> RelatorioAsync(
+        DateTime dataInicial, 
+        DateTime dataFinal, 
+        IList<Guid> produtosIds, 
+        IList<Guid> pesosIds, 
+        IList<Guid> tamanhosIds)
+    {
+        var query = _parceiroContext
+            .MovimentacoesDeProdutos
+            .OrderBy(x => x.DataDeCriacao)
+            .Where(x => x.DataDeCriacao >= dataInicial && x.DataDeCriacao <= dataFinal);
+
+        if(produtosIds.Count > 0)
+        {
+            query = query.Where(x => produtosIds.Contains(x.ProdutoId));
+        }
+
+        if(tamanhosIds.Count > 0)
+        {
+            query = query.Where(x => tamanhosIds.Contains(x.TamanhoId!.Value));
+        }
+
+        if (pesosIds.Count > 0)
+        {
+            query = query.Where(x => pesosIds.Contains(x.PesoId!.Value));
+        }
+
+        return await query.ToListAsync();
     }
 }

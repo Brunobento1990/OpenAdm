@@ -2,7 +2,7 @@
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Cached.Cached;
@@ -37,7 +37,7 @@ public class ProdutoCached : IProdutoRepository
 
     public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
-        if(paginacaoProdutoEcommerceDto.CategoriaId != null && paginacaoProdutoEcommerceDto.CategoriaId != Guid.Empty)
+        if (paginacaoProdutoEcommerceDto.CategoriaId != null && paginacaoProdutoEcommerceDto.CategoriaId != Guid.Empty)
         {
             return await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
         }
@@ -168,4 +168,7 @@ public class ProdutoCached : IProdutoRepository
     {
         return await _produtoRepository.GetDescricaoDeProdutosAsync(ids);
     }
+
+    public Task<IDictionary<Guid, Produto>> GetDictionaryProdutosAsync(IList<Guid> ids)
+        => _produtoRepository.GetDictionaryProdutosAsync(ids);
 }

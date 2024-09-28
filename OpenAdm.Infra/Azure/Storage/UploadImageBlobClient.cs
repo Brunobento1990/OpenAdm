@@ -1,5 +1,5 @@
 ﻿using Azure.Storage.Blobs;
-using Domain.Pkg.Exceptions;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.Infra.Azure.Interfaces;
 using SixLabors.ImageSharp;

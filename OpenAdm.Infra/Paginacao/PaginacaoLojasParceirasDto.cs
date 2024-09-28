@@ -1,13 +1,13 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
 
 namespace OpenAdm.Infra.Paginacao;
 
-public class PaginacaoLojasParceirasDto : FilterModel<LojasParceiras>
+public class PaginacaoLojasParceirasDto : FilterModel<LojaParceira>
 {
-    public override Expression<Func<LojasParceiras, bool>>? GetWhereBySearch()
+    public override Expression<Func<LojaParceira, bool>>? GetWhereBySearch()
     {
         if (string.IsNullOrWhiteSpace(Search))
             return null;

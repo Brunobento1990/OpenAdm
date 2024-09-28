@@ -1,8 +1,8 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Infra.Paginacao;
 

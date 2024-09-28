@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("home")]
+[AutenticaParceiro]
 public class HomeController : ControllerBase
 {
     private readonly IHomeSevice _homeEcommerSevice;
@@ -14,7 +16,7 @@ public class HomeController : ControllerBase
         _homeEcommerSevice = homeEcommerSevice;
     }
 
-    //[ResponseCache(CacheProfileName = "Default300")]
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("adm")]
     public async Task<IActionResult> ListAdm()
     {

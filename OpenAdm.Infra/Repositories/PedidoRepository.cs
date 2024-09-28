@@ -3,9 +3,9 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
-using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model.Pedidos;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Infra.Repositories;
 

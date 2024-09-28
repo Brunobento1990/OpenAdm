@@ -1,12 +1,12 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public class LojasParceirasConfiguration : IEntityTypeConfiguration<LojasParceiras>
+public class LojasParceirasConfiguration : IEntityTypeConfiguration<LojaParceira>
 {
-    public void Configure(EntityTypeBuilder<LojasParceiras> builder)
+    public void Configure(EntityTypeBuilder<LojaParceira> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)

@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
@@ -11,7 +11,7 @@ public sealed class ConfiguracaoParceiroCached : IConfiguracaoParceiroRepository
     private readonly ICachedService<ConfiguracaoParceiro> _cachedService;
 
     public ConfiguracaoParceiroCached(
-        ConfiguracaoParceiroRepository configuracaoParceiroRepository, 
+        ConfiguracaoParceiroRepository configuracaoParceiroRepository,
         ICachedService<ConfiguracaoParceiro> cachedService)
     {
         _configuracaoParceiroRepository = configuracaoParceiroRepository;
@@ -22,11 +22,15 @@ public sealed class ConfiguracaoParceiroCached : IConfiguracaoParceiroRepository
     {
         var configuracaoParceiro = await _cachedService.GetItemAsync(dominio);
 
-        if(configuracaoParceiro == null)
+        if (configuracaoParceiro == null)
         {
             configuracaoParceiro = await _configuracaoParceiroRepository.GetParceiroByDominioAdmAsync(dominio);
-            if(configuracaoParceiro != null)
+            if (configuracaoParceiro != null)
             {
+                if (configuracaoParceiro.Parceiro != null)
+                {
+                    configuracaoParceiro.Parceiro.ConfiguracaoDbParceiro = null!;
+                }
                 await _cachedService.SetItemAsync(dominio, configuracaoParceiro);
             }
         }

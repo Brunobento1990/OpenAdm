@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("produtos-mais-vendidos")]
+[AutenticaParceiro]
 public class ProdutosMaisVendidosController : ControllerBase
 {
     private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;

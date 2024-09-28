@@ -1,7 +1,6 @@
-﻿using Domain.Pkg.Exceptions;
-using Npgsql;
-using OpenAdm.Domain.Interfaces;
+﻿using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Infra.Repositories;
 

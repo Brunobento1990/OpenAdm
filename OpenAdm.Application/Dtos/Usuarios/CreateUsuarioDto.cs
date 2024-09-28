@@ -1,8 +1,8 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Exceptions;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Models;
 using System.ComponentModel.DataAnnotations;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Application.Dtos.Usuarios;
 

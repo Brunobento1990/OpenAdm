@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using System.Linq.Expressions;
 
 namespace OpenAdm.Domain.Model.Pedidos;

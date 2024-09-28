@@ -8,6 +8,7 @@ namespace OpenAdm.Api.Controllers.Carrinhos;
 [ApiController]
 [Route("carrinho")]
 [Autentica]
+[AutenticaParceiro]
 public class CoutCarrinhoController : ControllerBase
 {
     private readonly IGetCountCarrinhoService _carrinhoService;

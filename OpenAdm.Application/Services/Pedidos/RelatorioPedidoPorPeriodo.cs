@@ -11,14 +11,17 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IPdfPedidoService _pdfPedidoService;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
     public RelatorioPedidoPorPeriodo(
         IPedidoRepository pedidoRepository,
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
-        IPdfPedidoService pdfPedidoService)
+        IPdfPedidoService pdfPedidoService,
+        IParceiroAutenticado parceiroAutenticado)
     {
         _pedidoRepository = pedidoRepository;
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _pdfPedidoService = pdfPedidoService;
+        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task<(byte[] pdf, int count)> GetRelatorioAsync(RelatorioPedidoDto relatorioPedidoDto)
@@ -48,7 +51,7 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
                 pedido.DataDeCriacao);
         }).ToList();
 
-        var pdf = _pdfPedidoService.GeneratePdfPedidoRelatorio(relatorioPedidoModel);
+        var pdf = _pdfPedidoService.GeneratePdfPedidoRelatorio(relatorioPedidoModel, _parceiroAutenticado.NomeFantasia);
 
         return (pdf, pedidos.Count);
     }

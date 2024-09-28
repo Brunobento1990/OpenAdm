@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Models.Usuarios;

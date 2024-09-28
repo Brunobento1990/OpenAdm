@@ -1,5 +1,5 @@
 ﻿using OpenAdm.Application.Models.MovimentacaoDeProdutos;
-using OpenAdm.Application.Models.TopUsuario;
+using OpenAdm.Application.Models.TopUsuarios;
 
 namespace OpenAdm.Application.Models.Home;
 

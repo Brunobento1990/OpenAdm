@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
 

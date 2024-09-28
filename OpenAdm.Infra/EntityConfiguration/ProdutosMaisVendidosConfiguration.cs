@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public class ProdutosMaisVendidosConfiguration : IEntityTypeConfiguration<ProdutosMaisVendidos>
+public class ProdutosMaisVendidosConfiguration : IEntityTypeConfiguration<ProdutoMaisVendido>
 {
-    public void Configure(EntityTypeBuilder<ProdutosMaisVendidos> builder)
+    public void Configure(EntityTypeBuilder<ProdutoMaisVendido> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)

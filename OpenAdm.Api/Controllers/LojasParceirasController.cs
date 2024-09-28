@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
-using OpenAdm.Application.Dtos.LojaParceira;
+using OpenAdm.Application.Dtos.LojasParceiras;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.Paginacao;
 
@@ -9,6 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("lojas-parceiras")]
+[AutenticaParceiro]
 public class LojasParceirasController : ControllerBase
 {
     private readonly ILojasParceirasService _lojasParceirasService;

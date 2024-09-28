@@ -10,6 +10,7 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 [Route("pedidos")]
 [Autentica]
 [IsFuncionario]
+[AutenticaParceiro]
 public class UpdateStatusPedidoController : ControllerBase
 {
     private readonly IUpdateStatusPedidoService _updateStatusPedidoService;

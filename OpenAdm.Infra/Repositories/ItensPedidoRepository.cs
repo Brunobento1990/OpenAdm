@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class ItensPedidoRepository : GenericRepository<ItensPedido>, IItensPedidoRepository
+public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedidoRepository
 {
     private readonly ParceiroContext _parceiroContext;
 
@@ -14,7 +14,7 @@ public class ItensPedidoRepository : GenericRepository<ItensPedido>, IItensPedid
         _parceiroContext = parceiroContext;
     }
 
-    public async Task<ItensPedido?> GetItemPedidoByIdAsync(Guid id)
+    public async Task<ItemPedido?> GetItemPedidoByIdAsync(Guid id)
     {
         return await _parceiroContext
             .ItensPedidos
@@ -22,7 +22,7 @@ public class ItensPedidoRepository : GenericRepository<ItensPedido>, IItensPedid
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<IList<ItensPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId)
+    public async Task<IList<ItemPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId)
     {
         var itens = await _parceiroContext
             .ItensPedidos
@@ -35,13 +35,13 @@ public class ItensPedidoRepository : GenericRepository<ItensPedido>, IItensPedid
 
         foreach (var item in itens)
         {
-            item.Produto.ItensPedido = new();
+            item.Produto.ItensPedido = [];
 
             if (item.Tamanho != null)
-                item.Tamanho.ItensPedido = new();
+                item.Tamanho.ItensPedido = [];
 
             if (item.Peso != null)
-                item.Peso.ItensPedido = new();
+                item.Peso.ItensPedido = [];
 
             item.Pedido = null!;
         }

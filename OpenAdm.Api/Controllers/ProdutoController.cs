@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
@@ -10,6 +9,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("produtos")]
+[AutenticaParceiro]
 public class ProdutoController : ControllerBase
 {
     private readonly IProdutoService _produtoService;

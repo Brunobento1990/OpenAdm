@@ -1,6 +1,6 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Dtos.Pedidos;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Test.Domain.Builder;
 

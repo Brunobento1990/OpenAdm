@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
@@ -8,17 +8,17 @@ namespace OpenAdm.Infra.Cached.Cached;
 public sealed class TopUsuariosCached : ITopUsuariosRepository
 {
     private readonly TopUsuariosRepository _topUsuariosRepository;
-    private readonly ICachedService<TopUsuarios> _cachedService;
+    private readonly ICachedService<TopUsuario> _cachedService;
     private const string _totalPedidos = "TotalPedidos";
     private const string _totalCompra = "TotalCompra";
 
-    public TopUsuariosCached(TopUsuariosRepository topUsuariosRepository, ICachedService<TopUsuarios> cachedService)
+    public TopUsuariosCached(TopUsuariosRepository topUsuariosRepository, ICachedService<TopUsuario> cachedService)
     {
         _topUsuariosRepository = topUsuariosRepository;
         _cachedService = cachedService;
     }
 
-    public async Task<IList<TopUsuarios>> GetTopTresUsuariosToTalCompraAsync()
+    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalCompraAsync()
     {
         var topUsuarios = await _cachedService.GetListItemAsync(_totalCompra);
 
@@ -35,7 +35,7 @@ public sealed class TopUsuariosCached : ITopUsuariosRepository
         return topUsuarios;
     }
 
-    public async Task<IList<TopUsuarios>> GetTopTresUsuariosToTalPedidosAsync()
+    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalPedidosAsync()
     {
         var topUsuarios = await _cachedService.GetListItemAsync(_totalPedidos);
 
@@ -52,12 +52,12 @@ public sealed class TopUsuariosCached : ITopUsuariosRepository
         return topUsuarios;
     }
 
-    public Task AddAsync(TopUsuarios topUsuario)
+    public Task AddAsync(TopUsuario topUsuario)
         => _topUsuariosRepository.AddAsync(topUsuario);
 
-    public Task UpdateAsync(TopUsuarios topUsuario)
+    public Task UpdateAsync(TopUsuario topUsuario)
         => _topUsuariosRepository.UpdateAsync(topUsuario);
 
-    public Task<TopUsuarios?> GetByUsuarioIdAsync(Guid usuarioId)
+    public Task<TopUsuario?> GetByUsuarioIdAsync(Guid usuarioId)
         => _topUsuariosRepository.GetByUsuarioIdAsync(usuarioId);
 }

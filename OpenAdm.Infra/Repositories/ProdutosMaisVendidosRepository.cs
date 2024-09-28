@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
@@ -14,7 +14,7 @@ public sealed class ProdutosMaisVendidosRepository : IProdutosMaisVendidosReposi
         _parceiroContext = parceiroContext;
     }
 
-    public async Task AddRangeAsync(IList<ProdutosMaisVendidos> produtosMaisVendidos)
+    public async Task AddRangeAsync(IList<ProdutoMaisVendido> produtosMaisVendidos)
     {
         if (produtosMaisVendidos.Count == 0) 
         {
@@ -24,7 +24,7 @@ public sealed class ProdutosMaisVendidosRepository : IProdutosMaisVendidosReposi
         await _parceiroContext.SaveChangesAsync();
     }
 
-    public async Task<IList<ProdutosMaisVendidos>> GetProdutosMaisVendidosAsync(IList<Guid> produtosIds)
+    public async Task<IList<ProdutoMaisVendido>> GetProdutosMaisVendidosAsync(IList<Guid> produtosIds)
     {
         return await _parceiroContext
             .ProdutosMaisVendidos
@@ -33,7 +33,7 @@ public sealed class ProdutosMaisVendidosRepository : IProdutosMaisVendidosReposi
             .ToListAsync();
     }
 
-    public async Task UpdateRangeAsync(IList<ProdutosMaisVendidos> produtosMaisVendidos)
+    public async Task UpdateRangeAsync(IList<ProdutoMaisVendido> produtosMaisVendidos)
     {
         _parceiroContext.AttachRange(produtosMaisVendidos);
         _parceiroContext.UpdateRange(produtosMaisVendidos);

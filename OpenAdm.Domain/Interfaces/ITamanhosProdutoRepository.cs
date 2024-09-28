@@ -1,9 +1,9 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Domain.Interfaces;
 
-public interface ITamanhosProdutoRepository : IGenericRepository<TamanhosProdutos>
+public interface ITamanhosProdutoRepository : IGenericRepository<TamanhoProduto>
 {
-    Task<IList<TamanhosProdutos>> AddRangeAsync(IList<TamanhosProdutos> tamanhosProdutos);
+    Task<IList<TamanhoProduto>> AddRangeAsync(IList<TamanhoProduto> tamanhosProdutos);
     Task<bool> DeleteRangeAsync(Guid produtoId);
 }

@@ -1,9 +1,8 @@
-﻿using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Adapters;
+﻿using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -19,7 +18,7 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
         var usuario = await _loginUsuarioRepository.LoginAsync(requestLogin.Email);
 
         if (usuario == null || !PasswordAdapter.VerifyPassword(requestLogin.Senha, usuario.Senha))
-            throw new ExceptionApi(CodigoErrors.ErrorEmailOuSenhaInvalido);
+            throw new ExceptionApi("Usuário ou senha inválidos!");
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);

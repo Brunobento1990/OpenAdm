@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public class ItensTabelaDePrecoConfiguration : IEntityTypeConfiguration<ItensTabelaDePreco>
+public class ItensTabelaDePrecoConfiguration : IEntityTypeConfiguration<ItemTabelaDePreco>
 {
-    public void Configure(EntityTypeBuilder<ItensTabelaDePreco> builder)
+    public void Configure(EntityTypeBuilder<ItemTabelaDePreco> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)
