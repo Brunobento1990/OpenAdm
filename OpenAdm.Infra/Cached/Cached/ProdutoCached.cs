@@ -37,7 +37,7 @@ public class ProdutoCached : IProdutoRepository
 
     public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
-        if(paginacaoProdutoEcommerceDto.CategoriaId != null && paginacaoProdutoEcommerceDto.CategoriaId != Guid.Empty)
+        if (paginacaoProdutoEcommerceDto.CategoriaId != null && paginacaoProdutoEcommerceDto.CategoriaId != Guid.Empty)
         {
             return await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
         }
@@ -168,4 +168,7 @@ public class ProdutoCached : IProdutoRepository
     {
         return await _produtoRepository.GetDescricaoDeProdutosAsync(ids);
     }
+
+    public Task<IDictionary<Guid, Produto>> GetDictionaryProdutosAsync(IList<Guid> ids)
+        => _produtoRepository.GetDictionaryProdutosAsync(ids);
 }

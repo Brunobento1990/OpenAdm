@@ -12,6 +12,7 @@ public static class DependencyInjectyApplication
 {
     public static void InjectServices(this IServiceCollection services)
     {
+        services.AddScoped<IMovimentacaoDeProdutoRelatorioService, MovimentacaoDeProdutoRelatorioService>();
         services.AddScoped<ITopUsuarioService, TopUsuarioService>();
         services.AddScoped<IEmailApiService, EmailApiService>();
         services.AddScoped<IPdfPedidoService, PdfPedidoService>();

@@ -364,7 +364,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                 if (!string.IsNullOrWhiteSpace(relatorioPedidoDto.Logo))
                 {
-                    row.ConstantItem(50).Height(50).Image(Convert.FromBase64String(relatorioPedidoDto.Logo));
+                    row.ConstantItem(50).Width(50).Height(50).Image(Convert.FromBase64String(relatorioPedidoDto.Logo));
                 }
 
             });
