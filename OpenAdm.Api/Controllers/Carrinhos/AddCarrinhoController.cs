@@ -11,6 +11,7 @@ namespace OpenAdm.Api.Controllers.Carrinhos;
 [ApiController]
 [Route("carrinho")]
 [Autentica]
+[AutenticaParceiro]
 public class AddCarrinhoController : ControllerBase
 {
     private readonly IAddCarrinhoService _addCarrinhoSerice;

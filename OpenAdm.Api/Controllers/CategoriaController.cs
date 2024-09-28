@@ -9,6 +9,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("categorias")]
+[AutenticaParceiro]
 public class CategoriaController(ICategoriaService categoriaService)
     : ControllerBase
 {

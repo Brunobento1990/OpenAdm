@@ -8,6 +8,7 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 [ApiController]
 [Route("pedidos")]
 [Autentica]
+[AutenticaParceiro]
 public class RelatorioPedidoController : ControllerBase
 {
     private readonly IRelatorioPedidoPorPeriodo _relatorioPedidoPorPeriodo;

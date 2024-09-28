@@ -8,6 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("tamanhos")]
+[AutenticaParceiro]
 public class TamanhoController : ControllerBase
 {
     private readonly ITamanhoService _tamanhoService;

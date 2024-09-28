@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 
@@ -6,6 +7,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("usuarios")]
+[AutenticaParceiro]
 public class EsqueceuSenhaController : ControllerBase
 {
     private readonly IEsqueceuSenhaService _esqueceuSenhaService;

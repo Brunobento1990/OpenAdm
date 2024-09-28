@@ -8,9 +8,10 @@ using OpenAdm.Infra.Paginacao;
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
+[Route("tabelas-de-precos")]
 [IsFuncionario]
 [Autentica]
-[Route("tabelas-de-precos")]
+[AutenticaParceiro]
 public class TabelaDePrecoController : ControllerBase
 {
     private readonly ITabelaDePrecoService _tabelaDePrecoService;

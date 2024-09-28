@@ -8,6 +8,7 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 [Route("pedidos")]
 [Autentica]
 [IsFuncionario]
+[AutenticaParceiro]
 public class DownloadPedidoController : ControllerBase
 {
     private readonly IPedidoDownloadService _pedidoDownloadService;

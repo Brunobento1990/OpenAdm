@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces;
 
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("token")]
+[AutenticaParceiro]
 public class RefreshTokenController(IRefreshTokenService refreshTokenService) : ControllerBase
 {
     private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;

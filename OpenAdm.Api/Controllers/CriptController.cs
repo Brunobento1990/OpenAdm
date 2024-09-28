@@ -10,6 +10,10 @@ public class CriptController : ControllerBase
     [HttpPost("Criptar")]
     public IActionResult Criptar(BodyCript bodyCript)
     {
+        if (!VariaveisDeAmbiente.IsDevelopment()) 
+        {
+            return Unauthorized();
+        }
         var conn = Criptografia.Encrypt(bodyCript.Code);
         return Ok(conn);
     }
@@ -17,6 +21,10 @@ public class CriptController : ControllerBase
     [HttpPost("DeCriptar")]
     public IActionResult DeCriptar(BodyCript bodyCript)
     {
+        if (!VariaveisDeAmbiente.IsDevelopment())
+        {
+            return Unauthorized();
+        }
         var conn = Criptografia.Decrypt(bodyCript.Code);
         return Ok(conn);
     }

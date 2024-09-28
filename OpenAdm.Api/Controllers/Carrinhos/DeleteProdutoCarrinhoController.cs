@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
-using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Domain.Interfaces;
 
@@ -9,6 +8,7 @@ namespace OpenAdm.Api.Controllers.Carrinhos;
 [ApiController]
 [Route("carrinho")]
 [Autentica]
+[AutenticaParceiro]
 public class DeleteProdutoCarrinhoController : ControllerBase
 {
     private readonly IDeleteProdutoCarrinhoService _deleteProdutoCarrinhoService;

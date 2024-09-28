@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
-using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
@@ -10,6 +9,7 @@ namespace OpenAdm.Api.Controllers.Carrinhos;
 [ApiController]
 [Route("carrinho")]
 [Autentica]
+[AutenticaParceiro]
 public class GetCarrinhoController : ControllerBase
 {
     private readonly IGetCarrinhoService _getCarrinhoService;

@@ -10,6 +10,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("banners")]
+[AutenticaParceiro]
 public class BannerController(IBannerService bannerService) : ControllerBase
 {
     private readonly IBannerService _bannerService = bannerService;

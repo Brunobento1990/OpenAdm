@@ -7,9 +7,10 @@ using OpenAdm.Infra.Paginacao;
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
+[Route("estoques")]
 [Autentica]
 [IsFuncionario]
-[Route("estoques")]
+[AutenticaParceiro]
 public class EstoqueController : ControllerBase
 {
     private readonly IEstoqueService _estoqueservice;

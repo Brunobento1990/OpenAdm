@@ -9,6 +9,7 @@ namespace OpenAdm.Api.Controllers;
 [ApiController]
 [Route("pedidos")]
 [Autentica]
+[AutenticaParceiro]
 public class PedidoController : ControllerBase
 {
     private readonly IPedidoService _pedidoService;

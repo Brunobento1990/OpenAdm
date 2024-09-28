@@ -1,4 +1,6 @@
-﻿using OpenAdm.Domain.Exceptions;
+﻿using Microsoft.AspNetCore.Http.Features;
+using OpenAdm.Api.Attributes;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 
@@ -17,6 +19,15 @@ public class ParceiroMiddleware
         IConfiguracaoParceiroRepository configuracaoParceiroRepository,
         IParceiroAutenticado parceiroAutenticado)
     {
+        var autenticar = httpContext.Features.Get<IEndpointFeature>()?.Endpoint?.Metadata
+                .FirstOrDefault(m => m is AutenticaParceiroAttribute) is AutenticaParceiroAttribute atributoAutorizacao;
+
+        if (!autenticar)
+        {
+            await _next(httpContext);
+            return;
+        }
+
         var referer = (string?)httpContext.Request.Headers.FirstOrDefault(x => x.Key == "Referer").Value;
 
         if (string.IsNullOrWhiteSpace(referer))
