@@ -3,6 +3,7 @@ using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Pedidos;
 
@@ -29,6 +30,10 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
     public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItemPedidoModel> itensPedidoModels, Usuario usuario)
     {
+        if (itensPedidoModels.Count == 0)
+        {
+            throw new ExceptionApi("Informe os itens do pedido!");
+        }
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id);
 
