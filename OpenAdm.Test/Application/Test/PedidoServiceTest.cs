@@ -157,41 +157,41 @@ public class PedidoServiceTest
         Assert.Equal(StatusPedido.Aberto, pedidoModel.StatusPedido);
     }
 
-    //[Fact]
-    //public async Task NaoDeveCriarPedidoSemItens()
-    //{
-    //    var itensPedido = new List<ItemPedidoModel>();
+    [Fact]
+    public async Task NaoDeveCriarPedidoSemItens()
+    {
+        var itensPedido = new List<ItemPedidoModel>();
 
-    //    var itensTabelaDePreco = new List<ItemTabelaDePreco>()
-    //    {
-    //        new (Guid.NewGuid(),
-    //            DateTime.Now,
-    //            DateTime.Now,
-    //            1,
-    //            Guid.NewGuid(),
-    //            1,
-    //            2,
-    //            Guid.NewGuid(),
-    //            Guid.NewGuid(),
-    //            Guid.NewGuid())
-    //    };
+        var itensTabelaDePreco = new List<ItemTabelaDePreco>()
+        {
+            new (Guid.NewGuid(),
+                DateTime.Now,
+                DateTime.Now,
+                1,
+                Guid.NewGuid(),
+                1,
+                2,
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid())
+        };
 
-    //    var produtosIds = itensPedido.Select(x => x.ProdutoId).ToList();
+        var produtosIds = itensPedido.Select(x => x.ProdutoId).ToList();
 
-    //    _itemTabelaDePrecoRepositoryMock.Setup((x) =>
-    //        x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
-    //        .ReturnsAsync(itensTabelaDePreco);
+        _itemTabelaDePrecoRepositoryMock.Setup((x) =>
+            x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
+            .ReturnsAsync(itensTabelaDePreco);
 
-    //    var service = new CreatePedidoService(
-    //        _pedidoRepositoryMock.Object,
-    //        _processarPedidoServiceMock.Object,
-    //        _itemTabelaDePrecoRepositoryMock.Object,
-    //        _carrinhoRepository.Object);
+        var service = new CreatePedidoService(
+            _pedidoRepositoryMock.Object,
+            _processarPedidoServiceMock.Object,
+            _itemTabelaDePrecoRepositoryMock.Object,
+            _carrinhoRepository.Object);
 
-    //    var usuario = UsuarioBuilder.Init().Build();
+        var usuario = UsuarioBuilder.Init().Build();
 
-    //    await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(itensPedido, usuario));
-    //}
+        await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(itensPedido, usuario));
+    }
 
     [Fact]
     public async Task NaoDeveCriarPedidoDeUsuarioJuridicoComValorUnitarioVarejo()
