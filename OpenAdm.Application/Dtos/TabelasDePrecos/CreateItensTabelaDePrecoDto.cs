@@ -1,5 +1,5 @@
 ﻿
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Dtos.TabelasDePrecos;
 
@@ -12,11 +12,11 @@ public class CreateItensTabelaDePrecoDto
     public Guid TabelaDePrecoId { get; set; }
     public Guid? PesoId { get; set; }
 
-    public ItensTabelaDePreco ToEntity()
+    public ItemTabelaDePreco ToEntity()
     {
         var date = DateTime.Now;
 
-        return new ItensTabelaDePreco(
+        return new ItemTabelaDePreco(
                 Guid.NewGuid(),
                 date,
                 date,

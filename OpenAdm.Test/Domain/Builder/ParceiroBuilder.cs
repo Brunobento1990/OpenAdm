@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Test.Domain.Builder;
 

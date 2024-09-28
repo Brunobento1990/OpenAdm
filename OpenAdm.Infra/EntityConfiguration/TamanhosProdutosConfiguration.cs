@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
-public class TamanhosProdutosConfiguration : IEntityTypeConfiguration<TamanhosProdutos>
+public class TamanhosProdutosConfiguration : IEntityTypeConfiguration<TamanhoProduto>
 {
-    public void Configure(EntityTypeBuilder<TamanhosProdutos> builder)
+    public void Configure(EntityTypeBuilder<TamanhoProduto> builder)
     {
         builder.HasKey(x => x.Id);
     }

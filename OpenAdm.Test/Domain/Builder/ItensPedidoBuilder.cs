@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Test.Domain.Builder;
 
@@ -57,18 +57,18 @@ public class ItensPedidoBuilder
         return this;
     }
 
-    public ItensPedido Build()
+    public ItemPedido Build()
     {
-        return new ItensPedido(_id, _created, _update, _numero, _pesoId, _tamanhoId, _produtoId, _pedidoId, _valorUnitario, _quantidade);
+        return new ItemPedido(_id, _created, _update, _numero, _pesoId, _tamanhoId, _produtoId, _pedidoId, _valorUnitario, _quantidade);
     }
 
-    public static IList<ItensPedido> BuildItens()
+    public static IList<ItemPedido> BuildItens()
     {
         var item1 = Init().Build();
         var item2 = Init().Build();
         var item3 = Init().Build();
 
-        return new List<ItensPedido>()
+        return new List<ItemPedido>()
         {
             item1,
             item2,

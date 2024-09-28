@@ -1,4 +1,4 @@
-﻿using OpenAdm.Application.Dtos.LojaParceira;
+﻿using OpenAdm.Application.Dtos.LojasParceiras;
 using OpenAdm.Application.Models.LojasParceira;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;

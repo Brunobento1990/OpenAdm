@@ -1,10 +1,9 @@
-﻿using Domain.Pkg.Enum;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.Pedidos;
+﻿using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services.Pedidos;
@@ -31,7 +30,7 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
     public async Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto)
     {
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(updateStatusPedidoDto.PedidoId)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o pedido");
         pedido.UpdateStatus(updateStatusPedidoDto.StatusPedido);
 
         await _pedidoRepository.UpdateAsync(pedido);

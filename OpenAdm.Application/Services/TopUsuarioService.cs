@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Entities;
-using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -25,7 +25,7 @@ public sealed class TopUsuarioService : ITopUsuarioService
 
         var date = DateTime.Now;
 
-        topUsuario = new TopUsuarios(
+        topUsuario = new TopUsuario(
             Guid.NewGuid(),
             date,
             date,

@@ -3,9 +3,9 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
-using Domain.Pkg.Entities;
 using System.Linq.Expressions;
 using OpenAdm.Domain.PaginateDto;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -94,7 +94,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .ProdutosMaisVendidos
             .AsNoTracking()
             .Select(x =>
-                    new ProdutosMaisVendidos(
+                    new ProdutoMaisVendido(
                         x.Id,
                         x.DataDeCriacao,
                         x.DataDeAtualizacao,

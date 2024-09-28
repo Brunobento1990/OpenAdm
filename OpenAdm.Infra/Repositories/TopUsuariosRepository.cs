@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
@@ -14,13 +14,13 @@ public class TopUsuariosRepository : ITopUsuariosRepository
         _parceiroContext = parceiroContext;
     }
 
-    public async Task AddAsync(TopUsuarios topUsuario)
+    public async Task AddAsync(TopUsuario topUsuario)
     {
         await _parceiroContext.AddAsync(topUsuario);
         await _parceiroContext.SaveChangesAsync();
     }
 
-    public async Task<TopUsuarios?> GetByUsuarioIdAsync(Guid usuarioId)
+    public async Task<TopUsuario?> GetByUsuarioIdAsync(Guid usuarioId)
     {
         return await _parceiroContext
             .TopUsuarios
@@ -28,7 +28,7 @@ public class TopUsuariosRepository : ITopUsuariosRepository
             .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId);
     }
 
-    public async Task<IList<TopUsuarios>> GetTopTresUsuariosToTalCompraAsync()
+    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalCompraAsync()
     {
         return await _parceiroContext
             .TopUsuarios
@@ -39,7 +39,7 @@ public class TopUsuariosRepository : ITopUsuariosRepository
             .ToListAsync();
     }
 
-    public async Task<IList<TopUsuarios>> GetTopTresUsuariosToTalPedidosAsync()
+    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalPedidosAsync()
     {
         return await _parceiroContext
             .TopUsuarios
@@ -50,7 +50,7 @@ public class TopUsuariosRepository : ITopUsuariosRepository
             .ToListAsync();
     }
 
-    public async Task UpdateAsync(TopUsuarios topUsuario)
+    public async Task UpdateAsync(TopUsuario topUsuario)
     {
         _parceiroContext.Attach(topUsuario);
         _parceiroContext.Update(topUsuario);

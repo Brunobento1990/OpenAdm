@@ -1,11 +1,11 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
-using Domain.Pkg.Exceptions;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
+using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -48,7 +48,7 @@ public class ItemPedidoServiceTest
     {
         var item = ItensPedidoBuilder.Init().Build();
         var pedido = PedidoBuilder.Init().Build();
-        pedido.ItensPedido = new List<ItensPedido>() { item };
+        pedido.ItensPedido = new List<ItemPedido>() { item };
 
         _itensPedidoRepositoryMock.Setup(x => x.GetItemPedidoByIdAsync(_itemPedidoDto.Id)).ReturnsAsync(item);
         _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(item.PedidoId)).ReturnsAsync(pedido);

@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Infra.HttpService.Interfaces;
 using System.Net.Http.Headers;
 using OpenAdm.Infra.Model;
-using Domain.Pkg.Errors;
 
 namespace OpenAdm.Infra.HttpService.Services;
 
@@ -13,10 +12,10 @@ public class DiscordHttpService(IHttpClientFactory httpClientFactory)
     public async Task NotifyExceptionAsync(DiscordModel discordModel, string webHookId, string webHookToken)
     {
         if (string.IsNullOrWhiteSpace(webHookId))
-            throw new Exception(CodigoErrors.WebHookIdDiscordInvalido);
+            throw new Exception("Web hook do discord inválido");
 
         if (string.IsNullOrWhiteSpace(webHookToken))
-            throw new Exception(CodigoErrors.WebHookTokenDiscordInvalido);
+            throw new Exception("Web token do discord inválido");
 
         var url = $"{webHookId}/{webHookToken}";
         var httpClient = _httpClientFactory.CreateClient("Discord");

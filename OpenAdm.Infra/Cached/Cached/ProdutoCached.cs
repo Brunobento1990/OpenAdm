@@ -2,7 +2,7 @@
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Cached.Cached;

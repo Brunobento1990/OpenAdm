@@ -1,7 +1,6 @@
-﻿using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.TabelasDePrecos;
+﻿using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -36,7 +35,7 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
     public async Task DeleteItemAsync(Guid id)
     {
         var item = await _itemTabelaDePrecoRepository.GetItemTabelaDePrecoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o item da tabela de preço!");
 
 
         await _itemTabelaDePrecoRepository.DeleteAsync(item);

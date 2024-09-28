@@ -1,11 +1,11 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Domain.Interfaces;
 
-public interface IItemTabelaDePrecoRepository : IGenericRepository<ItensTabelaDePreco>
+public interface IItemTabelaDePrecoRepository : IGenericRepository<ItemTabelaDePreco>
 {
-    Task<ItensTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id);
-    Task<IList<ItensTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds);
-    Task AddRangeAsync(IList<ItensTabelaDePreco> itensTabelaDePrecos);
+    Task<ItemTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id);
+    Task<IList<ItemTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds);
+    Task AddRangeAsync(IList<ItemTabelaDePreco> itensTabelaDePrecos);
     Task DeleteItensTabelaDePrecoByProdutoIdAsync(Guid produtoId);
 }

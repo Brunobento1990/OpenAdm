@@ -1,11 +1,11 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class ItemTabelaDePrecoRepository : GenericRepository<ItensTabelaDePreco>, IItemTabelaDePrecoRepository
+public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>, IItemTabelaDePrecoRepository
 {
     private readonly ParceiroContext _parceiroContext;
     public ItemTabelaDePrecoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
@@ -13,7 +13,7 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItensTabelaDePreco>
         _parceiroContext = parceiroContext;
     }
 
-    public async Task AddRangeAsync(IList<ItensTabelaDePreco> itensTabelaDePrecos)
+    public async Task AddRangeAsync(IList<ItemTabelaDePreco> itensTabelaDePrecos)
     {
         await _parceiroContext.AddRangeAsync(itensTabelaDePrecos);
         await _parceiroContext.SaveChangesAsync();
@@ -31,7 +31,7 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItensTabelaDePreco>
         await _parceiroContext.SaveChangesAsync();
     }
 
-    public async Task<ItensTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)
+    public async Task<ItemTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)
     {
         return await _parceiroContext
             .ItensTabelaDePreco
@@ -39,7 +39,7 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItensTabelaDePreco>
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<IList<ItensTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds)
+    public async Task<IList<ItemTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds)
     {
         return await _parceiroContext
             .ItensTabelaDePreco

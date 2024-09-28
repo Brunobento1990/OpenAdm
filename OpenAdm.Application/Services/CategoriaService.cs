@@ -1,8 +1,8 @@
-﻿using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.Categorias;
+﻿using OpenAdm.Application.Dtos.Categorias;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Mappers;
 using OpenAdm.Application.Models.Categorias;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Azure.Interfaces;
@@ -14,6 +14,7 @@ public class CategoriaService : ICategoriaService
 {
     private readonly ICategoriaRepository _categoriaRepository;
     private readonly IUploadImageBlobClient _uploadImageBlobClient;
+    private const string ERRO_NOT_FOUND = "Não foi possível localizar a categoria!";
     public CategoriaService(ICategoriaRepository categoriaRepository, IUploadImageBlobClient uploadImageBlobClient)
     {
         _categoriaRepository = categoriaRepository;
@@ -40,14 +41,14 @@ public class CategoriaService : ICategoriaService
     public async Task DeleteCategoriaAsync(Guid id)
     {
         var categoria = await _categoriaRepository.GetCategoriaAsync(id)
-            ?? throw new ExceptionApi();
+            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         if (!string.IsNullOrWhiteSpace(categoria.NomeFoto))
         {
             var resultDeleteBlob = await _uploadImageBlobClient.DeleteImageAsync(categoria.NomeFoto);
 
             if (!resultDeleteBlob)
-                throw new ExceptionApi();
+                throw new ExceptionApi("Não foi possível excluir a categoria!");
         }
 
         await _categoriaRepository.DeleteAsync(categoria);
@@ -56,7 +57,7 @@ public class CategoriaService : ICategoriaService
     public async Task<CategoriaViewModel> GetCategoriaAsync(Guid id)
     {
         var categoria = await _categoriaRepository.GetCategoriaAsync(id)
-            ?? throw new ExceptionApi();
+            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         return new CategoriaViewModel().ToModel(categoria);
     }
@@ -82,7 +83,7 @@ public class CategoriaService : ICategoriaService
     public async Task<CategoriaViewModel> UpdateCategoriaAsync(UpdateCategoriaDto updateCategoriaDto)
     {
         var categoria = await _categoriaRepository.GetCategoriaAsync(updateCategoriaDto.Id)
-            ?? throw new ExceptionApi();
+            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         var nomeFoto = categoria.NomeFoto;
         var foto = categoria.Foto;
@@ -93,7 +94,7 @@ public class CategoriaService : ICategoriaService
             {
                 var resultDeleteBlob = await _uploadImageBlobClient.DeleteImageAsync(categoria.NomeFoto);
                 if (!resultDeleteBlob)
-                    throw new ExceptionApi();
+                    throw new ExceptionApi("Não foi possível excluir a categoria!");
             }
 
             nomeFoto = $"{Guid.NewGuid()}.jpeg";

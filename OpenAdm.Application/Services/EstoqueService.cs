@@ -1,10 +1,9 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.Estoques;
+﻿using OpenAdm.Application.Dtos.Estoques;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Estoques;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
@@ -36,7 +35,7 @@ public class EstoqueService : IEstoqueService
     public async Task<EstoqueViewModel> GetEstoqueViewModelAsync(Guid id)
     {
         var estoque = await _estoqueRepository.GetEstoqueAsync(x => x.Id == id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
 
         var produto = await _produtoRepository.GetProdutoByIdAsync(estoque.ProdutoId);
         var peso = string.Empty;
@@ -150,7 +149,7 @@ public class EstoqueService : IEstoqueService
     public async Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto)
     {
         var estoque = await _estoqueRepository.GetEstoqueAsync(x => x.ProdutoId == updateEstoqueDto.ProdutoId)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
 
         estoque.UpdateEstoqueAtual(updateEstoqueDto.Quantidade);
 

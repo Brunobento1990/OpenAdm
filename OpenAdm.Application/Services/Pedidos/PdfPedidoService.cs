@@ -1,10 +1,10 @@
-﻿using Domain.Pkg.Entities;
-using OpenAdm.Application.Dtos.Pedidos;
+﻿using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces.Pedidos;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Services.Pedidos;
 
@@ -39,8 +39,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
     public byte[] GeneratePdfPedido(
         Pedido pedido,
-        EnderecoEntregaPedido?
-        enderecoEntregaPedido,
+        string nomeFantasia,
         string? logo)
     {
         void HeaderCustom(IContainer container)
@@ -53,7 +52,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
             {
                 row.RelativeItem().Column(column =>
                 {
-                    column.Item().Text($"#Iscas Lune").Style(titleStyle);
+                    column.Item().Text($"#{nomeFantasia}").Style(titleStyle);
 
                     column.Item().Text(text =>
                     {
@@ -336,7 +335,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
         return pdf;
     }
 
-    public byte[] GeneratePdfPedidoRelatorio(GerarRelatorioPedidoDto relatorioPedidoDto)
+    public byte[] GeneratePdfPedidoRelatorio(GerarRelatorioPedidoDto relatorioPedidoDto, string nomeFantasia)
     {
         void HeaderCustom(IContainer container)
         {
@@ -347,7 +346,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
             {
                 row.RelativeItem().Column(column =>
                 {
-                    column.Item().Text($"#Iscas Lune").Style(titleStyle);
+                    column.Item().Text($"#{nomeFantasia}").Style(titleStyle);
                     column.Item().Text($"Relatório de pedidos por período").Style(titleStyle2);
 
                     column.Item().Text(text =>

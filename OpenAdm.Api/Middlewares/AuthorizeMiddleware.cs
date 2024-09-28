@@ -1,9 +1,8 @@
-﻿using Domain.Pkg.Cryptography;
-using Domain.Pkg.Exceptions;
-using Microsoft.AspNetCore.Http.Features;
+﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Models.Tokens;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;

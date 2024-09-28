@@ -1,8 +1,7 @@
-﻿using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.Produtos;
+﻿using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
@@ -54,14 +53,14 @@ public class ProdutoService : IProdutoService
     {
 
         var produto = await _produtoRepository.GetProdutoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         if (!string.IsNullOrWhiteSpace(produto.NomeFoto))
         {
             var resultBlobDelete = await _uploadImageBlobClient.DeleteImageAsync(produto.NomeFoto);
 
             if (!resultBlobDelete)
-                throw new ExceptionApi();
+                throw new ExceptionApi("Não foi possível localizar a imagem do produto para fazer a exclusão");
         }
 
         var resultPesos = await _pesosProdutosRepository.DeleteRangeAsync(produto.Id);
@@ -165,7 +164,7 @@ public class ProdutoService : IProdutoService
     public async Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id)
     {
         var produto = await _produtoRepository.GetProdutoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         return new ProdutoViewModel().ToModel(produto);
     }
@@ -173,7 +172,7 @@ public class ProdutoService : IProdutoService
     public async Task<ProdutoViewModel> UpdateProdutoAsync(UpdateProdutoDto updateProdutoDto)
     {
         var produto = await _produtoRepository.GetProdutoByIdAsync(updateProdutoDto.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         var foto = produto.UrlFoto;
         var nomeFoto = produto.NomeFoto;
@@ -184,7 +183,7 @@ public class ProdutoService : IProdutoService
             {
                 var resultBlobDelete = await _uploadImageBlobClient.DeleteImageAsync(produto.NomeFoto);
                 if (!resultBlobDelete)
-                    throw new ExceptionApi();
+                    throw new ExceptionApi("Não foi possível localizar a imagem do produto para fazer a exclusão");
             }
 
             nomeFoto = $"{Guid.NewGuid()}.jpeg";

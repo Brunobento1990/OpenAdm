@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Exceptions;
+﻿using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 
@@ -34,6 +34,7 @@ public class ParceiroMiddleware
         parceiroAutenticado.Referer = referer;
         parceiroAutenticado.StringConnection = Criptografia.Decrypt(parceiro.ConexaoDb);
         parceiroAutenticado.KeyParceiro = parceiro.Id.ToString();
+        parceiroAutenticado.NomeFantasia = parceiro.Parceiro.NomeFantasia;
 
         await _next(httpContext);
     }

@@ -1,9 +1,8 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.TabelasDePrecos;
+﻿using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.TabelaDePrecos;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
@@ -141,11 +140,11 @@ public class TabelaDePrecoService : ITabelaDePrecoService
     public async Task<TabelaDePrecoViewModel> UpdateTabelaDePrecoAsync(UpdateTabelaDePrecoDto updateTabelaDePrecoDto)
     {
         var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoByIdUpdateAsync(updateTabelaDePrecoDto.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar a tabela de preço");
 
         var tabelaDePrecoAtiva = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaAsync();
 
-        if (tabelaDePrecoAtiva == null && !updateTabelaDePrecoDto.AtivaEcommerce 
+        if (tabelaDePrecoAtiva == null && !updateTabelaDePrecoDto.AtivaEcommerce
             || (!updateTabelaDePrecoDto.AtivaEcommerce && updateTabelaDePrecoDto.Id == tabelaDePrecoAtiva?.Id))
             throw new ExceptionApi("Não é possível ficar sem tabela de preço para o e-commerce, ativa a mesma e efetue o processo novamente!");
 
@@ -159,6 +158,6 @@ public class TabelaDePrecoService : ITabelaDePrecoService
     private async Task<TabelaDePreco> GetTabelaAsync(Guid id)
     {
         return await _tabelaDePrecoRepository.GetTabelaDePrecoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar a tabela de preço");
     }
 }

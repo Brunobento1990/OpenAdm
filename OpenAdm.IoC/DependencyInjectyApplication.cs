@@ -43,14 +43,11 @@ public static class DependencyInjectyApplication
         services.AddScoped<IAddCarrinhoService, AddCarrinhoService>();
         services.AddScoped<IGetCarrinhoService, GetCarrinhoService>();
         services.AddScoped<IDeleteProdutoCarrinhoService, DeleteProdutoCarrinhoService>();
-
         services.AddScoped<IPedidoDownloadService, PedidoDownloadService>();
         services.AddScoped<ICreatePedidoService, CreatePedidoService>();
         services.AddScoped<IUpdateStatusPedidoService, UpdateStatusPedidoService>();
         services.AddScoped<IDeletePedidoService, DeletePedidoService>();
         services.AddScoped<IRelatorioPedidoPorPeriodo, RelatorioPedidoPorPeriodo>();
         services.AddScoped<INotificarPedidoEditadoService, NotificarPedidoEditadoService>();
-        services.AddScoped<IAppLogService, AppLogService>();
-        services.AddScoped<IConfiguracaoDeFreteService, ConfiguracaoDeFreteService>();
     }
 }

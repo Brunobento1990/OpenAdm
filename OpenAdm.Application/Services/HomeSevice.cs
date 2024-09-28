@@ -1,6 +1,6 @@
 ﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Home;
-using OpenAdm.Application.Models.TopUsuario;
+using OpenAdm.Application.Models.TopUsuarios;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;

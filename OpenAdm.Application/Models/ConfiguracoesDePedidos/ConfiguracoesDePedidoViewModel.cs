@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using System.Text;
 
 namespace OpenAdm.Application.Models.ConfiguracoesDePedidos;

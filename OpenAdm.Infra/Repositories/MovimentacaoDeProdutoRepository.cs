@@ -1,10 +1,9 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
-using SkiaSharp;
 
 namespace OpenAdm.Infra.Repositories;
 

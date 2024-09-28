@@ -1,10 +1,10 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
-using Domain.Pkg.Model;
-using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Application.Services.Pedidos;
 
@@ -27,7 +27,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _carrinhoRepository = carrinhoRepository;
     }
 
-    public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItensPedidoModel> itensPedidoModels, Usuario usuario)
+    public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItemPedidoModel> itensPedidoModels, Usuario usuario)
     {
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id);
@@ -41,15 +41,12 @@ public sealed class CreatePedidoService : ICreatePedidoService
                 .FirstOrDefault(itemPedido =>
                     itemPedido.ProdutoId == itemTabelaDePreco.ProdutoId &&
                     itemPedido.PesoId == itemTabelaDePreco.PesoId &&
-                    itemPedido.TamanhoId == itemTabelaDePreco.TamanhoId);
+                    itemPedido.TamanhoId == itemTabelaDePreco.TamanhoId)
+                ?? throw new Exception($"Não foi possível localizar o preço do produto: {itemTabelaDePreco.ProdutoId}");
 
-
-            if (preco != null)
+            if (usuario.IsAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
             {
-                if (usuario.IsAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
-                {
-                    throw new Exception($"Os valores unitários do pedido estão incorretos: usuarioId: {usuario.Id}");
-                }
+                throw new Exception($"Os valores unitários do pedido estão incorretos: usuarioId: {usuario.Id}");
             }
         }
 

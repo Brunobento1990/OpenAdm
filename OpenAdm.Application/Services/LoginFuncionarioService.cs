@@ -1,9 +1,8 @@
-﻿using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Adapters;
+﻿using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Funcionarios;
 using OpenAdm.Application.Models.Logins;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;

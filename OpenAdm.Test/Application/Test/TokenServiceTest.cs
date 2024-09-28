@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using OpenAdm.Application.Models.Tokens;
+﻿using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Application.Services;
-using Domain.Pkg.Entities;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Test.Application.Test;
 

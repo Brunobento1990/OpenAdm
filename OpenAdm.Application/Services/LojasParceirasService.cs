@@ -1,9 +1,8 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.LojaParceira;
+﻿using OpenAdm.Application.Dtos.LojasParceiras;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.LojasParceira;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Azure.Interfaces;
@@ -112,9 +111,9 @@ public class LojasParceirasService : ILojasParceirasService
         return new LojasParceirasViewModel().ToModel(lojaParceira);
     }
 
-    private async Task<LojasParceiras> GetLojaAsync(Guid id)
+    private async Task<LojaParceira> GetLojaAsync(Guid id)
     {
         return await _lojasParceirasRepository.GetLojaParceiraByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar a loja!");
     }
 }

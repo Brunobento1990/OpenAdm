@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Models.MovimentacaoDeProdutos;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
@@ -9,6 +9,6 @@ public interface IMovimentacaoDeProdutosService
 {
     Task<PaginacaoViewModel<MovimentacaoDeProdutoViewModel>>
         GetPaginacaoAsync(PaginacaoMovimentacaoDeProdutoDto paginacaoMovimentacaoDeProdutoDto);
-    Task MovimentarItensPedidoAsync(IList<ItensPedido> itens);
+    Task MovimentarItensPedidoAsync(IList<ItemPedido> itens);
     Task<IList<MovimentoDeProdutoDashBoardModel>> MovimentoDashBoardAsync();
 }

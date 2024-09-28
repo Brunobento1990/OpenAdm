@@ -1,9 +1,8 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.ConfiguracoesDePedidos;
+﻿using OpenAdm.Application.Dtos.ConfiguracoesDePedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ConfiguracoesDePedidos;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using System.Text;
 
@@ -88,6 +87,6 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
     private async Task<ConfiguracoesDePedido> GetAsync()
     {
         return await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync()
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar as configurações");
     }
 }

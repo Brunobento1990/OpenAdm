@@ -1,7 +1,7 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.TabelasDePrecos;
+﻿using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Application.Services;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
 

@@ -1,5 +1,5 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
+﻿using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Models.MovimentacaoDeProdutos;
 

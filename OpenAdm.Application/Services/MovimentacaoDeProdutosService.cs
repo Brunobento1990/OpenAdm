@@ -1,11 +1,11 @@
-﻿using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
-using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.MovimentacaoDeProdutos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
 using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Services;
 
@@ -72,7 +72,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         };
     }
 
-    public async Task MovimentarItensPedidoAsync(IList<ItensPedido> itens)
+    public async Task MovimentarItensPedidoAsync(IList<ItemPedido> itens)
     {
         var data = DateTime.Now;
         var movimentos = itens.Select(x => new MovimentacaoDeProduto(

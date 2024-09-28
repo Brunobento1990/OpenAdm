@@ -1,9 +1,9 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Domain.Interfaces;
 
-public interface IItensPedidoRepository : IGenericRepository<ItensPedido>
+public interface IItensPedidoRepository : IGenericRepository<ItemPedido>
 {
-    Task<IList<ItensPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId);
-    Task<ItensPedido?> GetItemPedidoByIdAsync(Guid id);
+    Task<IList<ItemPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId);
+    Task<ItemPedido?> GetItemPedidoByIdAsync(Guid id);
 }

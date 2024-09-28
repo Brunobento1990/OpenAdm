@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Domain.Interfaces;

@@ -3,10 +3,9 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Models.Banners;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
 using OpenAdm.Infra.Paginacao;
 using OpenAdm.Infra.Azure.Interfaces;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Application.Services;
 
@@ -15,6 +14,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 {
     private readonly IBannerRepository _bannerRepository = bannerRepository;
     private readonly IUploadImageBlobClient _uploadImageBlobClient = uploadImageBlobClient;
+    private const string ERRO_NOT_FOUND = "Não foi possível localizar o banner!";
 
     public async Task<BannerViewModel> CreateBannerAsync(BannerCreateDto bannerCreateDto)
     {
@@ -31,7 +31,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
     public async Task DeleteBannerAsync(Guid id)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         var resultBlobDelete = await _uploadImageBlobClient.DeleteImageAsync(banner.NomeFoto);
 
@@ -40,13 +40,13 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 
         var result = await _bannerRepository.DeleteAsync(banner);
 
-        if (!result) throw new ExceptionApi();
+        if (!result) throw new ExceptionApi("Não foi possivel excluir o banner");
     }
 
     public async Task<BannerViewModel> EditBannerAsync(BannerEditDto bannerEditDto)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(bannerEditDto.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         var foto = banner.Foto;
         var nomeFoto = banner.NomeFoto;
@@ -74,7 +74,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
     public async Task<BannerViewModel> GetBannerByIdAsync(Guid id)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         return new BannerViewModel().ToModel(banner);
     }

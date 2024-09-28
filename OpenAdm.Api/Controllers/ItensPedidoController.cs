@@ -1,6 +1,4 @@
-﻿using Domain.Pkg.Errors;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Interfaces;
@@ -32,7 +30,7 @@ public class ItensPedidoController : ControllerBase
         var result = await _itensPedidoService.DeleteItemPedidoAsync(id);
         if (!result)
         {
-            return BadRequest(new { message = CodigoErrors.ErrorGeneric });
+            return BadRequest(new { message = "Ocorreu um erro, tente novamente" });
         }
         return Ok();
     }

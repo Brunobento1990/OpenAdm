@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace OpenAdm.Application.Dtos.TabelasDePrecos;
@@ -26,7 +26,7 @@ public class CreateTabelaDePrecoDto
 
         tabelaDePreco.ItensTabelaDePreco = ItensTabelaDePreco
             .Select(x =>
-                new ItensTabelaDePreco(
+                new ItemTabelaDePreco(
                     Guid.NewGuid(),
                     date,
                     date,

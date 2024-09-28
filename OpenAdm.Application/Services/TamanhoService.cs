@@ -1,8 +1,7 @@
-﻿using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
-using OpenAdm.Application.Dtos.Tamanhos;
+﻿using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Tamanhos;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
@@ -28,7 +27,7 @@ public class TamanhoService : ITamanhoService
     public async Task DeleteTamanhoAsync(Guid id)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
         await _tamanhoRepository.DeleteAsync(tamanho);
     }
@@ -47,7 +46,7 @@ public class TamanhoService : ITamanhoService
     public async Task<TamanhoViewModel> GetTamanhoViewModelAsync(Guid id)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
         return new TamanhoViewModel().ToModel(tamanho);
     }
@@ -61,7 +60,7 @@ public class TamanhoService : ITamanhoService
     public async Task<TamanhoViewModel> UpdateTamanhoAsync(UpdateTamanhoDto updateTamanhoDto)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(updateTamanhoDto.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
         tamanho.Update(updateTamanhoDto.Descricao);
 

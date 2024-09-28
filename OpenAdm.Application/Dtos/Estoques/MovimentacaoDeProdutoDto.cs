@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Enum;
+﻿using OpenAdm.Domain.Enuns;
 using System.ComponentModel.DataAnnotations;
 
 namespace OpenAdm.Application.Dtos.Estoques;

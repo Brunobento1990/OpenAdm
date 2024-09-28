@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using ExpectedObjects;
 using OpenAdm.Application.Models.Banners;
 using OpenAdm.Application.Services;

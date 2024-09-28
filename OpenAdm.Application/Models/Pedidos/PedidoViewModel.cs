@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.Bases;
-using Domain.Pkg.Entities;
-using Domain.Pkg.Enum;
-using OpenAdm.Application.Models.EnderecosEntregaPedidos;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Models.Pedidos;
 
@@ -11,7 +10,6 @@ public class PedidoViewModel : BaseViewModel
     public decimal ValorTotal { get; set; }
     public string Usuario { get; set; } = string.Empty;
     public IList<ItensPedidoViewModel> ItensPedido { get; set; } = [];
-    public EnderecoEntregaPedidoViewModel? EnderecoEntrega { get; set; }
     public PedidoViewModel ForModel(Pedido entity)
     {
         Id = entity.Id;

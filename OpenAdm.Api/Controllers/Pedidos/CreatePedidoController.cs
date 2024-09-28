@@ -1,8 +1,8 @@
-﻿using Domain.Pkg.Model;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Api.Controllers.Pedidos;
 
@@ -23,7 +23,7 @@ public class CreatePedidoController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreatePedido(IList<ItensPedidoModel> itensPedidoModels)
+    public async Task<IActionResult> CreatePedido(IList<ItemPedidoModel> itensPedidoModels)
     {
         var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
         var result = await _createPedidoService.CreatePedidoAsync(itensPedidoModels, usuario);

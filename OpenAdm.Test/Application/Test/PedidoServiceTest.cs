@@ -1,13 +1,13 @@
 ﻿using OpenAdm.Application.Interfaces;
-using Domain.Pkg.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
-using Domain.Pkg.Enum;
-using OpenAdm.Application.Models.Pedidos;
-using Domain.Pkg.Model;
-using Domain.Pkg.Entities;
 using OpenAdm.Application.Services.Pedidos;
 using OpenAdm.Application.Interfaces.Pedidos;
+using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Model.Pedidos;
+using OpenAdm.Domain.Exceptions;
+using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -18,6 +18,7 @@ public class PedidoServiceTest
     private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepositoryMock;
     private readonly Mock<IPdfPedidoService> _pdfPedidoService;
     private readonly Mock<ICarrinhoRepository> _carrinhoRepository;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
     public PedidoServiceTest()
     {
         _pedidoRepositoryMock = new();
@@ -25,6 +26,7 @@ public class PedidoServiceTest
         _itemTabelaDePrecoRepositoryMock = new();
         _pdfPedidoService = new();
         _carrinhoRepository = new();
+        _parceiroAutenticado = new ParceiroAutenticado();
     }
 
     //[Fact]
@@ -66,11 +68,9 @@ public class PedidoServiceTest
     {
         var pedido = PedidoBuilder.Init().Build();
         var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
-        var enderecoEntregaPedidoRepository = new Mock<IEnderecoEntregaPedidoRepository>();
 
         _pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
-        enderecoEntregaPedidoRepository.Setup(x => x.GetEnderecoEntregaPedidoByPedidoIdAsync(pedido.Id)).ReturnsAsync((EnderecoEntregaPedido?)null);
-        var pedidoService = new PedidoDownloadService(_pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object, enderecoEntregaPedidoRepository.Object, _pdfPedidoService.Object);
+        var pedidoService = new PedidoDownloadService(_pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object, _pdfPedidoService.Object, _parceiroAutenticado);
         var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
         Assert.NotNull(pdf);
@@ -94,26 +94,26 @@ public class PedidoServiceTest
     [Fact]
     public async Task DeveCriarPedido()
     {
-        var primeiroProduto = new ItensPedidoModel()
+        var primeiroProduto = new ItemPedidoModel()
         {
             ProdutoId = Guid.NewGuid(),
             Quantidade = 5,
             ValorUnitario = 1
         };
-        var segundoProduto = new ItensPedidoModel()
+        var segundoProduto = new ItemPedidoModel()
         {
             ProdutoId = Guid.NewGuid(),
             Quantidade = 2,
             ValorUnitario = 1
         };
 
-        var itensPedidoModel = new List<ItensPedidoModel>()
+        var itensPedidoModel = new List<ItemPedidoModel>()
         {
            primeiroProduto,
            segundoProduto
         };
 
-        var itensTabelaDePreco = new List<ItensTabelaDePreco>()
+        var itensTabelaDePreco = new List<ItemTabelaDePreco>()
         {
             new (Guid.NewGuid(),
                 DateTime.Now,
@@ -160,9 +160,9 @@ public class PedidoServiceTest
     [Fact]
     public async Task NaoDeveCriarPedidoSemItens()
     {
-        var itensPedido = new List<ItensPedidoModel>();
+        var itensPedido = new List<ItemPedidoModel>();
 
-        var itensTabelaDePreco = new List<ItensTabelaDePreco>()
+        var itensTabelaDePreco = new List<ItemTabelaDePreco>()
         {
             new (Guid.NewGuid(),
                 DateTime.Now,
@@ -196,7 +196,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task NaoDeveCriarPedidoDeUsuarioJuridicoComValorUnitarioVarejo()
     {
-        var item = new ItensPedidoModel()
+        var item = new ItemPedidoModel()
         {
             PesoId = Guid.NewGuid(),
             ProdutoId = Guid.NewGuid(),
@@ -204,14 +204,14 @@ public class PedidoServiceTest
             ValorUnitario = 5
         };
 
-        var itens = new List<ItensPedidoModel>()
+        var itens = new List<ItemPedidoModel>()
         {
             item
         };
 
         var usuarioViewModel = UsuarioBuilder.Init().Build();
 
-        var itensTabelaDePreco = new List<ItensTabelaDePreco>()
+        var itensTabelaDePreco = new List<ItemTabelaDePreco>()
         {
             new (Guid.NewGuid(),
                 DateTime.Now,

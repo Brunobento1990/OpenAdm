@@ -1,4 +1,4 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
@@ -20,6 +20,7 @@ public class ConfiguracaoParceiroRepository
     {
         return await _context
             .ConfiguracoesParceiro
+            .Include(x => x.Parceiro)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.DominioSiteAdm == dominio || x.DominioSiteEcommerce == dominio);
     }

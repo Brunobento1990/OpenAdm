@@ -1,12 +1,12 @@
-﻿using Domain.Pkg.Entities;
+﻿using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Domain.Interfaces;
 
 public interface ITopUsuariosRepository
 {
-    Task<IList<TopUsuarios>> GetTopTresUsuariosToTalCompraAsync();
-    Task<IList<TopUsuarios>> GetTopTresUsuariosToTalPedidosAsync();
-    Task AddAsync(TopUsuarios topUsuario);
-    Task UpdateAsync(TopUsuarios topUsuario);
-    Task<TopUsuarios?> GetByUsuarioIdAsync(Guid usuarioId);
+    Task<IList<TopUsuario>> GetTopTresUsuariosToTalCompraAsync();
+    Task<IList<TopUsuario>> GetTopTresUsuariosToTalPedidosAsync();
+    Task AddAsync(TopUsuario topUsuario);
+    Task UpdateAsync(TopUsuario topUsuario);
+    Task<TopUsuario?> GetByUsuarioIdAsync(Guid usuarioId);
 }

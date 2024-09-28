@@ -2,12 +2,11 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
-using Domain.Pkg.Errors;
-using Domain.Pkg.Exceptions;
+using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
-using Domain.Pkg.Enum;
 
 namespace OpenAdm.Application.Services;
 
@@ -61,7 +60,7 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioViewModel> GetUsuarioByIdAsync()
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o seu cadastro");
 
         var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
@@ -90,7 +89,7 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioViewModel> GetUsuarioByIdAdmAsync(Guid id)
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
 
         var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
@@ -131,7 +130,7 @@ public class UsuarioService : IUsuarioService
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id);
         if (usuario == null || !updateSenhaUsuarioDto.Senha.Equals(updateSenhaUsuarioDto.ReSenha))
-            throw new ExceptionApi(CodigoErrors.AsSenhaNaoConferem);
+            throw new ExceptionApi("As senhas não conferem!");
 
         usuario.UpdateSenha(updateSenhaUsuarioDto.HashSenha());
 
@@ -141,7 +140,7 @@ public class UsuarioService : IUsuarioService
     public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto)
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id)
-            ?? throw new ExceptionApi(CodigoErrors.RegistroNotFound);
+            ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
 
         usuario.Update(updateUsuarioDto.Email, updateUsuarioDto.Nome, updateUsuarioDto.Telefone, updateUsuarioDto.Cnpj, updateUsuarioDto.Cpf);
 

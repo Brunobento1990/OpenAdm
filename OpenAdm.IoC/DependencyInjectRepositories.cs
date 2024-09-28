@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Azure.Interfaces;
 using OpenAdm.Infra.Azure.Storage;
@@ -20,9 +19,6 @@ public static class DependencyInjectRepositories
             options.Configuration = connectionString;
         });
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
-
-        services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-
         services.AddScoped<ConfiguracaoParceiroRepository>();
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroCached>();
 
@@ -44,8 +40,7 @@ public static class DependencyInjectRepositories
         services.AddScoped<UsuarioRepository>();
         services.AddScoped<IUsuarioRepository, UsuarioCached>();
 
-        services.AddScoped<ItensPedidoRepository>();
-        services.AddScoped<IItensPedidoRepository, ItensPedidoCached>();
+        services.AddScoped<IItensPedidoRepository, ItensPedidoRepository>();
 
         services.AddScoped<ConfiguracaoDeEmailRepository>();
         services.AddScoped<IConfiguracaoDeEmailRepository, ConfiguracaoDeEmailCached>();
@@ -67,9 +62,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<ILojasParceirasRepository, LojasParceirasRepository>();
         services.AddScoped<TopUsuariosRepository>();
         services.AddScoped<ITopUsuariosRepository, TopUsuariosCached>();
-        services.AddScoped<IAppLogRepository, AppLogRepository>();
-        services.AddScoped<IConfiguracaoDeFreteRepository, ConfiguracaoDeFreteRepository>();
-        services.AddScoped<IEnderecoEntregaPedidoRepository, EnderecoEntregaPedidoRepository>();
         services.AddScoped<IProdutosMaisVendidosRepository, ProdutosMaisVendidosRepository>();
     }
 }
