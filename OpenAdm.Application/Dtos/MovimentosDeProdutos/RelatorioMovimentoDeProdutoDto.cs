@@ -9,3 +9,9 @@ public class RelatorioMovimentoDeProdutoDto
     public IList<Guid> TamanhosId { get; set; } = [];
     public IList<Guid> CategoriasId { get; set; } = [];
 }
+
+public class RelatorioMovimentoDeProdutoTotalizacaoDto
+{
+    public string Descricao { get; set; } = string.Empty;
+    public decimal Total { get; set; }
+}
