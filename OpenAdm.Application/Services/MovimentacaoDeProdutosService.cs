@@ -72,11 +72,29 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         var pesos = await _pesoRepository.GetDescricaoPesosAsync(pesosIds);
 
         var movimentacoesRelatorio = new List<MovimentacaoDeProdutoRelatorio>();
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalCategorias = [];
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalPesos = [];
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalTamanhos = [];
 
         foreach (var item in movimentacoes)
         {
             if (produtos.TryGetValue(item.ProdutoId, out var produto))
             {
+                var totalCategoria = totalCategorias.FirstOrDefault(x => x.Descricao == produto.Categoria.Descricao);
+
+                if(totalCategoria == null)
+                {
+                    totalCategorias.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
+                    {
+                        Descricao = produto.Categoria.Descricao,
+                        Total = 1
+                    });
+                }
+                else
+                {
+                    totalCategoria.Total++;
+                }
+
                 var pesoTamanho = string.Empty;
 
                 if (item.TamanhoId.HasValue && tamanhos.TryGetValue(item.TamanhoId.Value, out var tamanho))
@@ -102,12 +120,57 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
             }
         }
 
+        var groupedByPesos = movimentacoes
+             .Where(x => x.PesoId != null)
+             .GroupBy(p => p.PesoId)
+             .Select(group => new
+             {
+                 Peso = group.Key!.Value,
+                 Count = group.Count()
+             });
+
+        var groupedByTamanhos = movimentacoes
+             .Where(x => x.TamanhoId != null)
+             .GroupBy(p => p.TamanhoId)
+             .Select(group => new
+             {
+                 Tamanho = group.Key!.Value,
+                 Count = group.Count()
+             });
+
+        foreach (var peso in groupedByPesos)
+        {
+            if (pesos.TryGetValue(peso.Peso, out var pes))
+            {
+                totalPesos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
+                {
+                    Descricao = pes,
+                    Total = peso.Count
+                });
+            }
+        }
+
+        foreach (var tamanho in groupedByTamanhos)
+        {
+            if (tamanhos.TryGetValue(tamanho.Tamanho, out var tama))
+            {
+                totalTamanhos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
+                {
+                    Descricao = tama,
+                    Total = tamanho.Count
+                });
+            }
+        }
+
         return _movimentacaoDeProdutoRelatorioService.ObterPdfAsync(
             movimentacoesRelatorio,
             _parceiroAutenticado.NomeFantasia,
             relatorioMovimentoDeProdutoDto.DataInicial,
             relatorioMovimentoDeProdutoDto.DataFinal,
-            logo);
+            logo,
+            totalCategoria: totalCategorias,
+            totalPesos: totalPesos,
+            totalTamanhos: totalTamanhos);
     }
 
     public async Task<PaginacaoViewModel<MovimentacaoDeProdutoViewModel>>

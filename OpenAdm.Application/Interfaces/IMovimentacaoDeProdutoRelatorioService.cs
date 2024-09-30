@@ -1,4 +1,5 @@
-﻿using OpenAdm.Application.Models.MovimentacaoDeProdutos;
+﻿using OpenAdm.Application.Dtos.MovimentosDeProdutos;
+using OpenAdm.Application.Models.MovimentacaoDeProdutos;
 
 namespace OpenAdm.Application.Interfaces;
 
@@ -9,5 +10,8 @@ public interface IMovimentacaoDeProdutoRelatorioService
         string nomeFantasia,
         DateTime dataInicial,
         DateTime dataFinal,
-        string? logo);
+        string? logo,
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalCategoria,
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalPesos,
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalTamanhos);
 }
