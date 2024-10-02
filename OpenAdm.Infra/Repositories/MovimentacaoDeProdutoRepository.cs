@@ -65,7 +65,7 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
         var query = _parceiroContext
             .MovimentacoesDeProdutos
             .OrderBy(x => x.DataDeCriacao)
-            .Where(x => x.DataDeCriacao >= dataInicial && x.DataDeCriacao <= dataFinal);
+            .Where(x => x.DataDeCriacao.Date >= dataInicial.Date && x.DataDeCriacao.Date <= dataFinal.Date);
 
         if(produtosIds.Count > 0)
         {
