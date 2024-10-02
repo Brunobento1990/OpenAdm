@@ -87,12 +87,12 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                     totalCategorias.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
                     {
                         Descricao = produto.Categoria.Descricao,
-                        Total = 1
+                        Total = item.QuantidadeMovimentada
                     });
                 }
                 else
                 {
-                    totalCategoria.Total++;
+                    totalCategoria.Total += item.QuantidadeMovimentada;
                 }
 
                 var pesoTamanho = string.Empty;
@@ -125,8 +125,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
              .GroupBy(p => p.PesoId)
              .Select(group => new
              {
-                 Peso = group.Key!.Value,
-                 Count = group.Count()
+                 Peso = group.Key!.Value
              });
 
         var groupedByTamanhos = movimentacoes
@@ -134,8 +133,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
              .GroupBy(p => p.TamanhoId)
              .Select(group => new
              {
-                 Tamanho = group.Key!.Value,
-                 Count = group.Count()
+                 Tamanho = group.Key!.Value
              });
 
         foreach (var peso in groupedByPesos)
@@ -145,7 +143,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                 totalPesos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
                 {
                     Descricao = pes,
-                    Total = peso.Count
+                    Total = movimentacoes.Where(x => x.PesoId == peso.Peso).Sum(x => x.QuantidadeMovimentada)
                 });
             }
         }
@@ -157,7 +155,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                 totalTamanhos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
                 {
                     Descricao = tama,
-                    Total = tamanho.Count
+                    Total = movimentacoes.Where(x => x.TamanhoId == tamanho.Tamanho).Sum(x => x.QuantidadeMovimentada)
                 });
             }
         }

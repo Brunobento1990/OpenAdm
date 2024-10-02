@@ -127,7 +127,7 @@ public sealed class MovimentacaoDeProdutoRelatorioService : IMovimentacaoDeProdu
                             }
 
                             // Total de produtos
-                            table.Cell().Element(CellTableStyle).Text($"Total produtos: {movimentacaoDeProdutoRelatorios.Count}")
+                            table.Cell().Element(CellTableStyle).Text($"Total produtos: {movimentacaoDeProdutoRelatorios.Sum(x => x.Quantidade).ConverterPadraoBrasileiro()}")
                                 .Bold().FontSize(8);
                             for (int i = 0; i < 6; i++) table.Cell(); // Preencher as células vazias restantes
                         });

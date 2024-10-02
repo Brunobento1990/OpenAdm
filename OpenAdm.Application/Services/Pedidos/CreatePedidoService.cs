@@ -40,16 +40,16 @@ public sealed class CreatePedidoService : ICreatePedidoService
         var produtosIds = itensPedidoModels.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
 
-        foreach (var itemTabelaDePreco in itensTabelaDePreco)
+        foreach (var item in itensPedidoModels)
         {
-            var preco = itensPedidoModels
-                .FirstOrDefault(itemPedido =>
-                    itemPedido.ProdutoId == itemTabelaDePreco.ProdutoId &&
-                    itemPedido.PesoId == itemTabelaDePreco.PesoId &&
-                    itemPedido.TamanhoId == itemTabelaDePreco.TamanhoId)
-                ?? throw new Exception($"Não foi possível localizar o preço do produto: {itemTabelaDePreco.ProdutoId}");
+            var itemTabela = itensTabelaDePreco
+                .FirstOrDefault(itemTabelaDePreco =>
+                    itemTabelaDePreco.ProdutoId == item.ProdutoId &&
+                    itemTabelaDePreco.PesoId == item.PesoId &&
+                    itemTabelaDePreco.TamanhoId == item.TamanhoId)
+                ?? throw new Exception($"Não foi possível localizar o preço do produto: {item.ProdutoId}");
 
-            if (usuario.IsAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
+            if (usuario.IsAtacado && item.ValorUnitario != itemTabela.ValorUnitarioAtacado)
             {
                 throw new Exception($"Os valores unitários do pedido estão incorretos: usuarioId: {usuario.Id}");
             }
