@@ -46,11 +46,14 @@ public sealed class CreatePedidoService : ICreatePedidoService
                 .FirstOrDefault(itemPedido =>
                     itemPedido.ProdutoId == itemTabelaDePreco.ProdutoId &&
                     itemPedido.PesoId == itemTabelaDePreco.PesoId &&
-                    itemPedido.TamanhoId == itemTabelaDePreco.TamanhoId)
-                ?? throw new Exception($"Não foi possível localizar o preço do produto: {itemTabelaDePreco.ProdutoId}");
-
-            if (usuario.IsAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
+                    itemPedido.TamanhoId == itemTabelaDePreco.TamanhoId);
+        
+            if (preco != null)
             {
+                if (usuario.IsAtacado && preco.ValorUnitario != itemTabelaDePreco.ValorUnitarioAtacado)
+                {
+                    throw new Exception($"Os valores unitários do pedido estão incorretos: usuarioId: {usuario.Id}");
+                }
                 throw new Exception($"Os valores unitários do pedido estão incorretos: usuarioId: {usuario.Id}");
             }
         }
