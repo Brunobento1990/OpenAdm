@@ -40,8 +40,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
     public async Task<byte[]> GerarRelatorioAsync(RelatorioMovimentoDeProdutoDto relatorioMovimentoDeProdutoDto)
     {
-        var dia = relatorioMovimentoDeProdutoDto.DataInicial.Day;
-        var mes = relatorioMovimentoDeProdutoDto.DataInicial.Month;
         var configuracaoDePedido = await _configuracoesDePedidoRepository
             .GetConfiguracoesDePedidoAsync();
         var logo = configuracaoDePedido?.Logo is null ? null : Encoding.UTF8.GetString(configuracaoDePedido.Logo);
