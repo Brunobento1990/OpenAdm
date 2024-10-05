@@ -7,6 +7,8 @@ namespace OpenAdm.Application.Interfaces;
 public interface IPedidoService
 {
     Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto);
+    Task<IList<PedidoViewModel>> GetPedidosEmAbertAsync();
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
     Task<PedidoViewModel> GetAsync(Guid pedidoId);
+    Task<byte[]> PedidoProducaoAsync(IList<Guid> pedidosIds);
 }

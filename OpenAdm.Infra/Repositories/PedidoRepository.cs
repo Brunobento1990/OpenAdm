@@ -123,6 +123,17 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
+    public async Task<IList<Pedido>> GetPedidosEmAbertoAsync()
+    {
+        return await _parceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .Include(x => x.Usuario)
+            .Include(x => x.ItensPedido)
+            .Where(x => x.StatusPedido == StatusPedido.Aberto)
+            .ToListAsync();
+    }
+
     public async Task<int> GetQuantidadeDePedidoPorUsuarioAsync(Guid usuarioId)
     {
         return await _parceiroContext

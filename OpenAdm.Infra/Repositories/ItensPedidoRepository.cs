@@ -48,4 +48,25 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
 
         return itens;
     }
+
+    public async Task<IList<ItemPedido>> GetItensPedidoByProducaoAsync(IList<Guid> pedidosIds)
+    {
+        var itens = _parceiroContext
+            .ItensPedidos
+            .AsNoTracking()
+            .Include(x => x.Pedido)
+                .ThenInclude(x => x.Usuario)
+            .Include(x => x.Produto)
+                .ThenInclude(x => x.Categoria)
+            .Include(x => x.Peso)
+            .Include(x => x.Tamanho)
+            .Where(x => x.Pedido.StatusPedido == Domain.Enuns.StatusPedido.Aberto);
+
+        if(pedidosIds.Count > 0)
+        {
+            itens = itens.Where(x => pedidosIds.Contains(x.PedidoId));
+        }
+
+        return await itens.ToListAsync();
+    }
 }
