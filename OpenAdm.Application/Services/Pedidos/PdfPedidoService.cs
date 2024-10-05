@@ -5,6 +5,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Application.Models.Pedidos;
 
 namespace OpenAdm.Application.Services.Pedidos;
 
@@ -19,6 +20,15 @@ public sealed class PdfPedidoService : IPdfPedidoService
         "Valor unitário",
         "Total"
     };
+    private readonly IList<string> _colunsNameProducao = new List<string>()
+    {
+        "REF",
+        "Descrição",
+        "Categoria",
+        "Tamanho",
+        "Peso",
+        "Quantidade"
+    };
     private readonly IList<string> _colunsNamePedidoRelatorio = new List<string>()
     {
         "N.",
@@ -28,6 +38,10 @@ public sealed class PdfPedidoService : IPdfPedidoService
         "Total"
     };
     private static readonly IList<int> _colunsWidt = new List<int>()
+    {
+        60,150,80,70,90,50
+    };
+    private static readonly IList<int> _colunsWidtProducao = new List<int>()
     {
         60,150,80,70,90,50
     };
@@ -459,6 +473,122 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         .Element(CellTableStyle)
                             .Text($"Total : {relatorioPedidoDto.Total.FormatMoney()}")
                         .FontSize(8);
+                    });
+                    page.FooterCustom();
+                });
+            }).GeneratePdf();
+
+        return pdf;
+    }
+
+    public byte[] ProducaoPedido(
+        IList<ItemPedidoProducaoViewModel> itemPedidoProducaoViewModels, 
+        string nomeFantasia, 
+        string? logo,
+        IList<string> pedidos)
+    {
+        void HeaderCustom(IContainer container)
+        {
+            var titleStyle = TextStyle.Default.FontSize(18).SemiBold();
+            var titleStyle2 = TextStyle.Default.FontSize(10).SemiBold();
+            var titleStyleName = TextStyle.Default.FontSize(10);
+
+            container.Row(row =>
+            {
+                row.RelativeItem().Column(column =>
+                {
+                    column.Item().Text($"#{nomeFantasia}").Style(titleStyle);
+                });
+
+                if (!string.IsNullOrWhiteSpace(logo))
+                {
+                    row.ConstantItem(50).Height(50).Width(50).Image(Convert.FromBase64String(logo));
+                }
+
+            });
+        }
+
+        static IContainer CellStyleHeaderTable(IContainer container)
+        {
+            return container
+                .DefaultTextStyle(x => x.SemiBold())
+                .PaddingVertical(5)
+                .BorderBottom(1)
+                .BorderColor(Colors.Black);
+        }
+
+        static IContainer CellTableStyle(IContainer container)
+        {
+            return container
+                .BorderBottom(1)
+                .BorderColor(Colors.Grey.Lighten2)
+                .PaddingVertical(5);
+        }
+
+
+        var pdf = Document
+            .Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Configurar();
+                    page.Header().Element(HeaderCustom);
+                    page.Content().Column(column =>
+                    {
+                        column.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                foreach (var columnsWidth in _colunsWidtProducao)
+                                {
+                                    columns.ConstantColumn(columnsWidth);
+                                }
+                            });
+
+                            table.Header(header =>
+                            {
+                                foreach (var columnsName in _colunsNameProducao)
+                                {
+                                    header
+                                        .Cell()
+                                        .Element(CellStyleHeaderTable)
+                                        .Text(columnsName)
+                                        .FontSize(10);
+                                }
+                            });
+
+                            foreach (var item in itemPedidoProducaoViewModels)
+                            {
+                                table.Cell().Element(CellTableStyle).Text(item.Referencia).FontSize(8);
+                                table.Cell().Element(CellTableStyle).Text(item.Produto).FontSize(8);
+                                table.Cell().Element(CellTableStyle).Text(item.Categoria).FontSize(8);
+                                table.Cell().Element(CellTableStyle).Text(item.Tamanho ?? "").FontSize(8);
+                                table.Cell().Element(CellTableStyle).Text(item.Peso ?? "").FontSize(8);
+                                table.Cell().Element(CellTableStyle).Text(item.Quantidade.FormatMoney()).FontSize(8);
+                            }
+                        });
+
+                        if (pedidos.Count > 0)
+                        {
+                            column.Item().Table(table =>
+                            {
+                                table.ColumnsDefinition(columns =>
+                                {
+                                    columns.RelativeColumn();
+                                    columns.RelativeColumn();
+                                });
+
+                                table.Cell().Element(CellTableStyle).Text("Pedidos").Bold().FontSize(8);
+                                table.Cell(); // Preencher com célula vazia
+
+                                foreach (var pedido in pedidos)
+                                {
+                                    table.Cell().Element(CellTableStyle).Text($"{pedido}")
+                                        .FontSize(8);
+                                    table.Cell();
+                                }
+                            });
+                        }
                     });
                     page.FooterCustom();
                 });

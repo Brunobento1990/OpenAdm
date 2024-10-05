@@ -12,10 +12,21 @@ namespace OpenAdm.Api.Controllers;
 public class ItensPedidoController : ControllerBase
 {
     private readonly IItensPedidoService _itensPedidoService;
-
-    public ItensPedidoController(IItensPedidoService itensPedidoService)
+    private readonly IPedidoService _pedidoService;
+    public ItensPedidoController(IItensPedidoService itensPedidoService, IPedidoService pedidoService)
     {
         _itensPedidoService = itensPedidoService;
+        _pedidoService = pedidoService;
+    }
+
+    [HttpPost("producao/pdf")]
+    public async Task<IActionResult> ProducaoPdf(RelatorioProducaoDto relatorioProducaoDto)
+    {
+        var pdf = await _pedidoService.PedidoProducaoAsync(relatorioProducaoDto.PedidosIds);
+        return Ok(new
+        {
+            pdf
+        });
     }
 
     [HttpGet("get-pedido-id")]

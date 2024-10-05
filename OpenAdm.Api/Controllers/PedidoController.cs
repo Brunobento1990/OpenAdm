@@ -31,6 +31,14 @@ public class PedidoController : ControllerBase
         return Ok(paginacaoViewModel);
     }
 
+    [IsFuncionario]
+    [HttpGet("list-em-aberto")]
+    public async Task<IActionResult> PedidoEmAberto()
+    {
+        var paginacaoViewModel = await _pedidoService.GetPedidosEmAbertAsync();
+        return Ok(paginacaoViewModel);
+    }
+
     [HttpGet("list")]
     public async Task<IActionResult> GetPedidos([FromQuery] int statusPedido)
     {
