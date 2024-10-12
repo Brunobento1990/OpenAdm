@@ -9,10 +9,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeProduto>, IMovimentacaoDeProdutoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public MovimentacaoDeProdutoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task AddRangeAsync(IList<MovimentacaoDeProduto> movimentacaoDeProdutos)

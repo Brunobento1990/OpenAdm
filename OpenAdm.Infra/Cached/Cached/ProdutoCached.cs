@@ -171,4 +171,7 @@ public class ProdutoCached : IProdutoRepository
 
     public Task<IDictionary<Guid, Produto>> GetDictionaryProdutosAsync(IList<Guid> ids)
         => _produtoRepository.GetDictionaryProdutosAsync(ids);
+
+    public Task<PaginacaoViewModel<Produto>> PaginacaoAsync(FilterModel<Produto> filterModel)
+        => _produtoRepository.PaginacaoAsync(filterModel);
 }

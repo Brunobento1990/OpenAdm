@@ -76,4 +76,7 @@ public class BannerCached : IBannerRepository
         await _cachedService.RemoveCachedAsync(entity.Id.ToString());
         return await _bannerRepository.UpdateAsync(entity);
     }
+
+    public Task<PaginacaoViewModel<Banner>> PaginacaoAsync(FilterModel<Banner> filterModel)
+        => _bannerRepository.PaginacaoAsync(filterModel);
 }

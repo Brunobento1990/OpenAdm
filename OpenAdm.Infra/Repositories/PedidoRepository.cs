@@ -12,8 +12,6 @@ namespace OpenAdm.Infra.Repositories;
 public class PedidoRepository(ParceiroContext parceiroContext)
     : GenericRepository<Pedido>(parceiroContext), IPedidoRepository
 {
-    private readonly ParceiroContext _parceiroContext = parceiroContext;
-
     public async Task<PaginacaoViewModel<Pedido>> GetPaginacaoPedidoAsync(FilterModel<Pedido> filterModel)
     {
         var (total, values) = await _parceiroContext
@@ -53,6 +51,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
                 .ThenInclude(x => x.Produto)
+                    .ThenInclude(x => x.Categoria)
             .Include(x => x.ItensPedido)
                 .ThenInclude(x => x.Tamanho)
             .Include(x => x.ItensPedido)
@@ -69,20 +68,24 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
                 if (item.Produto != null)
                 {
-                    item.Produto.Tamanhos = new();
-                    item.Produto.Pesos = new();
-                    item.Produto.ItensPedido = new();
-                    item.Produto.ItensTabelaDePreco = new();
+                    item.Produto.Tamanhos = [];
+                    item.Produto.Pesos = [];
+                    item.Produto.ItensPedido = [];
+                    item.Produto.ItensTabelaDePreco = [];
+                    if (item.Produto.Categoria != null)
+                    {
+                        item.Produto.Categoria.Produtos = [];
+                    }
                 }
 
                 if (item.Tamanho != null)
                 {
-                    item.Tamanho.ItensPedido = new();
+                    item.Tamanho.ItensPedido = [];
                 }
 
                 if (item.Peso != null)
                 {
-                    item.Peso.ItensPedido = new();
+                    item.Peso.ItensPedido = [];
                 }
             }
         }

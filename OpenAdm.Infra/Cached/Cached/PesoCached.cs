@@ -87,4 +87,7 @@ public class PesoCached : IPesoRepository
     {
         return await _pesoRepository.GetDescricaoPesosAsync(ids);
     }
+
+    public Task<PaginacaoViewModel<Peso>> PaginacaoAsync(FilterModel<Peso> filterModel)
+        => _pesoRepository.PaginacaoAsync(filterModel);
 }

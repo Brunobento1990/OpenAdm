@@ -7,10 +7,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>, IItemTabelaDePrecoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public ItemTabelaDePrecoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task AddRangeAsync(IList<ItemTabelaDePreco> itensTabelaDePrecos)

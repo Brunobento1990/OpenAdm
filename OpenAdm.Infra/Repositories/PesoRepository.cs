@@ -9,10 +9,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class PesoRepository : GenericRepository<Peso>, IPesoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public PesoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<IDictionary<Guid, string>> GetDescricaoPesosAsync(IList<Guid> ids)

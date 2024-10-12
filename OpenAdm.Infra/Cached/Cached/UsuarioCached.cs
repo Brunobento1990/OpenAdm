@@ -81,4 +81,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<PaginacaoViewModel<Usuario>> GetPaginacaoAsync(FilterModel<Usuario> filterModel)
         => _usuarioRepository.GetPaginacaoAsync(filterModel);
+
+    public Task<PaginacaoViewModel<Usuario>> PaginacaoAsync(FilterModel<Usuario> filterModel)
+        => _usuarioRepository.PaginacaoAsync(filterModel);
 }

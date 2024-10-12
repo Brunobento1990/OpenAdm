@@ -2,6 +2,7 @@
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -53,4 +54,7 @@ public class ConfiguracoesDePedidoCached : IConfiguracoesDePedidoRepository
         await _cachedService.RemoveCachedAsync(_key);
         return await _configuracoesDePedidoRepository.UpdateAsync(entity);
     }
+
+    public Task<PaginacaoViewModel<ConfiguracoesDePedido>> PaginacaoAsync(FilterModel<ConfiguracoesDePedido> filterModel)
+        => _configuracoesDePedidoRepository.PaginacaoAsync(filterModel);
 }

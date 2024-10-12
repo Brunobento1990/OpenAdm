@@ -87,4 +87,7 @@ public class TamanhoCached : ITamanhoRepository
     {
         return await _tamanhoRepository.GetDescricaoTamanhosAsync(ids);
     }
+
+    public Task<PaginacaoViewModel<Tamanho>> PaginacaoAsync(FilterModel<Tamanho> filterModel)
+        => _tamanhoRepository.PaginacaoAsync(filterModel);
 }

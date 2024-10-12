@@ -9,10 +9,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabelaDePrecoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public TabelaDePrecoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<IList<TabelaDePreco>> GetAllTabelaDePrecoAsync()

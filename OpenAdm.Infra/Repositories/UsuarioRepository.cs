@@ -10,8 +10,6 @@ namespace OpenAdm.Infra.Repositories;
 public class UsuarioRepository(ParceiroContext parceiroContext)
     : GenericRepository<Usuario>(parceiroContext), IUsuarioRepository
 {
-    private readonly ParceiroContext _parceiroContext = parceiroContext;
-
     public async Task<IList<Usuario>> GetAllUsuariosAsync()
     {
         return await _parceiroContext

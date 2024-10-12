@@ -10,8 +10,6 @@ namespace OpenAdm.Infra.Repositories;
 public class CategoriaRepository(ParceiroContext parceiroContext)
     : GenericRepository<Categoria>(parceiroContext), ICategoriaRepository
 {
-    private readonly ParceiroContext _parceiroContext = parceiroContext;
-
     public async Task<Categoria?> GetCategoriaAsync(Guid id)
     {
         return await _parceiroContext
