@@ -9,10 +9,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class LojasParceirasRepository : GenericRepository<LojaParceira>, ILojasParceirasRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public LojasParceirasRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<IList<string?>> GetFotosLojasParceirasAsync()

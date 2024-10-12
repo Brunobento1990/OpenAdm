@@ -7,11 +7,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedidoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
-
     public ItensPedidoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<ItemPedido?> GetItemPedidoByIdAsync(Guid id)

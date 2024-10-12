@@ -1,13 +1,16 @@
 ﻿using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Model;
+using Microsoft.EntityFrameworkCore;
+using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
 public class GenericRepository<T>(ParceiroContext parceiroContext)
     : IGenericRepository<T> where T : class
 {
-    private readonly ParceiroContext _parceiroContext = parceiroContext;
+    protected readonly ParceiroContext _parceiroContext = parceiroContext;
 
     public async Task<T> AddAsync(T entity)
     {
@@ -33,6 +36,36 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
 
             throw;
         }
+    }
+
+    public virtual async Task<PaginacaoViewModel<T>> PaginacaoAsync(FilterModel<T> filterModel)
+    {
+        var include = filterModel.IncludeCustom();
+        var select = filterModel.SelectCustom();
+
+        var query = _parceiroContext
+            .Set<T>()
+            .AsNoTracking()
+            .WhereIsNotNull(filterModel.GetWhereBySearch());
+
+        if (include != null)
+        {
+            query = query.Include(include);
+        };
+
+        if (select != null)
+        {
+            query = query.Select(select);
+        }
+
+        var (TotalPaginas, Values) = await query
+            .CustomFilterAsync(filterModel);
+
+        return new()
+        {
+            TotalPage = TotalPaginas,
+            Values = Values
+        };
     }
 
     public async Task<T> UpdateAsync(T entity)

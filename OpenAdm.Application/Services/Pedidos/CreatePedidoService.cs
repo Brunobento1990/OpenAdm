@@ -15,17 +15,19 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IProcessarPedidoService _processarPedidoService;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly ICarrinhoRepository _carrinhoRepository;
-
+    private readonly IContasAReceberService _contasAReceberService;
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
-        ICarrinhoRepository carrinhoRepository)
+        ICarrinhoRepository carrinhoRepository,
+        IContasAReceberService contasAReceberService)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _carrinhoRepository = carrinhoRepository;
+        _contasAReceberService = contasAReceberService;
     }
 
     public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItemPedidoModel> itensPedidoModels, Usuario usuario)
@@ -60,6 +62,18 @@ public sealed class CreatePedidoService : ICreatePedidoService
         await _pedidoRepository.AddAsync(pedido);
         await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());
         await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
+
+        await _contasAReceberService.CriarContasAReceberAsync(new()
+        {
+            DataDoPrimeiroVencimento = DateTime.Now.AddMonths(1),
+            Desconto = null,
+            MeioDePagamento = null,
+            Observacao = $"Pedido: {pedido.Numero}",
+            PedidoId = pedido.Id,
+            QuantidadeDeParcelas = 1,
+            Total = pedido.ValorTotal,
+            UsuarioId = pedido.UsuarioId
+        });
 
         return new PedidoViewModel().ForModel(pedido);
     }

@@ -10,10 +10,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public EstoqueRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<Estoque?> GetEstoqueAsync(Expression<Func<Estoque, bool>> where)

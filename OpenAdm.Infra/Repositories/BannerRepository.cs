@@ -10,8 +10,6 @@ namespace OpenAdm.Infra.Repositories;
 public class BannerRepository(ParceiroContext parceiroContext)
         : GenericRepository<Banner>(parceiroContext), IBannerRepository
 {
-    private readonly ParceiroContext _parceiroContext = parceiroContext;
-
     public async Task<Banner?> GetBannerByIdAsync(Guid id)
     {
         return await _parceiroContext

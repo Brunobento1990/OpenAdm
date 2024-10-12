@@ -9,10 +9,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public TamanhoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<IDictionary<Guid, string>> GetDescricaoTamanhosAsync(IList<Guid> ids)

@@ -20,7 +20,7 @@ public class PedidoViewModel : BaseViewModel
         ValorTotal = entity.ValorTotal;
         StatusPedido = entity.StatusPedido;
         TotalItens = entity.ItensPedido.Sum(x => x.Quantidade);
-
+        DataDeAtualizacao = entity.DataDeAtualizacao;
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
 

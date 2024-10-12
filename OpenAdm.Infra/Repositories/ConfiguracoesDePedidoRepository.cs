@@ -7,11 +7,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class ConfiguracoesDePedidoRepository :GenericRepository<ConfiguracoesDePedido> , IConfiguracoesDePedidoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
-
     public ConfiguracoesDePedidoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync()

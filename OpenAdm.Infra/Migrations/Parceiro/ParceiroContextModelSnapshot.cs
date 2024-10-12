@@ -17,12 +17,12 @@ namespace OpenAdm.Infra.Migrations.Parceiro
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Banner", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Banner", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -60,7 +60,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Banners");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Categoria", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Categoria", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,7 +100,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Categorias");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.ConfiguracaoDeEmail", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracaoDeEmail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -148,7 +148,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("ConfiguracoesDeEmail");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.ConfiguracoesDePedido", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracoesDePedido", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -194,7 +194,50 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("ConfiguracoesDePedidos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Estoque", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ContasAReceber", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataDeAtualizacao")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DataDeFechamento")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
+
+                    b.Property<Guid?>("PedidoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PedidoId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("ContasAReceber");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Estoque", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,7 +279,66 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Estoques");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Funcionario", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.FaturaContasAReceber", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ContasAReceberId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataDeAtualizacao")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime?>("DataDePagamento")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("DataDeVencimento")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal?>("Desconto")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.Property<int?>("MeioDePagamento")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
+
+                    b.Property<int>("NumeroDaFatura")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Valor")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContasAReceberId");
+
+                    b.ToTable("FaturasContasAReceber");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Funcionario", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -291,7 +393,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Funcionarios");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.ItensPedido", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ItemPedido", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -346,7 +448,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("ItensPedidos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.ItensTabelaDePreco", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ItemTabelaDePreco", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -397,7 +499,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("ItensTabelaDePreco");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.LojasParceiras", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.LojaParceira", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -453,7 +555,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("LojasParceiras");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.MovimentacaoDeProduto", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.MovimentacaoDeProduto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -502,7 +604,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("MovimentacoesDeProdutos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Pedido", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Pedido", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -537,7 +639,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Pedidos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Peso", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Peso", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -571,7 +673,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Pesos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.PesosProdutos", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.PesoProduto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -592,7 +694,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("PesosProdutos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Produto", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Produto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -629,6 +731,9 @@ namespace OpenAdm.Infra.Migrations.Parceiro
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
 
+                    b.Property<decimal?>("Peso")
+                        .HasColumnType("numeric");
+
                     b.Property<string>("Referencia")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -646,7 +751,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Produtos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.ProdutosMaisVendidos", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ProdutoMaisVendido", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -684,7 +789,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("ProdutosMaisVendidos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.TabelaDePreco", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.TabelaDePreco", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -719,7 +824,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("TabelaDePreco");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Tamanho", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Tamanho", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -753,7 +858,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Tamanhos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.TamanhosProdutos", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.TamanhoProduto", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -774,7 +879,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("TamanhosProdutos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.TopUsuarios", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.TopUsuario", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -807,7 +912,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("TopUsuarios");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Usuario", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Usuario", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -865,26 +970,54 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("Usuarios");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.ItensPedido", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ContasAReceber", b =>
                 {
-                    b.HasOne("Domain.Pkg.Entities.Pedido", "Pedido")
+                    b.HasOne("OpenAdm.Domain.Entities.Pedido", "Pedido")
+                        .WithMany()
+                        .HasForeignKey("PedidoId");
+
+                    b.HasOne("OpenAdm.Domain.Entities.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pedido");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.FaturaContasAReceber", b =>
+                {
+                    b.HasOne("OpenAdm.Domain.Entities.ContasAReceber", "ContasAReceber")
+                        .WithMany("Faturas")
+                        .HasForeignKey("ContasAReceberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContasAReceber");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ItemPedido", b =>
+                {
+                    b.HasOne("OpenAdm.Domain.Entities.Pedido", "Pedido")
                         .WithMany("ItensPedido")
                         .HasForeignKey("PedidoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Pkg.Entities.Peso", "Peso")
+                    b.HasOne("OpenAdm.Domain.Entities.Peso", "Peso")
                         .WithMany("ItensPedido")
                         .HasForeignKey("PesoId")
                         .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Domain.Pkg.Entities.Produto", "Produto")
+                    b.HasOne("OpenAdm.Domain.Entities.Produto", "Produto")
                         .WithMany("ItensPedido")
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Domain.Pkg.Entities.Tamanho", "Tamanho")
+                    b.HasOne("OpenAdm.Domain.Entities.Tamanho", "Tamanho")
                         .WithMany("ItensPedido")
                         .HasForeignKey("TamanhoId")
                         .OnDelete(DeleteBehavior.NoAction);
@@ -898,15 +1031,15 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("Tamanho");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.ItensTabelaDePreco", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ItemTabelaDePreco", b =>
                 {
-                    b.HasOne("Domain.Pkg.Entities.Produto", "Produto")
+                    b.HasOne("OpenAdm.Domain.Entities.Produto", "Produto")
                         .WithMany("ItensTabelaDePreco")
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Pkg.Entities.TabelaDePreco", "TabelaDePreco")
+                    b.HasOne("OpenAdm.Domain.Entities.TabelaDePreco", "TabelaDePreco")
                         .WithMany("ItensTabelaDePreco")
                         .HasForeignKey("TabelaDePrecoId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -917,9 +1050,9 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("TabelaDePreco");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Pedido", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Pedido", b =>
                 {
-                    b.HasOne("Domain.Pkg.Entities.Usuario", "Usuario")
+                    b.HasOne("OpenAdm.Domain.Entities.Usuario", "Usuario")
                         .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -928,15 +1061,15 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.PesosProdutos", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.PesoProduto", b =>
                 {
-                    b.HasOne("Domain.Pkg.Entities.Peso", "Peso")
+                    b.HasOne("OpenAdm.Domain.Entities.Peso", "Peso")
                         .WithMany()
                         .HasForeignKey("PesoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Pkg.Entities.Produto", "Produto")
+                    b.HasOne("OpenAdm.Domain.Entities.Produto", "Produto")
                         .WithMany()
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -947,9 +1080,9 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("Produto");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Produto", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Produto", b =>
                 {
-                    b.HasOne("Domain.Pkg.Entities.Categoria", "Categoria")
+                    b.HasOne("OpenAdm.Domain.Entities.Categoria", "Categoria")
                         .WithMany("Produtos")
                         .HasForeignKey("CategoriaId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -958,15 +1091,15 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("Categoria");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.TamanhosProdutos", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.TamanhoProduto", b =>
                 {
-                    b.HasOne("Domain.Pkg.Entities.Produto", "Produto")
+                    b.HasOne("OpenAdm.Domain.Entities.Produto", "Produto")
                         .WithMany()
                         .HasForeignKey("ProdutoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Pkg.Entities.Tamanho", "Tamanho")
+                    b.HasOne("OpenAdm.Domain.Entities.Tamanho", "Tamanho")
                         .WithMany()
                         .HasForeignKey("TamanhoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -977,34 +1110,39 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("Tamanho");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Categoria", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Categoria", b =>
                 {
                     b.Navigation("Produtos");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Pedido", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ContasAReceber", b =>
+                {
+                    b.Navigation("Faturas");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Pedido", b =>
                 {
                     b.Navigation("ItensPedido");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Peso", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Peso", b =>
                 {
                     b.Navigation("ItensPedido");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Produto", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Produto", b =>
                 {
                     b.Navigation("ItensPedido");
 
                     b.Navigation("ItensTabelaDePreco");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.TabelaDePreco", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.TabelaDePreco", b =>
                 {
                     b.Navigation("ItensTabelaDePreco");
                 });
 
-            modelBuilder.Entity("Domain.Pkg.Entities.Tamanho", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Tamanho", b =>
                 {
                     b.Navigation("ItensPedido");
                 });

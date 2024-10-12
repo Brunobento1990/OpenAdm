@@ -17,11 +17,11 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
     {
         var categorias = await _cachedService.GetListItemAsync(_keyList);
 
-        if(categorias == null)
+        if (categorias == null)
         {
             categorias = await _categoriaRepository.GetCategoriasAsync();
 
-            if(categorias.Count > 0)
+            if (categorias.Count > 0)
             {
                 await _cachedService.SetListItemAsync(_keyList, categorias);
             }
@@ -60,11 +60,11 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
         var key = id.ToString();
         var categoria = await _cachedService.GetItemAsync(key);
 
-        if(categoria == null)
+        if (categoria == null)
         {
             categoria = await _categoriaRepository.GetCategoriaAsync(id);
 
-            if(categoria != null)
+            if (categoria != null)
             {
                 await _cachedService.SetItemAsync(key, categoria);
             }
@@ -72,4 +72,7 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
 
         return categoria;
     }
+
+    public Task<PaginacaoViewModel<Categoria>> PaginacaoAsync(FilterModel<Categoria> filterModel)
+        => _categoriaRepository.PaginacaoAsync(filterModel);
 }

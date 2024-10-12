@@ -63,5 +63,7 @@ public static class DependencyInjectRepositories
         services.AddScoped<TopUsuariosRepository>();
         services.AddScoped<ITopUsuariosRepository, TopUsuariosCached>();
         services.AddScoped<IProdutosMaisVendidosRepository, ProdutosMaisVendidosRepository>();
+        services.AddScoped<IContasAReceberRepository, ContasAReceberRepository>();
+        services.AddScoped<IFaturaContasAReceberRepository, FaturaContasAReceberRepository>();
     }
 }

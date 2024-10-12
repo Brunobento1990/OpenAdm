@@ -2,6 +2,7 @@
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -51,4 +52,7 @@ public class ConfiguracaoDeEmailCached(
         await _cachedService.RemoveCachedAsync(entity.Id.ToString());
         return await _configuracaoDeEmailRepository.UpdateAsync(entity);
     }
+
+    public Task<PaginacaoViewModel<ConfiguracaoDeEmail>> PaginacaoAsync(FilterModel<ConfiguracaoDeEmail> filterModel)
+        => _configuracaoDeEmailRepository.PaginacaoAsync(filterModel);
 }

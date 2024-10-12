@@ -8,8 +8,6 @@ namespace OpenAdm.Infra.Repositories;
 public class PesosProdutosRepository(ParceiroContext parceiroContext) 
     : GenericRepository<PesoProduto>(parceiroContext), IPesosProdutosRepository
 {
-    private readonly ParceiroContext _parceiroContext = parceiroContext;
-
     public async Task<IList<PesoProduto>> AddRangeAsync(IList<PesoProduto> pesosProdutos)
     {
         await _parceiroContext.AddRangeAsync(pesosProdutos);

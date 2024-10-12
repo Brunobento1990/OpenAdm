@@ -18,6 +18,7 @@ public class PedidoServiceTest
     private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepositoryMock;
     private readonly Mock<IPdfPedidoService> _pdfPedidoService;
     private readonly Mock<ICarrinhoRepository> _carrinhoRepository;
+    private readonly Mock<IContasAReceberService> _contasAReceberService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
     public PedidoServiceTest()
     {
@@ -27,6 +28,7 @@ public class PedidoServiceTest
         _pdfPedidoService = new();
         _carrinhoRepository = new();
         _parceiroAutenticado = new ParceiroAutenticado();
+        _contasAReceberService = new();
     }
 
     //[Fact]
@@ -148,7 +150,8 @@ public class PedidoServiceTest
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
-            _carrinhoRepository.Object);
+            _carrinhoRepository.Object,
+            _contasAReceberService.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
         var pedidoModel = await service.CreatePedidoAsync(itensPedidoModel, usuario);
@@ -186,7 +189,8 @@ public class PedidoServiceTest
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
-            _carrinhoRepository.Object);
+            _carrinhoRepository.Object,
+            _contasAReceberService.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
 
@@ -235,7 +239,7 @@ public class PedidoServiceTest
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
-            _carrinhoRepository.Object);
+            _carrinhoRepository.Object, _contasAReceberService.Object);
 
         await Assert.ThrowsAsync<Exception>(async () => await service.CreatePedidoAsync(itens, usuarioViewModel));
     }

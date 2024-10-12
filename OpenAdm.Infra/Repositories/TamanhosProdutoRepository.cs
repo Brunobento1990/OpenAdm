@@ -7,10 +7,8 @@ namespace OpenAdm.Infra.Repositories;
 
 public class TamanhosProdutoRepository : GenericRepository<TamanhoProduto>, ITamanhosProdutoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
     public TamanhosProdutoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-        _parceiroContext = parceiroContext;
     }
 
     public async Task<IList<TamanhoProduto>> AddRangeAsync(IList<TamanhoProduto> tamanhosProdutos)

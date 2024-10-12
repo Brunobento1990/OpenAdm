@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models.Categorias;
+using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Paginacao;
 
@@ -47,6 +51,8 @@ public class PedidoController : ControllerBase
     }
 
     [HttpGet("get")]
+    [ProducesResponseType<PedidoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Get([FromQuery] Guid pedidoId)
     {
         var pedido = await _pedidoService.GetAsync(pedidoId);
