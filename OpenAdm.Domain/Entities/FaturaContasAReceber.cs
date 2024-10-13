@@ -43,6 +43,24 @@ public sealed class FaturaContasAReceber : BaseEntity
     public string? Observacao { get; private set; }
     public Guid ContasAReceberId { get; private set; }
     public ContasAReceber ContasAReceber { get; set; } = null!;
+
+    public void Edit(
+        StatusFaturaContasAReceberEnum status,
+        DateTime dataDeVencimento,
+        DateTime? dataDePagamento,
+        MeioDePagamentoEnum? meioDePagamento,
+        decimal valor,
+        decimal? desconto,
+        string? observacao)
+    {
+        Status = status;
+        DataDeVencimento = dataDeVencimento;
+        DataDePagamento = dataDePagamento;
+        MeioDePagamento = meioDePagamento;
+        Valor = valor;
+        Desconto = desconto;
+        Observacao = observacao;
+    }
     public void TirarDiferenca(decimal diferenca)
     {
         Valor -= diferenca;

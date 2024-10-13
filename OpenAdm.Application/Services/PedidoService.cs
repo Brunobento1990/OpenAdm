@@ -1,6 +1,8 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Dtos.ItensPedidos;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
@@ -57,13 +59,22 @@ public class PedidoService(
             .ToList();
     }
 
-    public async Task<byte[]> PedidoProducaoAsync(IList<Guid> pedidosIds)
+    public async Task<byte[]> PedidoProducaoAsync(RelatorioProducaoDto relatorioProducaoDto)
     {
         var configuracaoDePedido = await _configuracoesDePedidoRepository
             .GetConfiguracoesDePedidoAsync();
         var logo = configuracaoDePedido?.Logo is null ? null : Encoding.UTF8.GetString(configuracaoDePedido.Logo);
 
-        var itens = await _itensPedidoRepository.GetItensPedidoByProducaoAsync(pedidosIds);
+        var itens = await _itensPedidoRepository.GetItensPedidoByProducaoAsync(
+            pedidosIds: relatorioProducaoDto.PedidosIds,
+            produtosIds: relatorioProducaoDto.ProdutosIds,
+            pesosIds: relatorioProducaoDto.PesosIds,
+            tamanhosIds: relatorioProducaoDto.TamanhosIds);
+
+        if(itens.Count == 0)
+        {
+            throw new ExceptionApi("Não há produtos a serem produzidos!");
+        }
 
         var itensProducao = new List<ItemPedidoProducaoViewModel>();
         var pedidos = itens.DistinctBy(x => x.PedidoId).Select(x => $"#{x.Pedido.Numero} - {x.Pedido.Usuario.Nome}").ToList();
@@ -97,8 +108,8 @@ public class PedidoService(
         }
 
         return _pdfPedidoService.ProducaoPedido(
-            itensProducao.OrderBy(x => x.Produto).ToList(), 
-            _parceiroAutenticado.NomeFantasia, 
+            itensProducao.OrderBy(x => x.Produto).ToList(),
+            _parceiroAutenticado.NomeFantasia,
             logo,
             pedidos);
     }

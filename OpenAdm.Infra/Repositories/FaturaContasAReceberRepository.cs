@@ -36,4 +36,20 @@ public sealed class FaturaContasAReceberRepository : GenericRepository<FaturaCon
         return await query
             .ToListAsync();
     }
+
+    public async Task<IDictionary<int, decimal>> SumMesesAsync()
+    {
+        var dataInicio = DateTime.Now.AddMonths(-3);
+        var dataSplit = dataInicio.ToString("MM/dd/yyyy").Split('/');
+        var ano = int.Parse(dataSplit[2][..4]);
+        var mes = int.Parse(dataSplit[0]);
+
+        return await _parceiroContext
+            .FaturasContasAReceber
+            .Where(m => m.DataDeCriacao.Month >= mes && m.DataDeCriacao.Year == ano && m.Status == StatusFaturaContasAReceberEnum.Pago)
+            .GroupBy(m => m.DataDeCriacao.Month)
+            .ToDictionaryAsync(
+                g => g.Key,
+                g => g.Sum(x => x.Valor));
+    }
 }

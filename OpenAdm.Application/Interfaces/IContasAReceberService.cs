@@ -5,4 +5,5 @@ namespace OpenAdm.Application.Interfaces;
 public interface IContasAReceberService
 {
     Task CriarContasAReceberAsync(CriarContasAReceberDto contasAReceberDto);
+    Task VerificarFechamentoAsync(Guid id);
 }
