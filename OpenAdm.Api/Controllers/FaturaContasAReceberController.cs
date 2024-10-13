@@ -43,12 +43,30 @@ public class FaturaContasAReceberController : ControllerBase
         return Ok(faturas);
     }
 
+    [HttpGet("get-by-id")]
+    [ProducesResponseType<FaturaContasAReceberViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> GetById([FromQuery] Guid id)
+    {
+        var fatura = await _faturaContasAReceberService.GetByIdAsync(id);
+        return Ok(fatura);
+    }
+
     [HttpPut("pagar")]
     [ProducesResponseType<FaturaContasAReceberViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Pagar(PagarFaturaAReceberDto pagarFaturaAReceberDto)
     {
         var fatura = await _faturaContasAReceberService.PagarAsync(pagarFaturaAReceberDto);
+        return Ok(fatura);
+    }
+
+    [HttpPut("edit")]
+    [ProducesResponseType<FaturaContasAReceberViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> Edit(FaturaAReceberEdit faturaAReceberEdit)
+    {
+        var fatura = await _faturaContasAReceberService.EditAsync(faturaAReceberEdit);
         return Ok(fatura);
     }
 }

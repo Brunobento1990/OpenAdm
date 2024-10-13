@@ -31,6 +31,19 @@ public sealed class ContasAReceber : BaseEntity
     public IList<FaturaContasAReceber> Faturas { get; set; } = [];
     public decimal Total { get { return Faturas.Sum(x => x.Valor); } }
 
+    public void Fechar()
+    {
+        DataDeFechamento = DateTime.Now;
+        Status = StatusContasAPagarEnum.Paga;
+        DataDeAtualizacao = DateTime.Now;
+    }
+
+    public void PagaParcialmente()
+    {
+        Status = StatusContasAPagarEnum.Paga_Parcialmente;
+        DataDeAtualizacao = DateTime.Now;
+    }
+
     public static ContasAReceber NovaContasAReceber(
         Guid usuarioId,
         Guid? pedidoId,

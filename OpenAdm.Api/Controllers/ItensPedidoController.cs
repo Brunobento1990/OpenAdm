@@ -22,7 +22,7 @@ public class ItensPedidoController : ControllerBase
     [HttpPost("producao/pdf")]
     public async Task<IActionResult> ProducaoPdf(RelatorioProducaoDto relatorioProducaoDto)
     {
-        var pdf = await _pedidoService.PedidoProducaoAsync(relatorioProducaoDto.PedidosIds);
+        var pdf = await _pedidoService.PedidoProducaoAsync(relatorioProducaoDto);
         return Ok(new
         {
             pdf

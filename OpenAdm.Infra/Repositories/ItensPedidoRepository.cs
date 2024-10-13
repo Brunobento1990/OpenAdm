@@ -46,7 +46,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
         return itens;
     }
 
-    public async Task<IList<ItemPedido>> GetItensPedidoByProducaoAsync(IList<Guid> pedidosIds)
+    public async Task<IList<ItemPedido>> GetItensPedidoByProducaoAsync(IList<Guid> pedidosIds, IList<Guid> produtosIds, IList<Guid> pesosIds, IList<Guid> tamanhosIds)
     {
         var itens = _parceiroContext
             .ItensPedidos
@@ -59,9 +59,24 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
             .Include(x => x.Tamanho)
             .Where(x => x.Pedido.StatusPedido == Domain.Enuns.StatusPedido.Aberto);
 
-        if(pedidosIds.Count > 0)
+        if (pedidosIds.Count > 0)
         {
             itens = itens.Where(x => pedidosIds.Contains(x.PedidoId));
+        }
+
+        if (produtosIds.Count > 0)
+        {
+            itens = itens.Where(x => produtosIds.Contains(x.ProdutoId));
+        }
+
+        if (tamanhosIds.Count > 0)
+        {
+            itens = itens.Where(x => tamanhosIds.Contains(x.TamanhoId!.Value));
+        }
+
+        if (pesosIds.Count > 0)
+        {
+            itens = itens.Where(x => pesosIds.Contains(x.PesoId!.Value));
         }
 
         return await itens.ToListAsync();

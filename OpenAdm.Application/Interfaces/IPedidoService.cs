@@ -1,4 +1,5 @@
-﻿using OpenAdm.Application.Models.Pedidos;
+﻿using OpenAdm.Application.Dtos.ItensPedidos;
+using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
 
@@ -10,5 +11,5 @@ public interface IPedidoService
     Task<IList<PedidoViewModel>> GetPedidosEmAbertAsync();
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
     Task<PedidoViewModel> GetAsync(Guid pedidoId);
-    Task<byte[]> PedidoProducaoAsync(IList<Guid> pedidosIds);
+    Task<byte[]> PedidoProducaoAsync(RelatorioProducaoDto relatorioProducaoDto);
 }
