@@ -10,4 +10,6 @@ public class HomeAdmViewModel
     public IList<TopUsuariosViewModel> TopUsuariosTotalPedido { get; set; } = [];
     public IList<MovimentoDeProdutoDashBoardModel> Movimentos { get; set; } = [];
     public IList<FaturaPagaDashBoardModel> Faturas { get; set; } = [];
+    public decimal TotalAReceber { get; set; }
+    public int PedidosEmAberto { get; set; }
 }

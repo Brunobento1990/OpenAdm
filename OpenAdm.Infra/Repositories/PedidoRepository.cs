@@ -12,6 +12,22 @@ namespace OpenAdm.Infra.Repositories;
 public class PedidoRepository(ParceiroContext parceiroContext)
     : GenericRepository<Pedido>(parceiroContext), IPedidoRepository
 {
+    public async Task<int> GetCountPedidosEmAbertoAsync()
+    {
+        try
+        {
+            return await _parceiroContext
+                .Pedidos
+                .AsNoTracking()
+                .Where(x => x.StatusPedido == StatusPedido.Aberto)
+                .CountAsync();
+        }
+        catch (Exception)
+        {
+            return 0;
+        }
+    }
+
     public async Task<PaginacaoViewModel<Pedido>> GetPaginacaoPedidoAsync(FilterModel<Pedido> filterModel)
     {
         var (total, values) = await _parceiroContext

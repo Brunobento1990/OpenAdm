@@ -37,6 +37,22 @@ public sealed class FaturaContasAReceberRepository : GenericRepository<FaturaCon
             .ToListAsync();
     }
 
+    public async Task<decimal> SumAReceberAsync()
+    {
+        try
+        {
+            return await _parceiroContext
+                .FaturasContasAReceber
+                .AsNoTracking()
+                .Where(x => x.Status == StatusFaturaContasAReceberEnum.Pendente)
+                .SumAsync(x => x.Valor);
+        }
+        catch (Exception)
+        {
+            return 0;
+        }
+    }
+
     public async Task<IDictionary<int, decimal>> SumMesesAsync()
     {
         var dataInicio = DateTime.Now.AddMonths(-3);
