@@ -69,6 +69,9 @@ public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
         return faturas.Select(x => (FaturaContasAReceberViewModel)x).ToList();
     }
 
+    public Task<decimal> GetSumAReceberAsync()
+        => _faturaContasAReceberRepository.SumAReceberAsync();
+
     public async Task<FaturaContasAReceberViewModel> PagarAsync(PagarFaturaAReceberDto pagarFaturaAReceberDto)
     {
         var fatura = await _faturaContasAReceberRepository.GetByIdAsync(pagarFaturaAReceberDto.Id)

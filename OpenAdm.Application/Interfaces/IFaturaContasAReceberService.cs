@@ -8,6 +8,7 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IFaturaContasAReceberService
 {
+    Task<decimal> GetSumAReceberAsync();
     Task<IList<FaturaPagaDashBoardModel>> FaturasDashBoardAsync();
     Task<FaturaContasAReceberViewModel> PagarAsync(PagarFaturaAReceberDto pagarFaturaAReceberDto);
     Task<FaturaContasAReceberViewModel> GetByIdAsync(Guid id);
