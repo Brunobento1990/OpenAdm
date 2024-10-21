@@ -13,4 +13,5 @@ public interface ITamanhoService
     Task<TamanhoViewModel> UpdateTamanhoAsync(UpdateTamanhoDto updateTamanhoDto);
     Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(PaginacaoTamanhoDto paginacaoTamanhoDto);
     Task<IList<TamanhoViewModel>> GetTamanhoViewModelsAsync();
+    Task<IDictionary<Guid, TamanhoViewModel>> GetTamanhoPorIdsViewModelsAsync(IList<Guid> ids);
 }

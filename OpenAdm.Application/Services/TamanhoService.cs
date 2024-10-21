@@ -43,6 +43,19 @@ public class TamanhoService : ITamanhoService
         };
     }
 
+    public async Task<IDictionary<Guid, TamanhoViewModel>> GetTamanhoPorIdsViewModelsAsync(IList<Guid> ids)
+    {
+        var tamanhos = await _tamanhoRepository.GetDictionaryTamanhosAsync(ids);
+        var retorno = new Dictionary<Guid, TamanhoViewModel>();
+
+        foreach (var tamanho in tamanhos)
+        {
+            retorno.TryAdd(tamanho.Key, new TamanhoViewModel().ToModel(tamanho.Value));
+        }
+
+        return retorno;
+    }
+
     public async Task<TamanhoViewModel> GetTamanhoViewModelAsync(Guid id)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(id)
@@ -62,7 +75,7 @@ public class TamanhoService : ITamanhoService
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(updateTamanhoDto.Id)
             ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
-        tamanho.Update(updateTamanhoDto.Descricao);
+        tamanho.Update(updateTamanhoDto.Descricao, updateTamanhoDto.PesoReal);
 
         await _tamanhoRepository.UpdateAsync(tamanho);
         return new TamanhoViewModel().ToModel(tamanho);

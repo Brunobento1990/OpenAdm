@@ -8,10 +8,11 @@ public class CreateTamanhoDto
     [Required]
     [MaxLength(255)]
     public string Descricao { get; set; } = string.Empty;
+    public decimal PesoReal { get; set; }
 
     public Tamanho ToEntity()
     {
         var date = DateTime.Now;
-        return new Tamanho(Guid.NewGuid(), date, date, 0, Descricao);
+        return new Tamanho(Guid.NewGuid(), date, date, 0, Descricao, PesoReal);
     }
 }

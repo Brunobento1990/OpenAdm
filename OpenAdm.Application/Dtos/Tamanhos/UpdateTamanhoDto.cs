@@ -9,4 +9,5 @@ public class UpdateTamanhoDto
     [Required]
     [MaxLength(255)]
     public string Descricao { get; set; } = string.Empty;
+    public decimal? PesoReal { get; set; }
 }

@@ -9,6 +9,8 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     : DbContext(options)
 {
     private readonly IParceiroAutenticado _parceiroAutenticado = parceiroAutenticado;
+    public DbSet<EnderecoEntregaPedido> EnderecosEntregaPedido { get; set; }
+    public DbSet<ConfiguracaoDePagamento> ConfiguracoesDePagamento { get; set; }
     public DbSet<Banner> Banners { get; set; }
     public DbSet<Funcionario> Funcionarios { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
@@ -24,6 +26,7 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     public DbSet<ItemTabelaDePreco> ItensTabelaDePreco { get; set; }
     public DbSet<ProdutoMaisVendido> ProdutosMaisVendidos { get; set; }
     public DbSet<ConfiguracaoDeEmail> ConfiguracoesDeEmail { get; set; }
+    public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
@@ -41,6 +44,9 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new FaturaContasAReceberConfiguration());
         modelBuilder.ApplyConfiguration(new ContasAReceberConfiguration());
         modelBuilder.ApplyConfiguration(new BannerConfiguration());

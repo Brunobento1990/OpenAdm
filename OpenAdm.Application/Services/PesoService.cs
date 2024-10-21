@@ -43,6 +43,20 @@ public class PesoService : IPesoService
         };
     }
 
+    public async Task<IDictionary<Guid, PesoViewModel>> GetPesosByPesosIdsViewModelAsync(IList<Guid> pesosIds)
+    {
+        var pesos = await _pesoRepository.GetDictionaryPesosByIdsAsync(pesosIds);
+
+        var retorno = new Dictionary<Guid, PesoViewModel>();
+
+        foreach (var peso in pesos)
+        {
+            retorno.TryAdd(peso.Key, new PesoViewModel().ToModel(peso.Value));
+        }
+
+        return retorno;
+    }
+
     public async Task<IList<PesoViewModel>> GetPesosViewModelAsync()
     {
         var pesos = await _pesoRepository.GetPesosAsync();
@@ -63,7 +77,7 @@ public class PesoService : IPesoService
         var peso = await _pesoRepository.GetPesoByIdAsync(updatePesoDto.Id)
             ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
-        peso.Update(updatePesoDto.Descricao);
+        peso.Update(updatePesoDto.Descricao, updatePesoDto.PesoReal);
 
         await _pesoRepository.UpdateAsync(peso);
 

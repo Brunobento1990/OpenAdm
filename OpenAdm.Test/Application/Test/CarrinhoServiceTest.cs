@@ -16,7 +16,7 @@ public class CarrinhoServiceTest
         var quantidade = 12;
         var categoria = CategoriaBuilder.Init().Build();
         var carrinhoRepository = new CarrinhoRepositoryMemory();
-        var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho");
+        var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho", 0);
         var produto = ProdutoBuilder.Init().Build();
         produto.Categoria = categoria;
         produto.Tamanhos.Add(tamanho);
@@ -56,7 +56,7 @@ public class CarrinhoServiceTest
     public async Task DeveAdicionarProdutoNoCarrinho()
     {
         var usuario = UsuarioBuilder.Init().Build();
-        var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho");
+        var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho", 0);
         var produto = ProdutoBuilder.Init().Build();
         var addCarrinho = new List<AddCarrinhoModel>()
         {
@@ -88,7 +88,7 @@ public class CarrinhoServiceTest
     public async Task DeveDeletarProdutoDoCarrinho()
     {
         var usuario = UsuarioBuilder.Init().Build();
-        var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho");
+        var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho", 0);
         var produto = ProdutoBuilder.Init().Build();
         var addCarrinho = new List<AddCarrinhoModel>()
         {
