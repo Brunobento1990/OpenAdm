@@ -12,6 +12,8 @@ public static class DependencyInjectyApplication
 {
     public static void InjectServices(this IServiceCollection services)
     {
+        services.AddScoped<PagamentoPix>();
+        services.AddScoped<IPagamentoFactory, PagamentoFactory>();
         services.AddScoped<IEnderecoEntregaPedidoService, EnderecoEntregaPedidoService>();
         services.AddScoped<IConfiguracaoDeFreteService, ConfiguracaoDeFreteService>();
         services.AddScoped<IConfiguracaoDePagamentoService, ConfiguracaoDePagamentoService>();

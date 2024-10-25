@@ -8,6 +8,8 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model.Pedidos;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.Model;
+using OpenAdm.Application.Services;
+using OpenAdm.Application.Models.ConfiguracoesDePagamentos;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -19,6 +21,7 @@ public class PedidoServiceTest
     private readonly Mock<IPdfPedidoService> _pdfPedidoService;
     private readonly Mock<ICarrinhoRepository> _carrinhoRepository;
     private readonly Mock<IContasAReceberService> _contasAReceberService;
+    private readonly Mock<IConfiguracaoDePagamentoService> _configuracaoDePagamentoService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
     public PedidoServiceTest()
     {
@@ -29,6 +32,7 @@ public class PedidoServiceTest
         _carrinhoRepository = new();
         _parceiroAutenticado = new ParceiroAutenticado();
         _contasAReceberService = new();
+        _configuracaoDePagamentoService = new();
     }
 
     //[Fact]
@@ -70,9 +74,12 @@ public class PedidoServiceTest
     {
         var pedido = PedidoBuilder.Init().Build();
         var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
-
         _pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
-        var pedidoService = new PedidoDownloadService(_pedidoRepositoryMock.Object, configuracoesDePedidoRepository.Object, _pdfPedidoService.Object, _parceiroAutenticado);
+        var pedidoService = new PedidoDownloadService(
+            _pedidoRepositoryMock.Object, 
+            configuracoesDePedidoRepository.Object, 
+            _pdfPedidoService.Object, 
+            _parceiroAutenticado);
         var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
         Assert.NotNull(pdf);
@@ -146,12 +153,18 @@ public class PedidoServiceTest
             x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
             .ReturnsAsync(itensTabelaDePreco);
 
+        var efetuarCobranca = new EfetuarCobrancaViewModel()
+        {
+            Cobrar = false
+        };
+        _configuracaoDePagamentoService.Setup(x => x.CobrarAsync()).ReturnsAsync(efetuarCobranca);
+
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
             _carrinhoRepository.Object,
-            _contasAReceberService.Object);
+            _contasAReceberService.Object, _configuracaoDePagamentoService.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
         var pedidoModel = await service.CreatePedidoAsync(itensPedidoModel, usuario);
@@ -184,13 +197,18 @@ public class PedidoServiceTest
         _itemTabelaDePrecoRepositoryMock.Setup((x) =>
             x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
             .ReturnsAsync(itensTabelaDePreco);
-
+        var efetuarCobranca = new EfetuarCobrancaViewModel()
+        {
+            Cobrar = false
+        };
+        _configuracaoDePagamentoService.Setup(x => x.CobrarAsync()).ReturnsAsync(efetuarCobranca);
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
             _carrinhoRepository.Object,
-            _contasAReceberService.Object);
+            _contasAReceberService.Object,
+            _configuracaoDePagamentoService.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
 
@@ -234,12 +252,18 @@ public class PedidoServiceTest
         _itemTabelaDePrecoRepositoryMock.Setup((x) =>
             x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
             .ReturnsAsync(itensTabelaDePreco);
+        var efetuarCobranca = new EfetuarCobrancaViewModel()
+        {
+            Cobrar = false
+        };
+        _configuracaoDePagamentoService.Setup(x => x.CobrarAsync()).ReturnsAsync(efetuarCobranca);
 
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
-            _carrinhoRepository.Object, _contasAReceberService.Object);
+            _carrinhoRepository.Object, _contasAReceberService.Object,
+            _configuracaoDePagamentoService.Object);
 
         await Assert.ThrowsAsync<Exception>(async () => await service.CreatePedidoAsync(itens, usuarioViewModel));
     }

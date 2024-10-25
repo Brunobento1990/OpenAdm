@@ -16,18 +16,21 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly ICarrinhoRepository _carrinhoRepository;
     private readonly IContasAReceberService _contasAReceberService;
+    private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         ICarrinhoRepository carrinhoRepository,
-        IContasAReceberService contasAReceberService)
+        IContasAReceberService contasAReceberService,
+        IConfiguracaoDePagamentoService configuracaoDePagamentoService)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _carrinhoRepository = carrinhoRepository;
         _contasAReceberService = contasAReceberService;
+        _configuracaoDePagamentoService = configuracaoDePagamentoService;
     }
 
     public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItemPedidoModel> itensPedidoModels, Usuario usuario)
@@ -63,17 +66,22 @@ public sealed class CreatePedidoService : ICreatePedidoService
         await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());
         await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
 
-        await _contasAReceberService.CriarContasAReceberAsync(new()
+        var configPagamento = await _configuracaoDePagamentoService.CobrarAsync();
+
+        if (!configPagamento.Cobrar)
         {
-            DataDoPrimeiroVencimento = DateTime.Now.AddMonths(1),
-            Desconto = null,
-            MeioDePagamento = null,
-            Observacao = $"Pedido: {pedido.Numero}",
-            PedidoId = pedido.Id,
-            QuantidadeDeParcelas = 1,
-            Total = pedido.ValorTotal,
-            UsuarioId = pedido.UsuarioId
-        });
+            await _contasAReceberService.CriarContasAReceberAsync(new()
+            {
+                DataDoPrimeiroVencimento = DateTime.Now.AddMonths(1),
+                Desconto = null,
+                MeioDePagamento = null,
+                Observacao = $"Pedido: {pedido.Numero}",
+                PedidoId = pedido.Id,
+                QuantidadeDeParcelas = 1,
+                Total = pedido.ValorTotal,
+                UsuarioId = pedido.UsuarioId
+            });
+        }
 
         return new PedidoViewModel().ForModel(pedido);
     }

@@ -19,7 +19,8 @@ public sealed class FaturaContasAReceber : BaseEntity
         decimal? desconto,
         string? observacao,
         Guid contasAReceberId,
-        DateTime? dataDePagamento)
+        DateTime? dataDePagamento,
+        string? idExterno)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Status = status;
@@ -31,6 +32,7 @@ public sealed class FaturaContasAReceber : BaseEntity
         Observacao = observacao;
         ContasAReceberId = contasAReceberId;
         DataDePagamento = dataDePagamento;
+        IdExterno = idExterno;
     }
 
     public StatusFaturaContasAReceberEnum Status { get; private set; }
@@ -41,6 +43,7 @@ public sealed class FaturaContasAReceber : BaseEntity
     public decimal Valor { get; private set; }
     public decimal? Desconto { get; private set; }
     public string? Observacao { get; private set; }
+    public string? IdExterno { get; private set; }
     public Guid ContasAReceberId { get; private set; }
     public ContasAReceber ContasAReceber { get; set; } = null!;
 
@@ -94,7 +97,8 @@ public sealed class FaturaContasAReceber : BaseEntity
         decimal valor,
         decimal? desconto,
         string? observacao,
-        Guid contasAReceberId
+        Guid contasAReceberId,
+        string? idExterno
         )
     {
         return new FaturaContasAReceber(
@@ -110,6 +114,7 @@ public sealed class FaturaContasAReceber : BaseEntity
             desconto: desconto,
             observacao: observacao,
             contasAReceberId: contasAReceberId,
-            dataDePagamento: null);
+            dataDePagamento: null,
+            idExterno: idExterno);
     }
 }

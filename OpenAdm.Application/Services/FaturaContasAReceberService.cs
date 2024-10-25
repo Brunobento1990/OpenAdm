@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Application.Dtos.ContasAReceberDto;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ContasAReceberModel;
-using OpenAdm.Application.Models.MovimentacaoDeProdutos;
+using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Extensions;
@@ -15,7 +15,9 @@ public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
 {
     private readonly IFaturaContasAReceberRepository _faturaContasAReceberRepository;
     private readonly IContasAReceberService _contasAReceberService;
-    public FaturaContasAReceberService(IFaturaContasAReceberRepository faturaContasAReceberRepository, IContasAReceberService contasAReceberService)
+    public FaturaContasAReceberService(
+        IFaturaContasAReceberRepository faturaContasAReceberRepository,
+        IContasAReceberService contasAReceberService)
     {
         _faturaContasAReceberRepository = faturaContasAReceberRepository;
         _contasAReceberService = contasAReceberService;

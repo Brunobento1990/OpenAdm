@@ -35,17 +35,17 @@ public class ParceiroMiddleware
             throw new ExceptionUnauthorize("Referencia não localizada!!");
         }
 
-        var parceiro = await configuracaoParceiroRepository.GetParceiroByDominioAdmAsync(referer);
+        var configuracaoParceiro = await configuracaoParceiroRepository.GetParceiroByDominioAdmAsync(referer);
 
-        if (parceiro == null || !parceiro.Ativo)
+        if (configuracaoParceiro == null || !configuracaoParceiro.Ativo)
         {
             throw new ExceptionUnauthorize("Parceiro não autenticado!");
         }
 
         parceiroAutenticado.Referer = referer;
-        parceiroAutenticado.StringConnection = Criptografia.Decrypt(parceiro.ConexaoDb);
-        parceiroAutenticado.KeyParceiro = parceiro.Id.ToString();
-        parceiroAutenticado.NomeFantasia = parceiro.Parceiro.NomeFantasia;
+        parceiroAutenticado.StringConnection = Criptografia.Decrypt(configuracaoParceiro.ConexaoDb);
+        parceiroAutenticado.KeyParceiro = configuracaoParceiro.Parceiro.Id.ToString();
+        parceiroAutenticado.NomeFantasia = configuracaoParceiro.Parceiro.NomeFantasia;
 
         await _next(httpContext);
     }

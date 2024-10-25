@@ -130,7 +130,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
-    public async Task<List<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido)
+    public async Task<IList<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido)
     {
         return await _parceiroContext.Pedidos
             .AsNoTracking()

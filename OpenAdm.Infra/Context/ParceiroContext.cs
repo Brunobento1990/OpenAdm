@@ -37,8 +37,8 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_parceiroAutenticado.StringConnection);
-        //optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=localhost; Port=4449; Database=open-adm-cliente; Pooling=true;");
+        //optionsBuilder.UseNpgsql(_parceiroAutenticado.StringConnection);
+        optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=localhost; Port=4449; Database=open-adm-cliente; Pooling=true;");
         base.OnConfiguring(optionsBuilder);
     }
 
