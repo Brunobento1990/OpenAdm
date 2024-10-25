@@ -30,18 +30,17 @@ public sealed class PagamentoPix : IPagamentoService
 
     public async Task<PagamentoViewModel> GerarPagamentoAsync(Guid pedidoId)
     {
-        var pedido = await _pedidoService.GetPedidoByIdAsync(pedidoId)
+        var pedido = await _pedidoService.GetPedidoCompletoByIdAsync(pedidoId)
             ?? throw new ExceptionApi("Não foi possível localizar seu pedido para gerar o pix!");
+
         var enderecoEntrega = await _enderecoEntregaPedidoService.GetByPedidoIdAsync(pedidoId);
         var configuracao = await _configuracaoParceiroRepository.GetParceiroAutenticadoAdmAsync();
-
-        var payment_id = Guid.NewGuid();
 
         var mercadoPagoRequest = new MercadoPagoRequest()
         {
             Description = $"Pedido {pedido.Numero}",
-            Transaction_amount = pedido.ValorTotal + enderecoEntrega?.ValorFrete ?? 0,
-            External_reference = payment_id.ToString(),
+            Transaction_amount = pedido.ValorTotal + (enderecoEntrega?.ValorFrete ?? 0),
+            External_reference = pedido.Id.ToString(),
             Notification_url = $"https://api.open-adm.tech/api/v1/pagamento/pagamento/notificar?cliente={configuracao?.ClienteMercadoPago ?? ""}",
             Payer = new()
             {
@@ -60,7 +59,8 @@ public sealed class PagamentoPix : IPagamentoService
 
         var result = await _mercadoPagoHttpService.PostAsync(
             mercadoPagoRequest,
-            configuracaoPagamento.AccessToken);
+            configuracaoPagamento.AccessToken,
+            pedido.Id.ToString());
 
         return new PagamentoViewModel()
         {

@@ -15,12 +15,12 @@ public sealed class MercadoPagoHttpService : IMercadoPagoHttpService
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<MercadoPagoResponse> PostAsync(MercadoPagoRequest mercadoPagoRequest, string accessToken)
+    public async Task<MercadoPagoResponse> PostAsync(MercadoPagoRequest mercadoPagoRequest, string accessToken, string idempotencyKey)
     {
         var httpClient = _httpClientFactory.CreateClient("MercadoPago");
 
         httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        httpClient.DefaultRequestHeaders.Add("X-Idempotency-Key", mercadoPagoRequest.External_reference.ToString());
+        httpClient.DefaultRequestHeaders.Add("X-Idempotency-Key", idempotencyKey);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         var response = await httpClient.PostAsync("payments", JsonSerializerOptionsApi.ToJson(mercadoPagoRequest));
 

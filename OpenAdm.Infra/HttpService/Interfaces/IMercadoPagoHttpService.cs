@@ -1,8 +1,9 @@
-﻿using OpenAdm.Infra.Model;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Infra.HttpService.Interfaces;
 
 public interface IMercadoPagoHttpService
 {
-    Task<MercadoPagoResponse> PostAsync(MercadoPagoRequest mercadoPagoRequest, string accessToken);
+    Task<MercadoPagoResponse> PostAsync(MercadoPagoRequest mercadoPagoRequest, string accessToken, string idempotencyKey);
 }

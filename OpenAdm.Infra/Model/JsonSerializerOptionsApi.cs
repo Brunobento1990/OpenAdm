@@ -20,6 +20,11 @@ public static class JsonSerializerOptionsApi
 
     public static StringContent ToJson<T>(T body)
     {
-        return new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json");
+        var json = JsonSerializer.Serialize(body, new JsonSerializerOptions()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        });
+        return new StringContent(json, Encoding.UTF8, "application/json");
     }
 }
