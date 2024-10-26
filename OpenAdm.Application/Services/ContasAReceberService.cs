@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.ContasAReceberDto;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
@@ -10,10 +11,17 @@ namespace OpenAdm.Application.Services;
 public sealed class ContasAReceberService : IContasAReceberService
 {
     private readonly IContasAReceberRepository _contasAReceberRepository;
+    private readonly IPagamentoFactory _pagamentoFactory;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
-    public ContasAReceberService(IContasAReceberRepository contasAReceberRepository)
+    public ContasAReceberService(
+        IContasAReceberRepository contasAReceberRepository,
+        IPagamentoFactory pagamentoFactory,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _contasAReceberRepository = contasAReceberRepository;
+        _pagamentoFactory = pagamentoFactory;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     public async Task CriarContasAReceberAsync(CriarContasAReceberDto contasAReceberDto)
@@ -26,9 +34,38 @@ public sealed class ContasAReceberService : IContasAReceberService
             primeiroVencimento: contasAReceberDto.DataDoPrimeiroVencimento,
             meioDePagamento: contasAReceberDto.MeioDePagamento,
             desconto: contasAReceberDto.Desconto,
-            observacao: contasAReceberDto.Observacao);
+            observacao: contasAReceberDto.Observacao,
+            idExterno: null);
 
         await _contasAReceberRepository.AddAsync(contasAReceber);
+    }
+
+    public async Task<PagamentoViewModel> GerarPagamentoAsync(MeioDePagamentoEnum meioDePagamento, Guid pedidoId)
+    {
+        var resultPagamento = await _pagamentoFactory
+            .GetPagamento(meioDePagamento)
+            .GerarPagamentoAsync(pedidoId);
+
+        var contasAReceber = ContasAReceber
+            .NovaContasAReceber(
+            usuarioId: _usuarioAutenticado.Id,
+            pedidoId: pedidoId,
+            total: resultPagamento.Total,
+            quantidadeDeParcelas: resultPagamento.QuantidadeDeParcelas,
+            primeiroVencimento: resultPagamento.PrimeiroVencimento,
+            meioDePagamento: meioDePagamento,
+            desconto: null,
+            observacao: null,
+            idExterno: resultPagamento.MercadoPagoId);
+
+        await _contasAReceberRepository.AddAsync(contasAReceber);
+
+        return new()
+        {
+            LinkPagamento = resultPagamento.LinkPagamento,
+            QrCodePix = resultPagamento.QrCodePix,
+            QrCodePixBase64 = resultPagamento.QrCodePixBase64
+        };
     }
 
     public async Task VerificarFechamentoAsync(Guid id)
@@ -36,7 +73,7 @@ public sealed class ContasAReceberService : IContasAReceberService
         var contasAReceber = await _contasAReceberRepository.GetByIdAsync(id)
             ?? throw new ExceptionApi("Não foi possível localizar a contas a pagar");
 
-        if(contasAReceber
+        if (contasAReceber
             .Faturas
             .Where(x => x.Status == StatusFaturaContasAReceberEnum.Pago).Count() == contasAReceber.Faturas.Count)
         {
@@ -46,7 +83,7 @@ public sealed class ContasAReceberService : IContasAReceberService
             return;
         }
 
-        if(contasAReceber
+        if (contasAReceber
             .Faturas
             .Where(x => x.Status == StatusFaturaContasAReceberEnum.Pago).Count() > 1)
         {

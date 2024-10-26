@@ -25,6 +25,8 @@ var iv = VariaveisDeAmbiente.GetVariavel("CRYP_IV");
 var pgString = VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION");
 var redisString = VariaveisDeAmbiente.GetVariavel("REDIS_URL");
 var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
+var urlApiCep = VariaveisDeAmbiente.GetVariavel("URL_API_CEP");
+var urlApiMercadoPago = VariaveisDeAmbiente.GetVariavel("URL_API_MERCADO_PAGO");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
 var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
@@ -44,7 +46,7 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString);
-builder.Services.InjectHttpClient(urlDiscord);
+builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago);
 
 QuestPDF.Settings.License = LicenseType.Community;
 

@@ -70,17 +70,17 @@ public class TamanhoCached : ITamanhoRepository
     {
         var tamanhos = await _cachedService.GetListItemAsync(_keyList);
 
-        if(tamanhos == null)
+        if (tamanhos == null)
         {
             tamanhos = await _tamanhoRepository.GetTamanhosAsync();
 
-            if(tamanhos != null)
+            if (tamanhos != null)
             {
                 await _cachedService.SetListItemAsync(_keyList, tamanhos);
             }
         }
 
-        return tamanhos ?? new List<Tamanho>(); 
+        return tamanhos ?? new List<Tamanho>();
     }
 
     public async Task<IDictionary<Guid, string>> GetDescricaoTamanhosAsync(IList<Guid> ids)
@@ -90,4 +90,7 @@ public class TamanhoCached : ITamanhoRepository
 
     public Task<PaginacaoViewModel<Tamanho>> PaginacaoAsync(FilterModel<Tamanho> filterModel)
         => _tamanhoRepository.PaginacaoAsync(filterModel);
+
+    public Task<IDictionary<Guid, Tamanho>> GetDictionaryTamanhosAsync(IList<Guid> ids)
+        => _tamanhoRepository.GetDictionaryTamanhosAsync(ids);
 }

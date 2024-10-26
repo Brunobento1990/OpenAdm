@@ -4,7 +4,6 @@ using OpenAdm.Application.Dtos.ContasAReceberDto;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ContasAReceberModel;
-using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;

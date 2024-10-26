@@ -13,4 +13,5 @@ public interface IPesoService
     Task<PesoViewModel> UpdatePesoAsync(UpdatePesoDto updatePesoDto);
     Task<PaginacaoViewModel<PesoViewModel>> GetPaginacaoAsync(PaginacaoPesoDto paginacaoPesoDto);
     Task<IList<PesoViewModel>> GetPesosViewModelAsync();
+    Task<IDictionary<Guid, PesoViewModel>> GetPesosByPesosIdsViewModelAsync(IList<Guid> pesosIds);
 }

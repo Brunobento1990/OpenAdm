@@ -11,8 +11,8 @@ public class CachedService<T> : ICachedService<T> where T : class
     private readonly IDistributedCache _distributedCache;
     private readonly DistributedCacheEntryOptions _options;
     private readonly JsonSerializerOptions _serializerOptions;
-    private static readonly double _absolutExpiration = 30;
-    private static readonly double _slidingExpiration = 15;
+    private static readonly double _absolutExpiration = 5;
+    private static readonly double _slidingExpiration = 3;
     private readonly string _keyParceiro;
 
     public CachedService(IDistributedCache distributedCache,

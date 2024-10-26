@@ -23,7 +23,7 @@ public sealed class Pedido : BaseEntity
     public StatusPedido StatusPedido { get; private set; }
     public Guid UsuarioId { get; private set; }
     public Usuario Usuario { get; set; } = null!;
-
+    public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
     public decimal ValorTotal { get { return ItensPedido.Sum(x => x.ValorTotal); } }
     public IList<ItemPedido> ItensPedido { get; set; } = [];
 

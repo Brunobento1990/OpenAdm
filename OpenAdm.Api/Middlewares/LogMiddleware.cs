@@ -35,6 +35,10 @@ public class LogMiddleware
         catch (ExceptionApi ex)
         {
             _statusCode = 400;
+            if (ex.EnviarErroDiscord)
+            {
+                await NotificarDiscord(httpContext, ex.Message, discordHttpService);
+            }
             await HandleError(httpContext, ex.Message);
         }
         catch (Exception ex)

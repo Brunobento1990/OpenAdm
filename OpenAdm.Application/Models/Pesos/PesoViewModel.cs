@@ -6,6 +6,7 @@ namespace OpenAdm.Application.Models.Pesos;
 public class PesoViewModel : BaseModel
 {
     public string Descricao { get; set; } = string.Empty;
+    public decimal? PesoReal { get; set; }
     public PrecoProdutoViewModel? PrecoProdutoView { get; set; }
     public PesoViewModel ToModel(Peso entity)
     {
@@ -14,6 +15,7 @@ public class PesoViewModel : BaseModel
         DataDeCriacao = entity.DataDeCriacao;
         DataDeAtualizacao = entity.DataDeAtualizacao;
         Numero = entity.Numero;
+        PesoReal = entity.PesoReal;
         return this;
     }
 }

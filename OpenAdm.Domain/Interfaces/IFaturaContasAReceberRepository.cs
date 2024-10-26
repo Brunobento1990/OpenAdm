@@ -8,5 +8,6 @@ public interface IFaturaContasAReceberRepository : IGenericRepository<FaturaCont
     Task<decimal> SumAReceberAsync();
     Task<IDictionary<int, decimal>> SumMesesAsync();
     Task<FaturaContasAReceber?> GetByIdAsync(Guid id);
+    Task<FaturaContasAReceber?> GetByIdExternoAsync(string idExterno);
     Task<IList<FaturaContasAReceber>> GetByPedidoIdAsync(Guid pedidoId, StatusFaturaContasAReceberEnum? statusFaturaContasAReceberEnum);
 }

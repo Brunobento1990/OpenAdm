@@ -52,7 +52,8 @@ public sealed class ContasAReceber : BaseEntity
         DateTime primeiroVencimento,
         MeioDePagamentoEnum? meioDePagamento,
         decimal? desconto,
-        string? observacao)
+        string? observacao,
+        string? idExterno)
     {
         var contasAReceber = new ContasAReceber(
             id: Guid.NewGuid(),
@@ -76,7 +77,8 @@ public sealed class ContasAReceber : BaseEntity
                 valor: valorDaParcela,
                 desconto: desconto,
                 observacao: observacao,
-                contasAReceberId: contasAReceber.Id));
+                contasAReceberId: contasAReceber.Id,
+                idExterno: idExterno));
         }
 
         var totalValidacao = contasAReceber.Faturas.Sum(x => x.Valor);

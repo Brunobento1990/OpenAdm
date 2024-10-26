@@ -5,6 +5,7 @@ namespace OpenAdm.Application.Models.Tamanhos;
 
 public class TamanhoViewModel : BaseModel
 {
+    public decimal? PesoReal { get; set; }
     public string Descricao { get; set; } = string.Empty;
     public PrecoProdutoViewModel? PrecoProdutoView { get; set; }
     public TamanhoViewModel ToModel(Tamanho entity)
@@ -14,6 +15,7 @@ public class TamanhoViewModel : BaseModel
         DataDeAtualizacao = entity.DataDeAtualizacao;
         Numero = entity.Numero;
         Descricao = entity.Descricao;
+        PesoReal = entity.PesoReal;
 
         return this;
     }

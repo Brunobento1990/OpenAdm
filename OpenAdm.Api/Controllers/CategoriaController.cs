@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Categorias;
 using OpenAdm.Application.Interfaces;

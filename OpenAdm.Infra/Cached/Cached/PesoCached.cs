@@ -70,11 +70,11 @@ public class PesoCached : IPesoRepository
     {
         var pesos = await _cachedService.GetListItemAsync(_keyList);
 
-        if(pesos == null)
+        if (pesos == null)
         {
             pesos = await _pesoRepository.GetPesosAsync();
 
-            if(pesos != null)
+            if (pesos != null)
             {
                 await _cachedService.SetListItemAsync(_keyList, pesos);
             }
@@ -90,4 +90,7 @@ public class PesoCached : IPesoRepository
 
     public Task<PaginacaoViewModel<Peso>> PaginacaoAsync(FilterModel<Peso> filterModel)
         => _pesoRepository.PaginacaoAsync(filterModel);
+
+    public Task<IDictionary<Guid, Peso>> GetDictionaryPesosByIdsAsync(IList<Guid> ids)
+        => _pesoRepository.GetDictionaryPesosByIdsAsync(ids);
 }

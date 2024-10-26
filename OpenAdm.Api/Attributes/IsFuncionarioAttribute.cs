@@ -28,7 +28,7 @@ public class IsFuncionarioAttribute : Attribute, IAsyncActionFilter
         context.Result = new ContentResult()
         {
             StatusCode = StatusCodeUnauthorize,
-            Content = JsonSerializer.Serialize(new { message, statusCode = StatusCodeUnauthorize })
+            Content = JsonSerializer.Serialize(new { mensagem = message, statusCode = StatusCodeUnauthorize })
         };
     }
 }

@@ -159,14 +159,14 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 produto.Tamanhos = tamanhos
                     .Where(x => x.ProdutoId == produto.Id)
                     .Select(tm =>
-                        new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao)
+                        new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal)
                      )
                     .ToList();
 
                 produto.Pesos = pesos
                     .Where(x => x.ProdutoId == produto.Id)
                     .Select(tm =>
-                        new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao)
+                        new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao, tm.Peso.PesoReal)
                      )
                     .ToList();
             });
@@ -249,14 +249,14 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             produto.Tamanhos = tamanhos
                 .Where(x => x.ProdutoId == produto.Id)
                 .Select(tm =>
-                    new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao)
+                    new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal)
                  )
                 .ToList();
 
             produto.Pesos = pesos
                 .Where(x => x.ProdutoId == produto.Id)
                 .Select(tm =>
-                    new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao)
+                    new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao, tm.Peso.PesoReal)
                  )
                 .ToList();
         }

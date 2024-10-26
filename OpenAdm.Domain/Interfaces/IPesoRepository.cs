@@ -10,4 +10,5 @@ public interface IPesoRepository : IGenericRepository<Peso>
     Task<PaginacaoViewModel<Peso>> GetPaginacaoPesoAsync(FilterModel<Peso> filterModel);
     Task<Peso?> GetPesoByIdAsync(Guid id);
     Task<IDictionary<Guid, string>> GetDescricaoPesosAsync(IList<Guid> ids);
+    Task<IDictionary<Guid, Peso>> GetDictionaryPesosByIdsAsync(IList<Guid> ids);
 }

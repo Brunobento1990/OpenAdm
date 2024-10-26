@@ -148,6 +148,97 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("ConfiguracoesDeEmail");
                 });
 
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracaoDeFrete", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AlturaEmbalagem")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("CepOrigem")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("character varying(9)");
+
+                    b.Property<string>("ChaveApi")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool?>("CobrarCnpj")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("CobrarCpf")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ComprimentoEmbalagem")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool?>("Inativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LarguraEmbalagem")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("Peso")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracoesDeFrete");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracaoDePagamento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AccessToken")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<bool>("CobrarCnpj")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CobrarCpf")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("DataDeAtualizacao")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
+
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracoesDePagamento");
+                });
+
             modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracoesDePedido", b =>
                 {
                     b.Property<Guid>("Id")
@@ -237,6 +328,67 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.ToTable("ContasAReceber");
                 });
 
+            modelBuilder.Entity("OpenAdm.Domain.Entities.EnderecoEntregaPedido", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bairro")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Cep")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Complemento")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Localidade")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Logradouro")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<Guid>("PedidoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TipoFrete")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Uf")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<decimal>("ValorFrete")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PedidoId")
+                        .IsUnique();
+
+                    b.ToTable("EnderecosEntregaPedido");
+                });
+
             modelBuilder.Entity("OpenAdm.Domain.Entities.Estoque", b =>
                 {
                     b.Property<Guid>("Id")
@@ -307,6 +459,9 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Property<decimal?>("Desconto")
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)");
+
+                    b.Property<string>("IdExterno")
+                        .HasColumnType("text");
 
                     b.Property<int?>("MeioDePagamento")
                         .HasColumnType("integer");
@@ -666,6 +821,9 @@ namespace OpenAdm.Infra.Migrations.Parceiro
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
 
+                    b.Property<decimal?>("PesoReal")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Descricao");
@@ -851,6 +1009,9 @@ namespace OpenAdm.Infra.Migrations.Parceiro
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
 
+                    b.Property<decimal?>("PesoReal")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Descricao");
@@ -985,6 +1146,17 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("Pedido");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.EnderecoEntregaPedido", b =>
+                {
+                    b.HasOne("OpenAdm.Domain.Entities.Pedido", "Pedido")
+                        .WithOne("EnderecoEntrega")
+                        .HasForeignKey("OpenAdm.Domain.Entities.EnderecoEntregaPedido", "PedidoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pedido");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.FaturaContasAReceber", b =>
@@ -1122,6 +1294,8 @@ namespace OpenAdm.Infra.Migrations.Parceiro
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.Pedido", b =>
                 {
+                    b.Navigation("EnderecoEntrega");
+
                     b.Navigation("ItensPedido");
                 });
 
