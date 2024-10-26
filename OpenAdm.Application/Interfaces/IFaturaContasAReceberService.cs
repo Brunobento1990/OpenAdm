@@ -8,6 +8,7 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IFaturaContasAReceberService
 {
+    Task BaixarFaturaWebHookAsync(NotificationFaturaWebHook notificationFaturaWebHook);
     Task<decimal> GetSumAReceberAsync();
     Task<IList<FaturaPagaDashBoardModel>> FaturasDashBoardAsync();
     Task<FaturaContasAReceberViewModel> PagarAsync(PagarFaturaAReceberDto pagarFaturaAReceberDto);

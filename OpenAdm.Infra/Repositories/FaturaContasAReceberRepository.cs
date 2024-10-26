@@ -20,6 +20,15 @@ public sealed class FaturaContasAReceberRepository : GenericRepository<FaturaCon
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<FaturaContasAReceber?> GetByIdExternoAsync(string idExterno)
+    {
+        return await _parceiroContext
+            .FaturasContasAReceber
+            .AsNoTracking()
+            .Include(x => x.ContasAReceber)
+            .FirstOrDefaultAsync(x => x.IdExterno == idExterno);
+    }
+
     public async Task<IList<FaturaContasAReceber>> GetByPedidoIdAsync(Guid pedidoId, StatusFaturaContasAReceberEnum? statusFaturaContasAReceberEnum)
     {
         var query = _parceiroContext

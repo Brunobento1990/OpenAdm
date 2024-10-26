@@ -17,6 +17,15 @@ public class ConfiguracaoParceiroRepository
         _parceiroAutenticado = parceiroAutenticado;
     }
 
+    public async Task<ConfiguracaoParceiro?> GetParceiroAdmByMercadoPagoAsync(string cliente)
+    {
+        return await _context
+            .ConfiguracoesParceiro
+            .Include(x => x.Parceiro)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ClienteMercadoPago == cliente);
+    }
+
     public async Task<ConfiguracaoParceiro?> GetParceiroAutenticadoAdmAsync()
     {
         var keyParceiro = Guid.Parse(_parceiroAutenticado.KeyParceiro);

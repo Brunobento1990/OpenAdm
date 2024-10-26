@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Application.Dtos.ContasAReceberDto;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.ContasAReceberModel;
-using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Extensions;
@@ -15,12 +15,38 @@ public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
 {
     private readonly IFaturaContasAReceberRepository _faturaContasAReceberRepository;
     private readonly IContasAReceberService _contasAReceberService;
+    private readonly IUpdateStatusPedidoService _pedidoService;
     public FaturaContasAReceberService(
         IFaturaContasAReceberRepository faturaContasAReceberRepository,
-        IContasAReceberService contasAReceberService)
+        IContasAReceberService contasAReceberService,
+        IUpdateStatusPedidoService pedidoService)
     {
         _faturaContasAReceberRepository = faturaContasAReceberRepository;
         _contasAReceberService = contasAReceberService;
+        _pedidoService = pedidoService;
+    }
+
+    public async Task BaixarFaturaWebHookAsync(NotificationFaturaWebHook notificationFaturaWebHook)
+    {
+        var fatura = await _faturaContasAReceberRepository.GetByIdExternoAsync(notificationFaturaWebHook.Data.Id);
+        if (fatura == null || fatura.Status == StatusFaturaContasAReceberEnum.Pago)
+        {
+            return;
+        }
+
+        fatura.PagarWebHook();
+        await _faturaContasAReceberRepository.UpdateAsync(fatura);
+
+        if (fatura.ContasAReceber != null && fatura.ContasAReceber.PedidoId.HasValue)
+        {
+            await _pedidoService.UpdateStatusPedidoAsync(new()
+            {
+                PedidoId = fatura.ContasAReceber.PedidoId.Value,
+                StatusPedido = StatusPedido.Faturado
+            });
+        }
+
+        await _contasAReceberService.VerificarFechamentoAsync(fatura.ContasAReceberId);
     }
 
     public async Task<FaturaContasAReceberViewModel> EditAsync(FaturaAReceberEdit faturaAReceberEdit)

@@ -73,6 +73,12 @@ public sealed class FaturaContasAReceber : BaseEntity
         Valor += diferenca;
     }
 
+    public void PagarWebHook()
+    {
+        Status = StatusFaturaContasAReceberEnum.Pago;
+        DataDePagamento = DateTime.Now;
+    }
+
     public void Pagar(
         decimal? desconto,
         MeioDePagamentoEnum? meioDePagamento,

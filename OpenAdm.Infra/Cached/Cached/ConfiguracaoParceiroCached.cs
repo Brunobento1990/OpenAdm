@@ -18,6 +18,9 @@ public sealed class ConfiguracaoParceiroCached : IConfiguracaoParceiroRepository
         _cachedService = cachedService;
     }
 
+    public Task<ConfiguracaoParceiro?> GetParceiroAdmByMercadoPagoAsync(string cliente)
+        => _configuracaoParceiroRepository.GetParceiroAdmByMercadoPagoAsync(cliente);
+
     public Task<ConfiguracaoParceiro?> GetParceiroAutenticadoAdmAsync()
         => _configuracaoParceiroRepository.GetParceiroAutenticadoAdmAsync();
 
