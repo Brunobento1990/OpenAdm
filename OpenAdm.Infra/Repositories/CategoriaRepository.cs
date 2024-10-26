@@ -1,9 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
-using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -51,22 +49,5 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
         }
 
         return categorias;
-    }
-
-    public async Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(FilterModel<Categoria> filterModel)
-    {
-        var (total, values) = await _parceiroContext
-                .Categorias
-                .AsNoTracking()
-                .AsQueryable()
-                .OrderByDescending(x => EF.Property<Categoria>(x, filterModel.OrderBy))
-                .WhereIsNotNull(filterModel.GetWhereBySearch())
-                .CustomFilterAsync(filterModel);
-
-        return new()
-        {
-            TotalPage = total,
-            Values = values
-        };
     }
 }

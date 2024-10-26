@@ -7,5 +7,4 @@ public interface ICategoriaRepository : IGenericRepository<Categoria>
 {
     Task<IList<Categoria>> GetCategoriasAsync();
     Task<Categoria?> GetCategoriaAsync(Guid id);
-    Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(FilterModel<Categoria> filterModel);
 }

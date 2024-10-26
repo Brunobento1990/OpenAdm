@@ -31,10 +31,10 @@ public class CategoriaController(ICategoriaService categoriaService)
         return Ok(categoriaVieqModel);
     }
 
-    [HttpGet("paginacao")]
+    [HttpPost("paginacao")]
     [IsFuncionario]
     [Autentica]
-    public async Task<IActionResult> PaginacaoCategoria([FromQuery] PaginacaoCategoriaDto paginacaoCategoriaDto)
+    public async Task<IActionResult> PaginacaoCategoria(PaginacaoCategoriaDto paginacaoCategoriaDto)
     {
         var paginacao = await _categoriaService.GetPaginacaoAsync(paginacaoCategoriaDto);
         return Ok(paginacao);

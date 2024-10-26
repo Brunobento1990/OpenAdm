@@ -32,13 +32,13 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
     public DbSet<LojaParceira> LojasParceiras { get; set; }
     public DbSet<TopUsuario> TopUsuarios { get; set; }
-    public DbSet<ContasAReceber> ContasAReceber { get; set; }
-    public DbSet<FaturaContasAReceber> FaturasContasAReceber { get; set; }
+    public DbSet<Fatura> Faturas { get; set; }
+    public DbSet<Parcela> Parcelas { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_parceiroAutenticado.StringConnection);
-        // optionsBuilder.UseNpgsql("");
+        //optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=localhost; Port=4449; Database=open-adm-cliente; Pooling=true;");
         base.OnConfiguring(optionsBuilder);
     }
 
@@ -47,8 +47,8 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
-        modelBuilder.ApplyConfiguration(new FaturaContasAReceberConfiguration());
-        modelBuilder.ApplyConfiguration(new ContasAReceberConfiguration());
+        modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
+        modelBuilder.ApplyConfiguration(new FaturaConfiguration());
         modelBuilder.ApplyConfiguration(new BannerConfiguration());
         modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
         modelBuilder.ApplyConfiguration(new PesoConfiguration());

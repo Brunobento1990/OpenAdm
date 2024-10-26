@@ -1,12 +1,12 @@
-﻿using OpenAdm.Application.Dtos.ContasAReceberDto;
+﻿using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Interfaces;
 
-public interface IContasAReceberService
+public interface IFaturaService
 {
-    Task CriarContasAReceberAsync(CriarContasAReceberDto contasAReceberDto);
+    Task CriarContasAReceberAsync(CriarFaturaDto contasAReceberDto);
     Task VerificarFechamentoAsync(Guid id);
     Task<PagamentoViewModel> GerarPagamentoAsync(MeioDePagamentoEnum meioDePagamento, Guid pedidoId);
 }

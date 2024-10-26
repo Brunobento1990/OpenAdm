@@ -90,12 +90,13 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 
     public async Task<PaginacaoViewModel<BannerViewModel>> GetPaginacaoAsync(PaginacaoBannerDto paginacaoBannerDto)
     {
-        var paginacao = await _bannerRepository.GetPaginacaoBannerAsync(paginacaoBannerDto);
+        var paginacao = await _bannerRepository.PaginacaoAsync(paginacaoBannerDto);
 
         return new()
         {
-            TotalPage = paginacao.TotalPage,
-            Values = paginacao.Values.Select(x => new BannerViewModel().ToModel(x)).ToList()
+            TotalPaginas = paginacao.TotalPaginas,
+            Values = paginacao.Values.Select(x => new BannerViewModel().ToModel(x)).ToList(),
+            TotalDeRegistros = paginacao.TotalDeRegistros
         };
     }
 }

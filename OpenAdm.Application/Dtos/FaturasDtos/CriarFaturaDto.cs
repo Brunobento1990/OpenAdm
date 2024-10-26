@@ -1,8 +1,8 @@
 ﻿using OpenAdm.Domain.Enuns;
 
-namespace OpenAdm.Application.Dtos.ContasAReceberDto;
+namespace OpenAdm.Application.Dtos.FaturasDtos;
 
-public class CriarContasAReceberDto
+public class CriarFaturaDto
 {
     public Guid UsuarioId { get; set; }
     public Guid? PedidoId { get; set; }
@@ -12,4 +12,5 @@ public class CriarContasAReceberDto
     public DateTime DataDoPrimeiroVencimento { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public string? Observacao { get; set; }
+    public TipoFaturaEnum Tipo { get; set; }
 }

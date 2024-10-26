@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
-using OpenAdm.Application.Dtos.ContasAReceberDto;
+using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pagamentos;
@@ -13,11 +13,11 @@ namespace OpenAdm.Api.Controllers;
 
 public class PagamentoController : ControllerBase
 {
-    private readonly IContasAReceberService _contasAReceberService;
-    private readonly IFaturaContasAReceberService _faturaContasAReceberService;
+    private readonly IFaturaService _contasAReceberService;
+    private readonly IParcelaService _faturaContasAReceberService;
     public PagamentoController(
-        IContasAReceberService contasAReceberService,
-        IFaturaContasAReceberService faturaContasAReceberService)
+        IFaturaService contasAReceberService,
+        IParcelaService faturaContasAReceberService)
     {
         _contasAReceberService = contasAReceberService;
         _faturaContasAReceberService = faturaContasAReceberService;

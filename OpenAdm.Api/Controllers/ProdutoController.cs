@@ -41,10 +41,10 @@ public class ProdutoController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("paginacao")]
+    [HttpPost("paginacao")]
     [Autentica]
     [IsFuncionario]
-    public async Task<IActionResult> ProdutoPaginacao([FromQuery] PaginacaoProdutoDto paginacaoProdutoDto)
+    public async Task<IActionResult> ProdutoPaginacao(PaginacaoProdutoDto paginacaoProdutoDto)
     {
         var paginacao = await _produtoService.GetPaginacaoAsync(paginacaoProdutoDto);
         return Ok(paginacao);

@@ -11,7 +11,6 @@ public interface IProdutoRepository : IGenericRepository<Produto>
     Task<IList<Produto>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
     Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids);
     Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto);
-    Task<PaginacaoViewModel<Produto>> GetPaginacaoProdutoAsync(FilterModel<Produto> filterModel);
     Task<Produto?> GetProdutoByIdAsync(Guid id);
     Task<IDictionary<Guid, string>> GetDescricaoDeProdutosAsync(IList<Guid> ids);
     Task<IDictionary<Guid, Produto>> GetDictionaryProdutosAsync(IList<Guid> ids);

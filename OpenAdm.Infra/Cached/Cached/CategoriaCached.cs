@@ -50,10 +50,8 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
         return await _categoriaRepository.DeleteAsync(entity);
     }
 
-    public async Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(FilterModel<Categoria> filterModel)
-    {
-        return await _categoriaRepository.GetPaginacaoCategoriaAsync(filterModel);
-    }
+    public Task<PaginacaoViewModel<Categoria>> GetPaginacaoCategoriaAsync(FilterModel<Categoria> filterModel)
+        => _categoriaRepository.PaginacaoAsync(filterModel);
 
     public async Task<Categoria?> GetCategoriaAsync(Guid id)
     {

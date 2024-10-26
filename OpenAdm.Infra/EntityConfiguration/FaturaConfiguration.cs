@@ -4,9 +4,9 @@ using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-internal class ContasAReceberConfiguration : IEntityTypeConfiguration<ContasAReceber>
+internal class FaturaConfiguration : IEntityTypeConfiguration<Fatura>
 {
-    public void Configure(EntityTypeBuilder<ContasAReceber> builder)
+    public void Configure(EntityTypeBuilder<Fatura> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)
@@ -19,10 +19,11 @@ internal class ContasAReceberConfiguration : IEntityTypeConfiguration<ContasARec
             .HasDefaultValueSql("now()");
         builder.Property(x => x.Numero)
             .ValueGeneratedOnAdd();
+        builder.HasIndex(x => x.Tipo);
         builder.Ignore(x => x.Total);
-        builder.HasMany(x => x.Faturas)
-            .WithOne(x => x.ContasAReceber)
-            .HasForeignKey(x => x.ContasAReceberId)
+        builder.HasMany(x => x.Parcelas)
+            .WithOne(x => x.Fatura)
+            .HasForeignKey(x => x.FaturaId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

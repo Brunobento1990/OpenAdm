@@ -9,12 +9,12 @@ public class HomeSevice : IHomeSevice
 {
     private readonly ITopUsuariosRepository _topUsuariosRepository;
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
-    private readonly IFaturaContasAReceberService _faturaContasAReceberService;
+    private readonly IParcelaService _faturaContasAReceberService;
     private readonly IPedidoRepository _pedidoRepository;
     public HomeSevice(
         ITopUsuariosRepository topUsuariosRepository,
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
-        IFaturaContasAReceberService faturaContasAReceberService,
+        IParcelaService faturaContasAReceberService,
         IPedidoRepository pedidoRepository)
     {
         _topUsuariosRepository = topUsuariosRepository;

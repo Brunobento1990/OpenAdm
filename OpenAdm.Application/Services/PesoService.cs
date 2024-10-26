@@ -34,11 +34,12 @@ public class PesoService : IPesoService
 
     public async Task<PaginacaoViewModel<PesoViewModel>> GetPaginacaoAsync(PaginacaoPesoDto paginacaoPesoDto)
     {
-        var paginacao = await _pesoRepository.GetPaginacaoPesoAsync(paginacaoPesoDto);
+        var paginacao = await _pesoRepository.PaginacaoAsync(paginacaoPesoDto);
 
         return new PaginacaoViewModel<PesoViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = paginacao.Values.Select(x => new PesoViewModel().ToModel(x)).ToList()
         };
     }

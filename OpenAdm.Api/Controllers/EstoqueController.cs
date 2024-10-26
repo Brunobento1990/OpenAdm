@@ -47,8 +47,8 @@ public class EstoqueController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoEstoqueDto paginacaoEstoqueDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoEstoqueDto paginacaoEstoqueDto)
     {
         var paginacao = await _estoqueservice.GetPaginacaoAsync(paginacaoEstoqueDto);
         return Ok(paginacao);

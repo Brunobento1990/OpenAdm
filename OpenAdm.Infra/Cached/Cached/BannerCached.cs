@@ -65,10 +65,8 @@ public class BannerCached : IBannerRepository
         return banners;
     }
 
-    public async Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(FilterModel<Banner> filterModel)
-    {
-        return await _bannerRepository.GetPaginacaoBannerAsync(filterModel);
-    }
+    public Task<PaginacaoViewModel<Banner>> GetPaginacaoBannerAsync(FilterModel<Banner> filterModel)
+        => _bannerRepository.PaginacaoAsync(filterModel);
 
     public async Task<Banner> UpdateAsync(Banner entity)
     {

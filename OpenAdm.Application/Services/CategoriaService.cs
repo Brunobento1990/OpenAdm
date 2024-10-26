@@ -71,12 +71,13 @@ public class CategoriaService : ICategoriaService
 
     public async Task<PaginacaoViewModel<CategoriaViewModel>> GetPaginacaoAsync(PaginacaoCategoriaDto paginacaoCategoriaDto)
     {
-        var paginacao = await _categoriaRepository.GetPaginacaoCategoriaAsync(paginacaoCategoriaDto);
+        var paginacao = await _categoriaRepository.PaginacaoAsync(paginacaoCategoriaDto);
 
         return new PaginacaoViewModel<CategoriaViewModel>
         {
-            TotalPage = paginacao.TotalPage,
-            Values = paginacao.Values.Select(x => new CategoriaViewModel().ToModel(x)).ToList()
+            TotalPaginas = paginacao.TotalPaginas,
+            Values = paginacao.Values.Select(x => new CategoriaViewModel().ToModel(x)).ToList(),
+            TotalDeRegistros = paginacao.TotalDeRegistros
         };
     }
 

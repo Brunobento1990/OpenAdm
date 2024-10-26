@@ -1,9 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
-using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -30,22 +28,5 @@ public class LojasParceirasRepository : GenericRepository<LojaParceira>, ILojasP
             .LojasParceiras
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
-    }
-
-    public async Task<PaginacaoViewModel<LojaParceira>> GetPaginacaoLojasParceirasAsync(FilterModel<LojaParceira> filterModel)
-    {
-        var (total, values) = await _parceiroContext
-                .LojasParceiras
-                .AsNoTracking()
-                .AsQueryable()
-                .OrderByDescending(x => EF.Property<LojaParceira>(x, filterModel.OrderBy))
-                .WhereIsNotNull(filterModel.GetWhereBySearch())
-                .CustomFilterAsync(filterModel);
-
-        return new()
-        {
-            TotalPage = total,
-            Values = values
-        };
     }
 }

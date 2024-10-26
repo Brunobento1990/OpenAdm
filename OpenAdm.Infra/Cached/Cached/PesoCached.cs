@@ -33,7 +33,7 @@ public class PesoCached : IPesoRepository
 
     public async Task<PaginacaoViewModel<Peso>> GetPaginacaoPesoAsync(FilterModel<Peso> filterModel)
     {
-        return await _pesoRepository.GetPaginacaoPesoAsync(filterModel);
+        return await _pesoRepository.PaginacaoAsync(filterModel);
     }
 
     public async Task<IList<Peso>> GetPesosByIdsAsync(IList<Guid> ids)

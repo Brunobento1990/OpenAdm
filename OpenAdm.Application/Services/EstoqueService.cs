@@ -58,7 +58,7 @@ public class EstoqueService : IEstoqueService
 
     public async Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(PaginacaoEstoqueDto paginacaoEstoqueDto)
     {
-        var paginacao = await _estoqueRepository.GetPaginacaoEstoqueAsync(paginacaoEstoqueDto);
+        var paginacao = await _estoqueRepository.PaginacaoAsync(paginacaoEstoqueDto);
         var produtosids = paginacao
             .Values
             .DistinctBy(x => x.ProdutoId)
@@ -84,7 +84,8 @@ public class EstoqueService : IEstoqueService
 
         return new PaginacaoViewModel<EstoqueViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = paginacao
                 .Values
                 .Select(x =>

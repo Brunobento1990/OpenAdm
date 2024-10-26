@@ -4,9 +4,9 @@ using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-internal class FaturaContasAReceberConfiguration : IEntityTypeConfiguration<FaturaContasAReceber>
+internal class ParcelaConfiguration : IEntityTypeConfiguration<Parcela>
 {
-    public void Configure(EntityTypeBuilder<FaturaContasAReceber> builder)
+    public void Configure(EntityTypeBuilder<Parcela> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)

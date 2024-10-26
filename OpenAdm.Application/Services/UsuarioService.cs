@@ -117,11 +117,12 @@ public class UsuarioService : IUsuarioService
 
     public async Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(PaginacaoUsuarioDto paginacaoUsuarioDto)
     {
-        var paginacao = await _usuarioRepository.GetPaginacaoAsync(paginacaoUsuarioDto);
+        var paginacao = await _usuarioRepository.PaginacaoAsync(paginacaoUsuarioDto);
 
         return new PaginacaoViewModel<UsuarioViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = paginacao.Values.Select(x => new UsuarioViewModel().ToModel(x)).ToList()
         };
     }

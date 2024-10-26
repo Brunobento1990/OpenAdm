@@ -1,5 +1,4 @@
-﻿using OpenAdm.Domain.Entities.Bases;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace OpenAdm.Domain.Model;
 

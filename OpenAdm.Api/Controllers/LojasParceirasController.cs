@@ -18,8 +18,8 @@ public class LojasParceirasController : ControllerBase
         _lojasParceirasService = lojasParceirasService;
     }
 
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoLojasParceirasDto paginacaoLojasParceirasDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoLojasParceirasDto paginacaoLojasParceirasDto)
     {
         var paginacao = await _lojasParceirasService.GetPaginacaoAsync(paginacaoLojasParceirasDto);
         return Ok(paginacao);

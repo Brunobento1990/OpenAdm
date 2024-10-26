@@ -28,26 +28,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         }
     }
 
-    public async Task<PaginacaoViewModel<Pedido>> GetPaginacaoPedidoAsync(FilterModel<Pedido> filterModel)
-    {
-        var (total, values) = await _parceiroContext
-                .Pedidos
-                .AsNoTracking()
-                .AsQueryable()
-                .AsSplitQuery()
-                .IgnoreQueryFilters()
-                .OrderByDescending(x => EF.Property<Pedido>(x, filterModel.OrderBy))
-                .Include(x => x.Usuario)
-                .WhereIsNotNull(filterModel.GetWhereBySearch())
-                .CustomFilterAsync(filterModel);
-
-        return new()
-        {
-            TotalPage = total,
-            Values = values
-        };
-    }
-
     public async Task<Pedido?> GetPedidoByIdAsync(Guid id)
     {
         return await _parceiroContext

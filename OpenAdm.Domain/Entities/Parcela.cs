@@ -4,21 +4,21 @@ using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class FaturaContasAReceber : BaseEntity
+public sealed class Parcela : BaseEntity
 {
-    public FaturaContasAReceber(
+    public Parcela(
         Guid id,
         DateTime dataDeCriacao,
         DateTime dataDeAtualizacao,
         long numero,
-        StatusFaturaContasAReceberEnum status,
+        StatusParcelaEnum status,
         DateTime dataDeVencimento,
         int numeroDaFatura,
         MeioDePagamentoEnum? meioDePagamento,
         decimal valor,
         decimal? desconto,
         string? observacao,
-        Guid contasAReceberId,
+        Guid faturaId,
         DateTime? dataDePagamento,
         string? idExterno)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero)
@@ -30,12 +30,12 @@ public sealed class FaturaContasAReceber : BaseEntity
         Valor = valor;
         Desconto = desconto;
         Observacao = observacao;
-        ContasAReceberId = contasAReceberId;
+        FaturaId = faturaId;
         DataDePagamento = dataDePagamento;
         IdExterno = idExterno;
     }
 
-    public StatusFaturaContasAReceberEnum Status { get; private set; }
+    public StatusParcelaEnum Status { get; private set; }
     public DateTime DataDeVencimento { get; private set; }
     public DateTime? DataDePagamento { get; private set; }
     public int NumeroDaFatura { get; private set; }
@@ -44,11 +44,11 @@ public sealed class FaturaContasAReceber : BaseEntity
     public decimal? Desconto { get; private set; }
     public string? Observacao { get; private set; }
     public string? IdExterno { get; private set; }
-    public Guid ContasAReceberId { get; private set; }
-    public ContasAReceber ContasAReceber { get; set; } = null!;
+    public Guid FaturaId { get; private set; }
+    public Fatura Fatura { get; set; } = null!;
 
     public void Edit(
-        StatusFaturaContasAReceberEnum status,
+        StatusParcelaEnum status,
         DateTime dataDeVencimento,
         DateTime? dataDePagamento,
         MeioDePagamentoEnum? meioDePagamento,
@@ -75,7 +75,7 @@ public sealed class FaturaContasAReceber : BaseEntity
 
     public void PagarWebHook()
     {
-        Status = StatusFaturaContasAReceberEnum.Pago;
+        Status = StatusParcelaEnum.Pago;
         DataDePagamento = DateTime.Now;
     }
 
@@ -84,7 +84,7 @@ public sealed class FaturaContasAReceber : BaseEntity
         MeioDePagamentoEnum? meioDePagamento,
         string? observacao)
     {
-        if (Status == StatusFaturaContasAReceberEnum.Pago)
+        if (Status == StatusParcelaEnum.Pago)
         {
             throw new ExceptionApi($"A fatura: {Numero} já se encontra paga!");
         }
@@ -92,34 +92,34 @@ public sealed class FaturaContasAReceber : BaseEntity
         Desconto = desconto;
         Observacao = observacao;
         MeioDePagamento = meioDePagamento;
-        Status = StatusFaturaContasAReceberEnum.Pago;
+        Status = StatusParcelaEnum.Pago;
         DataDePagamento = DateTime.Now;
     }
 
-    public static FaturaContasAReceber NovaFatura(
+    public static Parcela NovaFatura(
         DateTime dataDeVencimento,
         int numeroDaFatura,
         MeioDePagamentoEnum? meioDePagamento,
         decimal valor,
         decimal? desconto,
         string? observacao,
-        Guid contasAReceberId,
+        Guid faturaId,
         string? idExterno
         )
     {
-        return new FaturaContasAReceber(
+        return new Parcela(
             id: Guid.NewGuid(),
             dataDeCriacao: DateTime.Now,
             dataDeAtualizacao: DateTime.Now,
             numero: 0,
-            status: StatusFaturaContasAReceberEnum.Pendente,
+            status: StatusParcelaEnum.Pendente,
             dataDeVencimento: dataDeVencimento,
             numeroDaFatura: numeroDaFatura,
             meioDePagamento: meioDePagamento,
             valor: valor,
             desconto: desconto,
             observacao: observacao,
-            contasAReceberId: contasAReceberId,
+            faturaId: faturaId,
             dataDePagamento: null,
             idExterno: idExterno);
     }

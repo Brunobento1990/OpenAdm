@@ -1,9 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
-using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -33,24 +31,6 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
             .ToDictionaryAsync(
                 g => g.Key,
                 g => g.Sum(x => x.QuantidadeMovimentada));
-    }
-
-    public async Task<PaginacaoViewModel<MovimentacaoDeProduto>>
-        GetPaginacaoMovimentacaoDeProdutoAsync(FilterModel<MovimentacaoDeProduto> filterModel)
-    {
-        var (total, values) = await _parceiroContext
-                .MovimentacoesDeProdutos
-                .AsNoTracking()
-                .AsQueryable()
-                .OrderByDescending(x => EF.Property<MovimentacaoDeProduto>(x, filterModel.OrderBy))
-                .WhereIsNotNull(filterModel.GetWhereBySearch())
-                .CustomFilterAsync(filterModel);
-
-        return new()
-        {
-            TotalPage = total,
-            Values = values
-        };
     }
 
     public async Task<IList<MovimentacaoDeProduto>> RelatorioAsync(

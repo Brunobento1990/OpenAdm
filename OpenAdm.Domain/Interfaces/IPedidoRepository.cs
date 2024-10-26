@@ -1,13 +1,11 @@
 ﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
-using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Domain.Interfaces;
 
 public interface IPedidoRepository : IGenericRepository<Pedido>
 {
-    Task<PaginacaoViewModel<Pedido>> GetPaginacaoPedidoAsync(FilterModel<Pedido> filterModel);
     Task<Pedido?> GetPedidoByIdAsync(Guid id);
     Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id);
     Task<IList<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido);

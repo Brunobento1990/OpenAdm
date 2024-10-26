@@ -63,7 +63,7 @@ public class ProdutoCached : IProdutoRepository
             if (paginacao.Values?.Count > 0)
             {
                 produtos = paginacao.Values;
-                count = paginacao.TotalPage;
+                count = paginacao.TotalPaginas;
                 await _cachedService.SetListItemAsync(key, paginacao.Values);
             }
 
@@ -76,8 +76,8 @@ public class ProdutoCached : IProdutoRepository
 
         return new PaginacaoViewModel<Produto>()
         {
-            TotalPage = count,
-            Values = produtos ?? new List<Produto>()
+            TotalPaginas = count,
+            Values = produtos ?? []
         };
     }
 
@@ -126,7 +126,7 @@ public class ProdutoCached : IProdutoRepository
 
     public async Task<PaginacaoViewModel<Produto>> GetPaginacaoProdutoAsync(FilterModel<Produto> filterModel)
     {
-        return await _produtoRepository.GetPaginacaoProdutoAsync(filterModel);
+        return await _produtoRepository.PaginacaoAsync(filterModel);
     }
 
     public async Task<Produto?> GetProdutoByIdAsync(Guid id)

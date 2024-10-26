@@ -58,16 +58,17 @@ public class LojasParceirasService : ILojasParceirasService
 
     public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(PaginacaoLojasParceirasDto paginacaoLojasParceirasDto)
     {
-        var paginacao = await _lojasParceirasRepository.GetPaginacaoLojasParceirasAsync(paginacaoLojasParceirasDto);
+        var paginacao = await _lojasParceirasRepository.PaginacaoAsync(paginacaoLojasParceirasDto);
 
         return new PaginacaoViewModel<LojasParceirasViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
             Values = paginacao
                 .Values
                 .Select(x =>
                     new LojasParceirasViewModel().ToModel(x))
-                .ToList()
+                .ToList(),
+            TotalPaginas = paginacao.TotalPaginas,
         };
     }
 
@@ -83,7 +84,7 @@ public class LojasParceirasService : ILojasParceirasService
         var foto = lojaParceira.Foto;
         var nomeFoto = lojaParceira.NomeFoto;
 
-        if(!string.IsNullOrWhiteSpace(updateLojaParceiraDto.Foto) && !updateLojaParceiraDto.Foto.StartsWith("https://"))
+        if (!string.IsNullOrWhiteSpace(updateLojaParceiraDto.Foto) && !updateLojaParceiraDto.Foto.StartsWith("https://"))
         {
             if (!string.IsNullOrWhiteSpace(nomeFoto))
             {

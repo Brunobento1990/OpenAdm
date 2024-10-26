@@ -29,8 +29,8 @@ public class PesoController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoPesoDto paginacaoPesoDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoPesoDto paginacaoPesoDto)
     {
         var paginacao = await _pesoService.GetPaginacaoAsync(paginacaoPesoDto);
         return Ok(paginacao);

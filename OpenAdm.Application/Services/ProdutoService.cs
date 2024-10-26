@@ -81,11 +81,12 @@ public class ProdutoService : IProdutoService
 
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto)
     {
-        var paginacao = await _produtoRepository.GetPaginacaoProdutoAsync(paginacaoProdutoDto);
+        var paginacao = await _produtoRepository.PaginacaoAsync(paginacaoProdutoDto);
 
         return new PaginacaoViewModel<ProdutoViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = paginacao.Values.Select(x => new ProdutoViewModel().ToModel(x)).ToList()
         };
     }
@@ -102,14 +103,14 @@ public class ProdutoService : IProdutoService
         {
             var produtoViewModel = new ProdutoViewModel().ToModel(produto);
 
-            if(produtoViewModel.Tamanhos != null)
+            if (produtoViewModel.Tamanhos != null)
             {
                 foreach (var tamanho in produtoViewModel.Tamanhos)
                 {
                     var preco = itensTabelaDePreco.FirstOrDefault(
                         x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
 
-                    if(preco != null)
+                    if (preco != null)
                     {
                         tamanho.PrecoProdutoView = new PrecoProdutoViewModel()
                         {
@@ -122,7 +123,7 @@ public class ProdutoService : IProdutoService
                 }
             }
 
-            if(produtoViewModel.Pesos != null)
+            if (produtoViewModel.Pesos != null)
             {
                 foreach (var peso in produtoViewModel.Pesos)
                 {
@@ -149,7 +150,8 @@ public class ProdutoService : IProdutoService
 
         return new PaginacaoViewModel<ProdutoViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = produtosViewModel
         };
     }

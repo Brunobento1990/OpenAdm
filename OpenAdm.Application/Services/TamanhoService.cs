@@ -34,11 +34,12 @@ public class TamanhoService : ITamanhoService
 
     public async Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(PaginacaoTamanhoDto paginacaoTamanhoDto)
     {
-        var paginacao = await _tamanhoRepository.GetPaginacaoTamanhoAsync(paginacaoTamanhoDto);
+        var paginacao = await _tamanhoRepository.PaginacaoAsync(paginacaoTamanhoDto);
 
         return new PaginacaoViewModel<TamanhoViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = paginacao.Values.Select(x => new TamanhoViewModel().ToModel(x)).ToList()
         };
     }
