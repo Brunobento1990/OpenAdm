@@ -175,7 +175,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         GetPaginacaoAsync(PaginacaoMovimentacaoDeProdutoDto paginacaoMovimentacaoDeProdutoDto)
     {
         var paginacao = await _movimentacaoDeProdutorepository
-            .GetPaginacaoMovimentacaoDeProdutoAsync(paginacaoMovimentacaoDeProdutoDto);
+            .PaginacaoAsync(paginacaoMovimentacaoDeProdutoDto);
 
         var produtosids = paginacao
             .Values
@@ -202,7 +202,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
         return new PaginacaoViewModel<MovimentacaoDeProdutoViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = paginacao
                 .Values
                 .Select(x =>
@@ -211,7 +211,8 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                             produtos.FirstOrDefault(p => p.Key == x.ProdutoId).Value,
                             pesos.FirstOrDefault(p => p.Key == x.PesoId).Value,
                             tamanhos.FirstOrDefault(t => t.Key == x.TamanhoId).Value))
-                .ToList()
+                .ToList(),
+            TotalDeRegistros = paginacao.TotalDeRegistros
         };
     }
 

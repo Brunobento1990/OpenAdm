@@ -19,8 +19,8 @@ public class MovimentacaoDeProdutoController : ControllerBase
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
     }
 
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoMovimentacaoDeProdutoDto paginacaoMovimentacaoDeProdutoDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoMovimentacaoDeProdutoDto paginacaoMovimentacaoDeProdutoDto)
     {
         var paginacao = await _movimentacaoDeProdutosService.GetPaginacaoAsync(paginacaoMovimentacaoDeProdutoDto);
         return Ok(paginacao);

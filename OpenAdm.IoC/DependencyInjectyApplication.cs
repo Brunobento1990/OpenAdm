@@ -18,7 +18,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IConfiguracaoDeFreteService, ConfiguracaoDeFreteService>();
         services.AddScoped<IConfiguracaoDePagamentoService, ConfiguracaoDePagamentoService>();
         services.AddScoped<IFreteService, FreteService>();
-        services.AddScoped<IContasAReceberService, ContasAReceberService>();
+        services.AddScoped<IFaturaService, FaturaService>();
         services.AddScoped<IMovimentacaoDeProdutoRelatorioService, MovimentacaoDeProdutoRelatorioService>();
         services.AddScoped<ITopUsuarioService, TopUsuarioService>();
         services.AddScoped<IEmailApiService, EmailApiService>();
@@ -46,7 +46,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<ILojasParceirasService, LojasParceirasService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IProdutosMaisVendidosService, ProdutosMaisVendidosService>();
-        services.AddScoped<IFaturaContasAReceberService, FaturaContasAReceberService>();
+        services.AddScoped<IParcelaService, ParcelaService>();
         services.AddScoped<IGetCountCarrinhoService, GetCountCarrinhoService>();
         services.AddScoped<IAddCarrinhoService, AddCarrinhoService>();
         services.AddScoped<IGetCarrinhoService, GetCarrinhoService>();

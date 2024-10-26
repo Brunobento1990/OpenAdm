@@ -36,25 +36,10 @@ public sealed class PedidoCached : IPedidoRepository
         => _pedidoRepository.GetCountPedidosEmAbertoAsync();
 
     public Task<PaginacaoViewModel<Pedido>> GetPaginacaoPedidoAsync(FilterModel<Pedido> filterModel)
-        => _pedidoRepository.GetPaginacaoPedidoAsync(filterModel);
+        => _pedidoRepository.PaginacaoAsync(filterModel);
 
-    public async Task<Pedido?> GetPedidoByIdAsync(Guid id)
-    {
-        var key = string.Format(KEY, id);
-        var pedido = await _cachedService.GetItemAsync(key);
-
-        if (pedido == null)
-        {
-            pedido = await _pedidoRepository.GetPedidoByIdAsync(id);
-
-            if (pedido != null)
-            {
-                await _cachedService.SetItemAsync(key, pedido);
-            }
-        }
-
-        return pedido;
-    }
+    public Task<Pedido?> GetPedidoByIdAsync(Guid id)
+        => _pedidoRepository.GetPedidoByIdAsync(id);
 
     public async Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id)
     {

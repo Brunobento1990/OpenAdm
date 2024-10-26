@@ -15,14 +15,14 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IProcessarPedidoService _processarPedidoService;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly ICarrinhoRepository _carrinhoRepository;
-    private readonly IContasAReceberService _contasAReceberService;
+    private readonly IFaturaService _contasAReceberService;
     private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         ICarrinhoRepository carrinhoRepository,
-        IContasAReceberService contasAReceberService,
+        IFaturaService contasAReceberService,
         IConfiguracaoDePagamentoService configuracaoDePagamentoService)
     {
         _pedidoRepository = pedidoRepository;

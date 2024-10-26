@@ -1,4 +1,4 @@
-﻿using OpenAdm.Application.Dtos.ContasAReceberDto;
+﻿using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Entities;
@@ -8,14 +8,14 @@ using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
 
-public sealed class ContasAReceberService : IContasAReceberService
+public sealed class FaturaService : IFaturaService
 {
-    private readonly IContasAReceberRepository _contasAReceberRepository;
+    private readonly IFaturaRepository _contasAReceberRepository;
     private readonly IPagamentoFactory _pagamentoFactory;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
 
-    public ContasAReceberService(
-        IContasAReceberRepository contasAReceberRepository,
+    public FaturaService(
+        IFaturaRepository contasAReceberRepository,
         IPagamentoFactory pagamentoFactory,
         IUsuarioAutenticado usuarioAutenticado)
     {
@@ -24,9 +24,9 @@ public sealed class ContasAReceberService : IContasAReceberService
         _usuarioAutenticado = usuarioAutenticado;
     }
 
-    public async Task CriarContasAReceberAsync(CriarContasAReceberDto contasAReceberDto)
+    public async Task CriarContasAReceberAsync(CriarFaturaDto contasAReceberDto)
     {
-        var contasAReceber = ContasAReceber.NovaContasAReceber(
+        var fatura = Fatura.NovaContasAReceber(
             usuarioId: contasAReceberDto.UsuarioId,
             pedidoId: contasAReceberDto.PedidoId,
             total: contasAReceberDto.Total,
@@ -35,9 +35,10 @@ public sealed class ContasAReceberService : IContasAReceberService
             meioDePagamento: contasAReceberDto.MeioDePagamento,
             desconto: contasAReceberDto.Desconto,
             observacao: contasAReceberDto.Observacao,
-            idExterno: null);
+            idExterno: null,
+            tipo: contasAReceberDto.Tipo);
 
-        await _contasAReceberRepository.AddAsync(contasAReceber);
+        await _contasAReceberRepository.AddAsync(fatura);
     }
 
     public async Task<PagamentoViewModel> GerarPagamentoAsync(MeioDePagamentoEnum meioDePagamento, Guid pedidoId)
@@ -46,7 +47,7 @@ public sealed class ContasAReceberService : IContasAReceberService
             .GetPagamento(meioDePagamento)
             .GerarPagamentoAsync(pedidoId);
 
-        var contasAReceber = ContasAReceber
+        var fatura = Fatura
             .NovaContasAReceber(
             usuarioId: _usuarioAutenticado.Id,
             pedidoId: pedidoId,
@@ -56,9 +57,10 @@ public sealed class ContasAReceberService : IContasAReceberService
             meioDePagamento: meioDePagamento,
             desconto: null,
             observacao: null,
-            idExterno: resultPagamento.MercadoPagoId);
+            idExterno: resultPagamento.MercadoPagoId,
+            tipo: TipoFaturaEnum.A_Receber);
 
-        await _contasAReceberRepository.AddAsync(contasAReceber);
+        await _contasAReceberRepository.AddAsync(fatura);
 
         return new()
         {
@@ -74,21 +76,21 @@ public sealed class ContasAReceberService : IContasAReceberService
             ?? throw new ExceptionApi("Não foi possível localizar a contas a pagar");
 
         if (contasAReceber
-            .Faturas
-            .Where(x => x.Status == StatusFaturaContasAReceberEnum.Pago).Count() == contasAReceber.Faturas.Count)
+            .Parcelas
+            .Where(x => x.Status == StatusParcelaEnum.Pago).Count() == contasAReceber.Parcelas.Count)
         {
             contasAReceber.Fechar();
-            contasAReceber.Faturas = [];
+            contasAReceber.Parcelas = [];
             await _contasAReceberRepository.UpdateAsync(contasAReceber);
             return;
         }
 
         if (contasAReceber
-            .Faturas
-            .Where(x => x.Status == StatusFaturaContasAReceberEnum.Pago).Count() > 1)
+            .Parcelas
+            .Where(x => x.Status == StatusParcelaEnum.Pago).Count() > 1)
         {
             contasAReceber.PagaParcialmente();
-            contasAReceber.Faturas = [];
+            contasAReceber.Parcelas = [];
             await _contasAReceberRepository.UpdateAsync(contasAReceber);
             return;
         }

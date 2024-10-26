@@ -1,9 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
-using OpenAdm.Infra.Extensions.IQueryable;
 using System.Linq.Expressions;
 
 namespace OpenAdm.Infra.Repositories;
@@ -44,22 +42,5 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
             .Estoques
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.ProdutoId == produtoId);
-    }
-
-    public async Task<PaginacaoViewModel<Estoque>> GetPaginacaoEstoqueAsync(FilterModel<Estoque> filterModel)
-    {
-        var (total, values) = await _parceiroContext
-                .Estoques
-                .AsNoTracking()
-                .AsQueryable()
-                .OrderByDescending(x => EF.Property<Estoque>(x, filterModel.OrderBy))
-                .WhereIsNotNull(filterModel.GetWhereBySearch())
-                .CustomFilterAsync(filterModel);
-
-        return new()
-        {
-            TotalPage = total,
-            Values = values
-        };
     }
 }

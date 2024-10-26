@@ -1,6 +1,6 @@
 ﻿namespace OpenAdm.Domain.Enuns;
 
-public enum StatusContasAPagarEnum
+public enum StatusFaturaEnum
 {
     Aberta,
     Paga_Parcialmente,

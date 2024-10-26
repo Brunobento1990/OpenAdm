@@ -21,8 +21,8 @@ public class TabelaDePrecoController : ControllerBase
         _tabelaDePrecoService = tabelaDePrecoService;
     }
 
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoTabelaDePrecoDto paginacaoTabelaDePrecoDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoTabelaDePrecoDto paginacaoTabelaDePrecoDto)
     {
         var paginacao = await _tabelaDePrecoService.GetPaginacaoTabelaViewModelAsync(paginacaoTabelaDePrecoDto);
         return Ok(paginacao);

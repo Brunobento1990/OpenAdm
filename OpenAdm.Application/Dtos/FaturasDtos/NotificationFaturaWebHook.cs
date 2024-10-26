@@ -1,4 +1,4 @@
-﻿namespace OpenAdm.Application.Dtos.ContasAReceberDto;
+﻿namespace OpenAdm.Application.Dtos.FaturasDtos;
 
 public class NotificationFaturaWebHook
 {

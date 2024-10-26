@@ -61,10 +61,13 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         var (TotalPaginas, Values) = await query
             .CustomFilterAsync(filterModel);
 
+        var totalDeRegistros = await _parceiroContext.Set<T>().WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
+
         return new()
         {
-            TotalPage = TotalPaginas,
-            Values = Values
+            TotalPaginas = TotalPaginas,
+            Values = Values,
+            TotalDeRegistros = totalDeRegistros
         };
     }
 

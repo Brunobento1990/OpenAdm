@@ -28,8 +28,8 @@ public class TamanhoController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoTamanhoDto paginacaoTamanhoDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoTamanhoDto paginacaoTamanhoDto)
     {
         var paginacao = await _tamanhoService.GetPaginacaoAsync(paginacaoTamanhoDto);
         return Ok(paginacao);

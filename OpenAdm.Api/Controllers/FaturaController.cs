@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
-using OpenAdm.Application.Dtos.ContasAReceberDto;
+using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ContasAReceberModel;
@@ -11,39 +11,39 @@ using OpenAdm.Infra.Paginacao;
 namespace OpenAdm.Api.Controllers;
 
 [ApiController]
-[Route("fatura-contas-a-receber")]
+[Route("fatura")]
 [Autentica]
 [IsFuncionario]
 [AutenticaParceiro]
-public class FaturaContasAReceberController : ControllerBase
+public class FaturaController : ControllerBase
 {
-    private readonly IFaturaContasAReceberService _faturaContasAReceberService;
+    private readonly IParcelaService _faturaContasAReceberService;
 
-    public FaturaContasAReceberController(IFaturaContasAReceberService faturaContasAReceberService)
+    public FaturaController(IParcelaService faturaContasAReceberService)
     {
         _faturaContasAReceberService = faturaContasAReceberService;
     }
 
-    [HttpGet("paginacao")]
-    [ProducesResponseType<PaginacaoViewModel<FaturaContasAReceberViewModel>>(200)]
+    [HttpPost("paginacao")]
+    [ProducesResponseType<PaginacaoViewModel<FaturaViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoFaturaAReceberDto paginacaoFaturaAReceberDto)
+    public async Task<IActionResult> Paginacao(PaginacaoParcelaDto paginacaoFaturaAReceberDto)
     {
         var paginacaoViewModel = await _faturaContasAReceberService.PaginacaoAsync(paginacaoFaturaAReceberDto);
         return Ok(paginacaoViewModel);
     }
 
     [HttpGet("pedido")]
-    [ProducesResponseType<IList<FaturaContasAReceberViewModel>>(200)]
+    [ProducesResponseType<IList<FaturaViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> ByPedido([FromQuery] Guid pedidoId, [FromQuery] StatusFaturaContasAReceberEnum statusFatura)
+    public async Task<IActionResult> ByPedido([FromQuery] Guid pedidoId, [FromQuery] StatusParcelaEnum statusFatura)
     {
         var faturas = await _faturaContasAReceberService.GetByPedidoIdAsync(pedidoId, statusFatura);
         return Ok(faturas);
     }
 
     [HttpGet("get-by-id")]
-    [ProducesResponseType<FaturaContasAReceberViewModel>(200)]
+    [ProducesResponseType<FaturaViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> GetById([FromQuery] Guid id)
     {
@@ -52,18 +52,18 @@ public class FaturaContasAReceberController : ControllerBase
     }
 
     [HttpPut("pagar")]
-    [ProducesResponseType<FaturaContasAReceberViewModel>(200)]
+    [ProducesResponseType<FaturaViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> Pagar(PagarFaturaAReceberDto pagarFaturaAReceberDto)
+    public async Task<IActionResult> Pagar(PagarParcelaDto pagarFaturaAReceberDto)
     {
         var fatura = await _faturaContasAReceberService.PagarAsync(pagarFaturaAReceberDto);
         return Ok(fatura);
     }
 
     [HttpPut("edit")]
-    [ProducesResponseType<FaturaContasAReceberViewModel>(200)]
+    [ProducesResponseType<FaturaViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> Edit(FaturaAReceberEdit faturaAReceberEdit)
+    public async Task<IActionResult> Edit(FaturaEdit faturaAReceberEdit)
     {
         var fatura = await _faturaContasAReceberService.EditAsync(faturaAReceberEdit);
         return Ok(fatura);

@@ -1,12 +1,13 @@
 ﻿using OpenAdm.Application.Dtos.Bases;
+using OpenAdm.Application.Models.ContasAReceberModel;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 
-namespace OpenAdm.Application.Models.ContasAReceberModel;
+namespace OpenAdm.Application.Models.FaturasModel;
 
-public class FaturaContasAReceberViewModel : BaseViewModel
+public class ParcelaViewModel : BaseViewModel
 {
-    public StatusFaturaContasAReceberEnum Status { get; set; }
+    public StatusParcelaEnum Status { get; set; }
     public DateTime DataDeVencimento { get; set; }
     public DateTime? DataDePagamento { get; set; }
     public int NumeroDaFatura { get; set; }
@@ -14,21 +15,21 @@ public class FaturaContasAReceberViewModel : BaseViewModel
     public decimal Valor { get; set; }
     public decimal? Desconto { get; set; }
     public string? Observacao { get; set; }
-    public Guid ContasAReceberId { get; set; }
+    public Guid FaturaId { get; set; }
     public bool Vencida { get; set; }
-    public ContasAReceberViewModel ContasAReceber { get; set; } = null!;
+    public FaturaViewModel Fatura { get; set; } = null!;
 
-    public static explicit operator FaturaContasAReceberViewModel(FaturaContasAReceber faturaContasAReceber)
+    public static explicit operator ParcelaViewModel(Parcela faturaContasAReceber)
     {
-        if (faturaContasAReceber.ContasAReceber != null)
+        if (faturaContasAReceber.Fatura != null)
         {
-            faturaContasAReceber.ContasAReceber.Faturas = [];
+            faturaContasAReceber.Fatura.Parcelas = [];
         }
 
-        return new FaturaContasAReceberViewModel()
+        return new ParcelaViewModel()
         {
-            ContasAReceber = faturaContasAReceber.ContasAReceber != null ? (ContasAReceberViewModel)faturaContasAReceber.ContasAReceber : null!,
-            ContasAReceberId = faturaContasAReceber.ContasAReceberId,
+            Fatura = faturaContasAReceber.Fatura != null ? (FaturaViewModel)faturaContasAReceber.Fatura : null!,
+            FaturaId = faturaContasAReceber.FaturaId,
             DataDeCriacao = faturaContasAReceber.DataDeCriacao,
             DataDeVencimento = faturaContasAReceber.DataDeVencimento,
             Desconto = faturaContasAReceber.Desconto,

@@ -1,7 +1,8 @@
-﻿using OpenAdm.Application.Dtos.ContasAReceberDto;
+﻿using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
-using OpenAdm.Application.Models.ContasAReceberModel;
+using OpenAdm.Application.Models.FaturasModel;
+using OpenAdm.Application.Models.ParcelasModel;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Extensions;
@@ -11,14 +12,14 @@ using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
-public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
+public sealed class ParcelaService : IParcelaService
 {
-    private readonly IFaturaContasAReceberRepository _faturaContasAReceberRepository;
-    private readonly IContasAReceberService _contasAReceberService;
+    private readonly IParcelaRepository _faturaContasAReceberRepository;
+    private readonly IFaturaService _contasAReceberService;
     private readonly IUpdateStatusPedidoService _pedidoService;
-    public FaturaContasAReceberService(
-        IFaturaContasAReceberRepository faturaContasAReceberRepository,
-        IContasAReceberService contasAReceberService,
+    public ParcelaService(
+        IParcelaRepository faturaContasAReceberRepository,
+        IFaturaService contasAReceberService,
         IUpdateStatusPedidoService pedidoService)
     {
         _faturaContasAReceberRepository = faturaContasAReceberRepository;
@@ -29,7 +30,7 @@ public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
     public async Task BaixarFaturaWebHookAsync(NotificationFaturaWebHook notificationFaturaWebHook)
     {
         var fatura = await _faturaContasAReceberRepository.GetByIdExternoAsync(notificationFaturaWebHook.Data.Id);
-        if (fatura == null || fatura.Status == StatusFaturaContasAReceberEnum.Pago)
+        if (fatura == null || fatura.Status == StatusParcelaEnum.Pago)
         {
             return;
         }
@@ -37,19 +38,19 @@ public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
         fatura.PagarWebHook();
         await _faturaContasAReceberRepository.UpdateAsync(fatura);
 
-        if (fatura.ContasAReceber != null && fatura.ContasAReceber.PedidoId.HasValue)
+        if (fatura.Fatura != null && fatura.Fatura.PedidoId.HasValue)
         {
             await _pedidoService.UpdateStatusPedidoAsync(new()
             {
-                PedidoId = fatura.ContasAReceber.PedidoId.Value,
+                PedidoId = fatura.Fatura.PedidoId.Value,
                 StatusPedido = StatusPedido.Faturado
             });
         }
 
-        await _contasAReceberService.VerificarFechamentoAsync(fatura.ContasAReceberId);
+        await _contasAReceberService.VerificarFechamentoAsync(fatura.FaturaId);
     }
 
-    public async Task<FaturaContasAReceberViewModel> EditAsync(FaturaAReceberEdit faturaAReceberEdit)
+    public async Task<ParcelaViewModel> EditAsync(FaturaEdit faturaAReceberEdit)
     {
         var fatura = await _faturaContasAReceberRepository.GetByIdAsync(faturaAReceberEdit.Id)
             ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
@@ -65,16 +66,16 @@ public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
 
         await _faturaContasAReceberRepository.UpdateAsync(fatura);
 
-        return (FaturaContasAReceberViewModel)fatura;
+        return (ParcelaViewModel)fatura;
     }
 
-    public async Task<IList<FaturaPagaDashBoardModel>> FaturasDashBoardAsync()
+    public async Task<IList<ParcelaPagaDashBoardModel>> FaturasDashBoardAsync()
     {
         var faturas = await _faturaContasAReceberRepository.SumMesesAsync();
-        var faturasPagaDashBoardModel = new List<FaturaPagaDashBoardModel>();
+        var faturasPagaDashBoardModel = new List<ParcelaPagaDashBoardModel>();
         foreach (var item in faturas)
         {
-            faturasPagaDashBoardModel.Add(new FaturaPagaDashBoardModel()
+            faturasPagaDashBoardModel.Add(new ParcelaPagaDashBoardModel()
             {
                 Mes = item.Key.ConverterMesIntEmNome(),
                 Count = item.Value
@@ -83,50 +84,51 @@ public sealed class FaturaContasAReceberService : IFaturaContasAReceberService
         return faturasPagaDashBoardModel;
     }
 
-    public async Task<FaturaContasAReceberViewModel> GetByIdAsync(Guid id)
+    public async Task<ParcelaViewModel> GetByIdAsync(Guid id)
     {
-        var fatura = await _faturaContasAReceberRepository.GetByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
+        var parcela = await _faturaContasAReceberRepository.GetByIdAsync(id)
+            ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
-        return (FaturaContasAReceberViewModel)fatura;
+        return (ParcelaViewModel)parcela;
     }
 
-    public async Task<IList<FaturaContasAReceberViewModel>> GetByPedidoIdAsync(Guid pedidoId, StatusFaturaContasAReceberEnum? statusFaturaContasAReceberEnum)
+    public async Task<IList<ParcelaViewModel>> GetByPedidoIdAsync(Guid pedidoId, StatusParcelaEnum? statusFaturaContasAReceberEnum)
     {
         var faturas = await _faturaContasAReceberRepository.GetByPedidoIdAsync(pedidoId, statusFaturaContasAReceberEnum);
-        return faturas.Select(x => (FaturaContasAReceberViewModel)x).ToList();
+        return faturas.Select(x => (ParcelaViewModel)x).ToList();
     }
 
     public Task<decimal> GetSumAReceberAsync()
         => _faturaContasAReceberRepository.SumAReceberAsync();
 
-    public async Task<FaturaContasAReceberViewModel> PagarAsync(PagarFaturaAReceberDto pagarFaturaAReceberDto)
+    public async Task<ParcelaViewModel> PagarAsync(PagarParcelaDto pagarFaturaAReceberDto)
     {
-        var fatura = await _faturaContasAReceberRepository.GetByIdAsync(pagarFaturaAReceberDto.Id)
+        var parcela = await _faturaContasAReceberRepository.GetByIdAsync(pagarFaturaAReceberDto.Id)
             ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
 
-        fatura.Pagar(
+        parcela.Pagar(
             desconto: pagarFaturaAReceberDto.Desconto,
             meioDePagamento: pagarFaturaAReceberDto.MeioDePagamento,
             observacao: pagarFaturaAReceberDto.Observacao);
 
-        await _faturaContasAReceberRepository.UpdateAsync(fatura);
-        fatura.ContasAReceber = null!;
+        await _faturaContasAReceberRepository.UpdateAsync(parcela);
+        parcela.Fatura = null!;
 
-        await _contasAReceberService.VerificarFechamentoAsync(fatura.ContasAReceberId);
+        await _contasAReceberService.VerificarFechamentoAsync(parcela.FaturaId);
 
-        return (FaturaContasAReceberViewModel)fatura;
+        return (ParcelaViewModel)parcela;
     }
 
-    public async Task<PaginacaoViewModel<FaturaContasAReceberViewModel>> PaginacaoAsync(PaginacaoFaturaAReceberDto paginacaoFaturaAReceberDto)
+    public async Task<PaginacaoViewModel<ParcelaViewModel>> PaginacaoAsync(PaginacaoParcelaDto paginacaoFaturaAReceberDto)
     {
         var paginacao = await _faturaContasAReceberRepository
             .PaginacaoAsync(paginacaoFaturaAReceberDto);
 
-        return new PaginacaoViewModel<FaturaContasAReceberViewModel>()
+        return new PaginacaoViewModel<ParcelaViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
-            Values = paginacao.Values.Select(x => (FaturaContasAReceberViewModel)x).ToList()
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            Values = paginacao.Values.Select(x => (ParcelaViewModel)x).ToList(),
+            TotalPaginas = paginacao.TotalPaginas,
         };
     }
 }

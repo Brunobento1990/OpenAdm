@@ -20,7 +20,7 @@ public class PedidoServiceTest
     private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepositoryMock;
     private readonly Mock<IPdfPedidoService> _pdfPedidoService;
     private readonly Mock<ICarrinhoRepository> _carrinhoRepository;
-    private readonly Mock<IContasAReceberService> _contasAReceberService;
+    private readonly Mock<IFaturaService> _contasAReceberService;
     private readonly Mock<IConfiguracaoDePagamentoService> _configuracaoDePagamentoService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
     public PedidoServiceTest()

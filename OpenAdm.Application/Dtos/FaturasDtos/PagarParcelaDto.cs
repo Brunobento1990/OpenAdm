@@ -1,8 +1,8 @@
 ﻿using OpenAdm.Domain.Enuns;
 
-namespace OpenAdm.Application.Dtos.ContasAReceberDto;
+namespace OpenAdm.Application.Dtos.FaturasDtos;
 
-public class PagarFaturaAReceberDto
+public class PagarParcelaDto
 {
     public Guid Id { get; set; }
     public decimal? Desconto { get; set; }

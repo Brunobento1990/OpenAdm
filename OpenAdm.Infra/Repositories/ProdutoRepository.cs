@@ -82,8 +82,8 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
         return new PaginacaoViewModel<Produto>()
         {
-            TotalPage = totalPages,
-            Values = produtos
+            TotalPaginas = totalPages,
+            Values = produtos,
         };
     }
 
@@ -201,23 +201,6 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         });
 
         return produtos;
-    }
-
-    public async Task<PaginacaoViewModel<Produto>> GetPaginacaoProdutoAsync(FilterModel<Produto> filterModel)
-    {
-        var (total, values) = await _parceiroContext
-                .Produtos
-                .AsNoTracking()
-                .AsQueryable()
-                .OrderByDescending(x => EF.Property<Produto>(x, filterModel.OrderBy))
-                .WhereIsNotNull(filterModel.GetWhereBySearch())
-                .CustomFilterAsync(filterModel);
-
-        return new()
-        {
-            TotalPage = total,
-            Values = values
-        };
     }
 
     public async Task<Produto?> GetProdutoByIdAsync(Guid id)

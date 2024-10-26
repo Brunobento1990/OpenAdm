@@ -1,6 +1,6 @@
 ﻿using OpenAdm.Domain.Enuns;
 
-namespace OpenAdm.Application.Dtos.ContasAReceberDto;
+namespace OpenAdm.Application.Dtos.FaturasDtos;
 
 public class GerarPagamentoDto
 {

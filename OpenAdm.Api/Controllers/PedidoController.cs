@@ -28,8 +28,8 @@ public class PedidoController : ControllerBase
     }
 
     [IsFuncionario]
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoPedidoDto paginacaoPedidoDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoPedidoDto paginacaoPedidoDto)
     {
         var paginacaoViewModel = await _pedidoService.GetPaginacaoAsync(paginacaoPedidoDto);
         return Ok(paginacaoViewModel);
@@ -53,7 +53,7 @@ public class PedidoController : ControllerBase
     [HttpGet("get")]
     [ProducesResponseType<PedidoViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> Get([FromQuery] Guid pedidoId)
+    public async Task<IActionResult> Get(Guid pedidoId)
     {
         var pedido = await _pedidoService.GetAsync(pedidoId);
         return Ok(pedido);

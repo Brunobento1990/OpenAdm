@@ -6,36 +6,36 @@ using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public sealed class FaturaContasAReceberRepository : GenericRepository<FaturaContasAReceber>, IFaturaContasAReceberRepository
+public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepository
 {
-    public FaturaContasAReceberRepository(ParceiroContext parceiroContext) : base(parceiroContext)
+    public ParcelaRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
     }
 
-    public async Task<FaturaContasAReceber?> GetByIdAsync(Guid id)
+    public async Task<Parcela?> GetByIdAsync(Guid id)
     {
         return await _parceiroContext
-            .FaturasContasAReceber
+            .Parcelas
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<FaturaContasAReceber?> GetByIdExternoAsync(string idExterno)
+    public async Task<Parcela?> GetByIdExternoAsync(string idExterno)
     {
         return await _parceiroContext
-            .FaturasContasAReceber
+            .Parcelas
             .AsNoTracking()
-            .Include(x => x.ContasAReceber)
+            .Include(x => x.Fatura)
             .FirstOrDefaultAsync(x => x.IdExterno == idExterno);
     }
 
-    public async Task<IList<FaturaContasAReceber>> GetByPedidoIdAsync(Guid pedidoId, StatusFaturaContasAReceberEnum? statusFaturaContasAReceberEnum)
+    public async Task<IList<Parcela>> GetByPedidoIdAsync(Guid pedidoId, StatusParcelaEnum? statusFaturaContasAReceberEnum)
     {
         var query = _parceiroContext
-            .FaturasContasAReceber
+            .Parcelas
             .AsNoTracking()
-            .Include(x => x.ContasAReceber)
-            .Where(x => x.ContasAReceber.PedidoId == pedidoId);
+            .Include(x => x.Fatura)
+            .Where(x => x.Fatura.PedidoId == pedidoId);
 
         if (statusFaturaContasAReceberEnum.HasValue)
         {
@@ -51,9 +51,9 @@ public sealed class FaturaContasAReceberRepository : GenericRepository<FaturaCon
         try
         {
             return await _parceiroContext
-                .FaturasContasAReceber
+                .Parcelas
                 .AsNoTracking()
-                .Where(x => x.Status == StatusFaturaContasAReceberEnum.Pendente)
+                .Where(x => x.Status == StatusParcelaEnum.Pendente)
                 .SumAsync(x => x.Valor);
         }
         catch (Exception)
@@ -70,8 +70,9 @@ public sealed class FaturaContasAReceberRepository : GenericRepository<FaturaCon
         var mes = int.Parse(dataSplit[0]);
 
         return await _parceiroContext
-            .FaturasContasAReceber
-            .Where(m => m.DataDeCriacao.Month >= mes && m.DataDeCriacao.Year == ano && m.Status == StatusFaturaContasAReceberEnum.Pago)
+            .Parcelas
+            .AsNoTracking()
+            .Where(m => m.DataDeCriacao.Month >= mes && m.DataDeCriacao.Year == ano && m.Status == StatusParcelaEnum.Pago)
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,

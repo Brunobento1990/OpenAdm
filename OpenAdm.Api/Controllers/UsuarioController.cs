@@ -20,8 +20,8 @@ public class UsuarioController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoUsuarioDto paginacaoUsuarioDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoUsuarioDto paginacaoUsuarioDto)
     {
         var response = await _usuarioService.PaginacaoAsync(paginacaoUsuarioDto);
         return Ok(response);
@@ -45,7 +45,7 @@ public class UsuarioController : ControllerBase
     [Autentica]
     [IsFuncionario]
     [HttpGet("get-conta-adm")]
-    public async Task<IActionResult> GetContaAdm([FromQuery]Guid id)
+    public async Task<IActionResult> GetContaAdm(Guid id)
     {
         var usuarioViewModel = await _usuarioService.GetUsuarioByIdAdmAsync(id);
         return Ok(usuarioViewModel);

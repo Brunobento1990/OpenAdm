@@ -9,6 +9,10 @@ namespace OpenAdm.Infra.Paginacao;
 public class PaginacaoPedidoDto : FilterModel<Pedido>
 {
     public int? StatusPedido { get; set; }
+    public override Expression<Func<Pedido, object>>? IncludeCustom()
+    {
+        return x => x.Usuario;
+    }
     public override Expression<Func<Pedido, bool>>? GetWhereBySearch()
     {
 

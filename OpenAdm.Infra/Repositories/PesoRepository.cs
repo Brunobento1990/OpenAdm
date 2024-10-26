@@ -1,9 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
-using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -29,23 +27,6 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))
             .ToDictionaryAsync(x => x.Id, x => x);
-    }
-
-    public async Task<PaginacaoViewModel<Peso>> GetPaginacaoPesoAsync(FilterModel<Peso> filterModel)
-    {
-        var (total, values) = await _parceiroContext
-                .Pesos
-                .AsNoTracking()
-                .AsQueryable()
-                .OrderByDescending(x => EF.Property<Categoria>(x, filterModel.OrderBy))
-                .WhereIsNotNull(filterModel.GetWhereBySearch())
-                .CustomFilterAsync(filterModel);
-
-        return new()
-        {
-            TotalPage = total,
-            Values = values
-        };
     }
 
     public async Task<Peso?> GetPesoByIdAsync(Guid id)

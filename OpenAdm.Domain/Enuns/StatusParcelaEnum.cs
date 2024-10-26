@@ -1,6 +1,6 @@
 ﻿namespace OpenAdm.Domain.Enuns;
 
-public enum StatusFaturaContasAReceberEnum
+public enum StatusParcelaEnum
 {
     Pendente,
     Pago

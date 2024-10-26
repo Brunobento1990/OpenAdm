@@ -82,11 +82,12 @@ public class TabelaDePrecoService : ITabelaDePrecoService
     public async Task<PaginacaoViewModel<TabelaDePrecoViewModel>> GetPaginacaoTabelaViewModelAsync(
         PaginacaoTabelaDePrecoDto paginacaoTabelaDePrecoDto)
     {
-        var paginacao = await _tabelaDePrecoRepository.GetPaginacaoAsync(paginacaoTabelaDePrecoDto);
+        var paginacao = await _tabelaDePrecoRepository.PaginacaoAsync(paginacaoTabelaDePrecoDto);
 
         return new PaginacaoViewModel<TabelaDePrecoViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
             Values = paginacao.Values.Select(x => new TabelaDePrecoViewModel().ToModel(x)).ToList()
         };
     }

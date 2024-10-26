@@ -1,11 +1,11 @@
 ﻿using OpenAdm.Domain.Enuns;
 
-namespace OpenAdm.Application.Dtos.ContasAReceberDto;
+namespace OpenAdm.Application.Dtos.FaturasDtos;
 
-public class FaturaAReceberEdit
+public class FaturaEdit
 {
     public Guid Id { get; set; }
-    public StatusFaturaContasAReceberEnum Status { get; set; }
+    public StatusParcelaEnum Status { get; set; }
     public DateTime DataDeVencimento { get; set; }
     public DateTime? DataDePagamento { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }

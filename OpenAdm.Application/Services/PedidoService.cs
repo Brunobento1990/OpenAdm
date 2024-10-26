@@ -36,11 +36,12 @@ public class PedidoService(
 
     public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto)
     {
-        var paginacao = await _pedidoRepository.GetPaginacaoPedidoAsync(paginacaoPedidoDto);
+        var paginacao = await _pedidoRepository.PaginacaoAsync(paginacaoPedidoDto);
 
         return new PaginacaoViewModel<PedidoViewModel>()
         {
-            TotalPage = paginacao.TotalPage,
+            TotalPaginas = paginacao.TotalPaginas,
+            TotalDeRegistros = paginacao.TotalDeRegistros,
             Values = paginacao.Values.Select(x => new PedidoViewModel().ForModel(x)).ToList()
         };
     }
@@ -71,7 +72,7 @@ public class PedidoService(
             pesosIds: relatorioProducaoDto.PesosIds,
             tamanhosIds: relatorioProducaoDto.TamanhosIds);
 
-        if(itens.Count == 0)
+        if (itens.Count == 0)
         {
             throw new ExceptionApi("Não há produtos a serem produzidos!");
         }

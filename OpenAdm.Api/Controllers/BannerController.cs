@@ -25,8 +25,8 @@ public class BannerController(IBannerService bannerService) : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [HttpGet("paginacao")]
-    public async Task<IActionResult> Paginacao([FromQuery] PaginacaoBannerDto paginacaoBannerDto)
+    [HttpPost("paginacao")]
+    public async Task<IActionResult> Paginacao(PaginacaoBannerDto paginacaoBannerDto)
     {
         var paginacaoViewModel = await _bannerService.GetPaginacaoAsync(paginacaoBannerDto);
         return Ok(paginacaoViewModel);

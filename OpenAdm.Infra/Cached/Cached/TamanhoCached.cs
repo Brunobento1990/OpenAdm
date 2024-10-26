@@ -33,7 +33,7 @@ public class TamanhoCached : ITamanhoRepository
 
     public async Task<PaginacaoViewModel<Tamanho>> GetPaginacaoTamanhoAsync(FilterModel<Tamanho> filterModel)
     {
-        return await _tamanhoRepository.GetPaginacaoTamanhoAsync(filterModel);
+        return await _tamanhoRepository.PaginacaoAsync(filterModel);
     }
 
     public async Task<Tamanho?> GetTamanhoByIdAsync(Guid id)
