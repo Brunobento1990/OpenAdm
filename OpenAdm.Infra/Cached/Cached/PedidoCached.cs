@@ -80,22 +80,8 @@ public sealed class PedidoCached : IPedidoRepository
         return pedidos;
     }
 
-    public async Task<IList<Pedido>> GetPedidosEmAbertoAsync()
-    {
-        var key = "pedidos-aberto";
-        var pedidos = await _cachedService.GetListItemAsync(key);
-
-        if (pedidos == null)
-        {
-            pedidos = await _pedidoRepository.GetPedidosEmAbertoAsync();
-            if (pedidos.Count > 0)
-            {
-                await _cachedService.SetListItemAsync(key, pedidos);
-            }
-        }
-
-        return pedidos;
-    }
+    public Task<IList<Pedido>> GetPedidosEmAbertoAsync()
+        => _pedidoRepository.GetPedidosEmAbertoAsync();
 
     public Task<int> GetQuantidadeDePedidoPorUsuarioAsync(Guid usuarioId)
         => _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuarioId);
