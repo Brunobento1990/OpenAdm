@@ -3,11 +3,12 @@ using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
 public class ConfiguracaoDeEmailCached(
-    ConfiguracaoDeEmailRepository configuracaoDeEmailRepository, 
+    ConfiguracaoDeEmailRepository configuracaoDeEmailRepository,
     ICachedService<ConfiguracaoDeEmail> cachedService) : IConfiguracaoDeEmailRepository
 {
     private readonly ConfiguracaoDeEmailRepository _configuracaoDeEmailRepository = configuracaoDeEmailRepository;
@@ -33,11 +34,11 @@ public class ConfiguracaoDeEmailCached(
 
         var configuracao = await _cachedService.GetItemAsync(key);
 
-        if(configuracao == null)
+        if (configuracao == null)
         {
             configuracao = await _configuracaoDeEmailRepository.GetConfiguracaoDeEmailAtivaAsync();
 
-            if(configuracao != null)
+            if (configuracao != null)
             {
                 await _cachedService.SetItemAsync(key, configuracao);
             }
@@ -55,4 +56,7 @@ public class ConfiguracaoDeEmailCached(
 
     public Task<PaginacaoViewModel<ConfiguracaoDeEmail>> PaginacaoAsync(FilterModel<ConfiguracaoDeEmail> filterModel)
         => _configuracaoDeEmailRepository.PaginacaoAsync(filterModel);
+
+    public Task<IList<ConfiguracaoDeEmail>> PaginacaoDropDownAsync(PaginacaoDropDown<ConfiguracaoDeEmail> paginacaoDropDown)
+        => _configuracaoDeEmailRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }

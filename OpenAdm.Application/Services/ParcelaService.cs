@@ -71,7 +71,7 @@ public sealed class ParcelaService : IParcelaService
 
     public async Task<IList<ParcelaPagaDashBoardModel>> FaturasDashBoardAsync()
     {
-        var faturas = await _faturaContasAReceberRepository.SumMesesAsync();
+        var faturas = await _faturaContasAReceberRepository.SumTotalMesesAsync(TipoFaturaEnum.A_Receber);
         var faturasPagaDashBoardModel = new List<ParcelaPagaDashBoardModel>();
         foreach (var item in faturas)
         {
@@ -99,7 +99,7 @@ public sealed class ParcelaService : IParcelaService
     }
 
     public Task<decimal> GetSumAReceberAsync()
-        => _faturaContasAReceberRepository.SumAReceberAsync();
+        => _faturaContasAReceberRepository.SumTotalAsync(TipoFaturaEnum.A_Receber);
 
     public async Task<ParcelaViewModel> PagarAsync(PagarParcelaDto pagarFaturaAReceberDto)
     {

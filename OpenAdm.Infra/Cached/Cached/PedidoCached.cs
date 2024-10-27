@@ -3,6 +3,7 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Pedidos;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 
@@ -101,4 +102,7 @@ public sealed class PedidoCached : IPedidoRepository
         await _cachedService.RemoveCachedAsync(key);
         return await _pedidoRepository.UpdateAsync(entity);
     }
+
+    public Task<IList<Pedido>> PaginacaoDropDownAsync(PaginacaoDropDown<Pedido> paginacaoDropDown)
+        => _pedidoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }

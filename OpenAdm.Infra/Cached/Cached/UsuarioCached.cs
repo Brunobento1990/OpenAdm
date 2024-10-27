@@ -3,6 +3,7 @@ using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -84,4 +85,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<PaginacaoViewModel<Usuario>> PaginacaoAsync(FilterModel<Usuario> filterModel)
         => _usuarioRepository.PaginacaoAsync(filterModel);
+
+    public Task<IList<Usuario>> PaginacaoDropDownAsync(PaginacaoDropDown<Usuario> paginacaoDropDown)
+        => _usuarioRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }

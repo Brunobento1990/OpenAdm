@@ -4,6 +4,7 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Model;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Infra.Extensions.IQueryable;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -69,6 +70,18 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
             Values = Values,
             TotalDeRegistros = totalDeRegistros
         };
+    }
+
+    public async Task<IList<T>> PaginacaoDropDownAsync(PaginacaoDropDown<T> paginacaoDropDown)
+    {
+        return await _parceiroContext
+            .Set<T>()
+            .AsNoTracking()
+            .OrderBy(x => EF.Property<T>(x, paginacaoDropDown.OrderBy))
+            .WhereIsNotNull(paginacaoDropDown.Where())
+            .Skip(0)
+            .Take(100)
+            .ToListAsync();
     }
 
     public async Task<T> UpdateAsync(T entity)

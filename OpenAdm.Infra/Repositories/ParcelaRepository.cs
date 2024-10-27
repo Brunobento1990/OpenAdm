@@ -46,14 +46,15 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .ToListAsync();
     }
 
-    public async Task<decimal> SumAReceberAsync()
+    public async Task<decimal> SumTotalAsync(TipoFaturaEnum tipoFatura)
     {
         try
         {
             return await _parceiroContext
                 .Parcelas
                 .AsNoTracking()
-                .Where(x => x.Status == StatusParcelaEnum.Pendente)
+                .Include(x => x.Fatura)
+                .Where(x => x.Status == StatusParcelaEnum.Pendente && x.Fatura.Tipo == tipoFatura)
                 .SumAsync(x => x.Valor);
         }
         catch (Exception)
@@ -62,7 +63,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
         }
     }
 
-    public async Task<IDictionary<int, decimal>> SumMesesAsync()
+    public async Task<IDictionary<int, decimal>> SumTotalMesesAsync(TipoFaturaEnum faturaEnum)
     {
         var dataInicio = DateTime.Now.AddMonths(-3);
         var dataSplit = dataInicio.ToString("MM/dd/yyyy").Split('/');
@@ -72,7 +73,11 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
         return await _parceiroContext
             .Parcelas
             .AsNoTracking()
-            .Where(m => m.DataDeCriacao.Month >= mes && m.DataDeCriacao.Year == ano && m.Status == StatusParcelaEnum.Pago)
+            .Include(x => x.Fatura)
+            .Where(m => m.DataDeCriacao.Month >= mes &&
+                m.DataDeCriacao.Year == ano &&
+                m.Status == StatusParcelaEnum.Pago &&
+                m.Fatura.Tipo == faturaEnum)
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,

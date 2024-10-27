@@ -15,4 +15,5 @@ public interface IUsuarioService
     Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto);
     Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto);
     Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(PaginacaoUsuarioDto paginacaoUsuarioDto);
+    Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoUsuarioDropDown paginacaoUsuarioDropDown);
 }

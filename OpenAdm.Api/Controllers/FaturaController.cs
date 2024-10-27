@@ -17,55 +17,19 @@ namespace OpenAdm.Api.Controllers;
 [AutenticaParceiro]
 public class FaturaController : ControllerBase
 {
-    private readonly IParcelaService _faturaContasAReceberService;
+    private readonly IFaturaService _faturaService;
 
-    public FaturaController(IParcelaService faturaContasAReceberService)
+    public FaturaController(IFaturaService faturaService)
     {
-        _faturaContasAReceberService = faturaContasAReceberService;
+        _faturaService = faturaService;
     }
 
-    [HttpPost("paginacao")]
+    [HttpPost("criar")]
     [ProducesResponseType<PaginacaoViewModel<FaturaViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> Paginacao(PaginacaoParcelaDto paginacaoFaturaAReceberDto)
+    public async Task<IActionResult> Criar(FaturaCriarAdmDto faturaCriarAdmDto)
     {
-        var paginacaoViewModel = await _faturaContasAReceberService.PaginacaoAsync(paginacaoFaturaAReceberDto);
-        return Ok(paginacaoViewModel);
-    }
-
-    [HttpGet("pedido")]
-    [ProducesResponseType<IList<FaturaViewModel>>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> ByPedido([FromQuery] Guid pedidoId, [FromQuery] StatusParcelaEnum statusFatura)
-    {
-        var faturas = await _faturaContasAReceberService.GetByPedidoIdAsync(pedidoId, statusFatura);
-        return Ok(faturas);
-    }
-
-    [HttpGet("get-by-id")]
-    [ProducesResponseType<FaturaViewModel>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> GetById([FromQuery] Guid id)
-    {
-        var fatura = await _faturaContasAReceberService.GetByIdAsync(id);
-        return Ok(fatura);
-    }
-
-    [HttpPut("pagar")]
-    [ProducesResponseType<FaturaViewModel>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> Pagar(PagarParcelaDto pagarFaturaAReceberDto)
-    {
-        var fatura = await _faturaContasAReceberService.PagarAsync(pagarFaturaAReceberDto);
-        return Ok(fatura);
-    }
-
-    [HttpPut("edit")]
-    [ProducesResponseType<FaturaViewModel>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> Edit(FaturaEdit faturaAReceberEdit)
-    {
-        var fatura = await _faturaContasAReceberService.EditAsync(faturaAReceberEdit);
-        return Ok(fatura);
+        var result = await _faturaService.CriarAdmAsync(faturaCriarAdmDto);
+        return Ok(result);
     }
 }
