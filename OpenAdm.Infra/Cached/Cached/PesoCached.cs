@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 
@@ -93,4 +94,7 @@ public class PesoCached : IPesoRepository
 
     public Task<IDictionary<Guid, Peso>> GetDictionaryPesosByIdsAsync(IList<Guid> ids)
         => _pesoRepository.GetDictionaryPesosByIdsAsync(ids);
+
+    public Task<IList<Peso>> PaginacaoDropDownAsync(PaginacaoDropDown<Peso> paginacaoDropDown)
+        => _pesoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }

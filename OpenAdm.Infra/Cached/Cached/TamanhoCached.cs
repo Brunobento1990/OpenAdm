@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 
@@ -93,4 +94,7 @@ public class TamanhoCached : ITamanhoRepository
 
     public Task<IDictionary<Guid, Tamanho>> GetDictionaryTamanhosAsync(IList<Guid> ids)
         => _tamanhoRepository.GetDictionaryTamanhosAsync(ids);
+
+    public Task<IList<Tamanho>> PaginacaoDropDownAsync(PaginacaoDropDown<Tamanho> paginacaoDropDown)
+        => _tamanhoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }

@@ -174,4 +174,7 @@ public class ProdutoCached : IProdutoRepository
 
     public Task<PaginacaoViewModel<Produto>> PaginacaoAsync(FilterModel<Produto> filterModel)
         => _produtoRepository.PaginacaoAsync(filterModel);
+
+    public Task<IList<Produto>> PaginacaoDropDownAsync(PaginacaoDropDown<Produto> paginacaoDropDown)
+        => _produtoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }

@@ -152,4 +152,15 @@ public class UsuarioService : IUsuarioService
 
         return new(usuarioViewModel, token, refreshToken);
     }
+
+    public async Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoUsuarioDropDown paginacaoUsuarioDropDown)
+    {
+        var usuarios = await _usuarioRepository.PaginacaoDropDownAsync(paginacaoUsuarioDropDown);
+        return usuarios.Select(x => new UsuarioViewModel()
+        {
+            Cnpj = string.IsNullOrWhiteSpace(x.Cnpj) ? x.Cpf : x.Cnpj,
+            Id = x.Id,
+            Nome = x.Nome
+        }).ToList();
+    }
 }

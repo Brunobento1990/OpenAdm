@@ -12,6 +12,7 @@ namespace OpenAdm.Infra.Migrations.Parceiro
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("CREATE EXTENSION IF NOT EXISTS \"unaccent\";");
             migrationBuilder.CreateTable(
                 name: "Banners",
                 columns: table => new

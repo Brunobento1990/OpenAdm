@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models.ContasAReceberModel;
 using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
@@ -13,15 +14,57 @@ public sealed class FaturaService : IFaturaService
     private readonly IFaturaRepository _contasAReceberRepository;
     private readonly IPagamentoFactory _pagamentoFactory;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
+    private readonly IUsuarioService _usuarioService;
 
     public FaturaService(
         IFaturaRepository contasAReceberRepository,
         IPagamentoFactory pagamentoFactory,
-        IUsuarioAutenticado usuarioAutenticado)
+        IUsuarioAutenticado usuarioAutenticado,
+        IUsuarioService usuarioService)
     {
         _contasAReceberRepository = contasAReceberRepository;
         _pagamentoFactory = pagamentoFactory;
         _usuarioAutenticado = usuarioAutenticado;
+        _usuarioService = usuarioService;
+    }
+
+    public async Task<FaturaViewModel> CriarAdmAsync(FaturaCriarAdmDto faturaCriarAdmDto)
+    {
+        _ = await _usuarioService.GetUsuarioByIdAdmAsync(id: faturaCriarAdmDto.UsuarioId);
+
+        var fatura = new Fatura(
+            id: Guid.NewGuid(),
+            dataDeCriacao: DateTime.Now,
+            dataDeAtualizacao: DateTime.Now,
+            numero: 0,
+            status: StatusFaturaEnum.Aberta,
+            usuarioId: faturaCriarAdmDto.UsuarioId,
+            pedidoId: faturaCriarAdmDto.PedidoId,
+            dataDeFechamento: null,
+            tipo: faturaCriarAdmDto.Tipo);
+
+        foreach (var parcelaDto in faturaCriarAdmDto.Parcelas)
+        {
+            fatura.Parcelas.Add(new Parcela(
+                id: Guid.NewGuid(),
+                dataDeCriacao: DateTime.Now,
+                dataDeAtualizacao: DateTime.Now,
+                numero: 0,
+                status: StatusParcelaEnum.Pendente,
+                dataDeVencimento: parcelaDto.DataDeVencimento,
+                numeroDaFatura: parcelaDto.NumeroDaFatura,
+                meioDePagamento: parcelaDto.MeioDePagamento,
+                valor: parcelaDto.Valor,
+                desconto: parcelaDto.Desconto,
+                observacao: parcelaDto.Observacao,
+                faturaId: fatura.Id,
+                dataDePagamento: null,
+                idExterno: null));
+        }
+
+        await _contasAReceberRepository.AddAsync(fatura);
+
+        return (FaturaViewModel)fatura;
     }
 
     public async Task CriarContasAReceberAsync(CriarFaturaDto contasAReceberDto)

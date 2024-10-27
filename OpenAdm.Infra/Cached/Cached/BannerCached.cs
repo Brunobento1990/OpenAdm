@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 
@@ -77,4 +78,7 @@ public class BannerCached : IBannerRepository
 
     public Task<PaginacaoViewModel<Banner>> PaginacaoAsync(FilterModel<Banner> filterModel)
         => _bannerRepository.PaginacaoAsync(filterModel);
+
+    public Task<IList<Banner>> PaginacaoDropDownAsync(PaginacaoDropDown<Banner> paginacaoDropDown)
+        => _bannerRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }

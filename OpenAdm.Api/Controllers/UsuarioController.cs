@@ -53,6 +53,15 @@ public class UsuarioController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
+    [HttpPost("paginacao-drop-down")]
+    public async Task<IActionResult> PaginacaoDropDown(PaginacaoUsuarioDropDown paginacaoUsuarioDropDown)
+    {
+        var usuarioViewModel = await _usuarioService.PaginacaoDropDownAsync(paginacaoUsuarioDropDown);
+        return Ok(usuarioViewModel);
+    }
+
+    [Autentica]
+    [IsFuncionario]
     [HttpGet("list")]
     public async Task<IActionResult> GetUsuarios()
     {

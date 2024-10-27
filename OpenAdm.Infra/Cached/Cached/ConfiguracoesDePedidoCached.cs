@@ -3,6 +3,7 @@ using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Repositories;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
@@ -13,7 +14,7 @@ public class ConfiguracoesDePedidoCached : IConfiguracoesDePedidoRepository
     private const string _key = "configuracao-de-pedido";
 
     public ConfiguracoesDePedidoCached(
-        ConfiguracoesDePedidoRepository configuracoesDePedidoRepository, 
+        ConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         ICachedService<ConfiguracoesDePedido> cachedService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
@@ -36,11 +37,11 @@ public class ConfiguracoesDePedidoCached : IConfiguracoesDePedidoRepository
     {
         var configuracao = await _cachedService.GetItemAsync(_key);
 
-        if(configuracao == null)
+        if (configuracao == null)
         {
             configuracao = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
 
-            if(configuracao != null)
+            if (configuracao != null)
             {
                 await _cachedService.SetItemAsync(_key, configuracao);
             }
@@ -57,4 +58,7 @@ public class ConfiguracoesDePedidoCached : IConfiguracoesDePedidoRepository
 
     public Task<PaginacaoViewModel<ConfiguracoesDePedido>> PaginacaoAsync(FilterModel<ConfiguracoesDePedido> filterModel)
         => _configuracoesDePedidoRepository.PaginacaoAsync(filterModel);
+
+    public Task<IList<ConfiguracoesDePedido>> PaginacaoDropDownAsync(PaginacaoDropDown<ConfiguracoesDePedido> paginacaoDropDown)
+        => _configuracoesDePedidoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
 }
