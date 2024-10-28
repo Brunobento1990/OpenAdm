@@ -14,8 +14,7 @@ public sealed class Produto : BaseEntity
         Guid categoriaId,
         string? referencia,
         string? urlFoto,
-        string? nomeFoto,
-        decimal? peso)
+        string? nomeFoto)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Descricao = descricao;
@@ -24,7 +23,6 @@ public sealed class Produto : BaseEntity
         Referencia = referencia;
         UrlFoto = urlFoto;
         NomeFoto = nomeFoto;
-        Peso = peso;
     }
 
     public string Descricao { get; private set; }
@@ -38,18 +36,14 @@ public sealed class Produto : BaseEntity
     public string? Referencia { get; private set; }
     public string? UrlFoto { get; private set; }
     public string? NomeFoto { get; private set; }
-    public decimal? Peso { get; private set; }
-
     public void Update(
         string descricao,
         string? especificacaoTecnica,
         Guid categoriaId,
         string? referencia,
         string? urlFoto,
-        string? nomeFoto,
-        decimal? peso)
+        string? nomeFoto)
     {
-        Peso = peso;
         UrlFoto = urlFoto;
         Descricao = descricao;
         EspecificacaoTecnica = especificacaoTecnica;

@@ -29,7 +29,7 @@ public class ParceiroMiddleware
         }
 
         var referer = (string?)httpContext.Request.Headers.FirstOrDefault(x => x.Key == "Referer").Value;
-        Console.WriteLine($"referer: {referer}");
+
         if (string.IsNullOrWhiteSpace(referer))
         {
             throw new ExceptionUnauthorize("Referencia não localizada!!");

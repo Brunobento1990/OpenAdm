@@ -44,6 +44,13 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<TabelaDePreco>().HasData(new TabelaDePreco(
+            id: Guid.Parse("4b43157b-8029-4e55-be53-1b8d27ea9be2"),
+            dataDeCriacao: DateTime.MinValue,
+            dataDeAtualizacao: DateTime.MinValue,
+            numero: 1,
+            descricao: "E-commerce",
+            ativaEcommerce: true));
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());

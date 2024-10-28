@@ -16,7 +16,6 @@ public class UpdateProdutoDto
     public Guid CategoriaId { get; set; }
     public IList<Guid>? TamanhosIds { get; set; }
     public IList<Guid>? PesosIds { get; set; }
-    public decimal? Peso { get; set; }
 
     public IList<TamanhoProduto> ToTamanhosProdutos()
     {

@@ -55,6 +55,6 @@ public class ProdutoBuilder
 
     public Produto Build()
     {
-        return new Produto(_id, _created, _update, _numero, _descricao, _especificacaoTecnica, _categoriaId, _referencia, _foto, _nomeFoto, null);
+        return new Produto(_id, _created, _update, _numero, _descricao, _especificacaoTecnica, _categoriaId, _referencia, _foto, _nomeFoto);
     }
 }
