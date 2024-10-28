@@ -78,7 +78,7 @@ public sealed class Fatura : BaseEntity
             fatura.Parcelas.Add(Parcela.NovaFatura(
                 dataDeVencimento: novoVencimento,
                 numeroDaFatura: i,
-                meioDePagamento: null,
+                meioDePagamento: meioDePagamento,
                 valor: valorDaParcela,
                 desconto: desconto,
                 observacao: observacao,
