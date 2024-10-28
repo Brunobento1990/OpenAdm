@@ -13,7 +13,7 @@ public class CachedService<T> : ICachedService<T> where T : class
     private readonly JsonSerializerOptions _serializerOptions;
     private static readonly double _absolutExpiration = 5;
     private static readonly double _slidingExpiration = 3;
-    private readonly string _keyParceiro;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
 
     public CachedService(IDistributedCache distributedCache,
         IParceiroAutenticado parceiroAutenticado)
@@ -29,7 +29,7 @@ public class CachedService<T> : ICachedService<T> where T : class
                       .SetSlidingExpiration(TimeSpan.FromMinutes(_slidingExpiration));
 
         _distributedCache = distributedCache;
-        _keyParceiro = parceiroAutenticado.KeyParceiro;
+        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task<T?> GetItemAsync(string key)
@@ -74,6 +74,6 @@ public class CachedService<T> : ICachedService<T> where T : class
 
     private string GetNewKey(string key)
     {
-        return $"{_keyParceiro}-{key}";
+        return $"{_parceiroAutenticado.KeyParceiro}-{key}";
     }
 }
