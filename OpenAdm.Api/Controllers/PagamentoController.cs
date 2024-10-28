@@ -37,6 +37,7 @@ public class PagamentoController : ControllerBase
     [HttpPost("pagamento/notificar")]
     [ProducesResponseType(200)]
     [ProducesResponseType<ErrorResponse>(400)]
+    [AutenticaMercadoPago]
     public async Task<IActionResult> PagamentoWebHook([FromBody] NotificationFaturaWebHook body)
     {
         if (body?.Data != null && (body?.Action == "payment.update" || body?.Action == "payment.updated"))
