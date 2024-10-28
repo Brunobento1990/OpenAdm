@@ -41,7 +41,6 @@ public class ProdutoViewModel : BaseModel
 
         CategoriaId = entity.CategoriaId;
         Referencia = entity.Referencia;
-        Peso = entity.Peso;
         return this;
     }
 }
