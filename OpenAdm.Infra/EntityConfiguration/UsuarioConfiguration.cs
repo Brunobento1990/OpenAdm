@@ -34,5 +34,9 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
             .HasMaxLength(15);
         builder.HasIndex(x => x.Email)
             .IsUnique();
+        builder.HasIndex(x => x.Cpf)
+            .IsUnique();
+        builder.HasIndex(x => x.Cnpj)
+            .IsUnique();
     }
 }

@@ -13,7 +13,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
 {
     protected readonly ParceiroContext _parceiroContext = parceiroContext;
 
-    public async Task<T> AddAsync(T entity)
+    public virtual async Task<T> AddAsync(T entity)
     {
         await _parceiroContext.AddAsync(entity);
         await _parceiroContext.SaveChangesAsync();

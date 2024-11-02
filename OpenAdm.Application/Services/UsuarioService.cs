@@ -30,11 +30,7 @@ public class UsuarioService : IUsuarioService
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
     {
-        if (!createUsuarioDto.Senha.Equals(createUsuarioDto.ReSenha))
-        {
-            throw new ExceptionApi("As senha não conferem!");
-        }
-
+        createUsuarioDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
 
         if (usuario != null)
@@ -162,5 +158,11 @@ public class UsuarioService : IUsuarioService
             Id = x.Id,
             Nome = x.Nome
         }).ToList();
+    }
+
+    public async Task<bool> TemTelefoneCadastradoAsync()
+    {
+        var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
+        return !string.IsNullOrWhiteSpace(usuario.Telefone);
     }
 }
