@@ -84,4 +84,15 @@ public class UsuarioController : ControllerBase
         await _usuarioService.TrocarSenhaAsync(updateSenhaUsuarioDto);
         return Ok();
     }
+
+    [Autentica]
+    [HttpGet("tem-telefone")]
+    public async Task<IActionResult> TemTelefone()
+    {
+        var result = await _usuarioService.TemTelefoneCadastradoAsync();
+        return Ok(new
+        {
+            result
+        });
+    }
 }

@@ -3,35 +3,57 @@ using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Models;
 using System.ComponentModel.DataAnnotations;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Helpers;
 
 namespace OpenAdm.Application.Dtos.Usuarios;
 
 public class CreateUsuarioDto : BaseModel
 {
-    [Required]
-    [MaxLength(255)]
     public string Nome { get; set; } = string.Empty;
-    [Required]
-    [MaxLength(255)]
-    [DataType(DataType.EmailAddress)]
     public string Email { get; set; } = string.Empty;
-    [Required]
-    [MaxLength(1000)]
     public string Senha { get; set; } = string.Empty;
-    [Required]
-    [MaxLength(1000)]
     public string ReSenha { get; set; } = string.Empty;
-    [MaxLength(15)]
-    [Required(ErrorMessage = "Informe o seu telefone.")]
     public string Telefone { get; set; } = string.Empty;
-    [MaxLength(20)]
     public string? Cnpj { get; set; } = string.Empty;
-    [MaxLength(20)]
     public string? Cpf { get; set; } = string.Empty;
+
+    public void Validar()
+    {
+        if ((string.IsNullOrWhiteSpace(Cpf) && string.IsNullOrWhiteSpace(Cnpj)) ||
+            !string.IsNullOrWhiteSpace(Cpf) && !string.IsNullOrWhiteSpace(Cnpj))
+        {
+            throw new ExceptionApi("Informe o CPF ou o CNPJ");
+        }
+
+        if (string.IsNullOrWhiteSpace(Nome))
+        {
+            throw new ExceptionApi("Informe o nome");
+        }
+
+        if (string.IsNullOrWhiteSpace(Telefone))
+        {
+            throw new ExceptionApi("Informe o telefone");
+        }
+
+        if (string.IsNullOrWhiteSpace(Senha) || string.IsNullOrWhiteSpace(ReSenha))
+        {
+            throw new ExceptionApi("Senhas inválidas");
+        }
+
+        if (!Senha.Equals(ReSenha))
+        {
+            throw new ExceptionApi("As senha não conferem!");
+        }
+
+        if(!string.IsNullOrWhiteSpace(Cpf) && !ValidarCnpjECpf.IsCpf(Cpf))
+        {
+            throw new ExceptionApi("CPF inválido!");
+        }
+    }
 
     public Usuario ToEntity()
     {
-        if((string.IsNullOrWhiteSpace(Cnpj) && string.IsNullOrWhiteSpace(Cpf))
+        if ((string.IsNullOrWhiteSpace(Cnpj) && string.IsNullOrWhiteSpace(Cpf))
             || (!string.IsNullOrWhiteSpace(Cnpj) && !string.IsNullOrWhiteSpace(Cpf)))
         {
             throw new ExceptionApi("Informe o CNPJ ou o CPF");
