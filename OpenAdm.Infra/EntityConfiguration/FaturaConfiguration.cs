@@ -25,5 +25,10 @@ internal class FaturaConfiguration : IEntityTypeConfiguration<Fatura>
             .WithOne(x => x.Fatura)
             .HasForeignKey(x => x.FaturaId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.Pedido)
+            .WithOne(x => x.Fatura)
+            .HasForeignKey<Fatura>(x => x.PedidoId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }
