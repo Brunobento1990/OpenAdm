@@ -45,7 +45,7 @@ public class CreateUsuarioDto : BaseModel
             throw new ExceptionApi("As senha não conferem!");
         }
 
-        if(!string.IsNullOrWhiteSpace(Cpf) && !ValidarCnpjECpf.IsCpf(Cpf))
+        if (!string.IsNullOrWhiteSpace(Cpf) && !ValidarCnpjECpf.IsCpf(Cpf))
         {
             throw new ExceptionApi("CPF inválido!");
         }
@@ -71,8 +71,8 @@ public class CreateUsuarioDto : BaseModel
             senha,
             Nome,
             Telefone,
-            Cnpj,
-            Cpf,
+            string.IsNullOrWhiteSpace(Cnpj) ? null : Cnpj,
+            string.IsNullOrWhiteSpace(Cpf) ? null : Cpf,
             true);
     }
 }
