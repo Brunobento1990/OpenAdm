@@ -79,7 +79,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
                 PedidoId = pedido.Id,
                 QuantidadeDeParcelas = 1,
                 Total = pedido.ValorTotal,
-                UsuarioId = pedido.UsuarioId
+                UsuarioId = pedido.UsuarioId,
+                Tipo = TipoFaturaEnum.A_Receber
             });
         }
 
