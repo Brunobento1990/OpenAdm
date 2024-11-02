@@ -89,6 +89,15 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return pedido;
     }
 
+    public async Task<IDictionary<Guid, Pedido>> GetPedidosAsync(IList<Guid> ids)
+    {
+        return await _parceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .Where(x => ids.Contains(x.Id))
+            .ToDictionaryAsync(x => x.Id, x => x);
+    }
+
     public async Task<IList<Pedido>> GetPedidosByRelatorioPorPeriodoAsync(RelatorioPedidoDto relatorioPedidoDto)
     {
         return await _parceiroContext

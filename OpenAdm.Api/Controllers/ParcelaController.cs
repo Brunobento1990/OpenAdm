@@ -4,6 +4,7 @@ using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ContasAReceberModel;
+using OpenAdm.Application.Models.FaturasModel;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
@@ -67,5 +68,35 @@ public class ParcelaController : ControllerBase
     {
         var fatura = await _parcelaService.EditAsync(faturaAReceberEdit);
         return Ok(fatura);
+    }
+
+    [HttpPut("editar-parcela")]
+    [ProducesResponseType<ParcelaViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> EditarParcela(ParcelaEditDto parcelaEditDto)
+    {
+        var fatura = await _parcelaService.EditarAsync(parcelaEditDto);
+        return Ok(fatura);
+    }
+
+    [HttpPost("nova-parcela")]
+    [ProducesResponseType<ParcelaViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> NovaParcela(ParcelaCriarDto parcelaCriarDto)
+    {
+        var fatura = await _parcelaService.AddAsync(parcelaCriarDto);
+        return Ok(fatura);
+    }
+
+    [HttpDelete("excluir")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> Excluir([FromQuery] Guid id)
+    {
+        var result = await _parcelaService.ExcluirAsync(id);
+        return Ok(new
+        {
+            result
+        });
     }
 }

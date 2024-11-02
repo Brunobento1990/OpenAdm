@@ -13,8 +13,11 @@ public interface IParcelaService
     Task<decimal> GetSumAReceberAsync();
     Task<IList<ParcelaPagaDashBoardModel>> FaturasDashBoardAsync();
     Task<ParcelaViewModel> PagarAsync(PagarParcelaDto pagarFaturaAReceberDto);
+    Task<ParcelaViewModel> EditarAsync(ParcelaEditDto parcelaEditDto);
+    Task<ParcelaViewModel> AddAsync(ParcelaCriarDto parcelaCriarDto);
     Task<ParcelaViewModel> GetByIdAsync(Guid id);
     Task<ParcelaViewModel> EditAsync(FaturaEdit faturaAReceberEdit);
+    Task<bool> ExcluirAsync(Guid id);
     Task<PaginacaoViewModel<ParcelaViewModel>> PaginacaoAsync(PaginacaoParcelaDto paginacaoFaturaAReceberDto);
     Task<IList<ParcelaViewModel>> GetByPedidoIdAsync(Guid pedidoId, StatusParcelaEnum? statusFaturaContasAReceberEnum);
 }

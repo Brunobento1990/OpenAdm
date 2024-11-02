@@ -11,6 +11,7 @@ public class ParcelaViewModel : BaseViewModel
     public DateTime DataDeVencimento { get; set; }
     public DateTime? DataDePagamento { get; set; }
     public int NumeroDaFatura { get; set; }
+    public long NumeroDoPedido { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public decimal Valor { get; set; }
     public decimal? Desconto { get; set; }
