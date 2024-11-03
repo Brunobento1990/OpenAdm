@@ -118,6 +118,11 @@ public sealed class ParcelaService : IParcelaService
         var parcela = await _faturaContasAReceberRepository.GetByIdAsync(id)
             ?? throw new ExceptionApi("Não foi possível localizar a parcela");
 
+        if (!string.IsNullOrWhiteSpace(parcela.IdExterno))
+        {
+            throw new ExceptionApi("Não é possível excluir uma parcela com integração com o mercado pago!");
+        }
+
         await _faturaContasAReceberRepository.DeleteAsync(parcela);
 
         return true;
