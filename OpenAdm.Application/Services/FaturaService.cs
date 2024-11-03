@@ -113,6 +113,21 @@ public sealed class FaturaService : IFaturaService
         };
     }
 
+    public async Task<FaturaViewModel> GetByIdAsync(Guid id)
+    {
+        var fatura = await _contasAReceberRepository.GetByIdAsync(id)
+            ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
+        return (FaturaViewModel)fatura;
+    }
+
+    public async Task<FaturaViewModel> GetCompletaAsync(Guid id)
+    {
+        var fatura = await _contasAReceberRepository.GetByIdCompletaAsync(id)
+            ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
+
+        return (FaturaViewModel)fatura;
+    }
+
     public async Task VerificarFechamentoAsync(Guid id)
     {
         var contasAReceber = await _contasAReceberRepository.GetByIdAsync(id)

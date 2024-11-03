@@ -105,4 +105,7 @@ public sealed class PedidoCached : IPedidoRepository
 
     public Task<IList<Pedido>> PaginacaoDropDownAsync(PaginacaoDropDown<Pedido> paginacaoDropDown)
         => _pedidoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<IDictionary<Guid, Pedido>> GetPedidosAsync(IList<Guid> ids)
+        => _pedidoRepository.GetPedidosAsync(ids);
 }

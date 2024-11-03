@@ -19,4 +19,15 @@ public sealed class FaturaRepository : GenericRepository<Fatura>, IFaturaReposit
             .Include(x => x.Parcelas)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<Fatura?> GetByIdCompletaAsync(Guid id)
+    {
+        return await _parceiroContext
+            .Faturas
+            .AsNoTracking()
+            .Include(x => x.Parcelas)
+            .Include(x => x.Usuario)
+            .Include(x => x.Pedido)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 }

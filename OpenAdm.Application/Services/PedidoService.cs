@@ -46,6 +46,19 @@ public class PedidoService(
         };
     }
 
+    public async Task<IDictionary<Guid, PedidoViewModel>> GetPedidosAsync(IList<Guid> ids)
+    {
+        var pedidos = await _pedidoRepository.GetPedidosAsync(ids);
+        var pedidosViewModel = new Dictionary<Guid, PedidoViewModel>();
+
+        foreach (var pedido in pedidos)
+        {
+            pedidosViewModel.TryAdd(pedido.Key, new PedidoViewModel().ForModelPedidoEmAberto(pedido.Value));
+        }
+
+        return pedidosViewModel;
+    }
+
     public async Task<IList<PedidoViewModel>> GetPedidosEmAbertAsync()
     {
         var pedidos = await _pedidoRepository.GetPedidosEmAbertoAsync();

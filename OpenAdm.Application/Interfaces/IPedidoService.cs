@@ -9,6 +9,7 @@ public interface IPedidoService
 {
     Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto);
     Task<IList<PedidoViewModel>> GetPedidosEmAbertAsync();
+    Task<IDictionary<Guid, PedidoViewModel>> GetPedidosAsync(IList<Guid> ids);
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
     Task<PedidoViewModel> GetAsync(Guid pedidoId);
     Task<byte[]> PedidoProducaoAsync(RelatorioProducaoDto relatorioProducaoDto);

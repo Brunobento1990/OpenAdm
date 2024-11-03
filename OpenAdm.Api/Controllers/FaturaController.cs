@@ -32,4 +32,13 @@ public class FaturaController : ControllerBase
         var result = await _faturaService.CriarAdmAsync(faturaCriarAdmDto);
         return Ok(result);
     }
+
+    [HttpGet("get")]
+    [ProducesResponseType<FaturaViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> Get([FromQuery] Guid id)
+    {
+        var result = await _faturaService.GetCompletaAsync(id);
+        return Ok(result);
+    }
 }

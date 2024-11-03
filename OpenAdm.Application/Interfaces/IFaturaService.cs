@@ -11,4 +11,6 @@ public interface IFaturaService
     Task VerificarFechamentoAsync(Guid id);
     Task<PagamentoViewModel> GerarPagamentoAsync(MeioDePagamentoEnum meioDePagamento, Guid pedidoId);
     Task<FaturaViewModel> CriarAdmAsync(FaturaCriarAdmDto faturaCriarAdmDto);
+    Task<FaturaViewModel> GetCompletaAsync(Guid id);
+    Task<FaturaViewModel> GetByIdAsync(Guid id);
 }
