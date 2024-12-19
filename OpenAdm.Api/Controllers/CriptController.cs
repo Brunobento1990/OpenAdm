@@ -1,5 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using OpenAdm.Application.Adapters;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Helpers;
+using OpenAdm.Domain.Interfaces;
+using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -7,10 +12,34 @@ namespace OpenAdm.Api.Controllers;
 [Route("cript")]
 public class CriptController : ControllerBase
 {
-    [HttpPost("Criptar")]
-    public IActionResult Criptar(BodyCript bodyCript)
+    private readonly OpenAdmContext _openAdmContext;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
+    private readonly ParceiroContext _parceiroContext;
+    public CriptController(OpenAdmContext openAdmContext, IParceiroAutenticado parceiroAutenticado, ParceiroContext parceiroContext)
     {
-        if (!VariaveisDeAmbiente.IsDevelopment()) 
+        _openAdmContext = openAdmContext;
+        _parceiroAutenticado = parceiroAutenticado;
+        _parceiroContext = parceiroContext;
+    }
+
+    [HttpPost("Criptar")]
+    public async Task<IActionResult> Criptar(BodyCript bodyCript)
+    {
+        var id = Guid.Parse("95114744-982f-4e09-a38d-a1e2b702ca1f");
+        var empresa = await _openAdmContext
+            .ConfiguracoesParceiro
+            .OrderByDescending(x => x.DataDeCriacao)
+            .FirstOrDefaultAsync(x => x.ParceiroId == id);
+
+        if(empresa != null)
+        {
+            empresa.DominioSiteAdm = "http://localhost:7154/";
+            _openAdmContext.Update(empresa);
+            await _openAdmContext.SaveChangesAsync();
+        }
+
+
+        if (!VariaveisDeAmbiente.IsDevelopment())
         {
             return Unauthorized();
         }
