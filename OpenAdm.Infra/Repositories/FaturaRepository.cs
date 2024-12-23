@@ -13,7 +13,7 @@ public sealed class FaturaRepository : GenericRepository<Fatura>, IFaturaReposit
 
     public async Task<Fatura?> GetByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Faturas
             .AsNoTracking()
             .Include(x => x.Parcelas)
@@ -22,7 +22,7 @@ public sealed class FaturaRepository : GenericRepository<Fatura>, IFaturaReposit
 
     public async Task<Fatura?> GetByIdCompletaAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Faturas
             .AsNoTracking()
             .Include(x => x.Parcelas)

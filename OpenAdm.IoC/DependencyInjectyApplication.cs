@@ -13,6 +13,7 @@ public static class DependencyInjectyApplication
     public static void InjectServices(this IServiceCollection services)
     {
         services.AddScoped<PagamentoPix>();
+        services.AddScoped<ITransacaoFinanceiraService, TransacaoFinanceiraService>();
         services.AddScoped<IPagamentoFactory, PagamentoFactory>();
         services.AddScoped<IEnderecoEntregaPedidoService, EnderecoEntregaPedidoService>();
         services.AddScoped<IConfiguracaoDeFreteService, ConfiguracaoDeFreteService>();

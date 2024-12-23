@@ -13,7 +13,7 @@ public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
 
     public async Task<IDictionary<Guid, string>> GetDescricaoTamanhosAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Tamanhos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))
@@ -22,7 +22,7 @@ public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
 
     public async Task<IDictionary<Guid, Tamanho>> GetDictionaryTamanhosAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Tamanhos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))
@@ -31,7 +31,7 @@ public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
 
     public async Task<Tamanho?> GetTamanhoByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Tamanhos
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -39,7 +39,7 @@ public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
 
     public async Task<IList<Tamanho>> GetTamanhosAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Tamanhos
             .AsNoTracking()
             .OrderByDescending(x => x.Numero)
@@ -48,7 +48,7 @@ public class TamanhoRepository : GenericRepository<Tamanho>, ITamanhoRepository
 
     public async Task<IList<Tamanho>> GetTamanhosByIdsAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Tamanhos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))

@@ -13,25 +13,25 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
 
     public async Task AddRangeAsync(IList<ItemTabelaDePreco> itensTabelaDePrecos)
     {
-        await _parceiroContext.AddRangeAsync(itensTabelaDePrecos);
-        await _parceiroContext.SaveChangesAsync();
+        await ParceiroContext.AddRangeAsync(itensTabelaDePrecos);
+        await ParceiroContext.SaveChangesAsync();
     }
 
     public async Task DeleteItensTabelaDePrecoByProdutoIdAsync(Guid produtoId)
     {
-        var itensTabelaDePreco = await _parceiroContext
+        var itensTabelaDePreco = await ParceiroContext
             .ItensTabelaDePreco
             .Where(x => x.ProdutoId == produtoId)
             .ToListAsync();
 
-        _parceiroContext.RemoveRange(itensTabelaDePreco);
+        ParceiroContext.RemoveRange(itensTabelaDePreco);
 
-        await _parceiroContext.SaveChangesAsync();
+        await ParceiroContext.SaveChangesAsync();
     }
 
     public async Task<ItemTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .ItensTabelaDePreco
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -39,7 +39,7 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
 
     public async Task<IList<ItemTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .ItensTabelaDePreco
             .AsNoTracking()
             .Where(x => produtosIds.Contains(x.ProdutoId))

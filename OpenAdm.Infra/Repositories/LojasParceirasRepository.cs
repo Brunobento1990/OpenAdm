@@ -13,7 +13,7 @@ public class LojasParceirasRepository : GenericRepository<LojaParceira>, ILojasP
 
     public async Task<IList<string?>> GetFotosLojasParceirasAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .LojasParceiras
             .Where(x => x.Foto != null)
             .OrderBy(x => Guid.NewGuid())
@@ -24,7 +24,7 @@ public class LojasParceirasRepository : GenericRepository<LojaParceira>, ILojasP
 
     public async Task<LojaParceira?> GetLojaParceiraByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .LojasParceiras
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);

@@ -14,7 +14,7 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
 
     public async Task<Estoque?> GetEstoqueAsync(Expression<Func<Estoque, bool>> where)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Estoques
             .AsNoTracking()
             .FirstOrDefaultAsync(where);
@@ -22,7 +22,7 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
 
     public async Task<Estoque?> GetEstoqueByProdutoIdAndPesoIdAsync(Guid produtoId, Guid pesoId)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Estoques
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.PesoId == pesoId);
@@ -30,7 +30,7 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
 
     public async Task<Estoque?> GetEstoqueByProdutoIdAndTamanhoIdAsync(Guid produtoId, Guid tamanhoId)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Estoques
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.TamanhoId == tamanhoId);
@@ -38,7 +38,7 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
 
     public async Task<Estoque?> GetEstoqueByProdutoIdAsync(Guid produtoId)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Estoques
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.ProdutoId == produtoId);

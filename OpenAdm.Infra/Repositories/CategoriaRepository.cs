@@ -10,7 +10,7 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
 {
     public async Task<Categoria?> GetCategoriaAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Categorias
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -18,7 +18,7 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Categoria>> GetCategoriasAsync()
     {
-        var categorias = await _parceiroContext
+        var categorias = await ParceiroContext
             .Categorias
             .AsQueryable()
             .AsNoTracking()

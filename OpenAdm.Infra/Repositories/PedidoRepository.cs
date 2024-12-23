@@ -16,7 +16,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         try
         {
-            return await _parceiroContext
+            return await ParceiroContext
                 .Pedidos
                 .AsNoTracking()
                 .Where(x => x.StatusPedido == StatusPedido.Aberto)
@@ -30,7 +30,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<Pedido?> GetPedidoByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pedidos
             .AsNoTracking()
             .IgnoreQueryFilters()
@@ -41,7 +41,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id)
     {
-        var pedido = await _parceiroContext
+        var pedido = await ParceiroContext
             .Pedidos
             .AsNoTracking()
             .IgnoreQueryFilters()
@@ -91,7 +91,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<IDictionary<Guid, Pedido>> GetPedidosAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pedidos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))
@@ -100,7 +100,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Pedido>> GetPedidosByRelatorioPorPeriodoAsync(RelatorioPedidoDto relatorioPedidoDto)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pedidos
             .AsNoTracking()
             .IgnoreQueryFilters()
@@ -121,7 +121,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido)
     {
-        return await _parceiroContext.Pedidos
+        return await ParceiroContext.Pedidos
             .AsNoTracking()
             .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
@@ -133,7 +133,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Pedido>> GetPedidosEmAbertoAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pedidos
             .AsNoTracking()
             .Include(x => x.Usuario)
@@ -144,7 +144,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<int> GetQuantidadeDePedidoPorUsuarioAsync(Guid usuarioId)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pedidos
             .AsNoTracking()
             .IgnoreQueryFilters()
@@ -156,7 +156,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         try
         {
-            return await _parceiroContext
+            return await ParceiroContext
                 .Pedidos
                 .AsNoTracking()
                 .CountAsync(x => x.StatusPedido == statusPedido && x.UsuarioId == usuarioId);
@@ -169,7 +169,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public async Task<decimal> GetTotalPedidoPorUsuarioAsync(Guid usuarioId)
     {
-        var pedidos = await _parceiroContext
+        var pedidos = await ParceiroContext
             .Pedidos
             .AsNoTracking()
             .Include(x => x.ItensPedido)

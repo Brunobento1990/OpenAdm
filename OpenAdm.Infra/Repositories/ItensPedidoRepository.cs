@@ -13,7 +13,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
 
     public async Task<ItemPedido?> GetItemPedidoByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .ItensPedidos
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -21,7 +21,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
 
     public async Task<IList<ItemPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId)
     {
-        var itens = await _parceiroContext
+        var itens = await ParceiroContext
             .ItensPedidos
             .AsNoTracking()
             .Include(x => x.Produto)
@@ -48,7 +48,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
 
     public async Task<IList<ItemPedido>> GetItensPedidoByProducaoAsync(IList<Guid> pedidosIds, IList<Guid> produtosIds, IList<Guid> pesosIds, IList<Guid> tamanhosIds)
     {
-        var itens = _parceiroContext
+        var itens = ParceiroContext
             .ItensPedidos
             .AsNoTracking()
             .Include(x => x.Pedido)

@@ -77,7 +77,7 @@ public sealed class Fatura : BaseEntity
             var novoVencimento = i == 1 ? primeiroVencimento : primeiroVencimento.AddMonths(i);
             fatura.Parcelas.Add(Parcela.NovaFatura(
                 dataDeVencimento: novoVencimento,
-                numeroDaFatura: i,
+                numeroDaParcela: i,
                 meioDePagamento: meioDePagamento,
                 valor: valorDaParcela,
                 desconto: desconto,

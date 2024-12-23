@@ -34,11 +34,12 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     public DbSet<TopUsuario> TopUsuarios { get; set; }
     public DbSet<Fatura> Faturas { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
+    public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_parceiroAutenticado.StringConnection);
-        //optionsBuilder.UseNpgsql("");
+        //optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=192.168.1.199; Port=5432; Database=desenvolvimento; Pooling=true;");
         base.OnConfiguring(optionsBuilder);
     }
 
@@ -51,6 +52,7 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
             numero: 1,
             descricao: "E-commerce",
             ativaEcommerce: true));
+        modelBuilder.ApplyConfiguration(new TransacaoFinanceiraConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());

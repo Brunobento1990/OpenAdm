@@ -24,7 +24,7 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
     }
     public async Task<IList<Usuario>> GetAllUsuariosAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Usuarios
             .AsNoTracking()
             .ToListAsync();
@@ -32,7 +32,7 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
 
     public async Task<Usuario?> GetUsuarioByEmailAsync(string email)
     {
-        return await _parceiroContext
+        return await ParceiroContext
              .Usuarios
              .AsNoTracking()
              .FirstOrDefaultAsync(x => x.Email == email);
@@ -40,7 +40,7 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
 
     public async Task<Usuario?> GetUsuarioByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Usuarios
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);

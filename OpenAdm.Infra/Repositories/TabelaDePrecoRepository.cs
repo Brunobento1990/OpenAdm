@@ -13,7 +13,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
 
     public async Task<IList<TabelaDePreco>> GetAllTabelaDePrecoAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .TabelaDePreco
             .AsNoTracking()
             .ToListAsync();
@@ -21,7 +21,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
 
     public async Task<int> GetCountTabelaDePrecoAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .TabelaDePreco
             .AsNoTracking()
             .CountAsync();
@@ -29,7 +29,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
 
     public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .TabelaDePreco
             .AsNoTracking()
             .Include(x => x.ItensTabelaDePreco)
@@ -38,14 +38,14 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
 
     public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaByProdutoIdAsync(Guid produtoId)
     {
-        var tabelaDePreco = await _parceiroContext
+        var tabelaDePreco = await ParceiroContext
             .TabelaDePreco
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.AtivaEcommerce);
 
         if(tabelaDePreco != null)
         {
-            tabelaDePreco.ItensTabelaDePreco = await _parceiroContext
+            tabelaDePreco.ItensTabelaDePreco = await ParceiroContext
                 .ItensTabelaDePreco
                 .Where(x => x.ProdutoId == produtoId)
                 .ToListAsync();
@@ -56,7 +56,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
 
     public async Task<TabelaDePreco?> GetTabelaDePrecoByIdAsync(Guid id)
     {
-        var tabelaDePreco = await _parceiroContext
+        var tabelaDePreco = await ParceiroContext
             .TabelaDePreco
             .AsNoTracking()
             .AsSingleQuery()
@@ -78,7 +78,7 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
 
     public async Task<TabelaDePreco?> GetTabelaDePrecoByIdUpdateAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .TabelaDePreco
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);

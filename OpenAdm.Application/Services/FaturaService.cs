@@ -50,15 +50,13 @@ public sealed class FaturaService : IFaturaService
                 dataDeCriacao: DateTime.Now,
                 dataDeAtualizacao: DateTime.Now,
                 numero: 0,
-                status: StatusParcelaEnum.Pendente,
                 dataDeVencimento: parcelaDto.DataDeVencimento,
-                numeroDaFatura: parcelaDto.NumeroDaFatura,
+                numeroDaParcela: parcelaDto.NumeroDaParcela,
                 meioDePagamento: parcelaDto.MeioDePagamento,
                 valor: parcelaDto.Valor,
                 desconto: parcelaDto.Desconto,
                 observacao: parcelaDto.Observacao,
                 faturaId: fatura.Id,
-                dataDePagamento: null,
                 idExterno: null));
         }
 
@@ -134,8 +132,7 @@ public sealed class FaturaService : IFaturaService
             ?? throw new ExceptionApi("Não foi possível localizar a contas a pagar");
 
         if (contasAReceber
-            .Parcelas
-            .Where(x => x.Status == StatusParcelaEnum.Pago).Count() == contasAReceber.Parcelas.Count)
+            .Parcelas.Count() == contasAReceber.Parcelas.Count)
         {
             contasAReceber.Fechar();
             contasAReceber.Parcelas = [];
@@ -145,7 +142,7 @@ public sealed class FaturaService : IFaturaService
 
         if (contasAReceber
             .Parcelas
-            .Where(x => x.Status == StatusParcelaEnum.Pago).Count() > 1)
+            .Count() > 1)
         {
             contasAReceber.PagaParcialmente();
             contasAReceber.Parcelas = [];

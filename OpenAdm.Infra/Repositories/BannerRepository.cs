@@ -10,7 +10,7 @@ public class BannerRepository(ParceiroContext parceiroContext)
 {
     public async Task<Banner?> GetBannerByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Banners
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -18,7 +18,7 @@ public class BannerRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Banner>> GetBannersAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Banners
             .OrderBy(x => Guid.NewGuid())
             .Take(5)

@@ -10,7 +10,7 @@ public class PesosProdutosRepository(ParceiroContext parceiroContext)
 {
     public async Task<IList<PesoProduto>> AddRangeAsync(IList<PesoProduto> pesosProdutos)
     {
-        await _parceiroContext.AddRangeAsync(pesosProdutos);
+        await ParceiroContext.AddRangeAsync(pesosProdutos);
         return pesosProdutos;
     }
 
@@ -18,12 +18,12 @@ public class PesosProdutosRepository(ParceiroContext parceiroContext)
     {
         try
         {
-            var pesosProdutos = await _parceiroContext
+            var pesosProdutos = await ParceiroContext
                 .PesosProdutos
                 .Where(x => x.ProdutoId == produtoId)
                 .ToListAsync();
 
-            _parceiroContext.RemoveRange(pesosProdutos);
+            ParceiroContext.RemoveRange(pesosProdutos);
 
             return true;
         }

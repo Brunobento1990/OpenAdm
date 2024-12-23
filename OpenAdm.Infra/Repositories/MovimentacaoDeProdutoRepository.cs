@@ -13,8 +13,8 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
 
     public async Task AddRangeAsync(IList<MovimentacaoDeProduto> movimentacaoDeProdutos)
     {
-        await _parceiroContext.AddRangeAsync(movimentacaoDeProdutos);
-        await _parceiroContext.SaveChangesAsync();
+        await ParceiroContext.AddRangeAsync(movimentacaoDeProdutos);
+        await ParceiroContext.SaveChangesAsync();
     }
 
     public async Task<IDictionary<int, decimal>> CountTresMesesAsync()
@@ -24,7 +24,7 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
         var ano = int.Parse(dataSplit[2][..4]);
         var mes = int.Parse(dataSplit[0]);
 
-        return await _parceiroContext
+        return await ParceiroContext
             .MovimentacoesDeProdutos
             .Where(m => m.DataDeCriacao.Month >= mes && m.DataDeCriacao.Year == ano)
             .GroupBy(m => m.DataDeCriacao.Month)
@@ -40,7 +40,7 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
         IList<Guid> pesosIds, 
         IList<Guid> tamanhosIds)
     {
-        var query = _parceiroContext
+        var query = ParceiroContext
             .MovimentacoesDeProdutos
             .OrderBy(x => x.DataDeCriacao)
             .Where(x => x.DataDeCriacao.Date >= dataInicial.Date && x.DataDeCriacao.Date <= dataFinal.Date);
