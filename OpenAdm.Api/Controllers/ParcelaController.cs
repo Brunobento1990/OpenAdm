@@ -35,21 +35,21 @@ public class ParcelaController : ControllerBase
     }
 
     [HttpGet("pedido")]
-    [ProducesResponseType<IList<FaturaViewModel>>(200)]
+    [ProducesResponseType<IList<ParcelaViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> ByPedido([FromQuery] Guid pedidoId, [FromQuery] StatusParcelaEnum statusFatura)
+    public async Task<IActionResult> ByPedido([FromQuery] Guid pedidoId)
     {
-        var faturas = await _parcelaService.GetByPedidoIdAsync(pedidoId, statusFatura);
-        return Ok(faturas);
+        var parcela = await _parcelaService.GetByPedidoIdAsync(pedidoId);
+        return Ok(parcela);
     }
 
     [HttpGet("get-by-id")]
-    [ProducesResponseType<FaturaViewModel>(200)]
+    [ProducesResponseType<ParcelaViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> GetById([FromQuery] Guid id)
     {
-        var fatura = await _parcelaService.GetByIdAsync(id);
-        return Ok(fatura);
+        var parcela = await _parcelaService.GetByIdAsync(id);
+        return Ok(parcela);
     }
 
     [HttpPut("pagar")]

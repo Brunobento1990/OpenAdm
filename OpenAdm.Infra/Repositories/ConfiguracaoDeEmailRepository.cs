@@ -13,7 +13,7 @@ public class ConfiguracaoDeEmailRepository : GenericRepository<ConfiguracaoDeEma
 
     public async Task<ConfiguracaoDeEmail?> GetConfiguracaoDeEmailAtivaAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .ConfiguracoesDeEmail
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Ativo);

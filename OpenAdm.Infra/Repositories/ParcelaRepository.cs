@@ -2,7 +2,9 @@
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Context;
+using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -12,35 +14,63 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
     {
     }
 
-    public async Task<Parcela?> GetByIdAsync(Guid id)
+    public override async Task<PaginacaoViewModel<Parcela>> PaginacaoAsync(FilterModel<Parcela> filterModel)
     {
-        return await _parceiroContext
+        var select = filterModel.SelectCustom();
+
+        var query = ParceiroContext
             .Parcelas
             .AsNoTracking()
+            .Include(x => x.Fatura.Usuario)
+            .Include(x => x.Transacoes)
+            .WhereIsNotNull(filterModel.GetWhereBySearch());
+
+        if (select != null)
+        {
+            query = query.Select(select);
+        }
+
+        var (TotalPaginas, Values) = await query
+            .CustomFilterAsync(filterModel);
+
+        var totalDeRegistros = await ParceiroContext.Parcelas
+            .WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
+
+        return new()
+        {
+            TotalPaginas = TotalPaginas,
+            Values = Values,
+            TotalDeRegistros = totalDeRegistros
+        };
+    }
+
+    public async Task<Parcela?> GetByIdAsync(Guid id)
+    {
+        return await ParceiroContext
+            .Parcelas
+            .AsNoTracking()
+            .Include(x => x.Fatura.Usuario)
+            .Include(x => x.Fatura.Pedido)
+            .Include(x => x.Transacoes)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<Parcela?> GetByIdExternoAsync(string idExterno)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Parcelas
             .AsNoTracking()
             .Include(x => x.Fatura)
             .FirstOrDefaultAsync(x => x.IdExterno == idExterno);
     }
 
-    public async Task<IList<Parcela>> GetByPedidoIdAsync(Guid pedidoId, StatusParcelaEnum? statusFaturaContasAReceberEnum)
+    public async Task<IList<Parcela>> GetByPedidoIdAsync(Guid pedidoId)
     {
-        var query = _parceiroContext
+        var query = ParceiroContext
             .Parcelas
             .AsNoTracking()
             .Include(x => x.Fatura)
             .Where(x => x.Fatura.PedidoId == pedidoId);
-
-        if (statusFaturaContasAReceberEnum.HasValue)
-        {
-            query = query.Where(x => x.Status == statusFaturaContasAReceberEnum);
-        }
 
         return await query
             .ToListAsync();
@@ -50,11 +80,10 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
     {
         try
         {
-            return await _parceiroContext
+            return await ParceiroContext
                 .Parcelas
                 .AsNoTracking()
                 .Include(x => x.Fatura)
-                .Where(x => x.Status == StatusParcelaEnum.Pendente && x.Fatura.Tipo == tipoFatura)
                 .SumAsync(x => x.Valor);
         }
         catch (Exception)
@@ -70,17 +99,21 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
         var ano = int.Parse(dataSplit[2][..4]);
         var mes = int.Parse(dataSplit[0]);
 
-        return await _parceiroContext
+        return await ParceiroContext
             .Parcelas
             .AsNoTracking()
             .Include(x => x.Fatura)
             .Where(m => m.DataDeCriacao.Month >= mes &&
                 m.DataDeCriacao.Year == ano &&
-                m.Status == StatusParcelaEnum.Pago &&
                 m.Fatura.Tipo == faturaEnum)
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,
                 g => g.Sum(x => x.Valor));
+    }
+
+    public async Task AdicionarTransacaoAsync(TransacaoFinanceira transacaoFinanceira)
+    {
+        await ParceiroContext.TransacoesFinanceiras.AddAsync(transacaoFinanceira);
     }
 }

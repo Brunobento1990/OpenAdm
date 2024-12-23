@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.Bases;
 using OpenAdm.Application.Models.ContasAReceberModel;
+using OpenAdm.Application.Models.Transacoes;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 
@@ -7,18 +8,20 @@ namespace OpenAdm.Application.Models.FaturasModel;
 
 public class ParcelaViewModel : BaseViewModel
 {
-    public StatusParcelaEnum Status { get; set; }
     public DateTime DataDeVencimento { get; set; }
-    public DateTime? DataDePagamento { get; set; }
-    public int NumeroDaFatura { get; set; }
+    public int NumeroDaParcela { get; set; }
     public long NumeroDoPedido { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public decimal Valor { get; set; }
+    public decimal ValorPagoRecebido { get; set; }
+    public decimal ValorAPagarAReceber { get; set; }
     public decimal? Desconto { get; set; }
     public string? Observacao { get; set; }
-    public Guid FaturaId { get; set; }
     public bool Vencida { get; set; }
+    public Guid FaturaId { get; set; }
+    public StatusParcelaEnum Status { get; set; }
     public FaturaViewModel Fatura { get; set; } = null!;
+    public IList<TransacaoFinanceiraViewModel>? Transacoes { get; set; }
 
     public static explicit operator ParcelaViewModel(Parcela faturaContasAReceber)
     {
@@ -37,12 +40,18 @@ public class ParcelaViewModel : BaseViewModel
             Id = faturaContasAReceber.Id,
             MeioDePagamento = faturaContasAReceber.MeioDePagamento,
             Numero = faturaContasAReceber.Numero,
-            NumeroDaFatura = faturaContasAReceber.NumeroDaFatura,
+            NumeroDaParcela = faturaContasAReceber.NumeroDaParcela,
             Observacao = faturaContasAReceber.Observacao,
-            Status = faturaContasAReceber.Status,
             Valor = faturaContasAReceber.Valor,
-            Vencida = DateTime.Now.Date > faturaContasAReceber.DataDeVencimento.Date && faturaContasAReceber.DataDePagamento == null,
-            DataDePagamento = faturaContasAReceber.DataDePagamento
+            Status = faturaContasAReceber.Status,
+            ValorAPagarAReceber = faturaContasAReceber.ValorAPagarAReceber,
+            ValorPagoRecebido = faturaContasAReceber.ValorPagoRecebido,
+            Vencida = faturaContasAReceber.Vencida,
+            Transacoes = faturaContasAReceber.Transacoes?.Select(x =>
+            {
+                x.Parcela = null;
+                return (TransacaoFinanceiraViewModel)x;
+            }).ToList()
         };
     }
 }

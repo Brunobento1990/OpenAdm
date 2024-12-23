@@ -10,6 +10,7 @@ public class OpenAdmContext(DbContextOptions<OpenAdmContext> options)
     public DbSet<Parceiro> Parceiros { get; set; }
     public DbSet<ConfiguracaoParceiro> ConfiguracoesParceiro { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new ParceiroConfiguration());

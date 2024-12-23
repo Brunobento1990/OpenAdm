@@ -35,11 +35,11 @@ public sealed class ParcelaService : IParcelaService
     {
         parcelaCriarDto.Validar();
         var fatura = await _contasAReceberService.GetByIdAsync(parcelaCriarDto.FaturaId);
-        var proximoNumeroParcela = (fatura.Parcelas.MaxBy(x => x.NumeroDaFatura)?.NumeroDaFatura ?? 0) + 1;
+        var proximoNumeroParcela = (fatura.Parcelas.MaxBy(x => x.NumeroDaParcela)?.NumeroDaParcela ?? 0) + 1;
 
         var parcela = Parcela.NovaFatura(
             dataDeVencimento: parcelaCriarDto.DataDeVencimento ?? DateTime.Now,
-            numeroDaFatura: proximoNumeroParcela,
+            numeroDaParcela: proximoNumeroParcela,
             meioDePagamento: parcelaCriarDto.MeioDePagamento,
             valor: parcelaCriarDto.Valor,
             desconto: parcelaCriarDto.Desconto,
@@ -55,12 +55,12 @@ public sealed class ParcelaService : IParcelaService
     public async Task BaixarFaturaWebHookAsync(NotificationFaturaWebHook notificationFaturaWebHook)
     {
         var fatura = await _faturaContasAReceberRepository.GetByIdExternoAsync(notificationFaturaWebHook.Data.Id);
-        if (fatura == null || fatura.Status == StatusParcelaEnum.Pago)
+        if (fatura == null)
         {
             return;
         }
 
-        fatura.PagarWebHook();
+        //fatura.PagarWebHook();
         await _faturaContasAReceberRepository.UpdateAsync(fatura);
 
         if (fatura.Fatura != null && fatura.Fatura.PedidoId.HasValue)
@@ -81,9 +81,7 @@ public sealed class ParcelaService : IParcelaService
             ?? throw new ExceptionApi("Não foi possível localizar a parcela");
 
         parcela.Edit(
-            status: parcelaEditDto.Status,
             dataDeVencimento: parcelaEditDto.DataDeVencimento,
-            dataDePagamento: parcelaEditDto.DataDePagamento,
             meioDePagamento: parcelaEditDto.MeioDePagamento,
             valor: parcelaEditDto.Valor,
             desconto: parcelaEditDto.Desconto,
@@ -100,9 +98,7 @@ public sealed class ParcelaService : IParcelaService
             ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
 
         fatura.Edit(
-            status: faturaAReceberEdit.Status,
             dataDeVencimento: faturaAReceberEdit.DataDeVencimento,
-            dataDePagamento: faturaAReceberEdit.DataDePagamento,
             meioDePagamento: faturaAReceberEdit.MeioDePagamento,
             valor: faturaAReceberEdit.Valor,
             desconto: faturaAReceberEdit.Desconto,
@@ -117,6 +113,11 @@ public sealed class ParcelaService : IParcelaService
     {
         var parcela = await _faturaContasAReceberRepository.GetByIdAsync(id)
             ?? throw new ExceptionApi("Não foi possível localizar a parcela");
+
+        if (!string.IsNullOrWhiteSpace(parcela.IdExterno))
+        {
+            throw new ExceptionApi("Não é possível excluir uma parcela com integração com o mercado pago!");
+        }
 
         await _faturaContasAReceberRepository.DeleteAsync(parcela);
 
@@ -146,9 +147,9 @@ public sealed class ParcelaService : IParcelaService
         return (ParcelaViewModel)parcela;
     }
 
-    public async Task<IList<ParcelaViewModel>> GetByPedidoIdAsync(Guid pedidoId, StatusParcelaEnum? statusFaturaContasAReceberEnum)
+    public async Task<IList<ParcelaViewModel>> GetByPedidoIdAsync(Guid pedidoId)
     {
-        var faturas = await _faturaContasAReceberRepository.GetByPedidoIdAsync(pedidoId, statusFaturaContasAReceberEnum);
+        var faturas = await _faturaContasAReceberRepository.GetByPedidoIdAsync(pedidoId);
         return faturas.Select(x => (ParcelaViewModel)x).ToList();
     }
 
@@ -157,16 +158,22 @@ public sealed class ParcelaService : IParcelaService
 
     public async Task<ParcelaViewModel> PagarAsync(PagarParcelaDto pagarFaturaAReceberDto)
     {
+        pagarFaturaAReceberDto.Validar();
+
         var parcela = await _faturaContasAReceberRepository.GetByIdAsync(pagarFaturaAReceberDto.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
+            ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
-        parcela.Pagar(
-            desconto: pagarFaturaAReceberDto.Desconto,
+        var transacao = parcela.Pagar(
+            valor: pagarFaturaAReceberDto.Valor,
             meioDePagamento: pagarFaturaAReceberDto.MeioDePagamento,
-            observacao: pagarFaturaAReceberDto.Observacao);
+            observacao: pagarFaturaAReceberDto.Observacao,
+            dataDePagamento: pagarFaturaAReceberDto.DataDePagamento,
+            desconto: pagarFaturaAReceberDto.Desconto);
 
-        await _faturaContasAReceberRepository.UpdateAsync(parcela);
         parcela.Fatura = null!;
+        parcela.Transacoes = null;
+        await _faturaContasAReceberRepository.AdicionarTransacaoAsync(transacao);
+        await _faturaContasAReceberRepository.UpdateAsync(parcela);
 
         await _contasAReceberService.VerificarFechamentoAsync(parcela.FaturaId);
 

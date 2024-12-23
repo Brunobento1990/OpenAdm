@@ -1,5 +1,4 @@
 using dotenv.net;
-using Microsoft.OpenApi.Models;
 using OpenAdm.Api;
 using OpenAdm.Api.Configure;
 using OpenAdm.Api.Middlewares;
@@ -62,10 +61,6 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     app.UseSwagger(c =>
     {
         c.RouteTemplate = "swagger/{documentName}/swagger.json";
-        //c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-        //{
-        //    swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}{basePath}" } };
-        //});
     });
     app.UseSwaggerUI();
 }

@@ -13,7 +13,7 @@ public class ConfiguracoesDePedidoRepository :GenericRepository<ConfiguracoesDeP
 
     public async Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .ConfiguracoesDePedidos
             .AsNoTracking()
             .OrderByDescending(x => x.Numero)

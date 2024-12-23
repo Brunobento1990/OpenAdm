@@ -26,7 +26,7 @@ public sealed class ConfiguracaoParceiro : BaseEntity
     }
 
     public string ConexaoDb { get; private set; }
-    public string DominioSiteAdm { get; private set; }
+    public string DominioSiteAdm { get; set; }
     public string DominioSiteEcommerce { get; private set; }
     public string? ClienteMercadoPago { get; private set; }
     public bool Ativo { get; private set; }

@@ -13,7 +13,7 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
 
     public async Task<IDictionary<Guid, string>> GetDescricaoPesosAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pesos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))
@@ -22,7 +22,7 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
 
     public async Task<IDictionary<Guid, Peso>> GetDictionaryPesosByIdsAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pesos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))
@@ -31,7 +31,7 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
 
     public async Task<Peso?> GetPesoByIdAsync(Guid id)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pesos
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -39,7 +39,7 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
 
     public async Task<IList<Peso>> GetPesosAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pesos
             .AsNoTracking()
             .OrderByDescending(x => x.Numero)
@@ -48,7 +48,7 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
 
     public async Task<IList<Peso>> GetPesosByIdsAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Pesos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))

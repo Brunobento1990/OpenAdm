@@ -11,12 +11,12 @@ namespace OpenAdm.Infra.Repositories;
 public class GenericRepository<T>(ParceiroContext parceiroContext)
     : IGenericRepository<T> where T : class
 {
-    protected readonly ParceiroContext _parceiroContext = parceiroContext;
+    protected readonly ParceiroContext ParceiroContext = parceiroContext;
 
     public virtual async Task<T> AddAsync(T entity)
     {
-        await _parceiroContext.AddAsync(entity);
-        await _parceiroContext.SaveChangesAsync();
+        await ParceiroContext.AddAsync(entity);
+        await ParceiroContext.SaveChangesAsync();
         return entity;
     }
 
@@ -24,8 +24,8 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
     {
         try
         {
-            _parceiroContext.Remove(entity);
-            return await _parceiroContext.SaveChangesAsync() > 0;
+            ParceiroContext.Remove(entity);
+            return await ParceiroContext.SaveChangesAsync() > 0;
         }
         catch (Exception ex)
         {
@@ -44,7 +44,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         var include = filterModel.IncludeCustom();
         var select = filterModel.SelectCustom();
 
-        var query = _parceiroContext
+        var query = ParceiroContext
             .Set<T>()
             .AsNoTracking()
             .WhereIsNotNull(filterModel.GetWhereBySearch());
@@ -62,7 +62,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         var (TotalPaginas, Values) = await query
             .CustomFilterAsync(filterModel);
 
-        var totalDeRegistros = await _parceiroContext.Set<T>().WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
+        var totalDeRegistros = await ParceiroContext.Set<T>().WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
 
         return new()
         {
@@ -74,7 +74,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
 
     public async Task<IList<T>> PaginacaoDropDownAsync(PaginacaoDropDown<T> paginacaoDropDown)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Set<T>()
             .AsNoTracking()
             .OrderBy(x => EF.Property<T>(x, paginacaoDropDown.OrderBy))
@@ -86,9 +86,9 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
 
     public async Task<T> UpdateAsync(T entity)
     {
-        _parceiroContext.Attach(entity);
-        _parceiroContext.Update(entity);
-        await _parceiroContext.SaveChangesAsync();
+        ParceiroContext.Attach(entity);
+        ParceiroContext.Update(entity);
+        await ParceiroContext.SaveChangesAsync();
         return entity;
     }
 }

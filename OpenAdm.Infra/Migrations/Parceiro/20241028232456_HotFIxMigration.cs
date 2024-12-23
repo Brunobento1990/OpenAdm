@@ -11,10 +11,6 @@ namespace OpenAdm.Infra.Migrations.Parceiro
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Peso",
-                table: "Produtos");
-
             migrationBuilder.InsertData(
                 table: "TabelaDePreco",
                 columns: new[] { "Id", "AtivaEcommerce", "Descricao", "Numero" },
@@ -28,12 +24,6 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                 table: "TabelaDePreco",
                 keyColumn: "Id",
                 keyValue: new Guid("4b43157b-8029-4e55-be53-1b8d27ea9be2"));
-
-            migrationBuilder.AddColumn<decimal>(
-                name: "Peso",
-                table: "Produtos",
-                type: "numeric",
-                nullable: true);
         }
     }
 }

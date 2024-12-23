@@ -4,9 +4,9 @@ using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-internal class ParcelaConfiguration : IEntityTypeConfiguration<Parcela>
+internal class TransacaoFinanceiraConfiguration : IEntityTypeConfiguration<TransacaoFinanceira>
 {
-    public void Configure(EntityTypeBuilder<Parcela> builder)
+    public void Configure(EntityTypeBuilder<TransacaoFinanceira> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.DataDeCriacao)
@@ -22,13 +22,12 @@ internal class ParcelaConfiguration : IEntityTypeConfiguration<Parcela>
         builder.Property(x => x.Valor)
             .IsRequired()
             .HasPrecision(12, 2);
-        builder.Property(x => x.Desconto)
-            .HasPrecision(12, 2);
         builder.Property(x => x.Observacao)
             .HasMaxLength(500);
-        builder.Ignore(x => x.ValorAPagarAReceber);
-        builder.Ignore(x => x.ValorPagoRecebido);
-        builder.Ignore(x => x.Status);
-        builder.Ignore(x => x.Vencida);
+
+        builder.HasOne(x => x.Parcela)
+            .WithMany(x => x.Transacoes)
+            .HasForeignKey(x => x.ParcelaId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -30,7 +30,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             paginacaoProdutoEcommerceDto.TamanhoId == null || paginacaoProdutoEcommerceDto.TamanhoId == Guid.Empty ? null :
             x => x.Tamanhos.Any(p => p.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value);
 
-        var produtos = await _parceiroContext
+        var produtos = await ParceiroContext
             .Produtos
             .AsNoTracking()
             .AsQueryable()
@@ -72,7 +72,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             });
         }
 
-        var totalPages = await _parceiroContext
+        var totalPages = await ParceiroContext
             .Produtos
             .AsQueryable()
             .WhereIsNotNull(where)
@@ -89,7 +89,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Produto>> GetProdutosMaisVendidosAsync()
     {
-        var produtosMaisVendidos = await _parceiroContext
+        var produtosMaisVendidos = await ParceiroContext
             .ProdutosMaisVendidos
             .AsNoTracking()
             .Select(x =>
@@ -109,7 +109,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Take(3)
             .ToList();
 
-        return await _parceiroContext
+        return await ParceiroContext
             .Produtos
             .AsNoTracking()
             .Where(x => produtosIds.Contains(x.Id))
@@ -118,7 +118,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<int> GetTotalPageProdutosAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Produtos
             .AsQueryable()
             .TotalPage(_take);
@@ -126,7 +126,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Produto>> GetProdutosByCategoriaIdAsync(Guid categoriaId)
     {
-        var produtos = await _parceiroContext
+        var produtos = await ParceiroContext
             .Produtos
             .AsNoTracking()
             .AsQueryable()
@@ -137,14 +137,14 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
         var produtosIds = produtos.Select(x => x.Id).ToList();
 
-        var tamanhos = await _parceiroContext
+        var tamanhos = await ParceiroContext
             .TamanhosProdutos
             .AsNoTracking()
             .Include(x => x.Tamanho)
             .Where(x => produtosIds.Contains(x.ProdutoId))
             .ToListAsync();
 
-        var pesos = await _parceiroContext
+        var pesos = await ParceiroContext
             .PesosProdutos
             .AsNoTracking()
             .Include(x => x.Peso)
@@ -177,7 +177,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids)
     {
-        var produtos = await _parceiroContext
+        var produtos = await ParceiroContext
             .Produtos
             .AsQueryable()
             .Include(x => x.Categoria)
@@ -205,7 +205,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<Produto?> GetProdutoByIdAsync(Guid id)
     {
-        var produto = await _parceiroContext
+        var produto = await ParceiroContext
             .Produtos
             .AsNoTracking()
             .Include(x => x.Categoria)
@@ -213,14 +213,14 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
         if (produto != null)
         {
-            var tamanhos = await _parceiroContext
+            var tamanhos = await ParceiroContext
             .TamanhosProdutos
             .AsNoTracking()
             .Include(x => x.Tamanho)
             .Where(x => x.ProdutoId == produto.Id)
             .ToListAsync();
 
-            var pesos = await _parceiroContext
+            var pesos = await ParceiroContext
                 .PesosProdutos
                 .AsNoTracking()
                 .Include(x => x.Peso)
@@ -249,7 +249,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<IList<Produto>> GetAllProdutosAsync()
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Produtos
             .AsNoTracking()
             .OrderByDescending(x => x.Numero)
@@ -258,7 +258,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<IDictionary<Guid, string>> GetDescricaoDeProdutosAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Produtos
             .AsNoTracking()
             .Where(x => ids.Contains(x.Id))
@@ -267,7 +267,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 
     public async Task<IDictionary<Guid, Produto>> GetDictionaryProdutosAsync(IList<Guid> ids)
     {
-        return await _parceiroContext
+        return await ParceiroContext
             .Produtos
             .AsNoTracking()
             .Include(x => x.Categoria)

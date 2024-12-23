@@ -18,8 +18,8 @@ public static class DependencyInjectRepositories
         {
             options.Configuration = connectionString;
         });
+
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
-        //services.AddScoped<ConfiguracaoParceiroRepository>();
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
 
         services.AddScoped<ConfiguracaoDePagamentoRepository>();
@@ -27,6 +27,7 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ILoginUsuarioRepository, LoginUsuarioRepository>();
         services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
+        services.AddScoped<ITransacaoFinanceiraRepository, TransacaoFinanceiraRepository>();
 
         services.AddScoped<BannerRepository>();
         services.AddScoped<IBannerRepository, BannerCached>();
@@ -36,7 +37,6 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ILoginFuncionarioRepository, LoginFuncionarioRepository>();
 
-        //services.AddScoped<PedidoRepository>();
         services.AddScoped<IPedidoRepository, PedidoRepository>();
 
         services.AddScoped<CategoriaRepository>();

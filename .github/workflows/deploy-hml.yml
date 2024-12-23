@@ -15,7 +15,7 @@ jobs:
     - name: Setup dotnet
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.x'
     - name: Install dependencies
       run: dotnet restore ./OpenAdm.Api
     - name: Build
@@ -23,7 +23,7 @@ jobs:
     - name: Test
       run: dotnet test ./OpenAdm.Test
     - name: Build-Image-Docker
-      run: docker build ./ -t brunobentocaina/open-adm-api:stating
+      run: docker build -f OpenAdm.Api/Dockerfile . -t brunobentocaina/open-adm-api:stating
     - name: Push
       run: |
         docker login -u brunobentocaina -p ${{ secrets.DOCKER_HUB_KEY }}
