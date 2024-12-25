@@ -5,7 +5,7 @@ namespace OpenAdm.Domain.Interfaces;
 
 public interface IParcelaRepository : IGenericRepository<Parcela>
 {
-    Task<decimal> SumTotalAsync(TipoFaturaEnum faturaEnum);
+    Task<IList<Parcela>> ListaParcelasTotalizadorAsync(TipoFaturaEnum tipoFatura);
     Task<IDictionary<int, decimal>> SumTotalMesesAsync(TipoFaturaEnum faturaEnum);
     Task<Parcela?> GetByIdAsync(Guid id);
     Task<Parcela?> GetByIdExternoAsync(string idExterno);

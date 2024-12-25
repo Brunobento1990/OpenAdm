@@ -16,7 +16,7 @@ public class HomeController : ControllerBase
         _homeEcommerSevice = homeEcommerSevice;
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
+    //[ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("adm")]
     public async Task<IActionResult> ListAdm()
     {

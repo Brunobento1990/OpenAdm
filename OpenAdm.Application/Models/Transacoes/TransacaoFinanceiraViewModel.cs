@@ -14,9 +14,11 @@ public class TransacaoFinanceiraViewModel : BaseViewModel
     public TipoTransacaoFinanceiraEnum TipoTransacaoFinanceira { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public string? Observacao { get; set; }
+    public bool EhEstorno { get; set; }
 
     public static explicit operator TransacaoFinanceiraViewModel(TransacaoFinanceira transacaoFinanceira)
     {
+        var estorno = transacaoFinanceira.EhEstorno;
         return new TransacaoFinanceiraViewModel()
         {
             Id = transacaoFinanceira.Id,
@@ -29,7 +31,8 @@ public class TransacaoFinanceiraViewModel : BaseViewModel
             Parcela = transacaoFinanceira.Parcela == null ? null : (ParcelaViewModel)transacaoFinanceira.Parcela,
             ParcelaId = transacaoFinanceira.ParcelaId,
             TipoTransacaoFinanceira = transacaoFinanceira.TipoTransacaoFinanceira,
-            Valor = transacaoFinanceira.Valor
+            Valor = transacaoFinanceira.Valor,
+            EhEstorno = estorno
         };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Context;
 
@@ -12,6 +13,25 @@ public class TransacaoFinanceiraRepository : ITransacaoFinanceiraRepository
     public TransacaoFinanceiraRepository(ParceiroContext parceiroContext)
     {
         _parceiroContext = parceiroContext;
+    }
+
+    public async Task<IDictionary<int, List<TransacaoFinanceira>>> SumTotalMesesAsync(TipoFaturaEnum faturaEnum)
+    {
+        var dataInicio = DateTime.Now.AddMonths(-3);
+        var dataSplit = dataInicio.ToString("MM/dd/yyyy").Split('/');
+        var ano = int.Parse(dataSplit[2][..4]);
+        var mes = int.Parse(dataSplit[0]);
+
+        return await _parceiroContext
+            .TransacoesFinanceiras
+            .AsNoTracking()
+            .Include(x => x.Parcela!.Fatura)
+            .Where(m => m.DataDeCriacao.Month >= mes &&
+                m.DataDeCriacao.Year == ano)
+            .GroupBy(m => m.DataDeCriacao.Month)
+            .ToDictionaryAsync(
+                g => g.Key,
+                g => g.ToList());
     }
 
     public async Task<IList<TransacaoFinanceira>> TransacoesNoPeriodoAsync(

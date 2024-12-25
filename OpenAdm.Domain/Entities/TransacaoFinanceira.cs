@@ -34,6 +34,31 @@ public sealed class TransacaoFinanceira : BaseEntity
     public MeioDePagamentoEnum? MeioDePagamento { get; private set; }
     public string? Observacao { get; private set; }
 
+    public bool EhEstorno
+    {
+        get
+        {
+            if (Parcela == null || Parcela.Fatura == null)
+            {
+                return false;
+            }
+
+            if (Parcela.Fatura.Tipo == TipoFaturaEnum.A_Pagar &&
+                TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada)
+            {
+                return true;
+            }
+
+            if (Parcela.Fatura.Tipo == TipoFaturaEnum.A_Receber &&
+                TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
+
     public static TransacaoFinanceira NovaTransacao(
         Guid? parcelaId,
         DateTime? dataDePagamento,
@@ -45,8 +70,8 @@ public sealed class TransacaoFinanceira : BaseEntity
     {
         if (dataDePagamento.HasValue)
         {
-            dataDePagamento.Value.AddHours(DateTime.Now.Hour);
-            dataDePagamento.Value.AddMinutes(DateTime.Now.Minute);
+            dataDePagamento = dataDePagamento.Value.AddHours(DateTime.Now.Hour);
+            dataDePagamento = dataDePagamento.Value.AddMinutes(DateTime.Now.Minute);
         }
 
         return new TransacaoFinanceira(

@@ -11,6 +11,7 @@ public interface IParcelaService
 {
     Task BaixarFaturaWebHookAsync(NotificationFaturaWebHook notificationFaturaWebHook);
     Task<decimal> GetSumAReceberAsync();
+    Task<bool> EstornarAsync(Guid id);
     Task<IList<ParcelaPagaDashBoardModel>> FaturasDashBoardAsync();
     Task<ParcelaViewModel> PagarAsync(PagarParcelaDto pagarFaturaAReceberDto);
     Task<ParcelaViewModel> EditarAsync(ParcelaEditDto parcelaEditDto);
