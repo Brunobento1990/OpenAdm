@@ -10,6 +10,6 @@ public interface IPdfPedidoService
         Pedido pedido,
         string empresa,
         string? logo);
-    byte[] GeneratePdfPedidoRelatorio(GerarRelatorioPedidoDto relatorioPedidoDto, string nomeFantasia);
+    byte[] GeneratePdfPedidoRelatorio(GerarRelatorioPedidoDto relatorioPedidoDto, string nomeFantasia, IList<Pedido> pedido);
     byte[] ProducaoPedido(IList<ItemPedidoProducaoViewModel> itemPedidoProducaoViewModels, string nomeFantasia, string? logo, IList<string> pedidos);
 }

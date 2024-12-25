@@ -5,7 +5,6 @@ using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ContasAReceberModel;
 using OpenAdm.Application.Models.FaturasModel;
-using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
 
@@ -59,6 +58,15 @@ public class ParcelaController : ControllerBase
     {
         var fatura = await _parcelaService.PagarAsync(pagarFaturaAReceberDto);
         return Ok(fatura);
+    }
+
+    [HttpPut("estornar")]
+    [ProducesResponseType<FaturaViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> Estornar([FromQuery] Guid parcelaId)
+    {
+        var result = await _parcelaService.EstornarAsync(parcelaId);
+        return Ok(result);
     }
 
     [HttpPut("edit")]

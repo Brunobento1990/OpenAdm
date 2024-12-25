@@ -51,7 +51,7 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
                 pedido.DataDeCriacao);
         }).ToList();
 
-        var pdf = _pdfPedidoService.GeneratePdfPedidoRelatorio(relatorioPedidoModel, _parceiroAutenticado.NomeFantasia);
+        var pdf = _pdfPedidoService.GeneratePdfPedidoRelatorio(relatorioPedidoModel, _parceiroAutenticado.NomeFantasia, pedidos);
 
         return (pdf, pedidos.Count);
     }

@@ -25,6 +25,8 @@ internal class TransacaoFinanceiraConfiguration : IEntityTypeConfiguration<Trans
         builder.Property(x => x.Observacao)
             .HasMaxLength(500);
 
+        builder.Ignore(x => x.EhEstorno);
+
         builder.HasOne(x => x.Parcela)
             .WithMany(x => x.Transacoes)
             .HasForeignKey(x => x.ParcelaId)

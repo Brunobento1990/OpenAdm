@@ -135,6 +135,17 @@ public sealed class Parcela : BaseEntity
             observacao: observacao ?? $"Pagamento da parcela: {NumeroDaParcela}");
     }
 
+    public TransacaoFinanceira Estornar()
+    {
+        return TransacaoFinanceira.NovaTransacao(
+            parcelaId: Id,
+            dataDePagamento: DateTime.Now,
+            valor: ValorPagoRecebido,
+            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.A_Pagar ? TipoTransacaoFinanceiraEnum.Entrada : TipoTransacaoFinanceiraEnum.Saida,
+            meioDePagamento: null,
+            observacao: $"Estorno da parcela: {NumeroDaParcela}");
+    }
+
     public static Parcela NovaFatura(
         DateTime dataDeVencimento,
         int numeroDaParcela,

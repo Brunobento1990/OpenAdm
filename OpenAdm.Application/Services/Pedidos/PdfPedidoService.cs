@@ -47,7 +47,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
     };
     private static readonly IList<int> _colunsWidtRelatorio = new List<int>()
     {
-        60,90,170,90,90
+        70,90,170,90,90
     };
 
 
@@ -246,7 +246,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
                             .GroupBy(x => x?.Id);
 
 
-                        if (tamamhosItens.Any())
+                        if (tamamhosItens.Count() > 0)
                         {
                             table
                             .Cell()
@@ -294,7 +294,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
                             count++;
                         }
 
-                        if (pesosItens.Any())
+                        if (pesosItens.Count() > 0)
                         {
                             table
                             .Cell()
@@ -349,8 +349,12 @@ public sealed class PdfPedidoService : IPdfPedidoService
         return pdf;
     }
 
-    public byte[] GeneratePdfPedidoRelatorio(GerarRelatorioPedidoDto relatorioPedidoDto, string nomeFantasia)
+    public byte[] GeneratePdfPedidoRelatorio(
+        GerarRelatorioPedidoDto relatorioPedidoDto,
+        string nomeFantasia, IList<Pedido> pedidos)
     {
+        var itensPedido = pedidos.SelectMany(x => x.ItensPedido);
+
         void HeaderCustom(IContainer container)
         {
             var titleStyle = TextStyle.Default.FontSize(18).SemiBold();
@@ -473,6 +477,113 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         .Element(CellTableStyle)
                             .Text($"Total : {relatorioPedidoDto.Total.FormatMoney()}")
                         .FontSize(8);
+
+                        var tamamhosItens = itensPedido
+                            .OrderBy(x => x.Tamanho?.Numero)
+                            .Where(x => x.Tamanho != null)
+                            .Select(x => x.Tamanho)
+                            .ToList()
+                            .GroupBy(x => x?.Id);
+
+                        var pesosItens = itensPedido
+                            .OrderBy(x => x.Peso?.Numero)
+                            .Where(x => x.Peso != null)
+                            .Select(x => x.Peso)
+                            .ToList()
+                            .GroupBy(x => x?.Id);
+
+
+                        if (tamamhosItens.Any())
+                        {
+                            table
+                            .Cell()
+                            .Element(CellStyleHeaderTable)
+                            .Text($"Tamanhos")
+                            .FontSize(10);
+                        }
+
+                        var count = 0;
+
+                        foreach (var tamanhoGroup in tamamhosItens)
+                        {
+
+                            if (count > 0)
+                            {
+                                table.Cell();
+                            }
+
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            //table.Cell();
+                            var itemPedido = itensPedido
+                                .FirstOrDefault(x => x.TamanhoId == tamanhoGroup.Key);
+
+                            var totalQuantidade = itensPedido
+                                .Where(x => x.TamanhoId == tamanhoGroup.Key)
+                                .ToList()
+                                .Sum(x => x.Quantidade);
+
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text($"{itemPedido?.Tamanho?.Descricao} : {totalQuantidade.FormatMoney()}")
+                                .FontSize(8);
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            //table.Cell();
+
+                            count++;
+                        }
+
+                        if (pesosItens.Any())
+                        {
+                            table
+                            .Cell()
+                            .Element(CellStyleHeaderTable)
+                            .Text($"Pesos")
+                            .FontSize(10);
+                        }
+
+                        count = 0;
+
+                        foreach (var pedoGroup in pesosItens)
+                        {
+                            if (count > 0)
+                            {
+                                table.Cell();
+                            }
+
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            //table.Cell();
+                            var itemPedido = itensPedido
+                                .FirstOrDefault(x => x.PesoId == pedoGroup.Key);
+
+                            var totalQuantidade = itensPedido
+                                .Where(x => x.PesoId == pedoGroup.Key)
+                                .ToList()
+                                .Sum(x => x.Quantidade);
+
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text($"{itemPedido?.Peso?.Descricao} : {totalQuantidade.FormatMoney()}")
+                                .FontSize(8);
+
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            table.Cell();
+                            //table.Cell();
+
+                            count++;
+                        }
                     });
                     page.FooterCustom();
                 });
@@ -482,8 +593,8 @@ public sealed class PdfPedidoService : IPdfPedidoService
     }
 
     public byte[] ProducaoPedido(
-        IList<ItemPedidoProducaoViewModel> itemPedidoProducaoViewModels, 
-        string nomeFantasia, 
+        IList<ItemPedidoProducaoViewModel> itemPedidoProducaoViewModels,
+        string nomeFantasia,
         string? logo,
         IList<string> pedidos)
     {
