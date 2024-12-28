@@ -1,9 +1,7 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Paginacao;

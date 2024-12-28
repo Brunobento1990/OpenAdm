@@ -16,6 +16,7 @@ public class UsuarioViewModel : BaseModel
     public int? PedidosEntregue { get; set; }
     public int? PedidosCancelados { get; set; }
     public decimal? TotalPedido { get; set; }
+    public bool IsAtacado { get; set; }
 
     public UsuarioViewModel ToModel(Usuario entity, int? quantidadeDePedido = null)
     {
@@ -29,6 +30,7 @@ public class UsuarioViewModel : BaseModel
         Nome = entity.Nome;
         Cnpj = entity.Cnpj;
         Cpf = entity.Cpf;
+        IsAtacado = entity.IsAtacado;
 
         return this;
     }
