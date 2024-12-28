@@ -12,6 +12,13 @@ public class PaginacaoProdutoDto : FilterModel<Produto>
         if (string.IsNullOrWhiteSpace(Search))
             return null;
 
-        return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Descricao), $"%{Search}%");
+        var pesquisa = Search.ToLower();
+        return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Descricao.ToLower()), $"%{pesquisa}%")
+            || EF.Functions.ILike(EF.Functions.Unaccent(x.Categoria.Descricao.ToLower()), $"%{pesquisa}%");
+    }
+
+    public override Expression<Func<Produto, object>>? IncludeCustom()
+    {
+        return x => x.Categoria;
     }
 }

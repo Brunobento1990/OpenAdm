@@ -83,6 +83,14 @@ public class ProdutoService : IProdutoService
     {
         var paginacao = await _produtoRepository.PaginacaoAsync(paginacaoProdutoDto);
 
+        foreach (var produto in paginacao.Values)
+        {
+            if (produto.Categoria != null)
+            {
+                produto.Categoria.Produtos = [];
+            }
+        }
+
         return new PaginacaoViewModel<ProdutoViewModel>()
         {
             TotalDeRegistros = paginacao.TotalDeRegistros,
