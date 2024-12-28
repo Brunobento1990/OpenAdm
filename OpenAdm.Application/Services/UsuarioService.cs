@@ -165,4 +165,14 @@ public class UsuarioService : IUsuarioService
         var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
         return !string.IsNullOrWhiteSpace(usuario.Telefone);
     }
+
+    public async Task<UsuarioViewModel> GetUsuarioByIdValidacaoAsync(Guid id)
+    {
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
+            ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
+
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, 0);
+
+        return usuarioViewModel;
+    }
 }
