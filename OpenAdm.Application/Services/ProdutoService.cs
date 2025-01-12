@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -17,19 +18,22 @@ public class ProdutoService : IProdutoService
     private readonly ITamanhosProdutoRepository _tamanhosProdutoRepository;
     private readonly IUploadImageBlobClient _uploadImageBlobClient;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
     public ProdutoService(
         IProdutoRepository produtoRepository,
         IPesosProdutosRepository pesosProdutosRepository,
         ITamanhosProdutoRepository tamanhosProdutoRepository,
         IUploadImageBlobClient uploadImageBlobClient,
-        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
+        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _produtoRepository = produtoRepository;
         _pesosProdutosRepository = pesosProdutosRepository;
         _tamanhosProdutoRepository = tamanhosProdutoRepository;
         _uploadImageBlobClient = uploadImageBlobClient;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
@@ -102,59 +106,7 @@ public class ProdutoService : IProdutoService
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
-        var itensTabelaDePreco = await _itemTabelaDePrecoRepository
-            .GetItensTabelaDePrecoByIdProdutosAsync(paginacao.Values.Select(x => x.Id).ToList());
-
-        var produtosViewModel = new List<ProdutoViewModel>();
-
-        foreach (var produto in paginacao.Values)
-        {
-            var produtoViewModel = new ProdutoViewModel().ToModel(produto);
-
-            if (produtoViewModel.Tamanhos != null)
-            {
-                foreach (var tamanho in produtoViewModel.Tamanhos)
-                {
-                    var preco = itensTabelaDePreco.FirstOrDefault(
-                        x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
-
-                    if (preco != null)
-                    {
-                        tamanho.PrecoProdutoView = new PrecoProdutoViewModel()
-                        {
-                            ProdutoId = produto.Id,
-                            TamanhoId = tamanho.Id,
-                            ValorUnitarioAtacado = preco.ValorUnitarioAtacado,
-                            ValorUnitarioVarejo = preco.ValorUnitarioVarejo
-                        };
-                    }
-                }
-            }
-
-            if (produtoViewModel.Pesos != null)
-            {
-                foreach (var peso in produtoViewModel.Pesos)
-                {
-                    var preco = itensTabelaDePreco.FirstOrDefault(
-                       x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
-
-                    if (preco != null)
-                    {
-                        peso.PrecoProdutoView = new PrecoProdutoViewModel()
-                        {
-                            ProdutoId = produto.Id,
-                            PesoId = peso.Id,
-                            ValorUnitarioAtacado = preco.ValorUnitarioAtacado,
-                            ValorUnitarioVarejo = preco.ValorUnitarioVarejo
-                        };
-                    }
-                }
-            }
-
-
-
-            produtosViewModel.Add(produtoViewModel);
-        }
+        var produtosViewModel = await MapearProdutosAsync(paginacao.Values);
 
         return new PaginacaoViewModel<ProdutoViewModel>()
         {
@@ -167,8 +119,9 @@ public class ProdutoService : IProdutoService
     public async Task<IList<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId)
     {
         var produtos = await _produtoRepository.GetProdutosByCategoriaIdAsync(categoriaId);
+        var produtosViewModel = await MapearProdutosAsync(produtos);
 
-        return produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
+        return produtosViewModel;
     }
 
     public async Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id)
@@ -226,5 +179,62 @@ public class ProdutoService : IProdutoService
         produto.Tamanhos.ForEach(x => x.Produtos = new());
 
         return new ProdutoViewModel().ToModel(produto);
+    }
+
+    private async Task<IList<ProdutoViewModel>> MapearProdutosAsync(IList<Produto> produtos)
+    {
+        var itensTabelaDePreco = await _itemTabelaDePrecoRepository
+            .GetItensTabelaDePrecoByIdProdutosAsync(produtos.Select(x => x.Id).ToList());
+        var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoOrNullAsync();
+        var isAtacado = usuario?.IsAtacado == true;
+        var produtosViewModel = new List<ProdutoViewModel>();
+
+        foreach (var produto in produtos)
+        {
+            var produtoViewModel = new ProdutoViewModel().ToModel(produto);
+
+            if (produtoViewModel.Tamanhos != null)
+            {
+                foreach (var tamanho in produtoViewModel.Tamanhos)
+                {
+                    var preco = itensTabelaDePreco.FirstOrDefault(
+                        x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
+
+                    if (preco != null)
+                    {
+                        tamanho.PrecoProduto = new PrecoProdutoViewModel()
+                        {
+                            ProdutoId = produto.Id,
+                            TamanhoId = tamanho.Id,
+                            ValorUnitario = isAtacado ?
+                                preco.ValorUnitarioAtacado : preco.ValorUnitarioVarejo
+                        };
+                    }
+                }
+            }
+
+            if (produtoViewModel.Pesos != null)
+            {
+                foreach (var peso in produtoViewModel.Pesos)
+                {
+                    var preco = itensTabelaDePreco.FirstOrDefault(
+                       x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
+
+                    if (preco != null)
+                    {
+                        peso.PrecoProduto = new PrecoProdutoViewModel()
+                        {
+                            ProdutoId = produto.Id,
+                            PesoId = peso.Id,
+                            ValorUnitario = isAtacado ?
+                                preco.ValorUnitarioAtacado : preco.ValorUnitarioVarejo
+                        };
+                    }
+                }
+            }
+            produtosViewModel.Add(produtoViewModel);
+        }
+
+        return produtosViewModel;
     }
 }

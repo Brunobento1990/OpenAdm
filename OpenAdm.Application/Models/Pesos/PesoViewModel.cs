@@ -7,7 +7,7 @@ public class PesoViewModel : BaseModel
 {
     public string Descricao { get; set; } = string.Empty;
     public decimal? PesoReal { get; set; }
-    public PrecoProdutoViewModel? PrecoProdutoView { get; set; }
+    public PrecoProdutoViewModel? PrecoProduto { get; set; }
     public PesoViewModel ToModel(Peso entity)
     {
         Id = entity.Id;

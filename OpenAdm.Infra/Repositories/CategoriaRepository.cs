@@ -22,7 +22,7 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
             .Categorias
             .AsQueryable()
             .AsNoTracking()
-            .OrderByDescending(c => c.Numero)
+            .OrderBy(c => c.Numero)
             .Include(x => x.Produtos)
             .ToListAsync();
 
@@ -42,7 +42,7 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
                         x.Referencia,
                         x.UrlFoto,
                         x.NomeFoto))
-                .OrderByDescending(x => x.Numero)
+                .OrderBy(x => x.Numero)
                 .Take(3)
                 .ToList();
         }

@@ -17,16 +17,11 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
         await ParceiroContext.SaveChangesAsync();
     }
 
-    public async Task<IDictionary<int, decimal>> CountTresMesesAsync()
+    public async Task<IDictionary<int, decimal>> CountTresMesesAsync(DateTime dataInicio, DateTime dataFinal)
     {
-        var dataInicio = DateTime.Now.AddMonths(-3);
-        var dataSplit = dataInicio.ToString("MM/dd/yyyy").Split('/');
-        var ano = int.Parse(dataSplit[2][..4]);
-        var mes = int.Parse(dataSplit[0]);
-
         return await ParceiroContext
             .MovimentacoesDeProdutos
-            .Where(m => m.DataDeCriacao.Month >= mes && m.DataDeCriacao.Year == ano)
+            .Where(m => m.DataDeCriacao >= dataInicio && m.DataDeCriacao <= dataFinal)
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,
@@ -34,10 +29,10 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
     }
 
     public async Task<IList<MovimentacaoDeProduto>> RelatorioAsync(
-        DateTime dataInicial, 
-        DateTime dataFinal, 
-        IList<Guid> produtosIds, 
-        IList<Guid> pesosIds, 
+        DateTime dataInicial,
+        DateTime dataFinal,
+        IList<Guid> produtosIds,
+        IList<Guid> pesosIds,
         IList<Guid> tamanhosIds)
     {
         var query = ParceiroContext
@@ -45,12 +40,12 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
             .OrderBy(x => x.DataDeCriacao)
             .Where(x => x.DataDeCriacao.Date >= dataInicial.Date && x.DataDeCriacao.Date <= dataFinal.Date);
 
-        if(produtosIds.Count > 0)
+        if (produtosIds.Count > 0)
         {
             query = query.Where(x => produtosIds.Contains(x.ProdutoId));
         }
 
-        if(tamanhosIds.Count > 0)
+        if (tamanhosIds.Count > 0)
         {
             query = query.Where(x => tamanhosIds.Contains(x.TamanhoId!.Value));
         }

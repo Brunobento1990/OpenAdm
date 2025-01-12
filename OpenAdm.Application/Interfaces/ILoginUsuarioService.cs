@@ -4,5 +4,5 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface ILoginUsuarioService
 {
-    Task<ResponseLoginUsuarioViewModel> LoginAsync(RequestLogin requestLogin);
+    Task<ResponseLoginUsuarioViewModel> LoginAsync(RequestLoginUsuario requestLogin);
 }

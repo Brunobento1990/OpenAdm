@@ -7,7 +7,7 @@ public class TamanhoViewModel : BaseModel
 {
     public decimal? PesoReal { get; set; }
     public string Descricao { get; set; } = string.Empty;
-    public PrecoProdutoViewModel? PrecoProdutoView { get; set; }
+    public PrecoProdutoViewModel? PrecoProduto { get; set; }
     public TamanhoViewModel ToModel(Tamanho entity)
     {
         Id = entity.Id;

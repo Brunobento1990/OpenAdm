@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 
@@ -29,7 +30,9 @@ public class LoginController : ControllerBase
     }
 
     [HttpPost("usuario")]
-    public async Task<IActionResult> LoginUsuario(RequestLogin requestLogin)
+    [ProducesResponseType<ResponseLoginUsuarioViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> LoginUsuario(RequestLoginUsuario requestLogin)
     {
         var responselogin = await _loginUsuarioService.LoginAsync(requestLogin);
         return Ok(responselogin);

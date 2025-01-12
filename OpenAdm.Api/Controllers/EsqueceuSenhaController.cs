@@ -21,6 +21,9 @@ public class EsqueceuSenhaController : ControllerBase
     public async Task<IActionResult> ResetarSenha(EsqueceuSenhaDto esqueceuSenhaDto)
     {
         await _esqueceuSenhaService.RecuperarSenhaAsync(esqueceuSenhaDto);
-        return Ok();
+        return Ok(new
+        {
+            result = true
+        });
     }
 }
