@@ -65,4 +65,12 @@ public class LojasParceirasController : ControllerBase
         var response = await _lojasParceirasService.ListLojasParceirasViewModelAsync();
         return Ok(response);
     }
+
+    [HttpGet("todas")]
+    [ResponseCache(CacheProfileName = "Default300")]
+    public async Task<IActionResult> Todas()
+    {
+        var response = await _lojasParceirasService.TodasLojasAsync();
+        return Ok(response);
+    }
 }

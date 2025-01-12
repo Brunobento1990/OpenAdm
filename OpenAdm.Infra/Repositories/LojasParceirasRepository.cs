@@ -29,4 +29,12 @@ public class LojasParceirasRepository : GenericRepository<LojaParceira>, ILojasP
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<IList<LojaParceira>> GetLojasParceirasAsync()
+    {
+        return await ParceiroContext
+            .LojasParceiras
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

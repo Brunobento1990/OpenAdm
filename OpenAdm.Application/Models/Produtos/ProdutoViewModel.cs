@@ -10,8 +10,8 @@ public class ProdutoViewModel : BaseModel
     public string Descricao { get; set; } = string.Empty;
     public string? EspecificacaoTecnica { get; set; }
     public string? Foto { get; set; } = string.Empty;
-    public List<TamanhoViewModel>? Tamanhos { get; set; } = new();
-    public List<PesoViewModel>? Pesos { get; set; } = new();
+    public List<TamanhoViewModel>? Tamanhos { get; set; } = [];
+    public List<PesoViewModel>? Pesos { get; set; } = [];
     public Guid CategoriaId { get; set; }
     public CategoriaViewModel? Categoria { get; set; } = null!;
     public string? Referencia { get; private set; }

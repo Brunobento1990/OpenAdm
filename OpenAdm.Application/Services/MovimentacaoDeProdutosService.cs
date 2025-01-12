@@ -82,7 +82,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
             {
                 var totalCategoria = totalCategorias.FirstOrDefault(x => x.Descricao == produto.Categoria.Descricao);
 
-                if(totalCategoria == null)
+                if (totalCategoria == null)
                 {
                     totalCategorias.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
                     {
@@ -236,19 +236,30 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
     public async Task<IList<MovimentoDeProdutoDashBoardModel>> MovimentoDashBoardAsync()
     {
-        var movimentos = await _movimentacaoDeProdutorepository.CountTresMesesAsync();
+        var dataInicio = DateTime.Now.AddMonths(-3);
+        var novaDataInicio = new DateTime(dataInicio.Year, dataInicio.Month, 1);
+        var dataFinal = DateTime.Now;
 
+        var movimentos = await _movimentacaoDeProdutorepository.CountTresMesesAsync(novaDataInicio, dataFinal);
         var movimentosDash = new List<MovimentoDeProdutoDashBoardModel>();
 
         foreach (var item in movimentos)
         {
+            int anoDoMovimento = dataFinal.Year;
+
+            if (item.Key > dataFinal.Month)
+            {
+                anoDoMovimento--;
+            }
+
             movimentosDash.Add(new MovimentoDeProdutoDashBoardModel()
             {
                 Mes = item.Key.ConverterMesIntEmNome(),
-                Count = item.Value
+                Count = item.Value,
+                Data = new DateTime(anoDoMovimento, item.Key, 1)
             });
         }
 
-        return movimentosDash;
+        return movimentosDash.OrderBy(x => x.Data).ToList();
     }
 }

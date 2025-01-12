@@ -77,6 +77,13 @@ public class LojasParceirasService : ILojasParceirasService
         return await _lojasParceirasRepository.GetFotosLojasParceirasAsync();
     }
 
+    public async Task<IList<LojasParceirasViewModel>> TodasLojasAsync()
+    {
+        var lojasParceiras = await _lojasParceirasRepository.GetLojasParceirasAsync();
+
+        return lojasParceiras.Select(x => new LojasParceirasViewModel().ToModel(x)).ToList();
+    }
+
     public async Task<LojasParceirasViewModel> UpdateLojaParceiraAsync(UpdateLojaParceiraDto updateLojaParceiraDto)
     {
         var lojaParceira = await GetLojaAsync(updateLojaParceiraDto.Id);
