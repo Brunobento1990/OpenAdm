@@ -32,9 +32,18 @@ public class LoginController : ControllerBase
     [HttpPost("usuario")]
     [ProducesResponseType<ResponseLoginUsuarioViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> LoginUsuario(RequestLoginUsuario requestLogin)
+    public async Task<IActionResult> LoginUsuario(RequestLogin requestLogin)
     {
         var responselogin = await _loginUsuarioService.LoginAsync(requestLogin);
+        return Ok(responselogin);
+    }
+
+    [HttpPost("usuario-v2")]
+    [ProducesResponseType<ResponseLoginUsuarioViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> LoginUsuarioV2(RequestLoginUsuario requestLogin)
+    {
+        var responselogin = await _loginUsuarioService.LoginV2Async(requestLogin);
         return Ok(responselogin);
     }
 }
