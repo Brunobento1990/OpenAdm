@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Interfaces.Carrinhos;
-using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Api.Controllers.Carrinhos;
 
@@ -12,19 +11,16 @@ namespace OpenAdm.Api.Controllers.Carrinhos;
 public class CoutCarrinhoController : ControllerBase
 {
     private readonly IGetCountCarrinhoService _carrinhoService;
-    private readonly Guid _usuarioId;
 
-    public CoutCarrinhoController(IGetCountCarrinhoService carrinhoService,
-        IUsuarioAutenticado usuarioAutenticado)
+    public CoutCarrinhoController(IGetCountCarrinhoService carrinhoService)
     {
-        _usuarioId = usuarioAutenticado.Id;
         _carrinhoService = carrinhoService;
     }
 
     [HttpGet("get-carrinho-count")]
     public async Task<IActionResult> GetCarrinhoCount()
     {
-        var result = await _carrinhoService.GetCountCarrinhoAsync(_usuarioId);
+        var result = await _carrinhoService.GetCountCarrinhoAsync();
         return Ok(result);
     }
 }

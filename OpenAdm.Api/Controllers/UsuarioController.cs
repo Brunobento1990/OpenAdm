@@ -82,7 +82,10 @@ public class UsuarioController : ControllerBase
     public async Task<IActionResult> UpdateSenha(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
         await _usuarioService.TrocarSenhaAsync(updateSenhaUsuarioDto);
-        return Ok();
+        return Ok(new
+        {
+            result = true
+        });
     }
 
     [Autentica]

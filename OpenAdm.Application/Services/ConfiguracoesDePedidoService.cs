@@ -74,9 +74,9 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         if (configuracaoDePedido is null) return new();
 
         var usuarioViewModel = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
-        var pedidoMinimo = string.IsNullOrWhiteSpace(usuarioViewModel.Cnpj) ? 
-            configuracaoDePedido.PedidoMinimoVarejo : 
-            configuracaoDePedido.PedidoMinimoAtacado;
+        var pedidoMinimo = usuarioViewModel.IsAtacado ?
+            configuracaoDePedido.PedidoMinimoAtacado :
+            configuracaoDePedido.PedidoMinimoVarejo;
 
         return new PedidoMinimoViewModel()
         {

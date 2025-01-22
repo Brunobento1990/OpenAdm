@@ -2,5 +2,5 @@
 
 public interface IDeleteProdutoCarrinhoService
 {
-    Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId, Guid usuarioId);
+    Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId);
 }

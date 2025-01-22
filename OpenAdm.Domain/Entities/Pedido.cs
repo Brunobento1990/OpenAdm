@@ -13,15 +13,18 @@ public sealed class Pedido : BaseEntity
         DateTime dataDeAtualizacao,
         long numero,
         StatusPedido statusPedido,
-        Guid usuarioId)
+        Guid usuarioId,
+        string? motivoCancelamento)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         StatusPedido = statusPedido;
         UsuarioId = usuarioId;
+        MotivoCancelamento = motivoCancelamento;
     }
 
     public StatusPedido StatusPedido { get; private set; }
     public Guid UsuarioId { get; private set; }
+    public string? MotivoCancelamento { get; private set; }
     public Usuario Usuario { get; set; } = null!;
     public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
     public Fatura? Fatura { get; set; }
@@ -34,6 +37,20 @@ public sealed class Pedido : BaseEntity
             throw new ExceptionApi("Não é possível modificar o status de um pedido entregue!");
 
         StatusPedido = statusPedido;
+    }
+
+    public void Cancelar(string? motivoCancelamento)
+    {
+        if (StatusPedido != StatusPedido.Aberto)
+            throw new ExceptionApi("Não é possível cancelar um pedido que não esteja em aberto!");
+
+        if (motivoCancelamento?.Length > 255)
+        {
+            throw new ExceptionApi("O motivo do cancelamento deve ter no máximo 255 caracteres!");
+        }
+
+        StatusPedido = StatusPedido.Cancelado;
+        MotivoCancelamento = motivoCancelamento;
     }
 
     public void ProcessarItensPedido(IList<ItemPedidoModel> itensPedidoModels)

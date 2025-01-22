@@ -8,28 +8,30 @@ namespace OpenAdm.Application.Services.Carrinhos;
 public sealed class AddCarrinhoService : IAddCarrinhoService
 {
     private readonly ICarrinhoRepository _carrinhoRepository;
-
-    public AddCarrinhoService(ICarrinhoRepository carrinhoRepository)
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
+    public AddCarrinhoService(
+        ICarrinhoRepository carrinhoRepository, IUsuarioAutenticado usuarioAutenticado)
     {
         _carrinhoRepository = carrinhoRepository;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
-    public async Task<bool> AddCarrinhoAsync(IList<AddCarrinhoModel> addCarrinhoModel, UsuarioViewModel usuarioViewModel)
+    public async Task<int> AddCarrinhoAsync(IList<AddCarrinhoModel> addCarrinhoModel)
     {
-        var _key = usuarioViewModel.Id.ToString();
-        var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_key);
+        var key = _usuarioAutenticado.Id.ToString();
+        var carrinho = await _carrinhoRepository.GetCarrinhoAsync(key);
 
         if (carrinho.UsuarioId == Guid.Empty)
-            carrinho.UsuarioId = Guid.Parse(_key);
+            carrinho.UsuarioId = _usuarioAutenticado.Id;
 
         foreach (var item in addCarrinhoModel)
         {
-            var addProduto = carrinho?
-            .Produtos
-            .FirstOrDefault(x =>
-                x.ProdutoId == item.ProdutoId &&
-                x.PesoId == item.PesoId &&
-                x.TamanhoId == item.TamanhoId);
+            var addProduto = carrinho
+                .Produtos
+                .FirstOrDefault(x =>
+                    x.ProdutoId == item.ProdutoId &&
+                    x.PesoId == item.PesoId &&
+                    x.TamanhoId == item.TamanhoId);
 
             if (addProduto == null)
             {
@@ -41,7 +43,7 @@ public sealed class AddCarrinhoService : IAddCarrinhoService
                     Quantidade = item.Quantidade
                 };
 
-                carrinho?.Produtos.Add(addProduto);
+                carrinho.Produtos.Add(addProduto);
             }
             else
             {
@@ -49,8 +51,8 @@ public sealed class AddCarrinhoService : IAddCarrinhoService
             }
         }
 
-        await _carrinhoRepository.AdicionarProdutoAsync(carrinho!, _key);
+        await _carrinhoRepository.AdicionarProdutoAsync(carrinho, key);
 
-        return true;
+        return carrinho.Produtos.Count;
     }
 }

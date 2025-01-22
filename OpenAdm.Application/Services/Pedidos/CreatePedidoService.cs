@@ -17,13 +17,16 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly ICarrinhoRepository _carrinhoRepository;
     private readonly IFaturaService _contasAReceberService;
     private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;
+    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         ICarrinhoRepository carrinhoRepository,
         IFaturaService contasAReceberService,
-        IConfiguracaoDePagamentoService configuracaoDePagamentoService)
+        IConfiguracaoDePagamentoService configuracaoDePagamentoService,
+        IConfiguracoesDePedidoService configuracoesDePedidoService)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
@@ -31,6 +34,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _carrinhoRepository = carrinhoRepository;
         _contasAReceberService = contasAReceberService;
         _configuracaoDePagamentoService = configuracaoDePagamentoService;
+        _configuracoesDePedidoService = configuracoesDePedidoService;
     }
 
     public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItemPedidoModel> itensPedidoModels, Usuario usuario)
@@ -39,8 +43,17 @@ public sealed class CreatePedidoService : ICreatePedidoService
         {
             throw new ExceptionApi("Informe os itens do pedido!");
         }
+
+        var pedidoMinimo = await _configuracoesDePedidoService.GetPedidoMinimoAsync();
+        var total = itensPedidoModels.Sum(x => x.Quantidade * x.ValorUnitario);
+
+        if (pedidoMinimo.PedidoMinimo > total)
+        {
+            throw new ExceptionApi("Seu pedido não atingiu o mínimo de valor!");
+        }
+
         var date = DateTime.Now;
-        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id);
+        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id, null);
 
         var produtosIds = itensPedidoModels.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);

@@ -19,17 +19,13 @@ public class CarrinhoRepositoryMemory : ICarrinhoRepository
         {
             _carrinho.Add(key, carrinhoModel);
         }
-        else
-        {
-            carrinho.Produtos.AddRange(carrinhoModel.Produtos);
-        }
 
         return await Task.FromResult(true);
     }
 
     public async Task DeleteCarrinhoAsync(string key)
     {
-        await Task.FromResult(_carrinho?.Remove(key));
+        await Task.FromResult(_carrinho.Remove(key));
     }
 
     public async Task<CarrinhoModel> GetCarrinhoAsync(string key)
