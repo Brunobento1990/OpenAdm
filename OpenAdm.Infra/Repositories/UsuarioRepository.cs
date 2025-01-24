@@ -30,6 +30,22 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
+    public async Task<Usuario?> GetUsuarioByCnpjAsync(string cnpj)
+    {
+        return await ParceiroContext
+             .Usuarios
+             .AsNoTracking()
+             .FirstOrDefaultAsync(x => x.Cnpj == cnpj);
+    }
+
+    public async Task<Usuario?> GetUsuarioByCpfAsync(string cpf)
+    {
+        return await ParceiroContext
+             .Usuarios
+             .AsNoTracking()
+             .FirstOrDefaultAsync(x => x.Cpf == cpf);
+    }
+
     public async Task<Usuario?> GetUsuarioByEmailAsync(string email)
     {
         return await ParceiroContext

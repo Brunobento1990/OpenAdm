@@ -6,19 +6,20 @@ namespace OpenAdm.Application.Services.Carrinhos;
 public sealed class DeleteProdutoCarrinhoService : IDeleteProdutoCarrinhoService
 {
     private readonly ICarrinhoRepository _carrinhoRepository;
-
-    public DeleteProdutoCarrinhoService(ICarrinhoRepository carrinhoRepository)
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
+    public DeleteProdutoCarrinhoService(ICarrinhoRepository carrinhoRepository, IUsuarioAutenticado usuarioAutenticado)
     {
         _carrinhoRepository = carrinhoRepository;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
-    public async Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId, Guid usuarioId)
+    public async Task<bool> DeleteProdutoCarrinhoAsync(Guid produtoId)
     {
-        var key = usuarioId.ToString();
+        var key = _usuarioAutenticado.Id.ToString();
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(key);
 
         if (carrinho.UsuarioId == Guid.Empty)
-            carrinho.UsuarioId = usuarioId;
+            carrinho.UsuarioId = _usuarioAutenticado.Id;
 
         var produtos = carrinho.Produtos.Where(x => x.ProdutoId == produtoId).ToList();
 

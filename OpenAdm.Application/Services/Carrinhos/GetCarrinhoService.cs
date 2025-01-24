@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Application.Models.Carrinhos;
 using OpenAdm.Application.Models.Categorias;
-using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services.Carrinhos;
@@ -11,25 +10,26 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
     private readonly ICarrinhoRepository _carrinhoRepository;
     private readonly IProdutoRepository _produtoRepository;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
-
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
     public GetCarrinhoService(
-        ICarrinhoRepository carrinhoRepository, 
-        IProdutoRepository produtoRepository, 
-        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
+        ICarrinhoRepository carrinhoRepository,
+        IProdutoRepository produtoRepository,
+        IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _carrinhoRepository = carrinhoRepository;
         _produtoRepository = produtoRepository;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
-    public async Task<IList<CarrinhoViewModel>> GetCarrinhoAsync(UsuarioViewModel usuarioViewModel)
+    public async Task<IList<CarrinhoViewModel>> GetCarrinhoAsync()
     {
+        var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
         var carrinhosViewModels = new List<CarrinhoViewModel>();
 
-        var carrinho = await _carrinhoRepository.GetCarrinhoAsync(usuarioViewModel.Id.ToString());
-
+        var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_usuarioAutenticado.Id.ToString());
         var produtosIds = carrinho.Produtos.Select(x => x.ProdutoId).ToList();
-
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
         var produtos = await _produtoRepository.GetProdutosByListIdAsync(produtosIds);
 
@@ -47,46 +47,52 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                 Foto = produto.UrlFoto ?? ""
             };
 
-            carrinhoViewModel.Tamanhos = produto.Tamanhos.OrderBy(x => x.Numero).Select(x => new TamanhoCarrinhoViewModel()
-            {
-                Id = x.Id,
-                Descricao = x.Descricao,
-                Numero = x.Numero,
-                PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
+            carrinhoViewModel.Tamanhos = produto
+                .Tamanhos
+                .OrderBy(x => x.Numero)
+                .Select(x => new TamanhoCarrinhoViewModel()
                 {
-                    Quantidade = (decimal)(carrinho?
-                        .Produtos?
-                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.TamanhoId == x.Id)?
-                                .Quantidade ?? 0),
-                    ValorUnitario = GetValorUnitarioProduto(
-                        usuarioViewModel.Cnpj,
-                        itensTabelaDePreco
-                        .FirstOrDefault(item => item.ProdutoId == produto.Id && item.TamanhoId == x.Id)?.ValorUnitarioAtacado,
-                        itensTabelaDePreco
-                        .FirstOrDefault(item => item.TamanhoId == x.Id && item.ProdutoId == produto.Id)?.ValorUnitarioVarejo)
-                }
-            }).ToList();
+                    Id = x.Id,
+                    Descricao = x.Descricao,
+                    Numero = x.Numero,
+                    PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
+                    {
+                        Quantidade = (decimal)(carrinho?
+                            .Produtos?
+                            .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.TamanhoId == x.Id)?
+                                    .Quantidade ?? 0),
+                        ValorUnitario = GetValorUnitarioProduto(
+                            usuario.Cnpj,
+                            itensTabelaDePreco
+                            .FirstOrDefault(item => item.ProdutoId == produto.Id && item.TamanhoId == x.Id)?.ValorUnitarioAtacado,
+                            itensTabelaDePreco
+                            .FirstOrDefault(item => item.TamanhoId == x.Id && item.ProdutoId == produto.Id)?.ValorUnitarioVarejo)
+                    }
+                }).ToList();
 
-            carrinhoViewModel.Pesos = produto.Pesos.OrderBy(x => x.Numero).Select(x => new PesoCarrinhoViewModel()
-            {
-                Id = x.Id,
-                Descricao = x.Descricao,
-                Numero = x.Numero,
-                PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
+            carrinhoViewModel.Pesos = produto
+                .Pesos
+                .OrderBy(x => x.Numero)
+                .Select(x => new PesoCarrinhoViewModel()
                 {
-                    Quantidade = (decimal)(carrinho?
-                        .Produtos?
-                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.PesoId == x.Id)?
-                                .Quantidade ?? 0),
-                    ValorUnitario = GetValorUnitarioProduto(
-                        usuarioViewModel.Cnpj,
-                        itensTabelaDePreco
-                        .FirstOrDefault(item => item.ProdutoId == produto.Id && item.PesoId == x.Id)?.ValorUnitarioAtacado,
-                        itensTabelaDePreco
-                        .FirstOrDefault(item => item.PesoId == x.Id && item.ProdutoId == produto.Id)?.ValorUnitarioVarejo
-                        )
-                }
-            }).ToList();
+                    Id = x.Id,
+                    Descricao = x.Descricao,
+                    Numero = x.Numero,
+                    PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
+                    {
+                        Quantidade = (decimal)(carrinho?
+                            .Produtos?
+                            .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.PesoId == x.Id)?
+                                    .Quantidade ?? 0),
+                        ValorUnitario = GetValorUnitarioProduto(
+                            usuario.Cnpj,
+                            itensTabelaDePreco
+                            .FirstOrDefault(item => item.ProdutoId == produto.Id && item.PesoId == x.Id)?.ValorUnitarioAtacado,
+                            itensTabelaDePreco
+                            .FirstOrDefault(item => item.PesoId == x.Id && item.ProdutoId == produto.Id)?.ValorUnitarioVarejo
+                            )
+                    }
+                }).ToList();
 
             carrinhosViewModels.Add(carrinhoViewModel);
         }
@@ -94,7 +100,10 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         return carrinhosViewModels;
     }
 
-    private static decimal GetValorUnitarioProduto(string? cnpj, decimal? valorUnitarioAtacado, decimal? valorUnitarioVarejo)
+    private static decimal GetValorUnitarioProduto(
+        string? cnpj, 
+        decimal? valorUnitarioAtacado, 
+        decimal? valorUnitarioVarejo)
     {
         var isAtacado = !string.IsNullOrWhiteSpace(cnpj);
 

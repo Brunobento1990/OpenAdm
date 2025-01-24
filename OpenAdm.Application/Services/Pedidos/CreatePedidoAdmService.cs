@@ -38,7 +38,7 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
         }
         var usuario = await _usuarioService.GetUsuarioByIdValidacaoAsync(id: pedidoAdmCreateDto.UsuarioId);
         var date = DateTime.Now;
-        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id);
+        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id, null);
 
         var produtosIds = pedidoAdmCreateDto.Itens.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);

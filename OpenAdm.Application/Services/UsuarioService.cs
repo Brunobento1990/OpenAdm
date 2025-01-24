@@ -36,6 +36,20 @@ public class UsuarioService : IUsuarioService
         if (usuario != null)
             throw new ExceptionApi("Este e-mail já se encontra cadastrado!");
 
+        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cpf))
+        {
+            usuario = await _usuarioRepository.GetUsuarioByCpfAsync(createUsuarioDto.Cpf);
+            if (usuario != null)
+                throw new ExceptionApi("Este CPF já se encontra cadastrado!");
+        }
+
+        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cnpj))
+        {
+            usuario = await _usuarioRepository.GetUsuarioByCnpjAsync(createUsuarioDto.Cnpj);
+            if (usuario != null)
+                throw new ExceptionApi("Este CNPJ já se encontra cadastrado!");
+        }
+
         usuario = createUsuarioDto.ToEntity();
 
         await _usuarioRepository.AddAsync(usuario);
@@ -136,6 +150,7 @@ public class UsuarioService : IUsuarioService
 
     public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto)
     {
+        updateUsuarioDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id)
             ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
 

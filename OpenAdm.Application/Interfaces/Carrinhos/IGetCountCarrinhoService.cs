@@ -2,5 +2,5 @@
 
 public interface IGetCountCarrinhoService
 {
-    Task<int> GetCountCarrinhoAsync(Guid usuarioId);
+    Task<int> GetCountCarrinhoAsync();
 }

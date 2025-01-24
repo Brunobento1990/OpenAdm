@@ -16,13 +16,18 @@ public class CreateUsuarioDto : BaseModel
     public string Telefone { get; set; } = string.Empty;
     public string? Cnpj { get; set; } = string.Empty;
     public string? Cpf { get; set; } = string.Empty;
+    public TipoPessoa TipoPessoa { get; set; }
 
     public void Validar()
     {
-        if ((string.IsNullOrWhiteSpace(Cpf) && string.IsNullOrWhiteSpace(Cnpj)) ||
-            !string.IsNullOrWhiteSpace(Cpf) && !string.IsNullOrWhiteSpace(Cnpj))
+        if (TipoPessoa == TipoPessoa.Juridica && string.IsNullOrWhiteSpace(Cnpj))
         {
-            throw new ExceptionApi("Informe o CPF ou o CNPJ");
+            throw new ExceptionApi("Informe o CNPJ");
+        }
+
+        if (TipoPessoa == TipoPessoa.Fisica && string.IsNullOrWhiteSpace(Cpf))
+        {
+            throw new ExceptionApi("Informe o CPF");
         }
 
         if (string.IsNullOrWhiteSpace(Nome))
@@ -45,20 +50,17 @@ public class CreateUsuarioDto : BaseModel
             throw new ExceptionApi("As senha não conferem!");
         }
 
-        if (!string.IsNullOrWhiteSpace(Cpf) && !ValidarCnpjECpf.IsCpf(Cpf))
+        if (!string.IsNullOrWhiteSpace(Cpf) && !ValidarCnpjECpf.IsCpf(Cpf) && TipoPessoa == TipoPessoa.Fisica)
         {
             throw new ExceptionApi("CPF inválido!");
         }
+
+        Cpf = Cpf?.Replace(".", "")?.Replace("-", "");
+        Cnpj = Cnpj?.Replace(".", "")?.Replace("-", "")?.Replace("/", "");
     }
 
     public Usuario ToEntity()
     {
-        if ((string.IsNullOrWhiteSpace(Cnpj) && string.IsNullOrWhiteSpace(Cpf))
-            || (!string.IsNullOrWhiteSpace(Cnpj) && !string.IsNullOrWhiteSpace(Cpf)))
-        {
-            throw new ExceptionApi("Informe o CNPJ ou o CPF");
-        }
-
         var senha = PasswordAdapter.GenerateHash(Senha);
 
         var date = DateTime.Now;
@@ -71,8 +73,14 @@ public class CreateUsuarioDto : BaseModel
             senha,
             Nome,
             Telefone,
-            string.IsNullOrWhiteSpace(Cnpj) ? null : Cnpj,
-            string.IsNullOrWhiteSpace(Cpf) ? null : Cpf,
+            TipoPessoa == TipoPessoa.Juridica ? Cnpj : null,
+            TipoPessoa == TipoPessoa.Fisica ? Cpf : null,
             true);
     }
+}
+
+public enum TipoPessoa
+{
+    Juridica = 1,
+    Fisica = 2
 }

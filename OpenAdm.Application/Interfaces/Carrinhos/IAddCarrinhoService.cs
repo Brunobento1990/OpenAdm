@@ -5,5 +5,5 @@ namespace OpenAdm.Application.Interfaces.Carrinhos;
 
 public interface IAddCarrinhoService
 {
-    Task<bool> AddCarrinhoAsync(IList<AddCarrinhoModel> addCarrinhoModel, UsuarioViewModel usuarioViewModel);
+    Task<int> AddCarrinhoAsync(IList<AddCarrinhoModel> addCarrinhoModel);
 }

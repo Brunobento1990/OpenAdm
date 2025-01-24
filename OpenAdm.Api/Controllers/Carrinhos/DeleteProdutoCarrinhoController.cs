@@ -12,20 +12,17 @@ namespace OpenAdm.Api.Controllers.Carrinhos;
 public class DeleteProdutoCarrinhoController : ControllerBase
 {
     private readonly IDeleteProdutoCarrinhoService _deleteProdutoCarrinhoService;
-    private readonly Guid _usuarioId;
 
     public DeleteProdutoCarrinhoController(
-        IDeleteProdutoCarrinhoService deleteProdutoCarrinhoService,
-        IUsuarioAutenticado usuarioAutenticado)
+        IDeleteProdutoCarrinhoService deleteProdutoCarrinhoService)
     {
-        _usuarioId = usuarioAutenticado.Id;
         _deleteProdutoCarrinhoService = deleteProdutoCarrinhoService;
     }
 
     [HttpDelete("delete-produto-carrinho")]
     public async Task<IActionResult> DeleteProdutCarrinho([FromQuery] Guid produtoId)
     {
-        var result = await _deleteProdutoCarrinhoService.DeleteProdutoCarrinhoAsync(produtoId, _usuarioId);
-        return Ok();
+        var result = await _deleteProdutoCarrinhoService.DeleteProdutoCarrinhoAsync(produtoId);
+        return Ok(result);
     }
 }

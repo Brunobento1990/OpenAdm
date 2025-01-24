@@ -5,5 +5,5 @@ namespace OpenAdm.Application.Interfaces.Carrinhos;
 
 public interface IGetCarrinhoService
 {
-    Task<IList<CarrinhoViewModel>> GetCarrinhoAsync(UsuarioViewModel usuarioViewModel);
+    Task<IList<CarrinhoViewModel>> GetCarrinhoAsync();
 }

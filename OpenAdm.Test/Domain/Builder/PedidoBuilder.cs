@@ -35,7 +35,7 @@ public class PedidoBuilder
 
     public Pedido Build()
     {
-        var pedido = new Pedido(_id, _created, _update, _numero, _statusPedido, _usuarioId);
+        var pedido = new Pedido(_id, _created, _update, _numero, _statusPedido, _usuarioId, null);
         pedido.Usuario = UsuarioBuilder.Init().Build();
         return pedido;
     }

@@ -10,6 +10,8 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.Model;
 using OpenAdm.Application.Services;
 using OpenAdm.Application.Models.ConfiguracoesDePagamentos;
+using OpenAdm.Application.Models.ConfiguracoesDePedidos;
+using Moq;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -23,6 +25,7 @@ public class PedidoServiceTest
     private readonly Mock<IFaturaService> _contasAReceberService;
     private readonly Mock<IConfiguracaoDePagamentoService> _configuracaoDePagamentoService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
+    private readonly Mock<IConfiguracoesDePedidoService> _configuracoesDePedidoService;
     public PedidoServiceTest()
     {
         _pedidoRepositoryMock = new();
@@ -33,6 +36,7 @@ public class PedidoServiceTest
         _parceiroAutenticado = new ParceiroAutenticado();
         _contasAReceberService = new();
         _configuracaoDePagamentoService = new();
+        _configuracoesDePedidoService = new();
     }
 
     //[Fact]
@@ -158,13 +162,15 @@ public class PedidoServiceTest
             Cobrar = false
         };
         _configuracaoDePagamentoService.Setup(x => x.CobrarAsync()).ReturnsAsync(efetuarCobranca);
+        var pedidoMinimo = new PedidoMinimoViewModel();
+        _configuracoesDePedidoService.Setup(x => x.GetPedidoMinimoAsync()).ReturnsAsync(pedidoMinimo);
 
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
             _carrinhoRepository.Object,
-            _contasAReceberService.Object, _configuracaoDePagamentoService.Object);
+            _contasAReceberService.Object, _configuracaoDePagamentoService.Object, _configuracoesDePedidoService.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
         var pedidoModel = await service.CreatePedidoAsync(itensPedidoModel, usuario);
@@ -208,7 +214,7 @@ public class PedidoServiceTest
             _itemTabelaDePrecoRepositoryMock.Object,
             _carrinhoRepository.Object,
             _contasAReceberService.Object,
-            _configuracaoDePagamentoService.Object);
+            _configuracaoDePagamentoService.Object, _configuracoesDePedidoService.Object);
 
         var usuario = UsuarioBuilder.Init().Build();
 
@@ -257,13 +263,14 @@ public class PedidoServiceTest
             Cobrar = false
         };
         _configuracaoDePagamentoService.Setup(x => x.CobrarAsync()).ReturnsAsync(efetuarCobranca);
-
+        var pedidoMinimo = new PedidoMinimoViewModel();
+        _configuracoesDePedidoService.Setup(x => x.GetPedidoMinimoAsync()).ReturnsAsync(pedidoMinimo);
         var service = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
             _carrinhoRepository.Object, _contasAReceberService.Object,
-            _configuracaoDePagamentoService.Object);
+            _configuracaoDePagamentoService.Object, _configuracoesDePedidoService.Object);
 
         await Assert.ThrowsAsync<Exception>(async () => await service.CreatePedidoAsync(itens, usuarioViewModel));
     }

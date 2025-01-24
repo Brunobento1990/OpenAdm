@@ -88,4 +88,10 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<IList<Usuario>> PaginacaoDropDownAsync(PaginacaoDropDown<Usuario> paginacaoDropDown)
         => _usuarioRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<Usuario?> GetUsuarioByCpfAsync(string cpf)
+        => _usuarioRepository.GetUsuarioByCpfAsync(cpf);
+
+    public Task<Usuario?> GetUsuarioByCnpjAsync(string cnpj)
+        => _usuarioRepository.GetUsuarioByCnpjAsync(cnpj);
 }
