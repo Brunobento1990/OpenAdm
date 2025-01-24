@@ -29,6 +29,7 @@ var urlApiMercadoPago = VariaveisDeAmbiente.GetVariavel("URL_API_MERCADO_PAGO");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
 var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
+var urlConsultaCnpj = VariaveisDeAmbiente.GetVariavel("ULR_CONSULTA_CNPJ");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
@@ -45,13 +46,13 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString);
-builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago);
+builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj);
 
 QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 
-var basePath = "/api/v1";
+var basePath = "/api";
 app.UsePathBase(new PathString(basePath));
 
 app.UseRouting();
