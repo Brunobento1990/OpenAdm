@@ -16,16 +16,20 @@ public class UsuarioService : IUsuarioService
     private readonly ITokenService _tokenService;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
+    private readonly ICnpjConsultaService _cnpjConsultaService;
+
     public UsuarioService(
         IUsuarioRepository usuarioRepository,
         ITokenService tokenService,
         IPedidoRepository pedidoRepository,
-        IUsuarioAutenticado usuarioAutenticado)
+        IUsuarioAutenticado usuarioAutenticado,
+        ICnpjConsultaService cnpjConsultaService)
     {
         _usuarioRepository = usuarioRepository;
         _tokenService = tokenService;
         _pedidoRepository = pedidoRepository;
         _usuarioAutenticado = usuarioAutenticado;
+        _cnpjConsultaService = cnpjConsultaService;
     }
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
@@ -48,6 +52,21 @@ public class UsuarioService : IUsuarioService
             usuario = await _usuarioRepository.GetUsuarioByCnpjAsync(createUsuarioDto.Cnpj);
             if (usuario != null)
                 throw new ExceptionApi("Este CNPJ já se encontra cadastrado!");
+        }
+
+        if (createUsuarioDto.TipoPessoa == TipoPessoa.Juridica)
+        {
+            if (string.IsNullOrWhiteSpace(createUsuarioDto.Cnpj))
+            {
+                throw new ExceptionApi("Informe o CNPJ");
+            }
+
+            var result = await _cnpjConsultaService.ConsultaCnpjAsync(createUsuarioDto.Cnpj);
+
+            if (!result.CnaeFiscalDescricao.Contains("pesca") && !result.CnaesSecundarios.Any(x => x.Descricao.Contains("pesca")))
+            {
+                throw new ExceptionApi("Seu CNAE deve ser do ramo de pesca");
+            }
         }
 
         usuario = createUsuarioDto.ToEntity();
