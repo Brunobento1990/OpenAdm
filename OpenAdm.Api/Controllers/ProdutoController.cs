@@ -20,6 +20,7 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpGet("list")]
+    [TryAutentica]
     public async Task<IActionResult> ListProdutos([FromQuery] PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         var result = await _produtoService.GetProdutosAsync(paginacaoProdutoEcommerceDto);
@@ -35,6 +36,7 @@ public class ProdutoController : ControllerBase
 
     [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list-by-categorias")]
+    [TryAutentica]
     public async Task<IActionResult> ListProdutosByCategorias([FromQuery] Guid categoriaId)
     {
         var result = await _produtoService.GetProdutosByCategoriaIdAsync(categoriaId);
