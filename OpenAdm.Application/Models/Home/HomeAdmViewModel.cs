@@ -12,4 +12,6 @@ public class HomeAdmViewModel
     public IList<ParcelaPagaDashBoardModel> Faturas { get; set; } = [];
     public decimal TotalAReceber { get; set; }
     public int PedidosEmAberto { get; set; }
+    public long QuantidadeDeAcessoEcommerce { get; set; }
+    public long QuantidadeDeUsuario { get; set; }
 }

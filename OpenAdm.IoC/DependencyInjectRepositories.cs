@@ -21,6 +21,7 @@ public static class DependencyInjectRepositories
 
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
         services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
+        services.AddScoped<IAcessoEcommerceRepository, AcessoEcommerceRepository>();
 
         services.AddScoped<ConfiguracaoDePagamentoRepository>();
         services.AddScoped<IConfiguracaoDePagamentoRepository, ConfiguracaoDePagamentoCached>();
