@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenAdm.Infra.Context;
@@ -11,9 +12,11 @@ using OpenAdm.Infra.Context;
 namespace OpenAdm.Infra.Migrations.Parceiro
 {
     [DbContext(typeof(ParceiroContext))]
-    partial class ParceiroContextModelSnapshot : ModelSnapshot
+    [Migration("20250130213108_AcessoEcommerceMigration")]
+    partial class AcessoEcommerceMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -94,4 +94,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<Usuario?> GetUsuarioByCnpjAsync(string cnpj)
         => _usuarioRepository.GetUsuarioByCnpjAsync(cnpj);
+
+    public Task<int> GetCountAsync()
+        => _usuarioRepository.GetCountAsync();
 }

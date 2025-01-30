@@ -11,16 +11,23 @@ public class HomeSevice : IHomeSevice
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
     private readonly IParcelaService _faturaContasAReceberService;
     private readonly IPedidoRepository _pedidoRepository;
+    private readonly IAcessoEcommerceService _acessoEcommerceService;
+    private readonly IUsuarioRepository _usuarioRepository;
+
     public HomeSevice(
         ITopUsuariosRepository topUsuariosRepository,
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
         IParcelaService faturaContasAReceberService,
-        IPedidoRepository pedidoRepository)
+        IPedidoRepository pedidoRepository,
+        IAcessoEcommerceService acessoEcommerceService,
+        IUsuarioRepository usuarioRepository)
     {
         _topUsuariosRepository = topUsuariosRepository;
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
         _faturaContasAReceberService = faturaContasAReceberService;
         _pedidoRepository = pedidoRepository;
+        _acessoEcommerceService = acessoEcommerceService;
+        _usuarioRepository = usuarioRepository;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
@@ -31,6 +38,9 @@ public class HomeSevice : IHomeSevice
         var faturas = await _faturaContasAReceberService.FaturasDashBoardAsync();
         var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
         var pedidosEmAberto = await _pedidoRepository.GetCountPedidosEmAbertoAsync();
+        var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
+        var quantidadeDeUsuario = await _usuarioRepository.GetCountAsync();
+
         return new HomeAdmViewModel()
         {
             TopUsuariosTotalCompra = topUsuariosTotalCompra.Select(x => (TopUsuariosViewModel)x).ToList(),
@@ -38,7 +48,9 @@ public class HomeSevice : IHomeSevice
             Movimentos = movimentos,
             Faturas = faturas,
             TotalAReceber = totalAReceber,
-            PedidosEmAberto = pedidosEmAberto
+            PedidosEmAberto = pedidosEmAberto,
+            QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
+            QuantidadeDeUsuario = quantidadeDeUsuario
         };
     }
 }

@@ -7,11 +7,12 @@ using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
 
-public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository, ITokenService tokenService)
+public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository, ITokenService tokenService, IAcessoEcommerceService acessoEcommerceService)
     : ILoginUsuarioService
 {
     private readonly ILoginUsuarioRepository _loginUsuarioRepository = loginUsuarioRepository;
     private readonly ITokenService _tokenService = tokenService;
+    private readonly IAcessoEcommerceService _acessoEcommerceService = acessoEcommerceService;
 
     public async Task<ResponseLoginUsuarioViewModel> LoginAsync(RequestLogin requestLogin)
     {
@@ -46,7 +47,7 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);
         var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
-
+        await _acessoEcommerceService.AtualizarAcessoAsync();
         return new(usuarioViewModel, token, refreshToken);
     }
 }

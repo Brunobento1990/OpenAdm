@@ -35,6 +35,7 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     public DbSet<Fatura> Faturas { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
+    public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -52,6 +53,7 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
             numero: 1,
             descricao: "E-commerce",
             ativaEcommerce: true));
+        modelBuilder.ApplyConfiguration(new AcessoEcommerceConfiguration());
         modelBuilder.ApplyConfiguration(new TransacaoFinanceiraConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());

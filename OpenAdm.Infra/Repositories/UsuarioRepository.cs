@@ -30,6 +30,20 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
+    public async Task<int> GetCountAsync()
+    {
+        try
+        {
+            return await ParceiroContext
+            .Usuarios
+            .CountAsync();
+        }
+        catch (Exception)
+        {
+            return 0;
+        }
+    }
+
     public async Task<Usuario?> GetUsuarioByCnpjAsync(string cnpj)
     {
         return await ParceiroContext

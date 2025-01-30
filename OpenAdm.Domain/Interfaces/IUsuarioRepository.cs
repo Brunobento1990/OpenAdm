@@ -9,4 +9,5 @@ public interface IUsuarioRepository : IGenericRepository<Usuario>
     Task<Usuario?> GetUsuarioByCpfAsync(string cpf);
     Task<Usuario?> GetUsuarioByCnpjAsync(string cnpj);
     Task<IList<Usuario>> GetAllUsuariosAsync();
+    Task<int> GetCountAsync();
 }
