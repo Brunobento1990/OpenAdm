@@ -111,5 +111,6 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
     public async Task AdicionarTransacaoAsync(TransacaoFinanceira transacaoFinanceira)
     {
         await ParceiroContext.TransacoesFinanceiras.AddAsync(transacaoFinanceira);
+        await ParceiroContext.SaveChangesAsync();
     }
 }

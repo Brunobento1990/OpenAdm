@@ -59,6 +59,7 @@ public sealed class ParcelaService : IParcelaService
         var parcela = await _parcelaRepository.GetByIdExternoAsync(notificationFaturaWebHook.Data.Id);
         if (parcela == null)
         {
+            Console.WriteLine("Não encontrou a parcela");
             return;
         }
 
@@ -78,15 +79,12 @@ public sealed class ParcelaService : IParcelaService
 
         if (parcela.Fatura != null && parcela.Fatura.PedidoId.HasValue && parcela.Valor >= parcela.Fatura.Pedido?.ValorTotal)
         {
+            Console.WriteLine("Atualizando status pedido");
             await _updateStatusPedidoService.UpdateStatusPedidoAsync(new()
             {
                 PedidoId = parcela.Fatura.PedidoId.Value,
                 StatusPedido = StatusPedido.Faturado
             });
-        }
-        else
-        {
-            await _parcelaRepository.SaveChangesAsync();
         }
     }
 

@@ -19,7 +19,7 @@ public class PagamentoController : ControllerBase
         _faturaContasAReceberService = faturaContasAReceberService;
     }
 
-    [HttpPost("pagamento/notificar")]
+    [HttpPost("notificar")]
     [ProducesResponseType(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     [AutenticaMercadoPago]
@@ -29,6 +29,7 @@ public class PagamentoController : ControllerBase
         {
             if (!string.IsNullOrWhiteSpace(body.Data.Id))
             {
+                Console.WriteLine("Processando pagamento!");
                 await _faturaContasAReceberService.BaixarFaturaWebHookAsync(body);
                 Console.WriteLine("Processamento concluído com sucesso!");
             }
