@@ -1,14 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.EntityConfiguration;
 
 namespace OpenAdm.Infra.Context;
 
-public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parceiroAutenticado)
+public class ParceiroContext(DbContextOptions<ParceiroContext> options)
     : DbContext(options)
 {
-    private readonly IParceiroAutenticado _parceiroAutenticado = parceiroAutenticado;
     public DbSet<EnderecoEntregaPedido> EnderecosEntregaPedido { get; set; }
     public DbSet<ConfiguracaoDePagamento> ConfiguracoesDePagamento { get; set; }
     public DbSet<Banner> Banners { get; set; }
@@ -36,13 +34,6 @@ public class ParceiroContext(DbContextOptions options, IParceiroAutenticado parc
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
     public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql(_parceiroAutenticado.StringConnection);
-        //optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=192.168.1.199; Port=5432; Database=desenvolvimento; Pooling=true;");
-        base.OnConfiguring(optionsBuilder);
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

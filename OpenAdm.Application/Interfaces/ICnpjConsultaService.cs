@@ -1,4 +1,4 @@
-﻿using OpenAdm.Infra.Model;
+﻿using OpenAdm.Application.HttpClient.Response;
 
 namespace OpenAdm.Application.Interfaces;
 

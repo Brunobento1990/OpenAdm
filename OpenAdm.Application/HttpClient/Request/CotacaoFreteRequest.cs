@@ -1,4 +1,4 @@
-﻿namespace OpenAdm.Infra.Model;
+﻿namespace OpenAdm.Application.HttpClient.Request;
 
 public class CotacaoFreteRequest
 {

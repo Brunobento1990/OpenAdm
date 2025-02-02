@@ -1,12 +1,12 @@
 ﻿using OpenAdm.Application.Dtos.Categorias;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Mappers;
 using OpenAdm.Application.Models.Categorias;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Azure.Interfaces;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
@@ -69,7 +69,7 @@ public class CategoriaService : ICategoriaService
         return categorias.Select(x => new CategoriaViewModel().ToModel(x)).ToList();
     }
 
-    public async Task<PaginacaoViewModel<CategoriaViewModel>> GetPaginacaoAsync(PaginacaoCategoriaDto paginacaoCategoriaDto)
+    public async Task<PaginacaoViewModel<CategoriaViewModel>> GetPaginacaoAsync(FilterModel<Categoria> paginacaoCategoriaDto)
     {
         var paginacao = await _categoriaRepository.PaginacaoAsync(paginacaoCategoriaDto);
 

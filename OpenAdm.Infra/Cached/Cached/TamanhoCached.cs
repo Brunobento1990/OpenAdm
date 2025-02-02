@@ -97,4 +97,7 @@ public class TamanhoCached : ITamanhoRepository
 
     public Task<IList<Tamanho>> PaginacaoDropDownAsync(PaginacaoDropDown<Tamanho> paginacaoDropDown)
         => _tamanhoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<int> SaveChangesAsync()
+        => _tamanhoRepository.SaveChangesAsync();
 }

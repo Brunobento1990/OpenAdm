@@ -29,20 +29,23 @@ public class LogMiddleware
         }
         catch (ExceptionUnauthorize ex)
         {
+            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 401;
             await HandleError(httpContext, ex.Message);
         }
         catch (ExceptionApi ex)
         {
+            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 400;
             if (ex.EnviarErroDiscord)
             {
-                await NotificarDiscord(httpContext, ex.Message, discordHttpService);
+                await NotificarDiscord(ex.Message, discordHttpService);
             }
             await HandleError(httpContext, ex.Message);
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 400;
 
             if (_development)
@@ -51,7 +54,7 @@ public class LogMiddleware
             }
             else
             {
-                await NotificarDiscord(httpContext, ex.Message, discordHttpService);
+                await NotificarDiscord(ex.Message, discordHttpService);
                 await HandleError(
                     httpContext,
                     _erroGenerico);
@@ -59,7 +62,7 @@ public class LogMiddleware
         }
     }
 
-    static async Task NotificarDiscord(HttpContext httpContext, string mensagem, IDiscordHttpService discordHttpService)
+    static async Task NotificarDiscord(string mensagem, IDiscordHttpService discordHttpService)
     {
         var webHookId = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_ID");
         var webHookToken = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_TOKEN");

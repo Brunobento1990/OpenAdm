@@ -10,4 +10,5 @@ public interface IGenericRepository<T> where T : class
     Task<bool> DeleteAsync(T entity);
     Task<PaginacaoViewModel<T>> PaginacaoAsync(FilterModel<T> filterModel);
     Task<IList<T>> PaginacaoDropDownAsync(PaginacaoDropDown<T> paginacaoDropDown);
+    Task<int> SaveChangesAsync();
 }

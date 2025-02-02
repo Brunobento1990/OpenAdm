@@ -1,8 +1,9 @@
 ﻿using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Interfaces;
 
@@ -15,7 +16,7 @@ public interface IUsuarioService
     Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto);
     Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto);
     Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto);
-    Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(PaginacaoUsuarioDto paginacaoUsuarioDto);
-    Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoUsuarioDropDown paginacaoUsuarioDropDown);
+    Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(FilterModel<Usuario> paginacaoUsuarioDto);
+    Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoDropDown<Usuario> paginacaoUsuarioDropDown);
     Task<bool> TemTelefoneCadastradoAsync();
 }

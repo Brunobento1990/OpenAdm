@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Models.Tamanhos;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Interfaces;
 
@@ -11,7 +11,7 @@ public interface ITamanhoService
     Task DeleteTamanhoAsync(Guid id);
     Task<TamanhoViewModel> CreateTamanhoAsync(CreateTamanhoDto createTamanhoDto);
     Task<TamanhoViewModel> UpdateTamanhoAsync(UpdateTamanhoDto updateTamanhoDto);
-    Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(PaginacaoTamanhoDto paginacaoTamanhoDto);
+    Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(FilterModel<Tamanho> paginacaoTamanhoDto);
     Task<IList<TamanhoViewModel>> GetTamanhoViewModelsAsync();
     Task<IDictionary<Guid, TamanhoViewModel>> GetTamanhoPorIdsViewModelsAsync(IList<Guid> ids);
 }

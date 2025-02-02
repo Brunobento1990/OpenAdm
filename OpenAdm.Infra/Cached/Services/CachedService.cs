@@ -2,7 +2,6 @@
 using OpenAdm.Infra.Cached.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Infra.Cached.Services;
 
@@ -13,10 +12,8 @@ public class CachedService<T> : ICachedService<T> where T : class
     private readonly JsonSerializerOptions _serializerOptions;
     private static readonly double _absolutExpiration = 5;
     private static readonly double _slidingExpiration = 3;
-    private readonly IParceiroAutenticado _parceiroAutenticado;
 
-    public CachedService(IDistributedCache distributedCache,
-        IParceiroAutenticado parceiroAutenticado)
+    public CachedService(IDistributedCache distributedCache)
     {
         _serializerOptions = new()
         {
@@ -29,51 +26,45 @@ public class CachedService<T> : ICachedService<T> where T : class
                       .SetSlidingExpiration(TimeSpan.FromMinutes(_slidingExpiration));
 
         _distributedCache = distributedCache;
-        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task<T?> GetItemAsync(string key)
     {
         Valid(key);
-        var value = await _distributedCache.GetStringAsync(GetNewKey(key));
+        var value = await _distributedCache.GetStringAsync(key);
         return value is null ? null : JsonSerializer.Deserialize<T>(value, _serializerOptions);
     }
 
     public async Task<IList<T>?> GetListItemAsync(string key)
     {
         Valid(key);
-        var values = await _distributedCache.GetStringAsync(GetNewKey(key));
+        var values = await _distributedCache.GetStringAsync(key);
         return values is null ? null : JsonSerializer.Deserialize<List<T>>(values, _serializerOptions);
     }
 
     public async Task RemoveCachedAsync(string key)
     {
         Valid(key);
-        await _distributedCache.RemoveAsync(GetNewKey(key));
+        await _distributedCache.RemoveAsync(key);
     }
 
     public async Task SetItemAsync(string key, T item)
     {
         Valid(key);
         var valueJson = JsonSerializer.Serialize<T>(item, options: _serializerOptions);
-        await _distributedCache.SetStringAsync(GetNewKey(key), valueJson, _options);
+        await _distributedCache.SetStringAsync(key, valueJson, _options);
     }
 
     public async Task SetListItemAsync(string key, IList<T> itens)
     {
         Valid(key);
         var valuesJson = JsonSerializer.Serialize<IList<T>>(itens, options: _serializerOptions);
-        await _distributedCache.SetStringAsync(GetNewKey(key), valuesJson, _options);
+        await _distributedCache.SetStringAsync(key, valuesJson, _options);
     }
 
     private static void Valid(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
             throw new Exception("Key do cached inválida!");
-    }
-
-    private string GetNewKey(string key)
-    {
-        return $"{_parceiroAutenticado.KeyParceiro}-{key}";
     }
 }

@@ -3,7 +3,6 @@ using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.Pagamentos;
 using System.Text.Json;
 
 namespace OpenAdm.Api.Controllers;
@@ -13,28 +12,14 @@ namespace OpenAdm.Api.Controllers;
 
 public class PagamentoController : ControllerBase
 {
-    private readonly IFaturaService _contasAReceberService;
     private readonly IParcelaService _faturaContasAReceberService;
     public PagamentoController(
-        IFaturaService contasAReceberService,
         IParcelaService faturaContasAReceberService)
     {
-        _contasAReceberService = contasAReceberService;
         _faturaContasAReceberService = faturaContasAReceberService;
     }
 
-    [HttpPost("gerar-pagamento")]
-    [AutenticaParceiro]
-    [Autentica]
-    [ProducesResponseType<PagamentoViewModel>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> GerarPagamento(GerarPagamentoDto gerarPagamentoDto)
-    {
-        var result = await _contasAReceberService.GerarPagamentoAsync(gerarPagamentoDto.MeioDePagamento, gerarPagamentoDto.PedidoId);
-        return Ok(result);
-    }
-
-    [HttpPost("pagamento/notificar")]
+    [HttpPost("notificar")]
     [ProducesResponseType(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     [AutenticaMercadoPago]
@@ -44,6 +29,7 @@ public class PagamentoController : ControllerBase
         {
             if (!string.IsNullOrWhiteSpace(body.Data.Id))
             {
+                Console.WriteLine("Processando pagamento!");
                 await _faturaContasAReceberService.BaixarFaturaWebHookAsync(body);
                 Console.WriteLine("Processamento concluído com sucesso!");
             }

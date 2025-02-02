@@ -1,13 +1,13 @@
 ﻿using OpenAdm.Application.Dtos.LojasParceiras;
 using OpenAdm.Application.Models.LojasParceira;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Interfaces;
 
 public interface ILojasParceirasService
 {
-    Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(PaginacaoLojasParceirasDto paginacaoLojasParceirasDto);
+    Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(FilterModel<LojaParceira> paginacaoLojasParceirasDto);
     Task<LojasParceirasViewModel> GetLojasParceirasViewModelAsync(Guid id);
     Task<IList<string?>> ListLojasParceirasViewModelAsync();
     Task<IList<LojasParceirasViewModel>> TodasLojasAsync();

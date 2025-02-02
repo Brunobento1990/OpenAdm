@@ -1,4 +1,6 @@
-﻿namespace OpenAdm.Infra.Model;
+﻿using OpenAdm.Application.HttpClient.Request;
+
+namespace OpenAdm.Application.HttpClient.Response;
 
 public class MercadoPagoResponse
 {

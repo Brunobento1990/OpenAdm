@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Azure.Interfaces;
 using OpenAdm.Infra.Azure.Storage;
 using OpenAdm.Infra.Cached.Cached;
 using OpenAdm.Infra.Cached.Interfaces;
@@ -12,15 +12,15 @@ namespace OpenAdm.IoC;
 
 public static class DependencyInjectRepositories
 {
-    public static void InjectRepositories(this IServiceCollection services, string connectionString)
+    public static void InjectRepositories(this IServiceCollection services, string connectionString, string instanceName)
     {
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = connectionString;
+            options.InstanceName = instanceName;
         });
 
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
-        services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
         services.AddScoped<IAcessoEcommerceRepository, AcessoEcommerceRepository>();
 
         services.AddScoped<ConfiguracaoDePagamentoRepository>();

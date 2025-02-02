@@ -2,5 +2,8 @@
 
 public enum HttpServiceEnum
 {
-    ConsultaCnpj
+    ConsultaCnpj,
+    MercadoPago,
+    Discord,
+    CepHttpService
 }

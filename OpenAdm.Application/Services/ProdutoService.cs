@@ -1,4 +1,5 @@
 ﻿using OpenAdm.Application.Dtos.Produtos;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Entities;
@@ -6,8 +7,6 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
-using OpenAdm.Infra.Azure.Interfaces;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
@@ -83,7 +82,7 @@ public class ProdutoService : IProdutoService
         return produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
     }
 
-    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(PaginacaoProdutoDto paginacaoProdutoDto)
+    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(FilterModel<Produto> paginacaoProdutoDto)
     {
         var paginacao = await _produtoRepository.PaginacaoAsync(paginacaoProdutoDto);
 

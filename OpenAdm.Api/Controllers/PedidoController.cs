@@ -56,4 +56,13 @@ public class PedidoController : ControllerBase
         var pedido = await _pedidoService.GetAsync(pedidoId);
         return Ok(pedido);
     }
+
+    [HttpGet("get-gerar-pix")]
+    [ProducesResponseType<PedidoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> GetGerarPix(Guid pedidoId)
+    {
+        var pedido = await _pedidoService.GetParaGerarPixAsync(pedidoId);
+        return Ok(pedido);
+    }
 }

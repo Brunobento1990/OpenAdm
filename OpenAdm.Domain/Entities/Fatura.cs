@@ -33,6 +33,8 @@ public sealed class Fatura : BaseEntity
     public DateTime? DataDeFechamento { get; private set; }
     public IList<Parcela> Parcelas { get; set; } = [];
     public decimal Total { get { return Parcelas.Sum(x => x.Valor); } }
+    public decimal ValorAPagarAReceber { get { return Parcelas.Sum(x => x.ValorAPagarAReceber); } }
+    public decimal ValorPagoRecebido { get { return Parcelas.Sum(x => x.ValorPagoRecebido); } }
 
     public void Fechar()
     {

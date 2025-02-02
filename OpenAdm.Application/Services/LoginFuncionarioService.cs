@@ -9,13 +9,11 @@ namespace OpenAdm.Application.Services;
 
 public class LoginFuncionarioService(
     ITokenService tokenService, 
-    ILoginFuncionarioRepository loginFuncionarioRepository, 
-    IParceiroAutenticado parceiroAutenticado)
+    ILoginFuncionarioRepository loginFuncionarioRepository)
     : ILoginFuncionarioService
 {
     private readonly ITokenService _tokenService = tokenService;
     private readonly ILoginFuncionarioRepository _loginFuncionarioRepository = loginFuncionarioRepository;
-    private readonly IParceiroAutenticado _parceiroAutenticado = parceiroAutenticado;
 
     public async Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin)
     {

@@ -24,7 +24,6 @@ public class PedidoServiceTest
     private readonly Mock<ICarrinhoRepository> _carrinhoRepository;
     private readonly Mock<IFaturaService> _contasAReceberService;
     private readonly Mock<IConfiguracaoDePagamentoService> _configuracaoDePagamentoService;
-    private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly Mock<IConfiguracoesDePedidoService> _configuracoesDePedidoService;
     public PedidoServiceTest()
     {
@@ -33,7 +32,6 @@ public class PedidoServiceTest
         _itemTabelaDePrecoRepositoryMock = new();
         _pdfPedidoService = new();
         _carrinhoRepository = new();
-        _parceiroAutenticado = new ParceiroAutenticado();
         _contasAReceberService = new();
         _configuracaoDePagamentoService = new();
         _configuracoesDePedidoService = new();
@@ -82,8 +80,7 @@ public class PedidoServiceTest
         var pedidoService = new PedidoDownloadService(
             _pedidoRepositoryMock.Object, 
             configuracoesDePedidoRepository.Object, 
-            _pdfPedidoService.Object, 
-            _parceiroAutenticado);
+            _pdfPedidoService.Object);
         var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
         Assert.NotNull(pdf);

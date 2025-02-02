@@ -2,7 +2,6 @@
 using OpenAdm.Application.Models.MovimentacaoDeProdutos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
@@ -18,7 +17,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
     private readonly IPesoRepository _pesoRepository;
     private readonly ITamanhoRepository _tamanhoRepository;
     private readonly IMovimentacaoDeProdutoRelatorioService _movimentacaoDeProdutoRelatorioService;
-    private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     public MovimentacaoDeProdutosService(
         IMovimentacaoDeProdutoRepository movimentacaoDeProdutorepository,
@@ -26,7 +24,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         IPesoRepository pesoRepository,
         ITamanhoRepository tamanhoRepository,
         IMovimentacaoDeProdutoRelatorioService movimentacaoDeProdutoRelatorioService,
-        IParceiroAutenticado parceiroAutenticado,
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
     {
         _movimentacaoDeProdutorepository = movimentacaoDeProdutorepository;
@@ -34,7 +31,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         _pesoRepository = pesoRepository;
         _tamanhoRepository = tamanhoRepository;
         _movimentacaoDeProdutoRelatorioService = movimentacaoDeProdutoRelatorioService;
-        _parceiroAutenticado = parceiroAutenticado;
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
     }
 
@@ -162,7 +158,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
         return _movimentacaoDeProdutoRelatorioService.ObterPdfAsync(
             movimentacoesRelatorio,
-            _parceiroAutenticado.NomeFantasia,
+            "Iscas lune",
             relatorioMovimentoDeProdutoDto.DataInicial,
             relatorioMovimentoDeProdutoDto.DataFinal,
             logo,
@@ -172,7 +168,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
     }
 
     public async Task<PaginacaoViewModel<MovimentacaoDeProdutoViewModel>>
-        GetPaginacaoAsync(PaginacaoMovimentacaoDeProdutoDto paginacaoMovimentacaoDeProdutoDto)
+        GetPaginacaoAsync(FilterModel<MovimentacaoDeProduto> paginacaoMovimentacaoDeProdutoDto)
     {
         var paginacao = await _movimentacaoDeProdutorepository
             .PaginacaoAsync(paginacaoMovimentacaoDeProdutoDto);

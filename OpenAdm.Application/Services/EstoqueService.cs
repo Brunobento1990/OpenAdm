@@ -6,7 +6,6 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
@@ -56,7 +55,7 @@ public class EstoqueService : IEstoqueService
         return new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso);
     }
 
-    public async Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(PaginacaoEstoqueDto paginacaoEstoqueDto)
+    public async Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(FilterModel<Estoque> paginacaoEstoqueDto)
     {
         var paginacao = await _estoqueRepository.PaginacaoAsync(paginacaoEstoqueDto);
         var produtosids = paginacao

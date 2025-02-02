@@ -5,7 +5,6 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
@@ -80,7 +79,7 @@ public class TabelaDePrecoService : ITabelaDePrecoService
     }
 
     public async Task<PaginacaoViewModel<TabelaDePrecoViewModel>> GetPaginacaoTabelaViewModelAsync(
-        PaginacaoTabelaDePrecoDto paginacaoTabelaDePrecoDto)
+        FilterModel<TabelaDePreco> paginacaoTabelaDePrecoDto)
     {
         var paginacao = await _tabelaDePrecoRepository.PaginacaoAsync(paginacaoTabelaDePrecoDto);
 

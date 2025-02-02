@@ -21,6 +21,8 @@ internal class FaturaConfiguration : IEntityTypeConfiguration<Fatura>
             .ValueGeneratedOnAdd();
         builder.HasIndex(x => x.Tipo);
         builder.Ignore(x => x.Total);
+        builder.Ignore(x => x.ValorAPagarAReceber);
+        builder.Ignore(x => x.ValorPagoRecebido);
         builder.HasMany(x => x.Parcelas)
             .WithOne(x => x.Fatura)
             .HasForeignKey(x => x.FaturaId)

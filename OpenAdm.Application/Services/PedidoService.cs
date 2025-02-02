@@ -2,10 +2,10 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 using System.Reactive.Linq;
 using System.Text;
 
@@ -15,14 +15,12 @@ public class PedidoService(
     IPedidoRepository pedidoRepository,
     IItensPedidoRepository itensPedidoRepository,
     IPdfPedidoService pdfPedidoService,
-    IParceiroAutenticado parceiroAutenticado,
     IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
     : IPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly IItensPedidoRepository _itensPedidoRepository = itensPedidoRepository;
     private readonly IPdfPedidoService _pdfPedidoService = pdfPedidoService;
-    private readonly IParceiroAutenticado _parceiroAutenticado = parceiroAutenticado;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
 
     public async Task<PedidoViewModel> GetAsync(Guid pedidoId)
@@ -34,7 +32,7 @@ public class PedidoService(
         return pedidoViewModel;
     }
 
-    public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(PaginacaoPedidoDto paginacaoPedidoDto)
+    public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(FilterModel<Pedido> paginacaoPedidoDto)
     {
         var paginacao = await _pedidoRepository.PaginacaoAsync(paginacaoPedidoDto);
 
@@ -44,6 +42,15 @@ public class PedidoService(
             TotalDeRegistros = paginacao.TotalDeRegistros,
             Values = paginacao.Values.Select(x => new PedidoViewModel().ForModel(x)).ToList()
         };
+    }
+
+    public async Task<PedidoViewModel> GetParaGerarPixAsync(Guid pedidoId)
+    {
+        var pedido = await _pedidoRepository.GetPedidoParaGerarPixByIdAsync(pedidoId)
+            ?? throw new Exception($"Pedido não localizado: {pedidoId}");
+        var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
+
+        return pedidoViewModel;
     }
 
     public async Task<IDictionary<Guid, PedidoViewModel>> GetPedidosAsync(IList<Guid> ids)
@@ -123,7 +130,7 @@ public class PedidoService(
 
         return _pdfPedidoService.ProducaoPedido(
             itensProducao.OrderBy(x => x.Produto).ToList(),
-            _parceiroAutenticado.NomeFantasia,
+            "Iscas lune",
             logo,
             pedidos);
     }

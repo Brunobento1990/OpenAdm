@@ -1,13 +1,17 @@
-﻿using OpenAdm.Domain.Exceptions;
-using OpenAdm.Infra.HttpService.Interfaces;
+﻿using OpenAdm.Application.HttpClient.Interfaces;
+using OpenAdm.Application.HttpClient.Request;
+using OpenAdm.Application.HttpClient.Response;
+using OpenAdm.Domain.Exceptions;
+using OpenAdm.Infra.Enums;
 using OpenAdm.Infra.Model;
 using System.Text.Json;
 
 namespace OpenAdm.Infra.HttpService.Services;
 
-public sealed class CepHttpService : ICepHttpService
+public sealed class CepHttpService : IHttpClientCep
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly string _nomeCliente = $"{HttpServiceEnum.CepHttpService.ToString()}";
 
     public CepHttpService(IHttpClientFactory httpClientFactory)
     {
@@ -16,7 +20,7 @@ public sealed class CepHttpService : ICepHttpService
 
     public async Task<ConsultaCepResponse> ConsultaCepAsync(string cepOrigem)
     {
-        var client = _httpClientFactory.CreateClient("CepHttpService");
+        var client = _httpClientFactory.CreateClient(_nomeCliente);
         var url = $"ws/json/{cepOrigem}";
         var response = await client.GetAsync(url);
         var body = await response.Content.ReadAsStringAsync();
@@ -37,7 +41,7 @@ public sealed class CepHttpService : ICepHttpService
 
     public async Task<CotacaoFreteResponse> CotarFreteAsync(CotacaoFreteRequest cotacaoFreteRequest)
     {
-        var client = _httpClientFactory.CreateClient("CepHttpService");
+        var client = _httpClientFactory.CreateClient(_nomeCliente);
         var url = $"ws/json-frete/{cotacaoFreteRequest.CepOrigem}/{cotacaoFreteRequest.CepDestino}/{cotacaoFreteRequest.Peso}/{cotacaoFreteRequest.Altura}/{cotacaoFreteRequest.Largura}/{cotacaoFreteRequest.Comprimento}/{cotacaoFreteRequest.ChaveDeAcesso}";
         var response = await client.GetAsync(url);
         var body = await response.Content.ReadAsStringAsync();

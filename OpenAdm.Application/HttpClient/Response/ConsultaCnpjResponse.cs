@@ -1,8 +1,6 @@
-﻿namespace OpenAdm.Infra.Model;
+﻿using System.Text.Json.Serialization;
 
-using System;
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
+namespace OpenAdm.Application.HttpClient.Response;
 
 public class ConsultaCnpjResponse
 {
@@ -201,4 +199,3 @@ public class CnaeSecundario
     [JsonPropertyName("descricao")]
     public string Descricao { get; set; } = string.Empty;
 }
-

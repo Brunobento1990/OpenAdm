@@ -11,7 +11,7 @@ public class PaginacaoPedidoDto : FilterModel<Pedido>
     public int? StatusPedido { get; set; }
     public override Expression<Func<Pedido, object>>? IncludeCustom()
     {
-        return x => x.Usuario;
+        return x => x.ItensPedido;
     }
     public override Expression<Func<Pedido, bool>>? GetWhereBySearch()
     {

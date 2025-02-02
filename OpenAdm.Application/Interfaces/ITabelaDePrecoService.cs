@@ -1,13 +1,13 @@
 ﻿using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Application.Models.TabelaDePrecos;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Interfaces;
 
 public interface ITabelaDePrecoService
 {
-    Task<PaginacaoViewModel<TabelaDePrecoViewModel>> GetPaginacaoTabelaViewModelAsync(PaginacaoTabelaDePrecoDto paginacaoTabelaDePrecoDto);
+    Task<PaginacaoViewModel<TabelaDePrecoViewModel>> GetPaginacaoTabelaViewModelAsync(FilterModel<TabelaDePreco> paginacaoTabelaDePrecoDto);
     Task<TabelaDePrecoViewModel> GetPrecoTabelaViewModelAsync(Guid id);
     Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid produtoId);
     Task<TabelaDePrecoViewModel> UpdateTabelaDePrecoAsync(UpdateTabelaDePrecoDto updateTabelaDePrecoDto);
