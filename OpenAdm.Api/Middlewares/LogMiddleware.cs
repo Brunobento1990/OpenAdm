@@ -25,9 +25,7 @@ public class LogMiddleware
     {
         try
         {
-            Console.WriteLine("Chegou requisição");
             await _next(httpContext);
-            Console.WriteLine("Saiu requisição");
         }
         catch (ExceptionUnauthorize ex)
         {
