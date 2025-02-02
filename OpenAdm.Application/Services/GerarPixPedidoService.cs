@@ -164,7 +164,7 @@ public class GerarPixPedidoService : IGerarPixPedidoService
             Description = $"Pedido {pedido.Numero}",
             Transaction_amount = valor,
             External_reference = pedido.Id.ToString(),
-            Notification_url = $"https://api.iscaslune.com.br/api/pagamento/pagamento/notificar",
+            Notification_url = $"https://api.hml.iscaslune.com.br/api/pagamento/pagamento/notificar",
             Payer = new()
             {
                 Email = pedido.Usuario.Email,
