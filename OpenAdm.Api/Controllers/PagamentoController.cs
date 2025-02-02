@@ -25,6 +25,7 @@ public class PagamentoController : ControllerBase
     [AutenticaMercadoPago]
     public async Task<IActionResult> PagamentoWebHook([FromBody] NotificationFaturaWebHook body)
     {
+        Console.WriteLine("111");
         if (body?.Data != null && (body?.Action == "payment.update" || body?.Action == "payment.updated"))
         {
             if (!string.IsNullOrWhiteSpace(body.Data.Id))
