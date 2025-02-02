@@ -35,5 +35,6 @@ public class AutenticaMercadoPagoMiddleware
 
         Console.WriteLine("Processou o midleware com sucesso");
         await _next(httpContext);
+        Console.WriteLine("Processou o midleware com sucesso 2");
     }
 }
