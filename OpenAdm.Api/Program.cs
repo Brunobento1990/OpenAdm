@@ -30,6 +30,7 @@ var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
 var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
 var urlConsultaCnpj = VariaveisDeAmbiente.GetVariavel("ULR_CONSULTA_CNPJ");
+var instanceName = VariaveisDeAmbiente.GetVariavel("REDIS_INSTANCENAME");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
@@ -45,7 +46,7 @@ builder.Services.InjectServices();
 builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
-builder.Services.InjectRepositories(redisString);
+builder.Services.InjectRepositories(redisString, instanceName);
 builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj);
 
 QuestPDF.Settings.License = LicenseType.Community;

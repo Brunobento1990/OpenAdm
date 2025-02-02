@@ -12,11 +12,12 @@ namespace OpenAdm.IoC;
 
 public static class DependencyInjectRepositories
 {
-    public static void InjectRepositories(this IServiceCollection services, string connectionString)
+    public static void InjectRepositories(this IServiceCollection services, string connectionString, string instanceName)
     {
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = connectionString;
+            options.InstanceName = instanceName;
         });
 
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
