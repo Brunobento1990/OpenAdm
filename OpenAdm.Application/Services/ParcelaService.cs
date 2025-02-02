@@ -56,6 +56,12 @@ public sealed class ParcelaService : IParcelaService
 
     public async Task BaixarFaturaWebHookAsync(NotificationFaturaWebHook notificationFaturaWebHook)
     {
+        if (string.IsNullOrWhiteSpace(notificationFaturaWebHook.Data?.Id))
+        {
+            Console.WriteLine("data id inválido");
+            return;
+        }
+
         var parcela = await _parcelaRepository.GetByIdExternoAsync(notificationFaturaWebHook.Data.Id);
         if (parcela == null)
         {
