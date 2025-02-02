@@ -97,4 +97,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<int> GetCountAsync()
         => _usuarioRepository.GetCountAsync();
+
+    public Task<int> SaveChangesAsync()
+        => _usuarioRepository.SaveChangesAsync();
 }

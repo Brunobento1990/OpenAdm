@@ -59,4 +59,7 @@ public class ConfiguracaoDeEmailCached(
 
     public Task<IList<ConfiguracaoDeEmail>> PaginacaoDropDownAsync(PaginacaoDropDown<ConfiguracaoDeEmail> paginacaoDropDown)
         => _configuracaoDeEmailRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<int> SaveChangesAsync()
+        => _configuracaoDeEmailRepository.SaveChangesAsync();
 }

@@ -12,6 +12,31 @@ namespace OpenAdm.Infra.Repositories;
 public class PedidoRepository(ParceiroContext parceiroContext)
     : GenericRepository<Pedido>(parceiroContext), IPedidoRepository
 {
+
+    public override async Task<PaginacaoViewModel<Pedido>> PaginacaoAsync(FilterModel<Pedido> filterModel)
+    {
+        var include = filterModel.IncludeCustom();
+        var select = filterModel.SelectCustom();
+
+        var query = ParceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .WhereIsNotNull(filterModel.GetWhereBySearch())
+            .Include(x => x.ItensPedido)
+            .Include(x => x.Usuario);
+
+        var (TotalPaginas, Values) = await query
+            .CustomFilterAsync(filterModel);
+
+        var totalDeRegistros = await ParceiroContext.Pedidos.WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
+
+        return new()
+        {
+            TotalPaginas = TotalPaginas,
+            Values = Values,
+            TotalDeRegistros = totalDeRegistros
+        };
+    }
     public async Task<int> GetCountPedidosEmAbertoAsync()
     {
         try
@@ -177,5 +202,17 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .ToListAsync();
 
         return pedidos.Sum(x => x.ValorTotal);
+    }
+
+    public async Task<Pedido?> GetPedidoParaGerarPixByIdAsync(Guid id)
+    {
+        return await
+            ParceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .Include(x => x.ItensPedido)
+            .Include(x => x.Fatura!.Parcelas)
+                .ThenInclude(x => x.Transacoes)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 }

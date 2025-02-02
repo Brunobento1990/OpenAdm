@@ -97,4 +97,7 @@ public class PesoCached : IPesoRepository
 
     public Task<IList<Peso>> PaginacaoDropDownAsync(PaginacaoDropDown<Peso> paginacaoDropDown)
         => _pesoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<int> SaveChangesAsync()
+        => _pesoRepository.SaveChangesAsync();
 }

@@ -1,10 +1,10 @@
 ﻿using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Tamanhos;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
@@ -32,7 +32,7 @@ public class TamanhoService : ITamanhoService
         await _tamanhoRepository.DeleteAsync(tamanho);
     }
 
-    public async Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(PaginacaoTamanhoDto paginacaoTamanhoDto)
+    public async Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(FilterModel<Tamanho> paginacaoTamanhoDto)
     {
         var paginacao = await _tamanhoRepository.PaginacaoAsync(paginacaoTamanhoDto);
 

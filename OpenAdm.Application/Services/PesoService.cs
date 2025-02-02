@@ -2,9 +2,9 @@
 using OpenAdm.Application.Models.Pesos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
 using OpenAdm.Application.Dtos.Pesos;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Services;
 
@@ -32,7 +32,7 @@ public class PesoService : IPesoService
         await _pesoRepository.DeleteAsync(peso);
     }
 
-    public async Task<PaginacaoViewModel<PesoViewModel>> GetPaginacaoAsync(PaginacaoPesoDto paginacaoPesoDto)
+    public async Task<PaginacaoViewModel<PesoViewModel>> GetPaginacaoAsync(FilterModel<Peso> paginacaoPesoDto)
     {
         var paginacao = await _pesoRepository.PaginacaoAsync(paginacaoPesoDto);
 

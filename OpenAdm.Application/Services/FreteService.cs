@@ -1,20 +1,20 @@
 ﻿using OpenAdm.Application.Dtos.Ceps;
+using OpenAdm.Application.HttpClient.Interfaces;
+using OpenAdm.Application.HttpClient.Request;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Fretes;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.HttpService.Interfaces;
-using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Application.Services;
 
 public sealed class FreteService : IFreteService
 {
-    private readonly ICepHttpService _cepHttpService;
+    private readonly IHttpClientCep _cepHttpService;
     private readonly IConfiguracaoDeFreteService _configuracaoDeFreteService;
     private readonly IItensPedidoRepository _itensPedidoRepository;
     public FreteService(
-        ICepHttpService cepHttpService,
+        IHttpClientCep cepHttpService,
         IConfiguracaoDeFreteService configuracaoDeFreteService,
         IItensPedidoRepository itensPedidoRepository)
     {

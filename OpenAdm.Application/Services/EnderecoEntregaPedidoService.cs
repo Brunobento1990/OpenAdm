@@ -1,9 +1,9 @@
 ﻿using OpenAdm.Application.Dtos.EnderecosDeEntregasPedidos;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.EnderecosEntregasPedido;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.HttpService.Interfaces;
 
 namespace OpenAdm.Application.Services;
 
@@ -11,12 +11,12 @@ public sealed class EnderecoEntregaPedidoService : IEnderecoEntregaPedidoService
 {
     private readonly IEnderecoEntregaPedidoRepository _enderecoEntregaPedidoRepository;
     private readonly IPedidoService _pedidoService;
-    private readonly ICepHttpService _httpService;
+    private readonly IHttpClientCep _httpService;
 
     public EnderecoEntregaPedidoService(
         IEnderecoEntregaPedidoRepository enderecoEntregaPedidoRepository,
         IPedidoService pedidoService,
-        ICepHttpService httpService)
+        IHttpClientCep httpService)
     {
         _enderecoEntregaPedidoRepository = enderecoEntregaPedidoRepository;
         _pedidoService = pedidoService;

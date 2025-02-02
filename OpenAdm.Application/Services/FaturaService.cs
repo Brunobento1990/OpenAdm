@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ContasAReceberModel;
-using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
@@ -12,19 +11,12 @@ namespace OpenAdm.Application.Services;
 public sealed class FaturaService : IFaturaService
 {
     private readonly IFaturaRepository _contasAReceberRepository;
-    private readonly IPagamentoFactory _pagamentoFactory;
-    private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IUsuarioService _usuarioService;
-
     public FaturaService(
         IFaturaRepository contasAReceberRepository,
-        IPagamentoFactory pagamentoFactory,
-        IUsuarioAutenticado usuarioAutenticado,
         IUsuarioService usuarioService)
     {
         _contasAReceberRepository = contasAReceberRepository;
-        _pagamentoFactory = pagamentoFactory;
-        _usuarioAutenticado = usuarioAutenticado;
         _usuarioService = usuarioService;
     }
 
@@ -80,35 +72,6 @@ public sealed class FaturaService : IFaturaService
             tipo: contasAReceberDto.Tipo);
 
         await _contasAReceberRepository.AddAsync(fatura);
-    }
-
-    public async Task<PagamentoViewModel> GerarPagamentoAsync(MeioDePagamentoEnum meioDePagamento, Guid pedidoId)
-    {
-        var resultPagamento = await _pagamentoFactory
-            .GetPagamento(meioDePagamento)
-            .GerarPagamentoAsync(pedidoId);
-
-        var fatura = Fatura
-            .NovaContasAReceber(
-            usuarioId: _usuarioAutenticado.Id,
-            pedidoId: pedidoId,
-            total: resultPagamento.Total,
-            quantidadeDeParcelas: resultPagamento.QuantidadeDeParcelas,
-            primeiroVencimento: resultPagamento.PrimeiroVencimento,
-            meioDePagamento: meioDePagamento,
-            desconto: null,
-            observacao: null,
-            idExterno: resultPagamento.MercadoPagoId,
-            tipo: TipoFaturaEnum.A_Receber);
-
-        await _contasAReceberRepository.AddAsync(fatura);
-
-        return new()
-        {
-            LinkPagamento = resultPagamento.LinkPagamento,
-            QrCodePix = resultPagamento.QrCodePix,
-            QrCodePixBase64 = resultPagamento.QrCodePixBase64
-        };
     }
 
     public async Task<FaturaViewModel> GetByIdAsync(Guid id)

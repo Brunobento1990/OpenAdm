@@ -61,6 +61,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .Parcelas
             .AsNoTracking()
             .Include(x => x.Fatura)
+                .ThenInclude(x => x.Pedido!.ItensPedido)
             .FirstOrDefaultAsync(x => x.IdExterno == idExterno);
     }
 

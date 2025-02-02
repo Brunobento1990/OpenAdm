@@ -81,4 +81,7 @@ public class BannerCached : IBannerRepository
 
     public Task<IList<Banner>> PaginacaoDropDownAsync(PaginacaoDropDown<Banner> paginacaoDropDown)
         => _bannerRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<int> SaveChangesAsync()
+     => _bannerRepository.SaveChangesAsync();
 }

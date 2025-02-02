@@ -1,12 +1,11 @@
 ﻿using OpenAdm.Application.Dtos.LojasParceiras;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.LojasParceira;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Azure.Interfaces;
-using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Application.Services;
 
@@ -56,7 +55,7 @@ public class LojasParceirasService : ILojasParceirasService
         return new LojasParceirasViewModel().ToModel(lojaParceira);
     }
 
-    public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(PaginacaoLojasParceirasDto paginacaoLojasParceirasDto)
+    public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(FilterModel<LojaParceira> paginacaoLojasParceirasDto)
     {
         var paginacao = await _lojasParceirasRepository.PaginacaoAsync(paginacaoLojasParceirasDto);
 

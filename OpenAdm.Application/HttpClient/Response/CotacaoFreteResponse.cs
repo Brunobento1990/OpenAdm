@@ -1,6 +1,6 @@
 ﻿using OpenAdm.Domain.Exceptions;
 
-namespace OpenAdm.Infra.Model;
+namespace OpenAdm.Application.HttpClient.Response;
 
 public class CotacaoFreteResponse
 {

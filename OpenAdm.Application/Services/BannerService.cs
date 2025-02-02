@@ -3,9 +3,9 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Models.Banners;
-using OpenAdm.Infra.Paginacao;
-using OpenAdm.Infra.Azure.Interfaces;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Application.HttpClient.Interfaces;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Services;
 
@@ -88,7 +88,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
             .ToList();
     }
 
-    public async Task<PaginacaoViewModel<BannerViewModel>> GetPaginacaoAsync(PaginacaoBannerDto paginacaoBannerDto)
+    public async Task<PaginacaoViewModel<BannerViewModel>> GetPaginacaoAsync(FilterModel<Banner> paginacaoBannerDto)
     {
         var paginacao = await _bannerRepository.PaginacaoAsync(paginacaoBannerDto);
 

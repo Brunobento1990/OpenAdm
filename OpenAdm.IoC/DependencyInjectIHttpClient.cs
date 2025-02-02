@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Infra.Enums;
 using OpenAdm.Infra.HttpService.Interfaces;
 using OpenAdm.Infra.HttpService.Services;
@@ -13,21 +14,21 @@ public static class DependencyInjectIHttpClient
         string urlMercadoPago,
         string urlConsultaCnpj)
     {
-        services.AddTransient<ICepHttpService, CepHttpService>();
+        services.AddTransient<IHttpClientCep, CepHttpService>();
         services.AddTransient<IDiscordHttpService, DiscordHttpService>();
-        services.AddTransient<IMercadoPagoHttpService, MercadoPagoHttpService>();
-        services.AddTransient<ICnpjHttpService, CnpjHttpService>();
-        services.AddHttpClient("Discord", x =>
+        services.AddTransient<IHttpClientMercadoPago, MercadoPagoHttpService>();
+        services.AddTransient<IHttpClientConsultaCnpj, CnpjHttpService>();
+        services.AddHttpClient(HttpServiceEnum.Discord.ToString(), x =>
         {
             x.BaseAddress = new Uri(url);
         });
 
-        services.AddHttpClient("MercadoPago", x =>
+        services.AddHttpClient(HttpServiceEnum.MercadoPago.ToString(), x =>
         {
             x.BaseAddress = new Uri(urlMercadoPago);
         });
 
-        services.AddHttpClient("CepHttpService", x =>
+        services.AddHttpClient(HttpServiceEnum.CepHttpService.ToString(), x =>
         {
             x.BaseAddress = new Uri(urlApiCep);
         });

@@ -50,7 +50,8 @@ public class HomeSevice : IHomeSevice
             TotalAReceber = totalAReceber,
             PedidosEmAberto = pedidosEmAberto,
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
-            QuantidadeDeUsuario = quantidadeDeUsuario
+            QuantidadeDeUsuario
+            = quantidadeDeUsuario
         };
     }
 }

@@ -77,4 +77,7 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
 
     public Task<IList<Categoria>> PaginacaoDropDownAsync(PaginacaoDropDown<Categoria> paginacaoDropDown)
         => _categoriaRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<int> SaveChangesAsync()
+        => _categoriaRepository.SaveChangesAsync();
 }

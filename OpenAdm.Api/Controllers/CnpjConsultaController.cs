@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Application.Dtos.Response;
+using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.Fretes;
-using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Api.Controllers;
 

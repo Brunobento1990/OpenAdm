@@ -3,7 +3,7 @@ using ExpectedObjects;
 using OpenAdm.Application.Models.Banners;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Azure.Interfaces;
+using OpenAdm.Application.HttpClient.Interfaces;
 
 namespace OpenAdm.Test.Application.Test;
 

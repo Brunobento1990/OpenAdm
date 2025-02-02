@@ -1,15 +1,15 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.HttpClient.Interfaces;
+using OpenAdm.Application.HttpClient.Response;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Exceptions;
-using OpenAdm.Infra.HttpService.Interfaces;
-using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Application.Services;
 
 public class CnpjConsultaService : ICnpjConsultaService
 {
-    private readonly ICnpjHttpService _cnpjHttpService;
+    private readonly IHttpClientConsultaCnpj _cnpjHttpService;
 
-    public CnpjConsultaService(ICnpjHttpService cnpjHttpService)
+    public CnpjConsultaService(IHttpClientConsultaCnpj cnpjHttpService)
     {
         _cnpjHttpService = cnpjHttpService;
     }

@@ -1,4 +1,4 @@
-﻿namespace OpenAdm.Infra.Azure.Interfaces;
+﻿namespace OpenAdm.Application.HttpClient.Interfaces;
 
 public interface IUploadImageBlobClient
 {

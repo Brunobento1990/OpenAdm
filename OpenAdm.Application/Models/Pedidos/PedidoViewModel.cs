@@ -9,6 +9,7 @@ public class PedidoViewModel : BaseViewModel
     public StatusPedido StatusPedido { get; set; }
     public decimal ValorTotal { get; set; }
     public decimal TotalItens { get; set; }
+    public decimal TotalAReceber { get; set; }
     public string Usuario { get; set; } = string.Empty;
     public IList<ItensPedidoViewModel> ItensPedido { get; set; } = [];
 
@@ -24,6 +25,8 @@ public class PedidoViewModel : BaseViewModel
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
 
+        TotalAReceber = entity.Fatura?.ValorAPagarAReceber ?? 0;
+
         return this;
     }
 
@@ -34,12 +37,14 @@ public class PedidoViewModel : BaseViewModel
         Numero = entity.Numero;
         ValorTotal = entity.ValorTotal;
         StatusPedido = entity.StatusPedido;
-        ItensPedido = entity.ItensPedido.Select(x => 
+        ItensPedido = entity.ItensPedido.Select(x =>
             new ItensPedidoViewModel().ToModel(x)
         ).ToList();
 
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
+
+        TotalAReceber = entity.Fatura?.ValorAPagarAReceber ?? 0;
 
         return this;
     }

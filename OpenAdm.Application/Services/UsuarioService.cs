@@ -2,11 +2,12 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Paginacao;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -144,7 +145,7 @@ public class UsuarioService : IUsuarioService
         return usuarioViewModel;
     }
 
-    public async Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(PaginacaoUsuarioDto paginacaoUsuarioDto)
+    public async Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(FilterModel<Usuario> paginacaoUsuarioDto)
     {
         var paginacao = await _usuarioRepository.PaginacaoAsync(paginacaoUsuarioDto);
 
@@ -183,7 +184,7 @@ public class UsuarioService : IUsuarioService
         return new(usuarioViewModel, token, refreshToken);
     }
 
-    public async Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoUsuarioDropDown paginacaoUsuarioDropDown)
+    public async Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoDropDown<Usuario> paginacaoUsuarioDropDown)
     {
         var usuarios = await _usuarioRepository.PaginacaoDropDownAsync(paginacaoUsuarioDropDown);
         return usuarios.Select(x => new UsuarioViewModel()

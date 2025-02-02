@@ -177,4 +177,7 @@ public class ProdutoCached : IProdutoRepository
 
     public Task<IList<Produto>> PaginacaoDropDownAsync(PaginacaoDropDown<Produto> paginacaoDropDown)
         => _produtoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<int> SaveChangesAsync()
+        => _produtoRepository.SaveChangesAsync();
 }

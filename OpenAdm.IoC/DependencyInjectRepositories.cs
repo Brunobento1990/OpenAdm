@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Azure.Interfaces;
 using OpenAdm.Infra.Azure.Storage;
 using OpenAdm.Infra.Cached.Cached;
 using OpenAdm.Infra.Cached.Interfaces;
@@ -20,7 +20,6 @@ public static class DependencyInjectRepositories
         });
 
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
-        services.AddScoped<IConfiguracaoParceiroRepository, ConfiguracaoParceiroRepository>();
         services.AddScoped<IAcessoEcommerceRepository, AcessoEcommerceRepository>();
 
         services.AddScoped<ConfiguracaoDePagamentoRepository>();

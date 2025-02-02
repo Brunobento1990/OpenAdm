@@ -61,4 +61,7 @@ public class ConfiguracoesDePedidoCached : IConfiguracoesDePedidoRepository
 
     public Task<IList<ConfiguracoesDePedido>> PaginacaoDropDownAsync(PaginacaoDropDown<ConfiguracoesDePedido> paginacaoDropDown)
         => _configuracoesDePedidoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+
+    public Task<int> SaveChangesAsync()
+        => _configuracoesDePedidoRepository.SaveChangesAsync();
 }
