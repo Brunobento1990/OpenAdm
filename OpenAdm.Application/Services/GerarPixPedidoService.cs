@@ -106,7 +106,7 @@ public class GerarPixPedidoService : IGerarPixPedidoService
             throw new ExceptionApi("O valor deve ser menor que o valor total do pedido");
         }
 
-        var parcelasExcluir = fatura.Parcelas.Where(x => x.ValorAPagarAReceber <= 0).ToList();
+        var parcelasExcluir = fatura.Parcelas.Where(x => x.ValorPagoRecebido <= 0).ToList();
 
         if (parcelasExcluir.Count > 0)
         {
