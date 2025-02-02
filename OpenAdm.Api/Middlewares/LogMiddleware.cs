@@ -29,11 +29,13 @@ public class LogMiddleware
         }
         catch (ExceptionUnauthorize ex)
         {
+            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 401;
             await HandleError(httpContext, ex.Message);
         }
         catch (ExceptionApi ex)
         {
+            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 400;
             if (ex.EnviarErroDiscord)
             {
@@ -43,6 +45,7 @@ public class LogMiddleware
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 400;
 
             if (_development)
