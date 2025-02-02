@@ -25,7 +25,9 @@ public class LogMiddleware
     {
         try
         {
+            Console.WriteLine("Chegou requisição");
             await _next(httpContext);
+            Console.WriteLine("Saiu requisição");
         }
         catch (ExceptionUnauthorize ex)
         {
@@ -39,7 +41,7 @@ public class LogMiddleware
             _statusCode = 400;
             if (ex.EnviarErroDiscord)
             {
-                await NotificarDiscord(httpContext, ex.Message, discordHttpService);
+                await NotificarDiscord(ex.Message, discordHttpService);
             }
             await HandleError(httpContext, ex.Message);
         }
@@ -54,7 +56,7 @@ public class LogMiddleware
             }
             else
             {
-                await NotificarDiscord(httpContext, ex.Message, discordHttpService);
+                await NotificarDiscord(ex.Message, discordHttpService);
                 await HandleError(
                     httpContext,
                     _erroGenerico);
@@ -62,7 +64,7 @@ public class LogMiddleware
         }
     }
 
-    static async Task NotificarDiscord(HttpContext httpContext, string mensagem, IDiscordHttpService discordHttpService)
+    static async Task NotificarDiscord(string mensagem, IDiscordHttpService discordHttpService)
     {
         var webHookId = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_ID");
         var webHookToken = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_TOKEN");
