@@ -39,12 +39,17 @@ public class GerarPixPedidoService : IGerarPixPedidoService
         var configuracaoPagamento = await _configuracaoDePagamentoService.GetAsync()
                 ?? throw new ExceptionApi("Não há configuração de pagamento para o mercado pago!", enviarErroDiscord: true);
 
+        if (string.IsNullOrWhiteSpace(configuracaoPagamento.UrlWebHook))
+        {
+            throw new ExceptionApi("Não há uma url de web hook configurada, verifique as configurações de pagamento");
+        }
+
         if (fatura == null || fatura.Pedido == null)
         {
             var pedido = await _pedidoRepository.GetPedidoByIdAsync(gerarPixParcelaDto.PedidoId)
-                ?? throw new ExceptionApi("Nãi foi possível localizar o pedido");
+                ?? throw new ExceptionApi("Não foi possível localizar o pedido");
 
-            var mercadoPagoRequest = GerarBodyMercadoPado(pedido, gerarPixParcelaDto.Valor);
+            var mercadoPagoRequest = GerarBodyMercadoPado(pedido, gerarPixParcelaDto.Valor, configuracaoPagamento.UrlWebHook);
             var idempontencyKey = Guid.NewGuid();
             var resultPix = await _httpClientMercadoPago
                 .PostAsync(mercadoPagoRequest, configuracaoPagamento.AccessToken, idempontencyKey.ToString());
@@ -113,7 +118,7 @@ public class GerarPixPedidoService : IGerarPixPedidoService
             _faturaRepository.ExcluirParcelasAsync(parcelasExcluir);
         }
 
-        var mercadoPagoRequest1 = GerarBodyMercadoPado(fatura.Pedido, gerarPixParcelaDto.Valor);
+        var mercadoPagoRequest1 = GerarBodyMercadoPado(fatura.Pedido, gerarPixParcelaDto.Valor, configuracaoPagamento.UrlWebHook);
         var idempontencyKey1 = Guid.NewGuid();
         var resultPix1 = await _httpClientMercadoPago
             .PostAsync(mercadoPagoRequest1, configuracaoPagamento.AccessToken, idempontencyKey1.ToString());
@@ -157,14 +162,14 @@ public class GerarPixPedidoService : IGerarPixPedidoService
         };
     }
 
-    private static MercadoPagoRequest GerarBodyMercadoPado(Pedido pedido, decimal valor)
+    private static MercadoPagoRequest GerarBodyMercadoPado(Pedido pedido, decimal valor, string urlWebHook)
     {
         return new MercadoPagoRequest()
         {
             Description = $"Pedido {pedido.Numero}",
             Transaction_amount = valor,
             External_reference = pedido.Id.ToString(),
-            Notification_url = $"https://api.hml.iscaslune.com.br/api/pagamento/notificar",
+            Notification_url = urlWebHook,
             Payer = new()
             {
                 Email = pedido.Usuario.Email,

@@ -25,5 +25,7 @@ internal class ConfiguracaoDePagamentoConfiguration : IEntityTypeConfiguration<C
         builder.Property(x => x.AccessToken)
             .IsRequired()
             .HasMaxLength(2000);
+        builder.Property(x => x.UrlWebHook)
+            .HasMaxLength(2000);
     }
 }

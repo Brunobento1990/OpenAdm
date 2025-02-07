@@ -7,6 +7,7 @@ public class ConfiguracaoDePagamentoViewModel
 {
     public string PublicKey { get; set; } = string.Empty;
     public string AccessToken { get; set; } = string.Empty;
+    public string? UrlWebHook { get; set; }
     public bool CobrarCpf { get; set; }
     public bool CobrarCnpj { get; set; }
 
@@ -17,7 +18,8 @@ public class ConfiguracaoDePagamentoViewModel
             AccessToken = Criptografia.Decrypt(configuracaoDePagamento.AccessToken),
             CobrarCnpj = configuracaoDePagamento.CobrarCnpj,
             CobrarCpf = configuracaoDePagamento.CobrarCpf,
-            PublicKey = Criptografia.Decrypt(configuracaoDePagamento.PublicKey)
+            PublicKey = Criptografia.Decrypt(configuracaoDePagamento.PublicKey),
+            UrlWebHook = configuracaoDePagamento.UrlWebHook
         };
     }
 }

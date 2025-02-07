@@ -26,16 +26,15 @@ public sealed class MercadoPagoHttpService : IHttpClientMercadoPago
         httpClient.DefaultRequestHeaders.Add("X-Idempotency-Key", idempotencyKey);
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         var response = await httpClient.PostAsync("payments", JsonSerializerOptionsApi.ToJson(mercadoPagoRequest));
-
+        var body = await response.Content.ReadAsStreamAsync();
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
             Console.WriteLine(error);
             throw new ExceptionApi($"Não foi possível gerar o pagamento.", enviarErroDiscord: true);
         }
-        var content = await response.Content.ReadAsStringAsync();
 
-        return JsonSerializer.Deserialize<MercadoPagoResponse>(content, JsonSerializerOptionsApi.Options())
+        return JsonSerializer.Deserialize<MercadoPagoResponse>(body, JsonSerializerOptionsApi.Options())
             ?? throw new Exception("Não foi possível desserealizar o objeto response do mercado pago!");
     }
 }
