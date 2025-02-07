@@ -61,7 +61,8 @@ public class ConfiguracaoDePagamentoService : IConfiguracaoDePagamentoService
                 publicKey: Criptografia.Encrypt(configuracaoDePagamentoCreateOrUpdate.PublicKey),
                 accessToken: Criptografia.Encrypt(configuracaoDePagamentoCreateOrUpdate.AccessToken),
                 cobrarCpf: configuracaoDePagamentoCreateOrUpdate.CobrarCpf,
-                cobrarCnpj: configuracaoDePagamentoCreateOrUpdate.CobrarCnpj);
+                cobrarCnpj: configuracaoDePagamentoCreateOrUpdate.CobrarCnpj,
+                urlWebHook: configuracaoDePagamentoCreateOrUpdate.UrlWebHook);
 
             await _configuracaoDePagamentoRepository.AddAsync(configuracao);
             return (ConfiguracaoDePagamentoViewModel)configuracao;
@@ -71,7 +72,8 @@ public class ConfiguracaoDePagamentoService : IConfiguracaoDePagamentoService
             publicKey: Criptografia.Encrypt(configuracaoDePagamentoCreateOrUpdate.PublicKey),
             accessToken: Criptografia.Encrypt(configuracaoDePagamentoCreateOrUpdate.AccessToken),
             cobrarCpf: configuracaoDePagamentoCreateOrUpdate.CobrarCpf,
-            cobrarCnpj: configuracaoDePagamentoCreateOrUpdate.CobrarCnpj);
+            cobrarCnpj: configuracaoDePagamentoCreateOrUpdate.CobrarCnpj,
+            urlWebHook: configuracaoDePagamentoCreateOrUpdate.UrlWebHook);
 
         await _configuracaoDePagamentoRepository.UpdateAsync(configuracao);
 
