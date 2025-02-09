@@ -20,6 +20,7 @@ public class EstoqueViewModel : BaseModel
         Produto = produto;
         Quantidade = estoque.Quantidade;
         ProdutoId = estoque.ProdutoId;
+        Numero = estoque.Numero;
 
         return this;
     }

@@ -29,6 +29,8 @@ public sealed class Estoque : BaseEntity
         {
             Quantidade -= quantidade;
         }
+
+        DataDeAtualizacao = DateTime.Now;
     }
 
     public Guid ProdutoId { get; private set; }

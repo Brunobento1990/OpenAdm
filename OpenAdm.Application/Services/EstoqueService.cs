@@ -97,6 +97,96 @@ public class EstoqueService : IEstoqueService
         };
     }
 
+    public async Task<IList<EstoqueViewModel>> GetPosicaoDeEstoqueAsync()
+    {
+        var estoquesViewModel = new List<EstoqueViewModel>();
+
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueAsync();
+
+        foreach (var estoque in estoques)
+        {
+            var produto = await _produtoRepository.GetProdutoByIdAsync(estoque.ProdutoId);
+            var peso = string.Empty;
+            var tamanho = string.Empty;
+
+            if (estoque.TamanhoId != null)
+            {
+                var tamanhoDb = await _tamanhoRepository.GetTamanhoByIdAsync(estoque.TamanhoId.Value);
+                tamanho = tamanhoDb?.Descricao;
+            }
+
+            if (estoque.PesoId != null)
+            {
+                var pesoDb = await _pesoRepository.GetPesoByIdAsync(estoque.PesoId.Value);
+                peso = pesoDb?.Descricao;
+            }
+
+            estoquesViewModel.Add(new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso));
+        }
+
+        return estoquesViewModel;
+    }
+
+    public async Task<bool> MovimentacaoDePedidoEntregueAsync(IList<ItemPedido> itens)
+    {
+        var estoques = new List<Estoque>();
+
+        foreach (var item in itens)
+        {
+            var estoque = estoques
+                .FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
+                    x.PesoId == item.PesoId &&
+                    x.TamanhoId == item.TamanhoId);
+
+            if (estoque == null)
+            {
+                estoque = await GetEstoqueLocalAsync(
+                    item.ProdutoId,
+                    item.PesoId,
+                    item.TamanhoId);
+
+                if (estoque == null)
+                {
+                    estoque ??= new Estoque(
+                        Guid.NewGuid(),
+                        DateTime.Now,
+                        DateTime.Now,
+                        0,
+                        item.ProdutoId,
+                        -item.Quantidade,
+                        item.TamanhoId,
+                        item.PesoId);
+                }
+                else
+                {
+                    estoque.UpdateEstoque(item.Quantidade, TipoMovimentacaoDeProduto.Saida);
+                }
+
+                estoques.Add(estoque);
+                continue;
+            }
+
+            estoque.UpdateEstoque(item.Quantidade, TipoMovimentacaoDeProduto.Saida);
+        }
+
+        var estoquesAdd = estoques.Where(x => x.Numero == 0).ToList();
+        var estoquesUpdate = estoques.Where(x => x.Numero > 0).ToList();
+
+        if (estoquesUpdate.Count > 0)
+        {
+            _estoqueRepository.UpdateRange(estoquesUpdate);
+        }
+
+        if (estoquesAdd.Count > 0)
+        {
+            await _estoqueRepository.AddRangeAsync(estoquesAdd);
+        }
+
+        await _estoqueRepository.SaveChangesAsync();
+
+        return true;
+    }
+
     public async Task<bool> MovimentacaoDeProdutoAsync(MovimentacaoDeProdutoDto movimentacaoDeProdutoDto)
     {
         var estoque = await GetEstoqueLocalAsync(

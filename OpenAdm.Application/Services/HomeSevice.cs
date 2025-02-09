@@ -13,6 +13,7 @@ public class HomeSevice : IHomeSevice
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IAcessoEcommerceService _acessoEcommerceService;
     private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IEstoqueService _estoqueService;
 
     public HomeSevice(
         ITopUsuariosRepository topUsuariosRepository,
@@ -20,7 +21,8 @@ public class HomeSevice : IHomeSevice
         IParcelaService faturaContasAReceberService,
         IPedidoRepository pedidoRepository,
         IAcessoEcommerceService acessoEcommerceService,
-        IUsuarioRepository usuarioRepository)
+        IUsuarioRepository usuarioRepository,
+        IEstoqueService estoqueService)
     {
         _topUsuariosRepository = topUsuariosRepository;
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
@@ -28,6 +30,7 @@ public class HomeSevice : IHomeSevice
         _pedidoRepository = pedidoRepository;
         _acessoEcommerceService = acessoEcommerceService;
         _usuarioRepository = usuarioRepository;
+        _estoqueService = estoqueService;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
@@ -40,6 +43,7 @@ public class HomeSevice : IHomeSevice
         var pedidosEmAberto = await _pedidoRepository.GetCountPedidosEmAbertoAsync();
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
         var quantidadeDeUsuario = await _usuarioRepository.GetCountAsync();
+        var estoques = await _estoqueService.GetPosicaoDeEstoqueAsync();
 
         return new HomeAdmViewModel()
         {
@@ -50,8 +54,8 @@ public class HomeSevice : IHomeSevice
             TotalAReceber = totalAReceber,
             PedidosEmAberto = pedidosEmAberto,
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
-            QuantidadeDeUsuario
-            = quantidadeDeUsuario
+            QuantidadeDeUsuario = quantidadeDeUsuario,
+            PosicaoDeEstoques = estoques
         };
     }
 }

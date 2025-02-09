@@ -14,17 +14,20 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
     private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;
     private readonly ITopUsuarioService _topUsuarioService;
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
+    private readonly IEstoqueService _estoqueService;
 
     public UpdateStatusPedidoService(
         IPedidoRepository pedidoRepository,
         IProdutosMaisVendidosService produtosMaisVendidosService,
         ITopUsuarioService topUsuarioService,
-        IMovimentacaoDeProdutosService movimentacaoDeProdutosService)
+        IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
+        IEstoqueService estoqueService)
     {
         _pedidoRepository = pedidoRepository;
         _produtosMaisVendidosService = produtosMaisVendidosService;
         _topUsuarioService = topUsuarioService;
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
+        _estoqueService = estoqueService;
     }
 
     public async Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto)
@@ -40,6 +43,7 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
             await _produtosMaisVendidosService.ProcessarAsync(pedido);
             await _topUsuarioService.AddOrUpdateTopUsuarioAsync(pedido);
             await _movimentacaoDeProdutosService.MovimentarItensPedidoAsync(pedido.ItensPedido);
+            await _estoqueService.MovimentacaoDePedidoEntregueAsync(pedido.ItensPedido);
         }
 
         return new PedidoViewModel().ForModel(pedido);
