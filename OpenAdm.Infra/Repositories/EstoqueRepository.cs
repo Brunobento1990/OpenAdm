@@ -12,6 +12,11 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
     {
     }
 
+    public async Task AddRangeAsync(IList<Estoque> entities)
+    {
+        await ParceiroContext.AddRangeAsync(entities);
+    }
+
     public async Task<Estoque?> GetEstoqueAsync(Expression<Func<Estoque, bool>> where)
     {
         return await ParceiroContext
@@ -20,27 +25,17 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
             .FirstOrDefaultAsync(where);
     }
 
-    public async Task<Estoque?> GetEstoqueByProdutoIdAndPesoIdAsync(Guid produtoId, Guid pesoId)
+    public async Task<IList<Estoque>> GetPosicaoEstoqueAsync()
     {
         return await ParceiroContext
             .Estoques
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.PesoId == pesoId);
+            .OrderByDescending(x => x.DataDeAtualizacao)
+            .Take(3)
+            .ToListAsync();
     }
 
-    public async Task<Estoque?> GetEstoqueByProdutoIdAndTamanhoIdAsync(Guid produtoId, Guid tamanhoId)
+    public void UpdateRange(IList<Estoque> entities)
     {
-        return await ParceiroContext
-            .Estoques
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.ProdutoId == produtoId && x.TamanhoId == tamanhoId);
-    }
-
-    public async Task<Estoque?> GetEstoqueByProdutoIdAsync(Guid produtoId)
-    {
-        return await ParceiroContext
-            .Estoques
-            .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.ProdutoId == produtoId);
+        ParceiroContext.UpdateRange(entities);
     }
 }

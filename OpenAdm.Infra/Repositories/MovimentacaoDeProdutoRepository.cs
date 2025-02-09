@@ -57,4 +57,5 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
 
         return await query.ToListAsync();
     }
+
 }
