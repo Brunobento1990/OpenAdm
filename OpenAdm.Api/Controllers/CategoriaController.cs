@@ -66,4 +66,16 @@ public class CategoriaController(ICategoriaService categoriaService)
         var categoriaViewModel = await _categoriaService.UpdateCategoriaAsync(updateCategoriaDto);
         return Ok(categoriaViewModel);
     }
+
+    [HttpPut("inativar-ativar")]
+    [IsFuncionario]
+    [Autentica]
+    public async Task<IActionResult> InativarAtivar([FromQuery] Guid id)
+    {
+        await _categoriaService.InativarAtivarEcommerceAsync(id);
+        return Ok(new
+        {
+            result = true
+        });
+    }
 }

@@ -37,5 +37,6 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
         builder.HasMany(x => x.Tamanhos)
             .WithMany(x => x.Produtos)
             .UsingEntity<TamanhoProduto>();
+        builder.HasIndex(x => x.InativoEcommerce);
     }
 }

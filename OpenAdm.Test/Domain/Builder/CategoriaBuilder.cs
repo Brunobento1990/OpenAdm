@@ -30,6 +30,6 @@ public class CategoriaBuilder
 
     public Categoria Build()
     {
-        return new Categoria(_id, _created, _update, _numero, _descricao, null, null);
+        return new Categoria(_id, _created, _update, _numero, _descricao, null, null, false);
     }
 }

@@ -16,6 +16,7 @@ public class ProdutoViewModel : BaseModel
     public CategoriaViewModel? Categoria { get; set; } = null!;
     public string? Referencia { get; private set; }
     public decimal? Peso { get; set; }
+    public bool InativoEcommerce { get; set; }
     public ProdutoViewModel ToModel(Produto entity)
     {
         Foto = entity.UrlFoto;
@@ -41,6 +42,7 @@ public class ProdutoViewModel : BaseModel
 
         CategoriaId = entity.CategoriaId;
         Referencia = entity.Referencia;
+        InativoEcommerce = entity.InativoEcommerce;
         return this;
     }
 }

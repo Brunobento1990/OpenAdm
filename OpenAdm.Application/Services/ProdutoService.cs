@@ -131,6 +131,15 @@ public class ProdutoService : IProdutoService
         return new ProdutoViewModel().ToModel(produto);
     }
 
+    public async Task InativarAtivarEcommerceAsync(Guid id)
+    {
+        var produto = await _produtoRepository.GetProdutoByIdParaEditarAsync(id)
+            ?? throw new ExceptionApi("Não foi possível localizar o produto");
+        produto.InativarAtivarEcommerce();
+
+        await _produtoRepository.UpdateAsync(produto);
+    }
+
     public async Task<ProdutoViewModel> UpdateProdutoAsync(UpdateProdutoDto updateProdutoDto)
     {
         var produto = await _produtoRepository.GetProdutoByIdAsync(updateProdutoDto.Id)

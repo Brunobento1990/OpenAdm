@@ -38,6 +38,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Include(x => x.Tamanhos)
             .Include(x => x.Pesos)
+            .Where(x => !x.InativoEcommerce)
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)
@@ -49,12 +50,12 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         {
             produtos.ForEach(produto =>
             {
-                if(paginacaoProdutoEcommerceDto.PesoId != null && paginacaoProdutoEcommerceDto.PesoId != Guid.Empty)
+                if (paginacaoProdutoEcommerceDto.PesoId != null && paginacaoProdutoEcommerceDto.PesoId != Guid.Empty)
                 {
                     produto.Pesos = produto.Pesos.Where(peso => peso.Id == paginacaoProdutoEcommerceDto.PesoId.Value).ToList();
                 }
 
-                if(paginacaoProdutoEcommerceDto.TamanhoId != null && paginacaoProdutoEcommerceDto.TamanhoId != Guid.Empty)
+                if (paginacaoProdutoEcommerceDto.TamanhoId != null && paginacaoProdutoEcommerceDto.TamanhoId != Guid.Empty)
                 {
                     produto.Tamanhos = produto.Tamanhos.Where(tamanho => tamanho.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value).ToList();
                 }
@@ -273,5 +274,12 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Where(x => ids.Contains(x.Id))
             .ToDictionaryAsync(x => x.Id, x => x);
+    }
+
+    public async Task<Produto?> GetProdutoByIdParaEditarAsync(Guid id)
+    {
+        return await ParceiroContext
+            .Produtos
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 }

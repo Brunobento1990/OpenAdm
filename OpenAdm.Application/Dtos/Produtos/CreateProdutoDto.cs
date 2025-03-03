@@ -29,7 +29,8 @@ public class CreateProdutoDto
             CategoriaId,
             Referencia,
             Foto,
-            nomeFoto);
+            nomeFoto,
+            false);
     }
 
     public IList<TamanhoProduto> ToTamanhosProdutos(Guid produtoId)

@@ -24,6 +24,7 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .OrderBy(c => c.Numero)
             .Include(x => x.Produtos)
+            .Where(x => !x.InativoEcommerce)
             .ToListAsync();
 
         foreach (var categoria in categorias)
@@ -41,7 +42,8 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
                         x.CategoriaId,
                         x.Referencia,
                         x.UrlFoto,
-                        x.NomeFoto))
+                        x.NomeFoto,
+                        x.InativoEcommerce))
                 .OrderBy(x => x.Numero)
                 .Take(3)
                 .ToList();

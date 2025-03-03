@@ -27,5 +27,6 @@ public class CategoriaConfiguration : IEntityTypeConfiguration<Categoria>
             .WithOne(x => x.Categoria)
             .HasForeignKey(x => x.CategoriaId)
             .OnDelete(DeleteBehavior.NoAction);
+        builder.HasIndex(x => x.InativoEcommerce);
     }
 }

@@ -108,4 +108,13 @@ public class CategoriaService : ICategoriaService
 
         return new CategoriaViewModel().ToModel(categoria);
     }
+
+    public async Task InativarAtivarEcommerceAsync(Guid id)
+    {
+        var categoria = await _categoriaRepository.GetCategoriaAsync(id)
+            ?? throw new ExceptionApi("Não foi possível localizar o cadastro da categoria");
+
+        categoria.InativarAtivarEcommerce();
+        await _categoriaRepository.UpdateAsync(categoria);
+    }
 }

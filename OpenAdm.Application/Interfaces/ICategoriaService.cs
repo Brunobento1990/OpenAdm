@@ -10,6 +10,7 @@ public interface ICategoriaService
     Task<IList<CategoriaViewModel>> GetCategoriasAsync();
     Task<CategoriaViewModel> GetCategoriaAsync(Guid id);
     Task DeleteCategoriaAsync(Guid id);
+    Task InativarAtivarEcommerceAsync(Guid id);
     Task<CategoriaViewModel> UpdateCategoriaAsync(UpdateCategoriaDto updateCategoriaDto);
     Task<CategoriaViewModel> CreateCategoriaAsync(CategoriaCreateDto categoriaCreateDto);
     Task<PaginacaoViewModel<CategoriaViewModel>> GetPaginacaoAsync(FilterModel<Categoria> paginacaoCategoriaDto);
