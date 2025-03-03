@@ -7,7 +7,7 @@ public abstract class FilterModel<T>
     public string? Search { get; set; }
     public int Skip { get; set; } = 0;
     public int Take { get; set; } = 10;
-    public string OrderBy { get; set; } = "DataDeAtualizacao";
+    public string OrderBy { get; set; } = "Numero";
     public bool Asc { get; set; } = false;
     public abstract Expression<Func<T, bool>>? GetWhereBySearch();
     public virtual Expression<Func<T, object>>? IncludeCustom()
