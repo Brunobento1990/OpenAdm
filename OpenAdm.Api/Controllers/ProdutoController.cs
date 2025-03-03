@@ -2,6 +2,7 @@
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Services;
 using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Paginacao;
 
@@ -84,5 +85,17 @@ public class ProdutoController : ControllerBase
     {
         var produtoViewlModel = await _produtoService.UpdateProdutoAsync(updateProdutoDto);
         return Ok(produtoViewlModel);
+    }
+
+    [HttpPut("inativar-ativar")]
+    [IsFuncionario]
+    [Autentica]
+    public async Task<IActionResult> InativarAtivar([FromQuery] Guid id)
+    {
+        await _produtoService.InativarAtivarEcommerceAsync(id);
+        return Ok(new
+        {
+            result = true
+        });
     }
 }

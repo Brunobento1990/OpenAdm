@@ -15,6 +15,7 @@ public partial class EntityMapper
             numero: 0,
             descricao: categoriaCreateDto.Descricao,
             foto: categoriaCreateDto.Foto,
-            nomeFoto: nomeFoto);
+            nomeFoto: nomeFoto,
+            inativoEcommerce: false);
     }
 }

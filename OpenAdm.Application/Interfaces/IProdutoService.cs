@@ -16,4 +16,5 @@ public interface IProdutoService
     Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id);
     Task DeleteProdutoAsync(Guid id);
     Task<ProdutoViewModel> UpdateProdutoAsync(UpdateProdutoDto updateProdutoDto);
+    Task InativarAtivarEcommerceAsync(Guid id);
 }

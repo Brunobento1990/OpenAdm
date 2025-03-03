@@ -180,4 +180,7 @@ public class ProdutoCached : IProdutoRepository
 
     public Task<int> SaveChangesAsync()
         => _produtoRepository.SaveChangesAsync();
+
+    public Task<Produto?> GetProdutoByIdParaEditarAsync(Guid id)
+     => _produtoRepository.GetProdutoByIdParaEditarAsync(id);
 }
