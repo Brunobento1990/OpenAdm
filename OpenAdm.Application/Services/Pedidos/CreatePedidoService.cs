@@ -44,6 +44,11 @@ public sealed class CreatePedidoService : ICreatePedidoService
             throw new ExceptionApi("Informe os itens do pedido!");
         }
 
+        if (string.IsNullOrWhiteSpace(usuario.Telefone))
+        {
+            throw new ExceptionApi("Seu cadastro esta incompleto, acesse sua conta e cadastre seu telefone!");
+        }
+
         var pedidoMinimo = await _configuracoesDePedidoService.GetPedidoMinimoAsync();
         var total = itensPedidoModels.Sum(x => x.Quantidade * x.ValorUnitario);
 

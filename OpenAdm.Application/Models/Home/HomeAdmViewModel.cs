@@ -15,5 +15,6 @@ public class HomeAdmViewModel
     public decimal TotalAReceber { get; set; }
     public int PedidosEmAberto { get; set; }
     public long QuantidadeDeAcessoEcommerce { get; set; }
-    public long QuantidadeDeUsuario { get; set; }
+    public long QuantidadeDeUsuarioCnpj { get; set; }
+    public long QuantidadeDeUsuarioCpf { get; set; }
 }
