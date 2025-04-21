@@ -7,11 +7,8 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model.Pedidos;
 using OpenAdm.Domain.Exceptions;
-using OpenAdm.Infra.Model;
-using OpenAdm.Application.Services;
 using OpenAdm.Application.Models.ConfiguracoesDePagamentos;
 using OpenAdm.Application.Models.ConfiguracoesDePedidos;
-using Moq;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -78,8 +75,8 @@ public class PedidoServiceTest
         var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
         _pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
         var pedidoService = new PedidoDownloadService(
-            _pedidoRepositoryMock.Object, 
-            configuracoesDePedidoRepository.Object, 
+            _pedidoRepositoryMock.Object,
+            configuracoesDePedidoRepository.Object,
             _pdfPedidoService.Object);
         var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
@@ -270,5 +267,66 @@ public class PedidoServiceTest
             _configuracaoDePagamentoService.Object, _configuracoesDePedidoService.Object);
 
         await Assert.ThrowsAsync<Exception>(async () => await service.CreatePedidoAsync(itens, usuarioViewModel));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public async Task NaoDeveCriarPedidoDeUsuarioSemTelefone(string? telefone)
+    {
+        var item = new ItemPedidoModel()
+        {
+            PesoId = Guid.NewGuid(),
+            ProdutoId = Guid.NewGuid(),
+            Quantidade = 5,
+            ValorUnitario = 5
+        };
+
+        var itens = new List<ItemPedidoModel>()
+        {
+            item
+        };
+
+        var usuarioViewModel = UsuarioBuilder.Init().SemTelefone(telefone).Build();
+
+        var itensTabelaDePreco = new List<ItemTabelaDePreco>()
+        {
+            new (Guid.NewGuid(),
+                DateTime.Now,
+                DateTime.Now,
+                1,
+                item.ProdutoId,
+                1,
+                2,
+                Guid.NewGuid(),
+                item.TamanhoId,
+                item.PesoId)
+        };
+
+        var produtosIds = itens.Select(x => x.ProdutoId).ToList();
+
+        _itemTabelaDePrecoRepositoryMock.Setup((x) =>
+            x.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds))
+            .ReturnsAsync(itensTabelaDePreco);
+        var efetuarCobranca = new EfetuarCobrancaViewModel()
+        {
+            Cobrar = false
+        };
+        _configuracaoDePagamentoService.Setup(x => x.CobrarAsync()).ReturnsAsync(efetuarCobranca);
+        var pedidoMinimo = new PedidoMinimoViewModel();
+        _configuracoesDePedidoService.Setup(x => x.GetPedidoMinimoAsync()).ReturnsAsync(pedidoMinimo);
+        var service = new CreatePedidoService(
+            _pedidoRepositoryMock.Object,
+            _processarPedidoServiceMock.Object,
+            _itemTabelaDePrecoRepositoryMock.Object,
+            _carrinhoRepository.Object, _contasAReceberService.Object,
+            _configuracaoDePagamentoService.Object, _configuracoesDePedidoService.Object);
+
+        var exception = await Assert.ThrowsAsync<ExceptionApi>(async () => await service.CreatePedidoAsync(itens, usuarioViewModel));
+
+        Assert.NotNull(exception);
+        Assert.IsType<ExceptionApi>(exception);
+        Assert.Equal("Seu cadastro esta incompleto, acesse sua conta e cadastre seu telefone!", exception.Message);
     }
 }

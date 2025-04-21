@@ -38,6 +38,12 @@ public class UsuarioBuilder
         return this;
     }
 
+    public UsuarioBuilder SemTelefone(string? telefone)
+    {
+        _telefone = telefone;
+        return this;
+    }
+
     public UsuarioBuilder SemSenha(string senha)
     {
         _senha = senha;

@@ -17,7 +17,7 @@ public class AcessoEcommerceService : IAcessoEcommerceService
     {
         var dataAtual = DateTime.Now;
         var dataConsultaInicial = new DateTime(dataAtual.Year, dataAtual.Month, 1);
-        var dataConsultaFinal = new DateTime(dataAtual.Year, dataAtual.Month, dataConsultaInicial.AddMonths(1).AddDays(-1).Day);
+        var dataConsultaFinal = dataConsultaInicial.AddMonths(1).AddTicks(-1);
 
         var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(dataConsultaInicial, dataConsultaFinal);
 
@@ -36,7 +36,7 @@ public class AcessoEcommerceService : IAcessoEcommerceService
     {
         var dataAtual = DateTime.Now;
         var dataConsultaInicial = new DateTime(dataAtual.Year, dataAtual.Month, 1);
-        var dataConsultaFinal = new DateTime(dataAtual.Year, dataAtual.Month, dataConsultaInicial.AddMonths(1).AddDays(-1).Day);
+        var dataConsultaFinal = dataConsultaInicial.AddMonths(1).AddTicks(-1);
 
         var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(dataConsultaInicial, dataConsultaFinal);
         return acesso?.Quantidade ?? 0;

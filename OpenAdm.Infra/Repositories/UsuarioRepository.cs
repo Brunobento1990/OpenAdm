@@ -30,12 +30,28 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
-    public async Task<int> GetCountAsync()
+    public async Task<int> GetCountCpfAsync()
     {
         try
         {
             return await ParceiroContext
             .Usuarios
+            .Where(x => x.Ativo && !string.IsNullOrWhiteSpace(x.Cpf))
+            .CountAsync();
+        }
+        catch (Exception)
+        {
+            return 0;
+        }
+    }
+
+    public async Task<int> GetCountCnpjAsync()
+    {
+        try
+        {
+            return await ParceiroContext
+            .Usuarios
+            .Where(x => x.Ativo && !string.IsNullOrWhiteSpace(x.Cnpj))
             .CountAsync();
         }
         catch (Exception)

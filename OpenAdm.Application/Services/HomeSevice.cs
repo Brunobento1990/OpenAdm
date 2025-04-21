@@ -42,7 +42,8 @@ public class HomeSevice : IHomeSevice
         var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
         var pedidosEmAberto = await _pedidoRepository.GetCountPedidosEmAbertoAsync();
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
-        var quantidadeDeUsuario = await _usuarioRepository.GetCountAsync();
+        var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
+        var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
         var estoques = await _estoqueService.GetPosicaoDeEstoqueAsync();
 
         return new HomeAdmViewModel()
@@ -54,7 +55,8 @@ public class HomeSevice : IHomeSevice
             TotalAReceber = totalAReceber,
             PedidosEmAberto = pedidosEmAberto,
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
-            QuantidadeDeUsuario = quantidadeDeUsuario,
+            QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,
+            QuantidadeDeUsuarioCpf = quantidadeDeUsuarioCpf,
             PosicaoDeEstoques = estoques
         };
     }
