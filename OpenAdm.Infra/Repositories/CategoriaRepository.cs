@@ -23,13 +23,13 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
             .AsQueryable()
             .AsNoTracking()
             .OrderBy(c => c.Numero)
-            .Include(x => x.Produtos)
-            .Where(x => !x.InativoEcommerce)
+            .Include(x => x.Produtos.Where(x => !x.InativoEcommerce))
+            .Where(x => !x.InativoEcommerce && x.Produtos.Where(x => !x.InativoEcommerce).Count() > 0)
             .ToListAsync();
 
         foreach (var categoria in categorias)
         {
-            categoria.Produtos = categoria
+            categoria.Produtos = [.. categoria
                 .Produtos
                 .Select(x =>
                     new Produto(
@@ -45,8 +45,7 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
                         x.NomeFoto,
                         x.InativoEcommerce))
                 .OrderBy(x => x.Numero)
-                .Take(3)
-                .ToList();
+                .Take(3)];
         }
 
         return categorias;
