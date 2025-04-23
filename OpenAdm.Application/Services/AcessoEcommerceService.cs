@@ -15,11 +15,7 @@ public class AcessoEcommerceService : IAcessoEcommerceService
 
     public async Task AtualizarAcessoAsync()
     {
-        var dataAtual = DateTime.Now;
-        var dataConsultaInicial = new DateTime(dataAtual.Year, dataAtual.Month, 1);
-        var dataConsultaFinal = dataConsultaInicial.AddMonths(1).AddTicks(-1);
-
-        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(dataConsultaInicial, dataConsultaFinal);
+        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(DateTime.Now.Year, DateTime.Now.Month);
 
         if (acesso == null)
         {
@@ -34,11 +30,7 @@ public class AcessoEcommerceService : IAcessoEcommerceService
 
     public async Task<long> QuantidadeDeAcessoAsync()
     {
-        var dataAtual = DateTime.Now;
-        var dataConsultaInicial = new DateTime(dataAtual.Year, dataAtual.Month, 1);
-        var dataConsultaFinal = dataConsultaInicial.AddMonths(1).AddTicks(-1);
-
-        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(dataConsultaInicial, dataConsultaFinal);
+        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(DateTime.Now.Year, DateTime.Now.Month);
         return acesso?.Quantidade ?? 0;
     }
 }

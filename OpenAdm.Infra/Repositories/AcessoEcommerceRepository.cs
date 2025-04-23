@@ -28,10 +28,10 @@ public class AcessoEcommerceRepository : IAcessoEcommerceRepository
             .ExecuteUpdateAsync(x => x.SetProperty(y => y.Quantidade, acessoEcommerce.Quantidade));
     }
 
-    public async Task<AcessoEcommerce?> ObterPorDataAsync(DateTime data, DateTime dataFinal)
+    public async Task<AcessoEcommerce?> ObterPorDataAsync(int ano, int mes)
     {
         return await _parceiroContext
             .AcessosEcommerce
-            .FirstOrDefaultAsync(x => x.DataDeCriacao.Date >= data.Date || x.DataDeCriacao.Date <= dataFinal.Date);
+            .FirstOrDefaultAsync(x => x.DataDeCriacao.Date.Year == ano && x.DataDeCriacao.Month == mes);
     }
 }
