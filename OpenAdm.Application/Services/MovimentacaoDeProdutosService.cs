@@ -18,13 +18,15 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
     private readonly ITamanhoRepository _tamanhoRepository;
     private readonly IMovimentacaoDeProdutoRelatorioService _movimentacaoDeProdutoRelatorioService;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly ICategoriaRepository _categoriaRepository;
     public MovimentacaoDeProdutosService(
         IMovimentacaoDeProdutoRepository movimentacaoDeProdutorepository,
         IProdutoRepository produtoRepository,
         IPesoRepository pesoRepository,
         ITamanhoRepository tamanhoRepository,
         IMovimentacaoDeProdutoRelatorioService movimentacaoDeProdutoRelatorioService,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        ICategoriaRepository categoriaRepository)
     {
         _movimentacaoDeProdutorepository = movimentacaoDeProdutorepository;
         _produtoRepository = produtoRepository;
@@ -32,6 +34,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         _tamanhoRepository = tamanhoRepository;
         _movimentacaoDeProdutoRelatorioService = movimentacaoDeProdutoRelatorioService;
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+        _categoriaRepository = categoriaRepository;
     }
 
     public async Task<byte[]> GerarRelatorioAsync(RelatorioMovimentoDeProdutoDto relatorioMovimentoDeProdutoDto)
@@ -238,6 +241,9 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
         var movimentos = await _movimentacaoDeProdutorepository.CountTresMesesAsync(novaDataInicio, dataFinal);
         var movimentosDash = new List<MovimentoDeProdutoDashBoardModel>();
+        var categorias = await _categoriaRepository.GetCategoriasAsync();
+        var produtosIds = movimentos.Values.SelectMany(x => x.Select(y => y.ProdutoId)).DistinctBy(x => x).ToList();
+        var produtos = await _produtoRepository.GetDictionaryProdutosAsync(produtosIds);
 
         foreach (var item in movimentos)
         {
@@ -248,12 +254,36 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                 anoDoMovimento--;
             }
 
-            movimentosDash.Add(new MovimentoDeProdutoDashBoardModel()
+            var movimento = new MovimentoDeProdutoDashBoardModel()
             {
                 Mes = item.Key.ConverterMesIntEmNome(),
-                Count = item.Value,
                 Data = new DateTime(anoDoMovimento, item.Key, 1)
-            });
+            };
+
+            foreach (var movimentoProduto in item.Value)
+            {
+                if (!produtos.TryGetValue(movimentoProduto.ProdutoId, out var produto))
+                {
+                    continue;
+                }
+
+                var dadoMovimentado = movimento.Dados.FirstOrDefault(x => x.Categoria == produto.Categoria.Descricao);
+
+                if (dadoMovimentado == null)
+                {
+                    movimento.Dados.Add(new DadosMovimentoDeProdutoDashBoardModel()
+                    {
+                        Categoria = produto.Categoria.Descricao,
+                        Quantidade = (int)movimentoProduto.QuantidadeMovimentada
+                    });
+
+                    continue;
+                }
+
+                dadoMovimentado.Quantidade += (int)movimentoProduto.QuantidadeMovimentada;
+            }
+
+            movimentosDash.Add(movimento);
         }
 
         return movimentosDash.OrderBy(x => x.Data).ToList();

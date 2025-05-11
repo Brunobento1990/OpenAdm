@@ -17,7 +17,7 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
         await ParceiroContext.SaveChangesAsync();
     }
 
-    public async Task<IDictionary<int, decimal>> CountTresMesesAsync(DateTime dataInicio, DateTime dataFinal)
+    public async Task<IDictionary<int, List<MovimentacaoDeProduto>>> CountTresMesesAsync(DateTime dataInicio, DateTime dataFinal)
     {
         return await ParceiroContext
             .MovimentacoesDeProdutos
@@ -25,7 +25,7 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,
-                g => g.Sum(x => x.QuantidadeMovimentada));
+                g => g.Select(x => x).ToList());
     }
 
     public async Task<IList<MovimentacaoDeProduto>> RelatorioAsync(
