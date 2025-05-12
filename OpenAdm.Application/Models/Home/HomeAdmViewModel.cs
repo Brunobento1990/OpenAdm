@@ -1,12 +1,14 @@
 ﻿using OpenAdm.Application.Models.Estoques;
 using OpenAdm.Application.Models.MovimentacaoDeProdutos;
 using OpenAdm.Application.Models.ParcelasModel;
+using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Application.Models.TopUsuarios;
 
 namespace OpenAdm.Application.Models.Home;
 
 public class HomeAdmViewModel
 {
+    public VariacaoMensalPedidoModel VariacaoMensalPedido { get; set; } = null!;
     public IList<EstoqueViewModel> PosicaoDeEstoques { get; set; } = [];
     public IList<TopUsuariosViewModel> TopUsuariosTotalCompra { get; set; } = [];
     public IList<TopUsuariosViewModel> TopUsuariosTotalPedido { get; set; } = [];
