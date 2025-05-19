@@ -208,28 +208,27 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     {
         var produto = await ParceiroContext
             .Produtos
-            .AsNoTracking()
             .Include(x => x.Categoria)
+            .Include(x => x.Tamanhos)
+            .Include(x => x.Pesos)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (produto != null)
         {
             var tamanhos = await ParceiroContext
             .TamanhosProdutos
-            .AsNoTracking()
             .Include(x => x.Tamanho)
             .Where(x => x.ProdutoId == produto.Id)
             .ToListAsync();
 
             var pesos = await ParceiroContext
                 .PesosProdutos
-                .AsNoTracking()
                 .Include(x => x.Peso)
                 .Where(x => x.ProdutoId == produto.Id)
                 .ToListAsync();
 
 
-            produto.Categoria.Produtos = new();
+            produto.Categoria.Produtos = [];
             produto.Tamanhos = tamanhos
                 .Where(x => x.ProdutoId == produto.Id)
                 .Select(tm =>
@@ -281,5 +280,10 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Produtos
             .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public void Update(Produto produto)
+    {
+        ParceiroContext.Produtos.Update(produto);
     }
 }

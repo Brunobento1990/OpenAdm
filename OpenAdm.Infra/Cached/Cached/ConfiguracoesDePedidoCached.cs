@@ -64,4 +64,7 @@ public class ConfiguracoesDePedidoCached : IConfiguracoesDePedidoRepository
 
     public Task<int> SaveChangesAsync()
         => _configuracoesDePedidoRepository.SaveChangesAsync();
+
+    public Task<ConfiguracoesDePedido> AdicionarAsync(ConfiguracoesDePedido entity)
+        => _configuracoesDePedidoRepository.AdicionarAsync(entity);
 }

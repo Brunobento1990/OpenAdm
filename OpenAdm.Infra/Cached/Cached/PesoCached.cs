@@ -100,4 +100,7 @@ public class PesoCached : IPesoRepository
 
     public Task<int> SaveChangesAsync()
         => _pesoRepository.SaveChangesAsync();
+
+    public Task<Peso> AdicionarAsync(Peso entity)
+        => _pesoRepository.AdicionarAsync(entity);
 }

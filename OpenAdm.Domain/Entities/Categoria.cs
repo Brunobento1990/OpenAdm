@@ -26,11 +26,12 @@ public sealed class Categoria : BaseEntity
         InativoEcommerce = !InativoEcommerce;
     }
 
-    public void Update(string descricao, string? foto, string? nomeFoto)
+    public void Update(string descricao, string? foto, string? nomeFoto, bool inativoEcommerce)
     {
         Descricao = descricao;
         NomeFoto = nomeFoto;
         Foto = foto;
+        InativoEcommerce = inativoEcommerce;
     }
 
     public string Descricao { get; private set; }

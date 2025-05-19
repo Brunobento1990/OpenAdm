@@ -84,4 +84,7 @@ public class BannerCached : IBannerRepository
 
     public Task<int> SaveChangesAsync()
      => _bannerRepository.SaveChangesAsync();
+
+    public Task<Banner> AdicionarAsync(Banner entity)
+        => _bannerRepository.AdicionarAsync(entity);
 }

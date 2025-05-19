@@ -1,21 +1,10 @@
 ﻿using OpenAdm.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace OpenAdm.Application.Dtos.Produtos;
 
-public class UpdateProdutoDto
+public class UpdateProdutoDto : CreateProdutoDto
 {
     public Guid Id { get; set; }
-    [Required]
-    [MaxLength(255)]
-    public string Descricao { get; set; } = string.Empty;
-    [Required]
-    public string Foto { get; set; } = string.Empty;
-    public string? EspecificacaoTecnica { get; set; }
-    public string? Referencia { get; set; }
-    public Guid CategoriaId { get; set; }
-    public IList<Guid>? TamanhosIds { get; set; }
-    public IList<Guid>? PesosIds { get; set; }
 
     public IList<TamanhoProduto> ToTamanhosProdutos()
     {
@@ -46,5 +35,11 @@ public class UpdateProdutoDto
         }
 
         return pesosProdutos;
+    }
+
+    public IList<ItemTabelaDePreco>? ObterItensTabelaDePrecoEdit()
+    {
+        return !TabelaDePrecoId.HasValue ? null : ItensTabelaDePreco
+        .Select(x => new ItemTabelaDePreco(Guid.NewGuid(), DateTime.Now, DateTime.Now, 0, Id, x.ValorUnitarioAtacado, x.ValorUnitarioVarejo, TabelaDePrecoId.Value, x.TamanhoId, x.PesoId)).ToList();
     }
 }

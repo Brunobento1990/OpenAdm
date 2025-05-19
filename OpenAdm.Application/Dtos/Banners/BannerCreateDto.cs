@@ -5,7 +5,15 @@ namespace OpenAdm.Application.Dtos.Banners;
 
 public class BannerCreateDto
 {
-    public string Foto { get; set; } = string.Empty;
+    public string NovaFoto { get; set; } = string.Empty;
+
+    public void Validar()
+    {
+        if (string.IsNullOrWhiteSpace(NovaFoto))
+        {
+            throw new ExceptionApi("Informe a foto do banner");
+        }
+    }
 
     public Banner ToEntity(string nomeFoto, string foto)
     {
@@ -14,8 +22,8 @@ public class BannerCreateDto
             throw new ExceptionApi("Informe a foto do banner");
         }
 
-        Foto = foto;
+        NovaFoto = foto;
         var date = DateTime.Now;
-        return new Banner(Guid.NewGuid(), date, date, 0, Foto, true, nomeFoto);
+        return new Banner(Guid.NewGuid(), date, date, 0, NovaFoto, true, nomeFoto);
     }
 }

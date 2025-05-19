@@ -18,7 +18,7 @@ public class HomeController : ControllerBase
         _homeEcommerSevice = homeEcommerSevice;
     }
 
-    //[ResponseCache(CacheProfileName = "Default300")]
+    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("adm")]
     [ProducesResponseType<HomeAdmViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]

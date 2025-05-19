@@ -9,7 +9,7 @@ public interface ITabelaDePrecoService
 {
     Task<PaginacaoViewModel<TabelaDePrecoViewModel>> GetPaginacaoTabelaViewModelAsync(FilterModel<TabelaDePreco> paginacaoTabelaDePrecoDto);
     Task<TabelaDePrecoViewModel> GetPrecoTabelaViewModelAsync(Guid id);
-    Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid produtoId);
+    Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid? produtoId = null);
     Task<TabelaDePrecoViewModel> UpdateTabelaDePrecoAsync(UpdateTabelaDePrecoDto updateTabelaDePrecoDto);
     Task<TabelaDePrecoViewModel> CreateTabelaDePrecoAsync(CreateTabelaDePrecoDto createTabelaDePrecoDto);
     Task DeleteTabelaDePrecoAsync(Guid id);

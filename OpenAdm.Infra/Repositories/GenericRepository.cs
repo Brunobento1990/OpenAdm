@@ -20,6 +20,12 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         return entity;
     }
 
+    public async Task<T> AdicionarAsync(T entity)
+    {
+        await ParceiroContext.AddAsync(entity);
+        return entity;
+    }
+
     public async Task<bool> DeleteAsync(T entity)
     {
         try
@@ -52,7 +58,8 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         if (include != null)
         {
             query = query.Include(include);
-        };
+        }
+        ;
 
         if (select != null)
         {

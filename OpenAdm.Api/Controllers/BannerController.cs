@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Banners;
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
-
+using OpenAdm.Application.Models.Banners;
+using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
@@ -25,6 +27,8 @@ public class BannerController(IBannerService bannerService) : ControllerBase
     [Autentica]
     [IsFuncionario]
     [HttpPost("paginacao")]
+    [ProducesResponseType<PaginacaoViewModel<BannerViewModel>>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Paginacao(PaginacaoBannerDto paginacaoBannerDto)
     {
         var paginacaoViewModel = await _bannerService.GetPaginacaoAsync(paginacaoBannerDto);
@@ -34,6 +38,8 @@ public class BannerController(IBannerService bannerService) : ControllerBase
     [Autentica]
     [IsFuncionario]
     [HttpPost("create")]
+    [ProducesResponseType<BannerViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Create(BannerCreateDto bannerCreateDto)
     {
         var result = await _bannerService.CreateBannerAsync(bannerCreateDto);
@@ -44,6 +50,8 @@ public class BannerController(IBannerService bannerService) : ControllerBase
     [Autentica]
     [IsFuncionario]
     [HttpGet("get-banner")]
+    [ProducesResponseType<BannerViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> GetBanner([FromQuery] Guid id)
     {
         var bannerViewModel = await _bannerService.GetBannerByIdAsync(id);
@@ -62,6 +70,8 @@ public class BannerController(IBannerService bannerService) : ControllerBase
     [Autentica]
     [IsFuncionario]
     [HttpPut("update")]
+    [ProducesResponseType<BannerViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> EditBanner(BannerEditDto bannerEditDto)
     {
         var bannerViewModel = await _bannerService.EditBannerAsync(bannerEditDto);

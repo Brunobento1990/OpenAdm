@@ -128,7 +128,7 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         return new TabelaDePrecoViewModel().ToModel(tabelaDePreco);
     }
 
-    public async Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid produtoId)
+    public async Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid? produtoId = null)
     {
         var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaByProdutoIdAsync(produtoId);
 

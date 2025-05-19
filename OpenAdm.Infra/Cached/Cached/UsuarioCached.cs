@@ -102,4 +102,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<int> SaveChangesAsync()
         => _usuarioRepository.SaveChangesAsync();
+
+    public Task<Usuario> AdicionarAsync(Usuario entity)
+        => _usuarioRepository.AdicionarAsync(entity);
 }

@@ -37,8 +37,15 @@ public class ProdutoService : IProdutoService
 
     public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
     {
+        createProdutoDto.Validar();
+
+        if (string.IsNullOrWhiteSpace(createProdutoDto.NovaFoto))
+        {
+            throw new ExceptionApi("Informe a foto do produto");
+        }
+
         var nomeFoto = $"{Guid.NewGuid()}.jpeg";
-        createProdutoDto.Foto = await _uploadImageBlobClient.UploadImageAsync(createProdutoDto.Foto, nomeFoto);
+        createProdutoDto.NovaFoto = await _uploadImageBlobClient.UploadImageAsync(createProdutoDto.NovaFoto, nomeFoto);
         var produto = createProdutoDto.ToEntity(nomeFoto);
 
         var pesosProdutos = createProdutoDto.ToPesosProdutos(produto.Id);
@@ -46,8 +53,8 @@ public class ProdutoService : IProdutoService
 
         await _pesosProdutosRepository.AddRangeAsync(pesosProdutos);
         await _tamanhosProdutoRepository.AddRangeAsync(tamanhosProdutos);
-
-        await _produtoRepository.AddAsync(produto);
+        await _produtoRepository.AdicionarAsync(produto);
+        await _produtoRepository.SaveChangesAsync();
 
         return new ProdutoViewModel().ToModel(produto);
     }
@@ -142,13 +149,14 @@ public class ProdutoService : IProdutoService
 
     public async Task<ProdutoViewModel> UpdateProdutoAsync(UpdateProdutoDto updateProdutoDto)
     {
-        var produto = await _produtoRepository.GetProdutoByIdAsync(updateProdutoDto.Id)
+        updateProdutoDto.Validar();
+        var produto = await _produtoRepository.GetProdutoByIdParaEditarAsync(updateProdutoDto.Id)
             ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         var foto = produto.UrlFoto;
         var nomeFoto = produto.NomeFoto;
 
-        if (!updateProdutoDto.Foto.StartsWith("https://") && !string.IsNullOrWhiteSpace(updateProdutoDto.Foto))
+        if (!string.IsNullOrWhiteSpace(updateProdutoDto.NovaFoto))
         {
             if (!string.IsNullOrWhiteSpace(produto.NomeFoto))
             {
@@ -158,7 +166,7 @@ public class ProdutoService : IProdutoService
             }
 
             nomeFoto = $"{Guid.NewGuid()}.jpeg";
-            foto = await _uploadImageBlobClient.UploadImageAsync(updateProdutoDto.Foto, nomeFoto);
+            foto = await _uploadImageBlobClient.UploadImageAsync(updateProdutoDto.NovaFoto, nomeFoto);
         }
 
         produto.Update(
@@ -176,15 +184,20 @@ public class ProdutoService : IProdutoService
         {
             var tamanhosProdutos = updateProdutoDto.ToTamanhosProdutos();
             var pesosProdutos = updateProdutoDto.ToPesosProdutos();
+            await _itemTabelaDePrecoRepository.DeleteItensTabelaDePrecoByProdutoIdAsync(produto.Id);
 
             await _pesosProdutosRepository.AddRangeAsync(pesosProdutos);
             await _tamanhosProdutoRepository.AddRangeAsync(tamanhosProdutos);
-            await _produtoRepository.UpdateAsync(produto);
+
+            var itens = updateProdutoDto.ObterItensTabelaDePrecoEdit() ?? [];
+
+            _produtoRepository.Update(produto);
+            await _itemTabelaDePrecoRepository.AddRangeAsync(itens);
         }
 
-        produto.Categoria.Produtos = new();
-        produto.Pesos.ForEach(x => x.Produtos = new());
-        produto.Tamanhos.ForEach(x => x.Produtos = new());
+        produto.Categoria.Produtos = [];
+        produto.Pesos.ForEach(x => x.Produtos = []);
+        produto.Tamanhos.ForEach(x => x.Produtos = []);
 
         return new ProdutoViewModel().ToModel(produto);
     }

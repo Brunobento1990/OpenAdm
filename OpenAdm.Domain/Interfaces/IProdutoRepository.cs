@@ -6,6 +6,7 @@ namespace OpenAdm.Domain.Interfaces;
 
 public interface IProdutoRepository : IGenericRepository<Produto>
 {
+    void Update(Produto produto);
     Task<IList<Produto>> GetProdutosMaisVendidosAsync();
     Task<IList<Produto>> GetAllProdutosAsync();
     Task<IList<Produto>> GetProdutosByCategoriaIdAsync(Guid categoriaId);

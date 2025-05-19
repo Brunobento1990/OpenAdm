@@ -1,13 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace OpenAdm.Application.Dtos.Categorias;
 
-namespace OpenAdm.Application.Dtos.Categorias;
-
-public class UpdateCategoriaDto
+public class UpdateCategoriaDto : CategoriaCreateDto
 {
     public Guid Id { get; set; }
-    [Required]
-    [MaxLength(255)]
-    public string Descricao { get; set; } = string.Empty;
-
-    public string? Foto { get; set; }
+    public bool InativoEcommerce { get; set; }
 }

@@ -80,4 +80,10 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
 
     public Task<int> SaveChangesAsync()
         => _categoriaRepository.SaveChangesAsync();
+
+    public Task<IList<Categoria>> GetCategoriasDropDownAsync()
+        => _categoriaRepository.GetCategoriasDropDownAsync();
+
+    public Task<Categoria> AdicionarAsync(Categoria entity)
+        => _categoriaRepository.AdicionarAsync(entity);
 }

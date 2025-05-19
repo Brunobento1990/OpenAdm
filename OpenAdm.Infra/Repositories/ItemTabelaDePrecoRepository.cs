@@ -24,9 +24,10 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
             .Where(x => x.ProdutoId == produtoId)
             .ToListAsync();
 
-        ParceiroContext.RemoveRange(itensTabelaDePreco);
-
-        await ParceiroContext.SaveChangesAsync();
+        if (itensTabelaDePreco.Count > 0)
+        {
+            ParceiroContext.RemoveRange(itensTabelaDePreco);
+        }
     }
 
     public async Task<ItemTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)

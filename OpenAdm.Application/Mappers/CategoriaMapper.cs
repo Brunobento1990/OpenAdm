@@ -14,7 +14,7 @@ public partial class EntityMapper
             dataDeAtualizacao: date,
             numero: 0,
             descricao: categoriaCreateDto.Descricao,
-            foto: categoriaCreateDto.Foto,
+            foto: categoriaCreateDto.NovaFoto,
             nomeFoto: nomeFoto,
             inativoEcommerce: false);
     }

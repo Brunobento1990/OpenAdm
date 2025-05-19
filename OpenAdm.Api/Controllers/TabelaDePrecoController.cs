@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Application.Interfaces;
@@ -43,7 +42,7 @@ public class TabelaDePrecoController : ControllerBase
     }
 
     [HttpGet("get-tabela-by-produtoId")]
-    public async Task<IActionResult> TabelaViewModelByProdutoId([FromQuery] Guid produtoId)
+    public async Task<IActionResult> TabelaViewModelByProdutoId([FromQuery] Guid? produtoId = null)
     {
         var tabelaDePrecoViewModel = await _tabelaDePrecoService.GetTabelaViewModelByProdutoIdAsync(produtoId);
         return Ok(tabelaDePrecoViewModel);

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Produtos;
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Services;
+using OpenAdm.Application.Models.Pesos;
+using OpenAdm.Application.Models.Produtos;
+using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Infra.Paginacao;
 
@@ -22,6 +25,8 @@ public class ProdutoController : ControllerBase
 
     [HttpGet("list")]
     [TryAutentica]
+    [ProducesResponseType<PaginacaoViewModel<ProdutoViewModel>>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> ListProdutos([FromQuery] PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         var result = await _produtoService.GetProdutosAsync(paginacaoProdutoEcommerceDto);
@@ -29,6 +34,8 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpGet("all-list")]
+    [ProducesResponseType<IList<ProdutoViewModel>>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> ListAllProdutos()
     {
         var result = await _produtoService.GetAllProdutosAsync();
@@ -38,6 +45,8 @@ public class ProdutoController : ControllerBase
     [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list-by-categorias")]
     [TryAutentica]
+    [ProducesResponseType<IList<ProdutoViewModel>>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> ListProdutosByCategorias([FromQuery] Guid categoriaId)
     {
         var result = await _produtoService.GetProdutosByCategoriaIdAsync(categoriaId);
@@ -47,6 +56,8 @@ public class ProdutoController : ControllerBase
     [HttpPost("paginacao")]
     [Autentica]
     [IsFuncionario]
+    [ProducesResponseType<PaginacaoViewModel<ProdutoViewModel>>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> ProdutoPaginacao(PaginacaoProdutoDto paginacaoProdutoDto)
     {
         var paginacao = await _produtoService.GetPaginacaoAsync(paginacaoProdutoDto);
@@ -56,6 +67,8 @@ public class ProdutoController : ControllerBase
     [HttpPost("create")]
     [Autentica]
     [IsFuncionario]
+    [ProducesResponseType<ProdutoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> CreateProduto([FromBody] CreateProdutoDto createProdutoDto)
     {
         var produtoViewModel = await _produtoService.CreateProdutoAsync(createProdutoDto);
@@ -63,6 +76,8 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpGet("get-produto")]
+    [ProducesResponseType<ProdutoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> GetProduto([FromQuery] Guid id)
     {
         var produtoViewModel = await _produtoService.GetProdutoViewModelByIdAsync(id);
@@ -72,6 +87,8 @@ public class ProdutoController : ControllerBase
     [HttpDelete("delete")]
     [IsFuncionario]
     [Autentica]
+    [ProducesResponseType(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> DeleteProduto([FromQuery] Guid id)
     {
         await _produtoService.DeleteProdutoAsync(id);
@@ -81,6 +98,8 @@ public class ProdutoController : ControllerBase
     [HttpPut("update")]
     [IsFuncionario]
     [Autentica]
+    [ProducesResponseType<PesoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> UpdateProduto(UpdateProdutoDto updateProdutoDto)
     {
         var produtoViewlModel = await _produtoService.UpdateProdutoAsync(updateProdutoDto);
@@ -90,6 +109,8 @@ public class ProdutoController : ControllerBase
     [HttpPut("inativar-ativar")]
     [IsFuncionario]
     [Autentica]
+    [ProducesResponseType(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> InativarAtivar([FromQuery] Guid id)
     {
         await _produtoService.InativarAtivarEcommerceAsync(id);
