@@ -13,7 +13,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("produtos")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class ProdutoController : ControllerBase
 {
     private readonly IProdutoService _produtoService;

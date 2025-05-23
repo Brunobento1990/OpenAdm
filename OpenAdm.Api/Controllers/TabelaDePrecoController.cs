@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 [Route("tabelas-de-precos")]
 [IsFuncionario]
 [Autentica]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class TabelaDePrecoController : ControllerBase
 {
     private readonly ITabelaDePrecoService _tabelaDePrecoService;

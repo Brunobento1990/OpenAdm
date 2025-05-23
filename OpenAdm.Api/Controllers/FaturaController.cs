@@ -13,7 +13,7 @@ namespace OpenAdm.Api.Controllers;
 [Route("fatura")]
 [Autentica]
 [IsFuncionario]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class FaturaController : ControllerBase
 {
     private readonly IFaturaService _faturaService;

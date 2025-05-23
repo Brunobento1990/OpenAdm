@@ -11,7 +11,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("pesos")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class PesoController : ControllerBase
 {
     private readonly IPesoService _pesoService;

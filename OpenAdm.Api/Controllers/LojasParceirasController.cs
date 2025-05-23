@@ -11,7 +11,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("lojas-parceiras")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class LojasParceirasController : ControllerBase
 {
     private readonly ILojasParceirasService _lojasParceirasService;

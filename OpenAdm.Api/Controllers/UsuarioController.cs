@@ -8,7 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("usuarios")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class UsuarioController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;

@@ -7,7 +7,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("usuarios")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class EsqueceuSenhaController : ControllerBase
 {
     private readonly IEsqueceuSenhaService _esqueceuSenhaService;

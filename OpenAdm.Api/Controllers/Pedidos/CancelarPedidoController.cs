@@ -7,7 +7,7 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 
 [ApiController]
 [Route("pedidos")]
-[AutenticaParceiro]
+[AcessoParceiro]
 [Autentica]
 public class CancelarPedidoController : ControllerBase
 {

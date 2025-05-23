@@ -9,7 +9,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("cep")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class CepController : ControllerBase
 {
     private readonly IFreteService _freteService;

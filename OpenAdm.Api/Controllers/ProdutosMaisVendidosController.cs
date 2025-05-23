@@ -6,7 +6,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("produtos-mais-vendidos")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class ProdutosMaisVendidosController : ControllerBase
 {
     private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;

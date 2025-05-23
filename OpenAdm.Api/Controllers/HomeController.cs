@@ -8,7 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("home")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class HomeController : ControllerBase
 {
     private readonly IHomeSevice _homeEcommerSevice;

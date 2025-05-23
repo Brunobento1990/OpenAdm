@@ -8,7 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("login")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class LoginController : ControllerBase
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;

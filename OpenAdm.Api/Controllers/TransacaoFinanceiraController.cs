@@ -7,7 +7,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("transacao-financeira")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class TransacaoFinanceiraController : ControllerBase
 {
     private readonly ITransacaoFinanceiraService _transacaoFinanceiraService;

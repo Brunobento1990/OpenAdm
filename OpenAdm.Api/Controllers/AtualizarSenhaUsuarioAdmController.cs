@@ -9,6 +9,7 @@ namespace OpenAdm.Api.Controllers;
 [Route("usuario")]
 [Autentica]
 [IsFuncionario]
+[AcessoParceiro]
 public class AtualizarSenhaUsuarioAdmController : ControllerBase
 {
     private readonly IAtualizarSenhaUsuarioAdmService _atualizarSenhaUsuarioAdmService;

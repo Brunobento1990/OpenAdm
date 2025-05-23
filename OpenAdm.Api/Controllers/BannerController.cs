@@ -4,6 +4,7 @@ using OpenAdm.Application.Dtos.Banners;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Banners;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
 
@@ -11,7 +12,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("banners")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class BannerController(IBannerService bannerService) : ControllerBase
 {
     private readonly IBannerService _bannerService = bannerService;
@@ -22,6 +23,12 @@ public class BannerController(IBannerService bannerService) : ControllerBase
     {
         var bannersViewModel = await _bannerService.GetBannersAsync();
         return Ok(bannersViewModel);
+    }
+
+    [HttpGet("teste")]
+    public IActionResult Teste()
+    {
+        return Ok(Criptografia.Encrypt("User ID=postgres; Password=1234; Host=localhost; Port=4814; Database=dev; Pooling=true;"));
     }
 
     [Autentica]
