@@ -17,31 +17,30 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
     private readonly IPesoRepository _pesoRepository;
     private readonly ITamanhoRepository _tamanhoRepository;
     private readonly IMovimentacaoDeProdutoRelatorioService _movimentacaoDeProdutoRelatorioService;
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly ICategoriaRepository _categoriaRepository;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
     public MovimentacaoDeProdutosService(
         IMovimentacaoDeProdutoRepository movimentacaoDeProdutorepository,
         IProdutoRepository produtoRepository,
         IPesoRepository pesoRepository,
         ITamanhoRepository tamanhoRepository,
         IMovimentacaoDeProdutoRelatorioService movimentacaoDeProdutoRelatorioService,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
-        ICategoriaRepository categoriaRepository)
+        ICategoriaRepository categoriaRepository,
+        IParceiroAutenticado parceiroAutenticado)
     {
         _movimentacaoDeProdutorepository = movimentacaoDeProdutorepository;
         _produtoRepository = produtoRepository;
         _pesoRepository = pesoRepository;
         _tamanhoRepository = tamanhoRepository;
         _movimentacaoDeProdutoRelatorioService = movimentacaoDeProdutoRelatorioService;
-        _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _categoriaRepository = categoriaRepository;
+        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task<byte[]> GerarRelatorioAsync(RelatorioMovimentoDeProdutoDto relatorioMovimentoDeProdutoDto)
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository
-            .GetConfiguracoesDePedidoAsync();
-        var logo = configuracaoDePedido?.Logo is null ? null : Encoding.UTF8.GetString(configuracaoDePedido.Logo);
+        var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
+        var logo = parceiro.Logo is null ? null : Encoding.UTF8.GetString(parceiro.Logo);
         var movimentacoes = await _movimentacaoDeProdutorepository.RelatorioAsync(
             dataInicial: relatorioMovimentoDeProdutoDto.DataInicial,
             dataFinal: relatorioMovimentoDeProdutoDto.DataFinal,

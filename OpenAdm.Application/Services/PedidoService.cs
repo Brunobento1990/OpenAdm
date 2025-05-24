@@ -15,18 +15,18 @@ public class PedidoService(
     IPedidoRepository pedidoRepository,
     IItensPedidoRepository itensPedidoRepository,
     IPdfPedidoService pdfPedidoService,
-    IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
+    IParceiroAutenticado parceiroAutenticado)
     : IPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
     private readonly IItensPedidoRepository _itensPedidoRepository = itensPedidoRepository;
     private readonly IPdfPedidoService _pdfPedidoService = pdfPedidoService;
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+    private readonly IParceiroAutenticado _parceiroAutenticado = parceiroAutenticado;
 
     public async Task<PedidoViewModel> GetAsync(Guid pedidoId)
     {
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
-            ?? throw new Exception($"Pedido não localizado: {pedidoId}");
+            ?? throw new ExceptionApi($"Pedido não localizado: {pedidoId}");
         var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
 
         return pedidoViewModel;
@@ -47,7 +47,7 @@ public class PedidoService(
     public async Task<PedidoViewModel> GetParaGerarPixAsync(Guid pedidoId)
     {
         var pedido = await _pedidoRepository.GetPedidoParaGerarPixByIdAsync(pedidoId)
-            ?? throw new Exception($"Pedido não localizado: {pedidoId}");
+            ?? throw new ExceptionApi($"Pedido não localizado: {pedidoId}");
         var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
 
         return pedidoViewModel;
@@ -82,9 +82,9 @@ public class PedidoService(
 
     public async Task<byte[]> PedidoProducaoAsync(RelatorioProducaoDto relatorioProducaoDto)
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository
-            .GetConfiguracoesDePedidoAsync();
-        var logo = configuracaoDePedido?.Logo is null ? null : Encoding.UTF8.GetString(configuracaoDePedido.Logo);
+        var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
+
+        var logo = parceiro.Logo is null ? null : Encoding.UTF8.GetString(parceiro.Logo);
 
         var itens = await _itensPedidoRepository.GetItensPedidoByProducaoAsync(
             pedidosIds: relatorioProducaoDto.PedidosIds,

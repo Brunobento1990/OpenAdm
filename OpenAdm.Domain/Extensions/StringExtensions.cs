@@ -1,4 +1,7 @@
-﻿namespace OpenAdm.Domain.Extensions;
+﻿using System.Text;
+using OpenAdm.Domain.Exceptions;
+
+namespace OpenAdm.Domain.Extensions;
 
 public static class StringExtensions
 {
@@ -18,8 +21,48 @@ public static class StringExtensions
         return Convert.ToUInt64(value).ToString(@"000\.000\.000\-00");
     }
 
+    public static string LimparMascaraTelefone(this string telefone)
+    {
+        return telefone.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Trim();
+    }
+
+    public static string LimparMascaraCnpj(this string cnpj)
+    {
+        return cnpj.Replace("-", "").Replace(".", "").Replace("/", "").Replace(" ", "").Trim();
+    }
+
     public static string FormatCnpj(this string value)
     {
         return Convert.ToUInt64(value).ToString(@"00\.000\.000\/0000\-00");
+    }
+
+    public static byte[]? ParaBytes(this string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return Encoding.UTF8.GetBytes(value);
+    }
+
+    public static string ValidarNullOrEmpty(this string? value, string erro)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new ExceptionApi(erro);
+        }
+
+        return value;
+    }
+
+    public static string? ValidarLength(this string? value, int length, string? campo = null)
+    {
+        if (value?.Length > length)
+        {
+            throw new ExceptionApi($"O campo {campo ?? nameof(value)} deve ter no máximo {length} caracteres");
+        }
+
+        return value;
     }
 }

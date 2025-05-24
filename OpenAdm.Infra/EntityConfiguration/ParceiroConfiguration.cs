@@ -28,9 +28,5 @@ public class ParceiroConfiguration : IEntityTypeConfiguration<Parceiro>
         builder.Property(x => x.NomeFantasia)
             .IsRequired()
         .HasMaxLength(255);
-
-        builder.HasOne(parceiro => parceiro.ConfiguracaoDbParceiro)
-            .WithOne(configuracao => configuracao.Parceiro)
-            .HasForeignKey<ConfiguracaoParceiro>(configuracao => configuracao.ParceiroId);
     }
 }

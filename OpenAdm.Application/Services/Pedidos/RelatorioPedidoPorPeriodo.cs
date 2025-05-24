@@ -9,16 +9,16 @@ namespace OpenAdm.Application.Services.Pedidos;
 public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
 {
     private readonly IPedidoRepository _pedidoRepository;
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IPdfPedidoService _pdfPedidoService;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
     public RelatorioPedidoPorPeriodo(
         IPedidoRepository pedidoRepository,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
-        IPdfPedidoService pdfPedidoService)
+        IPdfPedidoService pdfPedidoService,
+        IParceiroAutenticado parceiroAutenticado)
     {
         _pedidoRepository = pedidoRepository;
-        _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _pdfPedidoService = pdfPedidoService;
+        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task<(byte[] pdf, int count)> GetRelatorioAsync(RelatorioPedidoDto relatorioPedidoDto)
@@ -26,10 +26,9 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
         var pedidos = await _pedidoRepository
             .GetPedidosByRelatorioPorPeriodoAsync(relatorioPedidoDto);
 
-        var configuracaoDePedido = await _configuracoesDePedidoRepository
-            .GetConfiguracoesDePedidoAsync();
+        var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
 
-        var logo = configuracaoDePedido?.Logo is null ? null : Encoding.UTF8.GetString(configuracaoDePedido.Logo);
+        var logo = parceiro.Logo is null ? null : Encoding.UTF8.GetString(parceiro.Logo);
         var total = pedidos.Sum(x => x.ValorTotal);
         var relatorioPedidoModel = new GerarRelatorioPedidoDto(
             relatorioPedidoDto.DataInicial,
@@ -48,7 +47,7 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
                 pedido.DataDeCriacao);
         }).ToList();
 
-        var pdf = _pdfPedidoService.GeneratePdfPedidoRelatorio(relatorioPedidoModel, "Iscas lune", pedidos);
+        var pdf = _pdfPedidoService.GeneratePdfPedidoRelatorio(relatorioPedidoModel, parceiro.NomeFantasia, pedidos);
 
         return (pdf, pedidos.Count);
     }

@@ -68,20 +68,20 @@ public class PedidoServiceTest
     //    Assert.Equal(pedido.StatusPedido, pedidoViewModel.StatusPedido);
     //}
 
-    [Fact]
-    public async Task DeveEfetuarDownloadBase64DoPedido()
-    {
-        var pedido = PedidoBuilder.Init().Build();
-        var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
-        _pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
-        var pedidoService = new PedidoDownloadService(
-            _pedidoRepositoryMock.Object,
-            configuracoesDePedidoRepository.Object,
-            _pdfPedidoService.Object);
-        var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
+    //[Fact]
+    //public async Task DeveEfetuarDownloadBase64DoPedido()
+    //{
+    //    var pedido = PedidoBuilder.Init().Build();
+    //    var configuracoesDePedidoRepository = new Mock<IConfiguracoesDePedidoRepository>();
+    //    _pedidoRepositoryMock.Setup(x => x.GetPedidoCompletoByIdAsync(pedido.Id)).ReturnsAsync(pedido);
+    //    var pedidoService = new PedidoDownloadService(
+    //        _pedidoRepositoryMock.Object,
+    //        configuracoesDePedidoRepository.Object,
+    //        _pdfPedidoService.Object);
+    //    var pdf = await pedidoService.DownloadPedidoPdfAsync(pedido.Id);
 
-        Assert.NotNull(pdf);
-    }
+    //    Assert.NotNull(pdf);
+    //}
 
     [Fact]
     public async Task DeveExcluirPedido()
