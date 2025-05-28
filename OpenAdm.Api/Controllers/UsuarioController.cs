@@ -34,6 +34,15 @@ public class UsuarioController : ControllerBase
         return Ok(responseCreateUsuario);
     }
 
+    [HttpPost("create-admin")]
+    [IsFuncionario]
+    [Autentica]
+    public async Task<IActionResult> CreateUsuarioNoAdmin(CreateUsuarioDto createUsuarioDto)
+    {
+        var responseCreateUsuario = await _usuarioService.CreateUsuarioNoAdminAsync(createUsuarioDto);
+        return Ok(responseCreateUsuario);
+    }
+
     [Autentica]
     [HttpGet("get-conta")]
     public async Task<IActionResult> GetConta()

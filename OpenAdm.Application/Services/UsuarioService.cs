@@ -210,4 +210,35 @@ public class UsuarioService : IUsuarioService
 
         return usuarioViewModel;
     }
+
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioDto createUsuarioDto)
+    {
+        createUsuarioDto.Validar();
+        var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
+
+        if (usuario != null)
+            throw new ExceptionApi("Este e-mail já se encontra cadastrado!");
+
+        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cpf))
+        {
+            usuario = await _usuarioRepository.GetUsuarioByCpfAsync(createUsuarioDto.Cpf);
+            if (usuario != null)
+                throw new ExceptionApi("Este CPF já se encontra cadastrado!");
+        }
+
+        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cnpj))
+        {
+            usuario = await _usuarioRepository.GetUsuarioByCnpjAsync(createUsuarioDto.Cnpj);
+            if (usuario != null)
+                throw new ExceptionApi("Este CNPJ já se encontra cadastrado!");
+        }
+
+        usuario = createUsuarioDto.ToEntity();
+
+        await _usuarioRepository.AddAsync(usuario);
+
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
+
+        return new ResponseLoginUsuarioViewModel(usuarioViewModel, "", "");
+    }
 }
