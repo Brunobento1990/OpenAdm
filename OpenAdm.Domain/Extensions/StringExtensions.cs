@@ -46,6 +46,11 @@ public static class StringExtensions
         return Encoding.UTF8.GetBytes(value);
     }
 
+    public static string FromBytes(this byte[] value)
+    {
+        return Encoding.UTF8.GetString(value);
+    }
+
     public static string ValidarNullOrEmpty(this string? value, string erro)
     {
         if (string.IsNullOrWhiteSpace(value))

@@ -15,6 +15,11 @@ public class ParceiroRepository : IParceiroRepository
         _appDbContext = appDbContext;
     }
 
+    public async Task AddEndereco(EnderecoParceiro enderecoParceiro)
+    {
+        await _appDbContext.EnderecoParceiro.AddAsync(enderecoParceiro);
+    }
+
     public async Task AdicionarRedesSociaisAsync(IList<RedeSocial> redesSociais)
     {
         await _appDbContext.RedesSociais.AddRangeAsync(redesSociais);
@@ -31,6 +36,7 @@ public class ParceiroRepository : IParceiroRepository
             .Parceiros
             .Include(x => x.RedesSociais)
             .Include(x => x.Telefones)
+            .Include(x => x.EnderecoParceiro)
             .FirstOrDefaultAsync(x => x.EmpresaOpenAdmId == empresaOpenAdmId);
     }
 
@@ -46,6 +52,11 @@ public class ParceiroRepository : IParceiroRepository
         return await _appDbContext
             .TelefonesParceiro
             .FirstOrDefaultAsync(x => x.Id == telefoneId);
+    }
+
+    public void RemoverEndereco(EnderecoParceiro enderecoParceiro)
+    {
+        _appDbContext.EnderecoParceiro.Remove(enderecoParceiro);
     }
 
     public void RemoverRedeSocial(RedeSocial redeSocial)

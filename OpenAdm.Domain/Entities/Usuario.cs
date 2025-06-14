@@ -35,6 +35,7 @@ public sealed class Usuario : BaseEntity
     public string? Cpf { get; private set; }
     public bool Ativo { get; private set; }
     public bool IsAtacado => !string.IsNullOrWhiteSpace(Cnpj);
+    public EnderecoUsuario? EnderecoUsuario { get; set; }
 
     public void Inativar()
     {

@@ -28,6 +28,7 @@ public sealed class Parceiro : BaseEntity
 
     public Guid EmpresaOpenAdmId { get; private set; }
     public EmpresaOpenAdm EmpresaOpenAdm { get; set; } = null!;
+    public EnderecoParceiro? EnderecoParceiro { get; set; }
     public string RazaoSocial { get; private set; }
     public byte[]? Logo { get; private set; }
     public string NomeFantasia { get; private set; }

@@ -53,20 +53,19 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
     public byte[] GeneratePdfPedido(
         Pedido pedido,
-        string nomeFantasia,
-        string? logo)
+        Parceiro parceiro)
     {
+        var titleStyle = TextStyle.Default.FontSize(18).SemiBold();
+        var titleStyle2 = TextStyle.Default.FontSize(10).SemiBold();
+        var titleStyleName = TextStyle.Default.FontSize(10);
+
         void HeaderCustom(IContainer container)
         {
-            var titleStyle = TextStyle.Default.FontSize(18).SemiBold();
-            var titleStyle2 = TextStyle.Default.FontSize(10).SemiBold();
-            var titleStyleName = TextStyle.Default.FontSize(10);
-
             container.Row(row =>
             {
                 row.RelativeItem().Column(column =>
                 {
-                    column.Item().Text($"#{nomeFantasia}").Style(titleStyle);
+                    column.Item().Text($"#{parceiro.NomeFantasia}").Style(titleStyle);
 
                     column.Item().Text(text =>
                     {
@@ -116,9 +115,9 @@ public sealed class PdfPedidoService : IPdfPedidoService
                     }
                 });
 
-                if (!string.IsNullOrWhiteSpace(logo))
+                if (parceiro.Logo != null)
                 {
-                    row.ConstantItem(50).Height(50).Width(50).Image(Convert.FromBase64String(logo));
+                    row.ConstantItem(50).Height(50).Width(50).Image(Convert.FromBase64String(parceiro.Logo.FromBytes()));
                 }
 
             });
@@ -140,7 +139,6 @@ public sealed class PdfPedidoService : IPdfPedidoService
                 .BorderColor(Colors.Grey.Lighten2)
                 .PaddingVertical(5);
         }
-
 
         var pdf = Document
             .Create(container =>
@@ -344,6 +342,128 @@ public sealed class PdfPedidoService : IPdfPedidoService
                     });
                     page.FooterCustom();
                 });
+
+                if (pedido.EnderecoEntrega != null)
+                {
+                    container.Page(page =>
+                    {
+                        page.Margin(30);
+                        page.Content().Column(col =>
+                        {
+                            if (parceiro.EnderecoParceiro != null)
+                            {
+                                col.Item().PaddingTop(25).Element(container =>
+                                {
+                                    container.Border(1)
+                                        .BorderColor(Colors.Black)
+                                        .Padding(10)
+                                        .Column(column =>
+                                        {
+                                            column.Item().Text(text =>
+                                            {
+                                                text.Span("Remetente: ").Style(titleStyle2);
+                                                text.Span(parceiro.NomeFantasia).Style(titleStyleName);
+                                            });
+
+                                            column.Item().Text(text =>
+                                            {
+                                                text.Span("Endereço: ").Style(titleStyle2);
+                                                text.Span(parceiro.EnderecoParceiro.EnderecoCompleto).Style(titleStyleName);
+                                            });
+
+                                            column.Item().Text(text =>
+                                            {
+                                                text.Span("Cidade: ").Style(titleStyle2);
+                                                text.Span($"{parceiro.EnderecoParceiro.Localidade}").Style(titleStyleName);
+                                            });
+
+                                            column.Item().Text(text =>
+                                            {
+                                                text.Span("Bairro: ").Style(titleStyle2);
+                                                text.Span($"{parceiro.EnderecoParceiro.Bairro}").Style(titleStyleName);
+                                            });
+
+                                            column.Item().Text(text =>
+                                            {
+                                                text.Span("UF: ").Style(titleStyle2);
+                                                text.Span($"{parceiro.EnderecoParceiro.Uf}").Style(titleStyleName);
+                                            });
+
+                                            if (!string.IsNullOrWhiteSpace(parceiro.EnderecoParceiro.Complemento))
+                                            {
+                                                column.Item().Text(text =>
+                                                {
+                                                    text.Span("Complemento: ").Style(titleStyle2);
+                                                    text.Span(parceiro.EnderecoParceiro.Complemento).Style(titleStyleName);
+                                                });
+                                            }
+                                        });
+                                });
+                            }
+
+                            col.Item().PaddingTop(25).Element(container =>
+                            {
+                                container.Border(1)
+                                    .BorderColor(Colors.Black)
+                                    .Padding(10)
+                                    .Column(column =>
+                                    {
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Pedido: ").Style(titleStyle2);
+                                            text.Span($"{pedido.Numero}").Style(titleStyleName);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Destinatário: ").Style(titleStyle2);
+                                            text.Span(pedido.Usuario.Nome).Style(titleStyleName);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Endereço: ").Style(titleStyle2);
+                                            text.Span(pedido.EnderecoEntrega.EnderecoCompleto).Style(titleStyleName);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Cidade: ").Style(titleStyle2);
+                                            text.Span($"{pedido.EnderecoEntrega.Localidade}").Style(titleStyleName);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Bairro: ").Style(titleStyle2);
+                                            text.Span($"{pedido.EnderecoEntrega.Bairro}").Style(titleStyleName);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("UF: ").Style(titleStyle2);
+                                            text.Span($"{pedido.EnderecoEntrega.Uf}").Style(titleStyleName);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Telefone: ").Style(titleStyle2);
+                                            text.Span(pedido.Usuario.Telefone?.FormatPhone()).Style(titleStyleName);
+                                        });
+
+                                        if (!string.IsNullOrWhiteSpace(pedido.EnderecoEntrega.Complemento))
+                                        {
+                                            column.Item().Text(text =>
+                                            {
+                                                text.Span("Complemento: ").Style(titleStyle2);
+                                                text.Span(pedido.EnderecoEntrega.Complemento).Style(titleStyleName);
+                                            });
+                                        }
+                                    });
+                            });
+                        });
+                    });
+                }
+
             }).GeneratePdf();
 
         return pdf;

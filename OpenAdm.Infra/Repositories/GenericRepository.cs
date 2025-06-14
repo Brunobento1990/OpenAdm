@@ -87,7 +87,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
             .OrderBy(x => EF.Property<T>(x, paginacaoDropDown.OrderBy))
             .WhereIsNotNull(paginacaoDropDown.Where())
             .Skip(0)
-            .Take(100)
+            .Take(50)
             .ToListAsync();
     }
 

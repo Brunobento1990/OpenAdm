@@ -121,26 +121,26 @@ public class UsuarioService : IUsuarioService
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
             ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
 
-        var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
-        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
+        //var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, 0);
 
-        usuarioViewModel.PedidosEmAberto = await _pedidoRepository
-            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Aberto);
+        //usuarioViewModel.PedidosEmAberto = await _pedidoRepository
+        //    .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Aberto);
 
-        usuarioViewModel.PedidosFaturado = await _pedidoRepository
-            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Faturado);
+        //usuarioViewModel.PedidosFaturado = await _pedidoRepository
+        //    .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Faturado);
 
-        usuarioViewModel.PedidosEmEntraga = await _pedidoRepository
-            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.RotaDeEntrega);
+        //usuarioViewModel.PedidosEmEntraga = await _pedidoRepository
+        //    .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.RotaDeEntrega);
 
-        usuarioViewModel.PedidosEntregue = await _pedidoRepository
-            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Entregue);
+        //usuarioViewModel.PedidosEntregue = await _pedidoRepository
+        //    .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Entregue);
 
-        usuarioViewModel.PedidosCancelados = await _pedidoRepository
-            .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Cancelado);
+        //usuarioViewModel.PedidosCancelados = await _pedidoRepository
+        //    .GetQuantidadePorStatusUsuarioAsync(usuario.Id, StatusPedido.Cancelado);
 
-        usuarioViewModel.TotalPedido = await _pedidoRepository
-            .GetTotalPedidoPorUsuarioAsync(usuario.Id);
+        //usuarioViewModel.TotalPedido = await _pedidoRepository
+        //    .GetTotalPedidoPorUsuarioAsync(usuario.Id);
 
         return usuarioViewModel;
     }

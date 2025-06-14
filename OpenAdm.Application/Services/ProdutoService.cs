@@ -89,6 +89,12 @@ public class ProdutoService : IProdutoService
         return produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
     }
 
+    public async Task<IEnumerable<ProdutoViewModel>> GetDropDownPaginacaoAsync(PaginacaoDropDown<Produto> paginacaoDropDown)
+    {
+        var produtos = await _produtoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
+        return produtos.Select(x => new ProdutoViewModel().ToModel(x));
+    }
+
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(FilterModel<Produto> paginacaoProdutoDto)
     {
         var paginacao = await _produtoRepository.PaginacaoAsync(paginacaoProdutoDto);

@@ -11,7 +11,6 @@ namespace OpenAdm.Infra.HttpService.Services;
 public sealed class CepHttpService : IHttpClientCep
 {
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly string _nomeCliente = $"{HttpServiceEnum.CepHttpService.ToString()}";
 
     public CepHttpService(IHttpClientFactory httpClientFactory)
     {
@@ -20,28 +19,23 @@ public sealed class CepHttpService : IHttpClientCep
 
     public async Task<ConsultaCepResponse> ConsultaCepAsync(string cepOrigem)
     {
-        var client = _httpClientFactory.CreateClient(_nomeCliente);
-        var url = $"ws/json/{cepOrigem}";
+        var client = _httpClientFactory.CreateClient($"{HttpServiceEnum.ConsultaCep}");
+        var url = $"/ws/{cepOrigem}/json";
         var response = await client.GetAsync(url);
-        var body = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
-            var erro = string.IsNullOrWhiteSpace(body) ? $"Erro ao consultar o CEP: {cepOrigem}" : body;
-            throw new Exception(erro);
+            throw new ExceptionApi($"Não foi possível consultar o cep: {cepOrigem}");
         }
 
-        if (body.Contains("CEP not found"))
-        {
-            throw new ExceptionApi("CEP inválido!");
-        }
+        var body = await response.Content.ReadAsStreamAsync();
 
         return JsonSerializer.Deserialize<ConsultaCepResponse>(body, JsonSerializerOptionsApi.Options())
-            ?? throw new Exception($"Erro ao consultar o CEP: {cepOrigem}");
+            ?? throw new ExceptionApi($"Erro ao consultar o CEP: {cepOrigem}");
     }
 
     public async Task<CotacaoFreteResponse> CotarFreteAsync(CotacaoFreteRequest cotacaoFreteRequest)
     {
-        var client = _httpClientFactory.CreateClient(_nomeCliente);
+        var client = _httpClientFactory.CreateClient($"{HttpServiceEnum.CepHttpService}");
         var url = $"ws/json-frete/{cotacaoFreteRequest.CepOrigem}/{cotacaoFreteRequest.CepDestino}/{cotacaoFreteRequest.Peso}/{cotacaoFreteRequest.Altura}/{cotacaoFreteRequest.Largura}/{cotacaoFreteRequest.Comprimento}/{cotacaoFreteRequest.ChaveDeAcesso}";
         var response = await client.GetAsync(url);
         var body = await response.Content.ReadAsStringAsync();

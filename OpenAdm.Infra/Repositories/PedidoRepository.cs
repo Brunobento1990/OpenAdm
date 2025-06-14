@@ -78,6 +78,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Include(x => x.ItensPedido)
                 .ThenInclude(x => x.Peso)
             .Include(x => x.Usuario)
+            .Include(x => x.EnderecoEntrega)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (pedido != null)

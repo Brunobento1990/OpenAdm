@@ -89,6 +89,23 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Usuarios
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .Include(x => x.EnderecoUsuario)
+            .Where(x => x.Id == id)
+            .Select(x => new Usuario(
+                x.Id,
+                x.DataDeCriacao,
+                x.DataDeAtualizacao,
+                x.Numero,
+                x.Email,
+                x.Senha,
+                x.Nome,
+                x.Telefone,
+                x.Cnpj,
+                x.Cpf,
+                x.Ativo)
+            {
+                EnderecoUsuario = x.EnderecoUsuario
+            })
+            .FirstOrDefaultAsync();
     }
 }

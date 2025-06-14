@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     }
 
     public DbSet<EmpresaOpenAdm> Empresas { get; set; }
+    public DbSet<EnderecoParceiro> EnderecoParceiro { get; set; }
     public DbSet<Parceiro> Parceiros { get; set; }
     public DbSet<TelefoneParceiro> TelefonesParceiro { get; set; }
     public DbSet<RedeSocial> RedesSociais { get; set; }
@@ -23,6 +24,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ParceiroConfiguration());
         modelBuilder.ApplyConfiguration(new TelefoneParceiroConfiguration());
         modelBuilder.ApplyConfiguration(new RedeSocialConfiguration());
+        modelBuilder.ApplyConfiguration(new EnderecoParceiroConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

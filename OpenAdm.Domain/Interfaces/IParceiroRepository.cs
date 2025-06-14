@@ -16,4 +16,6 @@ public interface IParceiroRepository
     Task AdicionarTelefonesAsync(IList<TelefoneParceiro> telefones);
     void UpdateTelefones(IList<TelefoneParceiro> telefones);
     void UpdateRedesSociais(IList<RedeSocial> redesSociais);
+    Task AddEndereco(EnderecoParceiro enderecoParceiro);
+    void RemoverEndereco(EnderecoParceiro enderecoParceiro);
 }

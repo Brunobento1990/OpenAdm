@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
-using System.Text;
 
 namespace OpenAdm.Application.Services.Pedidos;
 
@@ -26,8 +25,7 @@ public sealed class PedidoDownloadService : IPedidoDownloadService
             ?? throw new ExceptionApi("Não foi possível localizar o pedido!");
 
         var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
-        var logo = parceiro.Logo != null ? Encoding.UTF8.GetString(parceiro.Logo) : null;
-        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro.NomeFantasia, logo);
+        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
 
         return pdf;
     }

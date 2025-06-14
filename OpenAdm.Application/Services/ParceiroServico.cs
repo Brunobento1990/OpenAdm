@@ -70,6 +70,41 @@ public class ParceiroServico : IParceiroServico
             redesSociaisUpdate.Add(redeSocialParceiro);
         }
 
+        if (parceiroDto.EnderecoParceiro == null)
+        {
+            if (parceiro.EnderecoParceiro != null)
+            {
+                _parceiroRepository.RemoverEndereco(parceiro.EnderecoParceiro);
+            }
+        }
+        else
+        {
+            if (parceiro.EnderecoParceiro == null)
+            {
+                await _parceiroRepository.AddEndereco(new Domain.Entities.EnderecoParceiro(
+                    cep: parceiroDto.EnderecoParceiro.Cep,
+                    logradouro: parceiroDto.EnderecoParceiro.Logradouro,
+                    bairro: parceiroDto.EnderecoParceiro.Bairro,
+                    localidade: parceiroDto.EnderecoParceiro.Localidade,
+                    complemento: parceiroDto.EnderecoParceiro.Complemento ?? "",
+                    numero: parceiroDto.EnderecoParceiro.Numero,
+                    uf: parceiroDto.EnderecoParceiro.Uf,
+                    id: Guid.NewGuid(),
+                    parceiroId: parceiro.Id));
+            }
+            else
+            {
+                parceiro.EnderecoParceiro.Editar(
+                    cep: parceiroDto.EnderecoParceiro.Cep,
+                    logradouro: parceiroDto.EnderecoParceiro.Logradouro,
+                    bairro: parceiroDto.EnderecoParceiro.Bairro,
+                    localidade: parceiroDto.EnderecoParceiro.Localidade,
+                    complemento: parceiroDto.EnderecoParceiro.Complemento ?? "",
+                    numero: parceiroDto.EnderecoParceiro.Numero,
+                    uf: parceiroDto.EnderecoParceiro.Uf);
+            }
+        }
+
         _parceiroRepository.UpdateRedesSociais(redesSociaisUpdate);
         _parceiroRepository.UpdateTelefones(telefonesUpdate);
         _parceiroRepository.Update(parceiro);

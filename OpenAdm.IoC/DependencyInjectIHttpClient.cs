@@ -12,7 +12,8 @@ public static class DependencyInjectIHttpClient
         string url,
         string urlApiCep,
         string urlMercadoPago,
-        string urlConsultaCnpj)
+        string urlConsultaCnpj,
+        string urlApiViaCep)
     {
         services.AddTransient<IHttpClientCep, CepHttpService>();
         services.AddTransient<IDiscordHttpService, DiscordHttpService>();
@@ -36,6 +37,11 @@ public static class DependencyInjectIHttpClient
         services.AddHttpClient(HttpServiceEnum.ConsultaCnpj.ToString(), x =>
         {
             x.BaseAddress = new Uri(urlConsultaCnpj);
+        });
+
+        services.AddHttpClient(HttpServiceEnum.ConsultaCep.ToString(), x =>
+        {
+            x.BaseAddress = new Uri(urlApiViaCep);
         });
     }
 }

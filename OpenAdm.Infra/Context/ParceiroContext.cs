@@ -44,6 +44,7 @@ public class ParceiroContext : DbContext
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
     public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
+    public DbSet<EnderecoUsuario> EnderecoUsuario { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -80,11 +81,13 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
         modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());
+        modelBuilder.ApplyConfiguration(new EnderecoUsuarioConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_parceiroAutenticado.ConnectionString);
+        //optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=localhost; Port=4814; Database=dev; Pooling=true;");
         base.OnConfiguring(optionsBuilder);
     }
 }

@@ -38,6 +38,15 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<IList<ItemTabelaDePreco>> GetItensTabelaDePrecoByIdAsync(Guid tabelaDePrecoId)
+    {
+        return await ParceiroContext
+            .ItensTabelaDePreco
+            .AsNoTracking()
+            .Where(x => x.TabelaDePrecoId == tabelaDePrecoId)
+            .ToListAsync();
+    }
+
     public async Task<IList<ItemTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds)
     {
         return await ParceiroContext

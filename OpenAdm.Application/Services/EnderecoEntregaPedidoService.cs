@@ -33,12 +33,12 @@ public sealed class EnderecoEntregaPedidoService : IEnderecoEntregaPedidoService
             logradouro: enderecoEntregaPedidoCreateDto.Logradouro,
             bairro: enderecoEntregaPedidoCreateDto.Bairro,
             localidade: enderecoEntregaPedidoCreateDto.Localidade,
-            complemento: enderecoEntregaPedidoCreateDto.Complemento,
+            complemento: enderecoEntregaPedidoCreateDto.Complemento ?? "",
             numero: enderecoEntregaPedidoCreateDto.Numero,
             uf: enderecoEntregaPedidoCreateDto.Uf,
             pedidoId: pedido.Id,
-            valorFrete: enderecoEntregaPedidoCreateDto.ValorFrete,
-            tipoFrete: enderecoEntregaPedidoCreateDto.TipoFrete,
+            valorFrete: enderecoEntregaPedidoCreateDto.ValorFrete ?? 0,
+            tipoFrete: enderecoEntregaPedidoCreateDto.TipoFrete ?? "",
             id: Guid.NewGuid());
 
         await _enderecoEntregaPedidoRepository.AddAsync(endereco);

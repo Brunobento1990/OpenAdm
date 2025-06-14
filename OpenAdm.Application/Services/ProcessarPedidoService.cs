@@ -38,8 +38,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
 
         if (pedido != null)
         {
-            var logo = parceiro.Logo != null ? Encoding.UTF8.GetString(parceiro.Logo) : null;
-            var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro.NomeFantasia, logo);
+            var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
 
             var message = $"Que ótima noticia, mais um pedido!\nN. do pedido : {pedido.Numero}";
             var assunto = "Novo pedido";
