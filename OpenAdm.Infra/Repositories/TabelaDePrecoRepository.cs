@@ -36,18 +36,18 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
             .FirstOrDefaultAsync(x => x.AtivaEcommerce);
     }
 
-    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaByProdutoIdAsync(Guid produtoId)
+    public async Task<TabelaDePreco?> GetTabelaDePrecoAtivaByProdutoIdAsync(Guid? produtoId = null)
     {
         var tabelaDePreco = await ParceiroContext
             .TabelaDePreco
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.AtivaEcommerce);
 
-        if(tabelaDePreco != null)
+        if (tabelaDePreco != null && produtoId.HasValue)
         {
             tabelaDePreco.ItensTabelaDePreco = await ParceiroContext
                 .ItensTabelaDePreco
-                .Where(x => x.ProdutoId == produtoId)
+                .Where(x => x.ProdutoId == produtoId.Value)
                 .ToListAsync();
         }
 
@@ -63,13 +63,13 @@ public class TabelaDePrecoRepository : GenericRepository<TabelaDePreco>, ITabela
             .Include(x => x.ItensTabelaDePreco)
                 .ThenInclude(x => x.Produto)
             .FirstOrDefaultAsync(x => x.Id == id);
-    
-        if(tabelaDePreco != null)
+
+        if (tabelaDePreco != null)
         {
             foreach (var item in tabelaDePreco.ItensTabelaDePreco)
             {
                 item.TabelaDePreco = null!;
-                item.Produto.ItensTabelaDePreco = new();
+                item.Produto.ItensTabelaDePreco = [];
             }
         }
 

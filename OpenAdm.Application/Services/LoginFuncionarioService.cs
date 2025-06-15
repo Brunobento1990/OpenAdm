@@ -8,7 +8,7 @@ using OpenAdm.Domain.Interfaces;
 namespace OpenAdm.Application.Services;
 
 public class LoginFuncionarioService(
-    ITokenService tokenService, 
+    ITokenService tokenService,
     ILoginFuncionarioRepository loginFuncionarioRepository)
     : ILoginFuncionarioService
 {
@@ -25,6 +25,6 @@ public class LoginFuncionarioService(
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
         var token = _tokenService.GenerateToken(funcionarioViewModel);
 
-        return new(token, funcionarioViewModel);
+        return new(token, "", funcionarioViewModel);
     }
 }

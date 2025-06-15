@@ -62,4 +62,7 @@ public class ConfiguracaoDeEmailCached(
 
     public Task<int> SaveChangesAsync()
         => _configuracaoDeEmailRepository.SaveChangesAsync();
+
+    public Task<ConfiguracaoDeEmail> AdicionarAsync(ConfiguracaoDeEmail entity)
+        => _configuracaoDeEmailRepository.AdicionarAsync(entity);
 }

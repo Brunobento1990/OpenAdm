@@ -23,10 +23,10 @@ public class LojasParceirasService : ILojasParceirasService
     public async Task<LojasParceirasViewModel> CreateLojaParceiraAsync(CreateLojaParceiraDto createLojaParceiraDto)
     {
         var nomeFoto = string.Empty;
-        if (!string.IsNullOrWhiteSpace(createLojaParceiraDto.Foto))
+        if (!string.IsNullOrWhiteSpace(createLojaParceiraDto.NovaFoto))
         {
             nomeFoto = $"{Guid.NewGuid()}.jpeg";
-            createLojaParceiraDto.Foto = await _uploadImageBlobClient.UploadImageAsync(createLojaParceiraDto.Foto, nomeFoto);
+            createLojaParceiraDto.NovaFoto = await _uploadImageBlobClient.UploadImageAsync(createLojaParceiraDto.NovaFoto, nomeFoto);
         }
 
         var lojaParceira = createLojaParceiraDto.ToEntity(nomeFoto);
@@ -90,7 +90,7 @@ public class LojasParceirasService : ILojasParceirasService
         var foto = lojaParceira.Foto;
         var nomeFoto = lojaParceira.NomeFoto;
 
-        if (!string.IsNullOrWhiteSpace(updateLojaParceiraDto.Foto) && !updateLojaParceiraDto.Foto.StartsWith("https://"))
+        if (!string.IsNullOrWhiteSpace(updateLojaParceiraDto.NovaFoto))
         {
             if (!string.IsNullOrWhiteSpace(nomeFoto))
             {
@@ -100,7 +100,7 @@ public class LojasParceirasService : ILojasParceirasService
 
                 nomeFoto = $"{Guid.NewGuid()}.jpeg";
 
-                foto = await _uploadImageBlobClient.UploadImageAsync(updateLojaParceiraDto.Foto, nomeFoto);
+                foto = await _uploadImageBlobClient.UploadImageAsync(updateLojaParceiraDto.NovaFoto, nomeFoto);
             }
         }
 

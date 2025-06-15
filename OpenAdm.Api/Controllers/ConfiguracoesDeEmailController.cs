@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 [Route("configuracoes-de-email")]
 [IsFuncionario]
 [Autentica]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class ConfiguracoesDeEmailController : ControllerBase
 {
     private readonly IConfiguracoesDeEmailService _configuracoesDeEmailService;

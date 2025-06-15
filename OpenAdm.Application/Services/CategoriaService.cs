@@ -23,13 +23,13 @@ public class CategoriaService : ICategoriaService
 
     public async Task<CategoriaViewModel> CreateCategoriaAsync(CategoriaCreateDto categoriaCreateDto)
     {
-        var nomeFoto = !string.IsNullOrWhiteSpace(categoriaCreateDto.Foto) ? $"{Guid.NewGuid()}.jpeg" : null;
+        categoriaCreateDto.Validar();
+        var nomeFoto = !string.IsNullOrWhiteSpace(categoriaCreateDto.NovaFoto) ? $"{Guid.NewGuid()}.jpeg" : null;
 
-        if (!string.IsNullOrWhiteSpace(nomeFoto) && categoriaCreateDto.Foto != null)
+        if (!string.IsNullOrWhiteSpace(categoriaCreateDto.NovaFoto) && !string.IsNullOrWhiteSpace(nomeFoto))
         {
-            categoriaCreateDto.Foto = await _uploadImageBlobClient.UploadImageAsync(categoriaCreateDto.Foto, nomeFoto);
+            categoriaCreateDto.NovaFoto = await _uploadImageBlobClient.UploadImageAsync(categoriaCreateDto.NovaFoto, nomeFoto);
         }
-
 
         var categoria = EntityMapper.ToCategoriaCreate(categoriaCreateDto, nomeFoto);
 
@@ -89,20 +89,20 @@ public class CategoriaService : ICategoriaService
         var nomeFoto = categoria.NomeFoto;
         var foto = categoria.Foto;
 
-        if (!string.IsNullOrWhiteSpace(updateCategoriaDto.Foto) && !updateCategoriaDto.Foto.StartsWith("https://"))
+        if (!string.IsNullOrWhiteSpace(updateCategoriaDto.NovaFoto))
         {
             if (!string.IsNullOrWhiteSpace(categoria.NomeFoto))
             {
                 var resultDeleteBlob = await _uploadImageBlobClient.DeleteImageAsync(categoria.NomeFoto);
                 if (!resultDeleteBlob)
-                    throw new ExceptionApi("Não foi possível excluir a categoria!");
+                    throw new ExceptionApi("Não foi possível excluir a foto da categoria!");
             }
 
             nomeFoto = $"{Guid.NewGuid()}.jpeg";
-            foto = await _uploadImageBlobClient.UploadImageAsync(updateCategoriaDto.Foto, nomeFoto);
+            foto = await _uploadImageBlobClient.UploadImageAsync(updateCategoriaDto.NovaFoto, nomeFoto);
         }
 
-        categoria.Update(updateCategoriaDto.Descricao, foto, nomeFoto);
+        categoria.Update(updateCategoriaDto.Descricao, foto, nomeFoto, updateCategoriaDto.InativoEcommerce);
 
         await _categoriaRepository.UpdateAsync(categoria);
 
@@ -116,5 +116,12 @@ public class CategoriaService : ICategoriaService
 
         categoria.InativarAtivarEcommerce();
         await _categoriaRepository.UpdateAsync(categoria);
+    }
+
+    public async Task<IList<CategoriaViewModel>> GetCategoriasDropDownAsync()
+    {
+        var categorias = await _categoriaRepository.GetCategoriasDropDownAsync();
+
+        return categorias.Select(x => new CategoriaViewModel().ToModel(x)).ToList();
     }
 }

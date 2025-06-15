@@ -24,9 +24,10 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
             .Where(x => x.ProdutoId == produtoId)
             .ToListAsync();
 
-        ParceiroContext.RemoveRange(itensTabelaDePreco);
-
-        await ParceiroContext.SaveChangesAsync();
+        if (itensTabelaDePreco.Count > 0)
+        {
+            ParceiroContext.RemoveRange(itensTabelaDePreco);
+        }
     }
 
     public async Task<ItemTabelaDePreco?> GetItemTabelaDePrecoByIdAsync(Guid id)
@@ -35,6 +36,15 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
             .ItensTabelaDePreco
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<IList<ItemTabelaDePreco>> GetItensTabelaDePrecoByIdAsync(Guid tabelaDePrecoId)
+    {
+        return await ParceiroContext
+            .ItensTabelaDePreco
+            .AsNoTracking()
+            .Where(x => x.TabelaDePrecoId == tabelaDePrecoId)
+            .ToListAsync();
     }
 
     public async Task<IList<ItemTabelaDePreco>> GetItensTabelaDePrecoByIdProdutosAsync(IList<Guid> produtosIds)

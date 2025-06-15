@@ -89,6 +89,40 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Usuarios
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .Include(x => x.EnderecoUsuario)
+            .Where(x => x.Id == id)
+            .Select(x => new Usuario(
+                x.Id,
+                x.DataDeCriacao,
+                x.DataDeAtualizacao,
+                x.Numero,
+                x.Email,
+                x.Senha,
+                x.Nome,
+                x.Telefone,
+                x.Cnpj,
+                x.Cpf,
+                x.Ativo)
+            {
+                EnderecoUsuario = x.EnderecoUsuario
+            })
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task AddEnderecoAsync(EnderecoUsuario endereco)
+    {
+        await ParceiroContext.EnderecoUsuario.AddAsync(endereco);
+    }
+
+    public void EditarEndereco(EnderecoUsuario endereco)
+    {
+        ParceiroContext.EnderecoUsuario.Update(endereco);
+    }
+
+    public async Task<EnderecoUsuario?> ObterEnderecoAsync(Guid usuarioId)
+    {
+        return await ParceiroContext
+            .EnderecoUsuario
+            .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId);
     }
 }

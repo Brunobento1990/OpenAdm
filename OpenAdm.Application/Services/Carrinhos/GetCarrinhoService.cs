@@ -23,10 +23,10 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         _usuarioAutenticado = usuarioAutenticado;
     }
 
-    public async Task<IList<CarrinhoViewModel>> GetCarrinhoAsync()
+    public async Task<CarrinhoViewModel> GetCarrinhoAsync()
     {
         var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
-        var carrinhosViewModels = new List<CarrinhoViewModel>();
+        var itensCarrinho = new List<ItemCarrinhoViewModel>();
 
         var carrinho = await _carrinhoRepository.GetCarrinhoAsync(_usuarioAutenticado.Id.ToString());
         var produtosIds = carrinho.Produtos.Select(x => x.ProdutoId).ToList();
@@ -35,7 +35,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
 
         foreach (var produto in produtos)
         {
-            var carrinhoViewModel = new CarrinhoViewModel()
+            var itemCarrinho = new ItemCarrinhoViewModel()
             {
                 Categoria = new CategoriaViewModel().ToModel(produto.Categoria),
                 CategoriaId = produto.CategoriaId,
@@ -47,7 +47,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                 Foto = produto.UrlFoto ?? ""
             };
 
-            carrinhoViewModel.Tamanhos = produto
+            itemCarrinho.Tamanhos = produto
                 .Tamanhos
                 .OrderBy(x => x.Numero)
                 .Select(x => new TamanhoCarrinhoViewModel()
@@ -70,7 +70,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                     }
                 }).ToList();
 
-            carrinhoViewModel.Pesos = produto
+            itemCarrinho.Pesos = produto
                 .Pesos
                 .OrderBy(x => x.Numero)
                 .Select(x => new PesoCarrinhoViewModel()
@@ -94,10 +94,23 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                     }
                 }).ToList();
 
-            carrinhosViewModels.Add(carrinhoViewModel);
+            itensCarrinho.Add(itemCarrinho);
         }
 
-        return carrinhosViewModels;
+        return new()
+        {
+            Itens = itensCarrinho,
+            EnderecoUsuario = usuario.EnderecoUsuario == null ? null : new Models.Fretes.EnderecoViewModel()
+            {
+                Bairro = usuario.EnderecoUsuario.Bairro,
+                Cep = usuario.EnderecoUsuario.Cep,
+                Complemento = usuario.EnderecoUsuario.Complemento,
+                Localidade = usuario.EnderecoUsuario.Localidade,
+                Logradouro = usuario.EnderecoUsuario.Logradouro,
+                Numero = usuario.EnderecoUsuario.Numero,
+                Uf = usuario.EnderecoUsuario.Uf
+            }
+        };
     }
 
     private static decimal GetValorUnitarioProduto(

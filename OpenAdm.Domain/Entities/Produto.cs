@@ -33,8 +33,8 @@ public sealed class Produto : BaseEntity
     public List<Peso> Pesos { get; set; } = new();
     public Guid CategoriaId { get; private set; }
     public Categoria Categoria { get; set; } = null!;
-    public List<ItemPedido> ItensPedido { get; set; } = new();
-    public List<ItemTabelaDePreco> ItensTabelaDePreco { get; set; } = new();
+    public List<ItemPedido> ItensPedido { get; set; } = [];
+    public IList<ItemTabelaDePreco> ItensTabelaDePreco { get; set; } = [];
     public string? Referencia { get; private set; }
     public string? UrlFoto { get; private set; }
     public string? NomeFoto { get; private set; }

@@ -9,7 +9,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("configuracao-de-pagamento")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class ConfiguracaoDePagamentoController : ControllerBase
 {
     private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;

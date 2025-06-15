@@ -12,6 +12,7 @@ public interface IProdutoService
     Task<IList<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
     Task<IList<ProdutoViewModel>> GetAllProdutosAsync();
     Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(FilterModel<Produto> paginacaoProdutoDto);
+    Task<IEnumerable<ProdutoViewModel>> GetDropDownPaginacaoAsync(PaginacaoDropDown<Produto> paginacaoDropDown);
     Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto);
     Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id);
     Task DeleteProdutoAsync(Guid id);

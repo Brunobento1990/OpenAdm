@@ -2,6 +2,7 @@ using dotenv.net;
 using OpenAdm.Api;
 using OpenAdm.Api.Configure;
 using OpenAdm.Api.Middlewares;
+using OpenAdm.Application.DependencyInject;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Helpers;
@@ -25,6 +26,7 @@ var pgString = VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION");
 var redisString = VariaveisDeAmbiente.GetVariavel("REDIS_URL");
 var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
 var urlApiCep = VariaveisDeAmbiente.GetVariavel("URL_API_CEP");
+var urlApiViaCep = VariaveisDeAmbiente.GetVariavel("URL_API_VIA_CEP");
 var urlApiMercadoPago = VariaveisDeAmbiente.GetVariavel("URL_API_MERCADO_PAGO");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
 var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
@@ -38,7 +40,7 @@ ConfigAzure.Configure(azureKey, azureContainer);
 Criptografia.Configure(key, iv);
 EmailConfiguracaoModel.Configure(email: email, servidor: servidor, senha: senha, porta: porta);
 
-builder.Services.AddResponseCaching();
+builder.Services.AddServicesApplication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureController();
@@ -47,7 +49,7 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
-builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj);
+builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj, urlApiViaCep);
 
 QuestPDF.Settings.License = LicenseType.Community;
 
@@ -66,7 +68,6 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     });
     app.UseSwaggerUI();
 }
-app.UseResponseCaching();
 
 app.UseCors("base");
 

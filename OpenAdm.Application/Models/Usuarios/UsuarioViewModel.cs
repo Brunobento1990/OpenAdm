@@ -1,4 +1,5 @@
-﻿using OpenAdm.Domain.Entities;
+﻿using OpenAdm.Application.Models.EnderecosEntregasPedido;
+using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Models.Usuarios;
 
@@ -17,6 +18,7 @@ public class UsuarioViewModel : BaseModel
     public int? PedidosCancelados { get; set; }
     public decimal? TotalPedido { get; set; }
     public bool IsAtacado { get; set; }
+    public EnderecoUsuarioViewModel? EnderecoUsuario { get; set; }
 
     public UsuarioViewModel ToModel(Usuario entity, int? quantidadeDePedido = null)
     {
@@ -31,6 +33,7 @@ public class UsuarioViewModel : BaseModel
         Cnpj = entity.Cnpj;
         Cpf = entity.Cpf;
         IsAtacado = entity.IsAtacado;
+        EnderecoUsuario = entity.EnderecoUsuario == null ? null : (EnderecoUsuarioViewModel)entity.EnderecoUsuario;
 
         return this;
     }

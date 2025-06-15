@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Home;
 using OpenAdm.Application.Models.TopUsuarios;
+using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -35,29 +36,39 @@ public class HomeSevice : IHomeSevice
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
     {
-        var topUsuariosTotalCompra = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync();
-        var topUsuariosTotalPedido = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync();
+        //var topUsuariosTotalCompra = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync();
+        //var topUsuariosTotalPedido = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync();
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
-        var faturas = await _faturaContasAReceberService.FaturasDashBoardAsync();
-        var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
+        //var faturas = await _faturaContasAReceberService.FaturasDashBoardAsync();
+        //var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
         var pedidosEmAberto = await _pedidoRepository.GetCountPedidosEmAbertoAsync();
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
-        var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
-        var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
+        //var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
+        //var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
         var estoques = await _estoqueService.GetPosicaoDeEstoqueAsync();
+        var variacaoPedido = await _pedidoRepository.ObterHomeAsync();
 
         return new HomeAdmViewModel()
         {
-            TopUsuariosTotalCompra = topUsuariosTotalCompra.Select(x => (TopUsuariosViewModel)x).ToList(),
-            TopUsuariosTotalPedido = topUsuariosTotalPedido.Select(x => (TopUsuariosViewModel)x).ToList(),
+            //TopUsuariosTotalCompra = topUsuariosTotalCompra.Select(x => (TopUsuariosViewModel)x).ToList(),
+            //TopUsuariosTotalPedido = topUsuariosTotalPedido.Select(x => (TopUsuariosViewModel)x).ToList(),
             Movimentos = movimentos,
-            Faturas = faturas,
-            TotalAReceber = totalAReceber,
+            //Faturas = faturas,
+            //TotalAReceber = totalAReceber,
             PedidosEmAberto = pedidosEmAberto,
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
-            QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,
-            QuantidadeDeUsuarioCpf = quantidadeDeUsuarioCpf,
-            PosicaoDeEstoques = estoques
+            //QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,
+            //QuantidadeDeUsuarioCpf = quantidadeDeUsuarioCpf,
+            PosicaoDeEstoques = estoques,
+            VariacaoMensalPedido = new()
+            {
+                Mes = variacaoPedido.Mes.ConverterMesIntEmNome(),
+                Porcentagem = variacaoPedido.Porcentagem,
+                TotalAnoAtual = variacaoPedido.TotalAnoAtual,
+                TotalAnoAnterior = variacaoPedido.TotalAnoAnterior,
+                AnoAtual = variacaoPedido.AnoAtual,
+                AnoAnterior = variacaoPedido.AnoAnterior
+            }
         };
     }
 }

@@ -8,7 +8,7 @@ namespace OpenAdm.Api.Controllers.Carrinhos;
 [ApiController]
 [Route("carrinho")]
 [Autentica]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class DeleteProdutoCarrinhoController : ControllerBase
 {
     private readonly IDeleteProdutoCarrinhoService _deleteProdutoCarrinhoService;

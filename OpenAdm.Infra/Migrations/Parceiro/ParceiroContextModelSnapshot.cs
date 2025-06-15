@@ -291,9 +291,6 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<byte[]>("Logo")
-                        .HasColumnType("bytea");
-
                     b.Property<long>("Numero")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
@@ -372,6 +369,58 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                         .IsUnique();
 
                     b.ToTable("EnderecosEntregaPedido");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.EnderecoUsuario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bairro")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Cep")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Complemento")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Localidade")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Logradouro")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Uf")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId")
+                        .IsUnique();
+
+                    b.ToTable("EnderecoUsuario");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.Estoque", b =>
@@ -1242,6 +1291,17 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.Navigation("Pedido");
                 });
 
+            modelBuilder.Entity("OpenAdm.Domain.Entities.EnderecoUsuario", b =>
+                {
+                    b.HasOne("OpenAdm.Domain.Entities.Usuario", "Usuario")
+                        .WithOne("EnderecoUsuario")
+                        .HasForeignKey("OpenAdm.Domain.Entities.EnderecoUsuario", "UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("OpenAdm.Domain.Entities.Fatura", b =>
                 {
                     b.HasOne("OpenAdm.Domain.Entities.Pedido", "Pedido")
@@ -1437,6 +1497,11 @@ namespace OpenAdm.Infra.Migrations.Parceiro
             modelBuilder.Entity("OpenAdm.Domain.Entities.Tamanho", b =>
                 {
                     b.Navigation("ItensPedido");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Usuario", b =>
+                {
+                    b.Navigation("EnderecoUsuario");
                 });
 #pragma warning restore 612, 618
         }

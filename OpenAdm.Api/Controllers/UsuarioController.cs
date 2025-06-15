@@ -8,7 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("usuarios")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class UsuarioController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
@@ -31,6 +31,15 @@ public class UsuarioController : ControllerBase
     public async Task<IActionResult> CretaeUsuario(CreateUsuarioDto createUsuarioDto)
     {
         var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto);
+        return Ok(responseCreateUsuario);
+    }
+
+    [HttpPost("create-admin")]
+    [IsFuncionario]
+    [Autentica]
+    public async Task<IActionResult> CreateUsuarioNoAdmin(CreateUsuarioDto createUsuarioDto)
+    {
+        var responseCreateUsuario = await _usuarioService.CreateUsuarioNoAdminAsync(createUsuarioDto);
         return Ok(responseCreateUsuario);
     }
 

@@ -17,5 +17,5 @@ public class UpdateLojaParceiraDto
     public string? Endereco { get; set; }
     [MaxLength(20)]
     public string? Contato { get; set; }
-    public string? Foto { get; set; }
+    public string? NovaFoto { get; set; }
 }

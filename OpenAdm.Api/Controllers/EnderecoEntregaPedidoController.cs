@@ -9,7 +9,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("endereco-entrega-pedido")]
-[AutenticaParceiro]
+[AcessoParceiro]
 [Autentica]
 public class EnderecoEntregaPedidoController : ControllerBase
 {

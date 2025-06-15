@@ -2,8 +2,9 @@
 
 namespace OpenAdm.Application.Models.Logins;
 
-public class ResponseLoginFuncionarioViewModel(string token, FuncionarioViewModel userData)
+public class ResponseLoginFuncionarioViewModel(string token, string refreshToken, FuncionarioViewModel userData)
 {
     public string Token { get; set; } = token;
-    public FuncionarioViewModel UserData { get; set; } = userData;
+    public string RefreshToken { get; set; } = refreshToken;
+    public FuncionarioViewModel Usuario { get; set; } = userData;
 }

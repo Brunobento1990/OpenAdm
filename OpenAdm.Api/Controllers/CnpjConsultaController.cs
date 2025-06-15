@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Application.Interfaces;
@@ -7,6 +8,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("cnpj")]
+[AcessoParceiro]
 public class CnpjConsultaController : ControllerBase
 {
     private readonly ICnpjConsultaService _cnpjConsultaService;

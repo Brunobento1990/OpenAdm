@@ -8,7 +8,7 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 [ApiController]
 [Route("pedidos-adm")]
 [Autentica]
-[AutenticaParceiro]
+[AcessoParceiro]
 [IsFuncionario]
 public class CreatePedidoAdmController : ControllerBase
 {

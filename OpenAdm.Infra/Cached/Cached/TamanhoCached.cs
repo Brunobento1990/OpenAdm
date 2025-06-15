@@ -100,4 +100,7 @@ public class TamanhoCached : ITamanhoRepository
 
     public Task<int> SaveChangesAsync()
         => _tamanhoRepository.SaveChangesAsync();
+
+    public Task<Tamanho> AdicionarAsync(Tamanho entity)
+        => _tamanhoRepository.AdicionarAsync(entity);
 }

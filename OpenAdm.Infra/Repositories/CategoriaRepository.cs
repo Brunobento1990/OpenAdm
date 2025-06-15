@@ -50,4 +50,12 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
 
         return categorias;
     }
+
+    public async Task<IList<Categoria>> GetCategoriasDropDownAsync()
+    {
+        return await ParceiroContext
+            .Categorias
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }

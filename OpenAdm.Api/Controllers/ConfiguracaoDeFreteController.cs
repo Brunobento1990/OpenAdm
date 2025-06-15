@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("configuracao-de-frete")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class ConfiguracaoDeFreteController : ControllerBase
 {
     private readonly IConfiguracaoDeFreteService _configuracaoDeFreteService;

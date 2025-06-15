@@ -29,23 +29,7 @@ public class TabelaDePrecoServiceTest
         var tabelaDePrecoDto = new CreateTabelaDePrecoDto()
         {
             Descricao = "Teste service",
-            ItensTabelaDePreco = new List<CreateItensTabelaDePrecoDto>()
-            {
-                new()
-                {
-                    PesoId = pesoId,
-                    ProdutoId = Guid.NewGuid(),
-                    ValorUnitarioAtacado = 5,
-                    ValorUnitarioVarejo = 2
-                },
-                new()
-                {
-                    ProdutoId = Guid.NewGuid(),
-                    TamanhoId = tamanhoId,
-                    ValorUnitarioAtacado = 15,
-                    ValorUnitarioVarejo = 2
-                }
-            }
+            
         };
 
         var tamanhosIds = tamanhos.Select(x => x.Id).ToList();
@@ -71,7 +55,6 @@ public class TabelaDePrecoServiceTest
 
         Assert.NotNull(tabelaDePrecoViewModel);
         Assert.Equal(tabelaDePrecoDto.Descricao, tabelaDePrecoViewModel.Descricao);
-        Assert.Equal(tabelaDePrecoDto.ItensTabelaDePreco.Count, tabelaDePrecoViewModel.ItensTabelaDePreco.Count);
     }
 
     [Fact]

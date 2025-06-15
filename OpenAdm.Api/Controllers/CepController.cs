@@ -9,14 +9,15 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("cep")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class CepController : ControllerBase
 {
     private readonly IFreteService _freteService;
-
-    public CepController(IFreteService freteService)
+    private readonly IConsultaCepService _consultaCepService;
+    public CepController(IFreteService freteService, IConsultaCepService consultaCepService)
     {
         _freteService = freteService;
+        _consultaCepService = consultaCepService;
     }
 
     [HttpPost("cotar-frete")]
@@ -26,6 +27,16 @@ public class CepController : ControllerBase
     public async Task<IActionResult> CotarFrete(CotarFreteDto cotarFreteDto)
     {
         var result = await _freteService.CotarFreteAsync(cotarFreteDto);
+        return Ok(result);
+    }
+
+    [HttpGet("consultar")]
+    [ProducesResponseType<EnderecoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    [Autentica]
+    public async Task<IActionResult> Consultar([FromQuery] string cep)
+    {
+        var result = await _consultaCepService.ConsultarAsync(cep);
         return Ok(result);
     }
 }

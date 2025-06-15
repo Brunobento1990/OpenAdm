@@ -5,12 +5,15 @@ using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class PesosProdutosRepository(ParceiroContext parceiroContext) 
+public class PesosProdutosRepository(ParceiroContext parceiroContext)
     : GenericRepository<PesoProduto>(parceiroContext), IPesosProdutosRepository
 {
     public async Task<IList<PesoProduto>> AddRangeAsync(IList<PesoProduto> pesosProdutos)
     {
-        await ParceiroContext.AddRangeAsync(pesosProdutos);
+        if (pesosProdutos.Count > 0)
+        {
+            await ParceiroContext.AddRangeAsync(pesosProdutos);
+        }
         return pesosProdutos;
     }
 
@@ -23,7 +26,10 @@ public class PesosProdutosRepository(ParceiroContext parceiroContext)
                 .Where(x => x.ProdutoId == produtoId)
                 .ToListAsync();
 
-            ParceiroContext.RemoveRange(pesosProdutos);
+            if (pesosProdutos.Count > 0)
+            {
+                ParceiroContext.RemoveRange(pesosProdutos);
+            }
 
             return true;
         }

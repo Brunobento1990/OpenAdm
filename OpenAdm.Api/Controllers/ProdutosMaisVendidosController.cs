@@ -6,7 +6,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("produtos-mais-vendidos")]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class ProdutosMaisVendidosController : ControllerBase
 {
     private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;
@@ -16,7 +16,6 @@ public class ProdutosMaisVendidosController : ControllerBase
         _produtosMaisVendidosService = produtosMaisVendidosService;
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     public async Task<IActionResult> List()
     {

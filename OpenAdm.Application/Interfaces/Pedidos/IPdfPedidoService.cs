@@ -8,8 +8,7 @@ public interface IPdfPedidoService
 {
     byte[] GeneratePdfPedido(
         Pedido pedido,
-        string empresa,
-        string? logo);
+        Parceiro parceiro);
     byte[] GeneratePdfPedidoRelatorio(GerarRelatorioPedidoDto relatorioPedidoDto, string nomeFantasia, IList<Pedido> pedido);
     byte[] ProducaoPedido(IList<ItemPedidoProducaoViewModel> itemPedidoProducaoViewModels, string nomeFantasia, string? logo, IList<string> pedidos);
 }

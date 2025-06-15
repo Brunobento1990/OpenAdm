@@ -18,8 +18,9 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 
     public async Task<BannerViewModel> CreateBannerAsync(BannerCreateDto bannerCreateDto)
     {
+        bannerCreateDto.Validar();
         var nomeFoto = $"{Guid.NewGuid()}.jpeg";
-        var foto = await _uploadImageBlobClient.UploadImageAsync(bannerCreateDto.Foto, nomeFoto);
+        var foto = await _uploadImageBlobClient.UploadImageAsync(bannerCreateDto.NovaFoto, nomeFoto);
 
         var banner = bannerCreateDto.ToEntity(nomeFoto, foto);
 
@@ -51,7 +52,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
         var foto = banner.Foto;
         var nomeFoto = banner.NomeFoto;
 
-        if (!bannerEditDto.Foto.StartsWith("https://") && !string.IsNullOrWhiteSpace(bannerEditDto.Foto))
+        if (!string.IsNullOrWhiteSpace(bannerEditDto.NovaFoto))
         {
             if (!string.IsNullOrWhiteSpace(banner.NomeFoto))
             {
@@ -61,7 +62,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
             }
 
             nomeFoto = $"{Guid.NewGuid()}.jpeg";
-            foto = await _uploadImageBlobClient.UploadImageAsync(bannerEditDto.Foto, nomeFoto);
+            foto = await _uploadImageBlobClient.UploadImageAsync(bannerEditDto.NovaFoto, nomeFoto);
         }
 
         banner.Update(foto, nomeFoto, bannerEditDto.Ativo);

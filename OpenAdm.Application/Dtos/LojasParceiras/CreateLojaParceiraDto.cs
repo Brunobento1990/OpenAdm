@@ -17,7 +17,7 @@ public class CreateLojaParceiraDto
     public string? Endereco { get; set; }
     [MaxLength(20)]
     public string? Contato { get; set; }
-    public string? Foto { get; set; }
+    public string? NovaFoto { get; set; }
 
     public LojaParceira ToEntity(string? nomeFoto)
     {
@@ -30,7 +30,7 @@ public class CreateLojaParceiraDto
             0,
             Nome,
             nomeFoto,
-            Foto,
+            NovaFoto,
             Instagram,
             Facebook,
             Endereco,

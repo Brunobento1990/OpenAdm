@@ -12,6 +12,7 @@ public static class DependencyInjectyApplication
 {
     public static void InjectServices(this IServiceCollection services)
     {
+        services.AddScoped<IParceiroServico, ParceiroServico>();
         services.AddScoped<IAtualizarSenhaUsuarioAdmService, AtualizarSenhaUsuarioAdmService>();
         services.AddScoped<IGerarPixPedidoService, GerarPixPedidoService>();
         services.AddScoped<IAcessoEcommerceService, AcessoEcommerceService>();

@@ -26,11 +26,6 @@ public class ParceiroBuilder
 
     public static ParceiroBuilder Init() => new();
 
-    public Parceiro DeveCriarParceiro(string razaoSocial, string nomeFantasia, string cnpj)
-    {
-        return new(_id, _created, _update, _numero, razaoSocial, nomeFantasia, cnpj);
-    }
-
     public ParceiroBuilder NaoDeveCriarSemCnpj(string cnpj)
     {
         _cnpj = cnpj;
@@ -47,10 +42,5 @@ public class ParceiroBuilder
     {
         _razaoSocial = razaoSocial;
         return this;
-    }
-
-    public Parceiro Build()
-    {
-        return new(_id, _created, _update, _numero, _razaoSocial, _nomeFantasia, _cnpj);
     }
 }

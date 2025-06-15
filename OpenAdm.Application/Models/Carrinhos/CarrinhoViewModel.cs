@@ -1,8 +1,9 @@
 ﻿using OpenAdm.Application.Models.Categorias;
+using OpenAdm.Application.Models.Fretes;
 
 namespace OpenAdm.Application.Models.Carrinhos;
 
-public class CarrinhoViewModel
+public class ItemCarrinhoViewModel
 {
     public Guid Id { get; set; }
     public long Numero { get; set; }
@@ -14,4 +15,10 @@ public class CarrinhoViewModel
     public Guid CategoriaId { get; set; }
     public CategoriaViewModel? Categoria { get; set; } = null!;
     public string? Referencia { get; set; }
+}
+
+public class CarrinhoViewModel
+{
+    public IList<ItemCarrinhoViewModel> Itens { get; set; } = [];
+    public EnderecoViewModel? EnderecoUsuario { get; set; }
 }

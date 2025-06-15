@@ -102,4 +102,24 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<int> SaveChangesAsync()
         => _usuarioRepository.SaveChangesAsync();
+
+    public Task<Usuario> AdicionarAsync(Usuario entity)
+        => _usuarioRepository.AdicionarAsync(entity);
+
+    public async Task AddEnderecoAsync(EnderecoUsuario endereco)
+    {
+        var key = $"usuario-{endereco.UsuarioId}";
+        await _cachedService.RemoveCachedAsync(key);
+        await _usuarioRepository.AddEnderecoAsync(endereco);
+    }
+
+    public void EditarEndereco(EnderecoUsuario endereco)
+    {
+        var key = $"usuario-{endereco.UsuarioId}";
+        _cachedService.RemoveCachedAsync(key).Wait();
+        _usuarioRepository.EditarEndereco(endereco);
+    }
+
+    public Task<EnderecoUsuario?> ObterEnderecoAsync(Guid usuarioId)
+        => _usuarioRepository.ObterEnderecoAsync(usuarioId);
 }

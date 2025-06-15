@@ -78,6 +78,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Include(x => x.ItensPedido)
                 .ThenInclude(x => x.Peso)
             .Include(x => x.Usuario)
+            .Include(x => x.EnderecoEntrega)
             .FirstOrDefaultAsync(x => x.Id == id);
 
         if (pedido != null)
@@ -214,5 +215,48 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Fatura!.Parcelas)
                 .ThenInclude(x => x.Transacoes)
             .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<VariacaoMensalHome> ObterHomeAsync()
+    {
+        var hoje = DateTime.Today;
+        var mes = hoje.Month;
+        var anoAtual = hoje.Year;
+        var anoAnterior = anoAtual - 1;
+
+        // Obter totais de cada ano
+        var totais = await ParceiroContext
+            .ItensPedidos
+            .AsNoTracking()
+            .Where(i =>
+                i.Pedido.DataDeCriacao.Month == mes &&
+                (i.Pedido.DataDeCriacao.Year == anoAtual || i.Pedido.DataDeCriacao.Year == anoAnterior)
+            )
+            .GroupBy(i => i.Pedido.DataDeCriacao.Year)
+            .Select(g => new
+            {
+                Ano = g.Key,
+                Total = g.Sum(i => i.Quantidade)
+            })
+            .ToListAsync();
+
+        // Extrair os valores
+        var totalAnoAtual = totais.FirstOrDefault(x => x.Ano == anoAtual)?.Total ?? 0;
+        var totalAnoAnterior = totais.FirstOrDefault(x => x.Ano == anoAnterior)?.Total ?? 0;
+
+        // Calcular variação em porcentagem
+        var variacao = totalAnoAnterior == 0
+            ? (totalAnoAtual > 0 ? 100 : 0)
+            : ((totalAnoAtual - totalAnoAnterior) / totalAnoAnterior) * 100;
+
+        return new VariacaoMensalHome()
+        {
+            Mes = mes,
+            TotalAnoAnterior = totalAnoAnterior,
+            TotalAnoAtual = totalAnoAtual,
+            Porcentagem = Math.Round(variacao, 2),
+            AnoAnterior = anoAnterior,
+            AnoAtual = anoAtual
+        };
     }
 }

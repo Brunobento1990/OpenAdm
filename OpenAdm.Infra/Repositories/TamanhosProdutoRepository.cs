@@ -13,7 +13,10 @@ public class TamanhosProdutoRepository : GenericRepository<TamanhoProduto>, ITam
 
     public async Task<IList<TamanhoProduto>> AddRangeAsync(IList<TamanhoProduto> tamanhosProdutos)
     {
-        await ParceiroContext.AddRangeAsync(tamanhosProdutos);
+        if (tamanhosProdutos.Count > 0)
+        {
+            await ParceiroContext.AddRangeAsync(tamanhosProdutos);
+        }
         return tamanhosProdutos;
     }
 
@@ -26,7 +29,10 @@ public class TamanhosProdutoRepository : GenericRepository<TamanhoProduto>, ITam
                 .Where(x => x.ProdutoId == produtoId)
                 .ToListAsync();
 
-            ParceiroContext.RemoveRange(tamanhosProdutos);
+            if (tamanhosProdutos.Count > 0)
+            {
+                ParceiroContext.RemoveRange(tamanhosProdutos);
+            }
             return true;
         }
         catch (Exception ex)

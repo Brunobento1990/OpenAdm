@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 [Route("movimentacao-de-produto")]
 [Autentica]
 [IsFuncionario]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class MovimentacaoDeProdutoController : ControllerBase
 {
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;

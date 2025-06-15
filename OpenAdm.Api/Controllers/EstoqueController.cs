@@ -10,7 +10,7 @@ namespace OpenAdm.Api.Controllers;
 [Route("estoques")]
 [Autentica]
 [IsFuncionario]
-[AutenticaParceiro]
+[AcessoParceiro]
 public class EstoqueController : ControllerBase
 {
     private readonly IEstoqueService _estoqueservice;
@@ -27,7 +27,10 @@ public class EstoqueController : ControllerBase
 
         if (!result) return BadRequest(new { message = "Ocorreu um erro, tente novamente" });
 
-        return Ok();
+        return Ok(new
+        {
+            resultado = true
+        });
     }
 
     [HttpGet("get-estoque")]
@@ -44,7 +47,10 @@ public class EstoqueController : ControllerBase
 
         if (!result) return BadRequest(new { message = "Ocorreu um erro, tente novamente" });
 
-        return Ok();
+        return Ok(new
+        {
+            result
+        });
     }
 
     [HttpPost("paginacao")]

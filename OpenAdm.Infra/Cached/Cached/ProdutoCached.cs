@@ -183,4 +183,12 @@ public class ProdutoCached : IProdutoRepository
 
     public Task<Produto?> GetProdutoByIdParaEditarAsync(Guid id)
      => _produtoRepository.GetProdutoByIdParaEditarAsync(id);
+
+    public Task<Produto> AdicionarAsync(Produto entity)
+        => _produtoRepository.AdicionarAsync(entity);
+
+    public void Update(Produto produto)
+    {
+        throw new NotImplementedException();
+    }
 }

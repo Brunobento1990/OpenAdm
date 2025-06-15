@@ -37,25 +37,6 @@ public class TabelaDePrecoService : ITabelaDePrecoService
 
         var tabelaDePrecoViewModel = new TabelaDePrecoViewModel().ToModel(tabelaDePreco);
 
-        var tamanhosIds = createTabelaDePrecoDto
-            .ItensTabelaDePreco
-            .Where(x => x.TamanhoId != null)
-            .Select(x => x.TamanhoId!.Value)
-            .ToList();
-
-        var pesosIds = createTabelaDePrecoDto
-            .ItensTabelaDePreco
-            .Where(x => x.PesoId != null)
-            .Select(x => x.PesoId!.Value)
-            .ToList();
-
-        var tamanhos = await _tamanhoRepository.GetTamanhosByIdsAsync(tamanhosIds);
-        var pesos = await _pesoRepository.GetPesosByIdsAsync(pesosIds);
-
-        tabelaDePrecoViewModel.ItensTabelaDePreco = tabelaDePreco
-                .ItensTabelaDePreco.Select(x => new ItensTabelaDePrecoViewModel().ToModel(x, pesos, tamanhos))
-                .ToList();
-
         return tabelaDePrecoViewModel;
     }
 
@@ -128,7 +109,7 @@ public class TabelaDePrecoService : ITabelaDePrecoService
         return new TabelaDePrecoViewModel().ToModel(tabelaDePreco);
     }
 
-    public async Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid produtoId)
+    public async Task<TabelaDePrecoViewModel> GetTabelaViewModelByProdutoIdAsync(Guid? produtoId = null)
     {
         var tabelaDePreco = await _tabelaDePrecoRepository.GetTabelaDePrecoAtivaByProdutoIdAsync(produtoId);
 

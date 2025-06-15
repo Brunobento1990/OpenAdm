@@ -26,10 +26,6 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
     {
         var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
 
-        var logo = updateConfiguracoesDePedidoDto.Logo == null ?
-            null :
-            Encoding.UTF8.GetBytes(updateConfiguracoesDePedidoDto.Logo);
-
         if (configuracaoDePedido == null)
         {
             var date = DateTime.Now;
@@ -39,7 +35,6 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 dataDeAtualizacao: date,
                 numero: 0,
                 emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
-                logo: logo,
                 ativo: true,
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
@@ -51,7 +46,6 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
             configuracaoDePedido.Update(
                 emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
                 ativo: true,
-                logo: logo,
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
 

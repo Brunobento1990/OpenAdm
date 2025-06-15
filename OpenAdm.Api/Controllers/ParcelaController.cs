@@ -13,7 +13,7 @@ namespace OpenAdm.Api.Controllers;
 [ApiController]
 [Route("parcela")]
 [IsFuncionario]
-[AutenticaParceiro]
+[AcessoParceiro]
 [Autentica]
 public class ParcelaController : ControllerBase
 {

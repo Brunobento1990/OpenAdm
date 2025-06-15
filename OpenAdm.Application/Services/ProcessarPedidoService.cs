@@ -13,31 +13,32 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IEmailApiService _emailService;
-
+    private readonly IParceiroAutenticado _parceiroAutenticado;
 
     public ProcessarPedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IPedidoRepository pedidoRepository,
         IPdfPedidoService pdfPedidoService,
-        IEmailApiService emailService)
+        IEmailApiService emailService,
+        IParceiroAutenticado parceiroAutenticado)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _pedidoRepository = pedidoRepository;
         _pdfPedidoService = pdfPedidoService;
         _emailService = emailService;
+        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId)
     {
         var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync()
             ?? throw new Exception("Configurações de pedido inválida!");
-
+        var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId);
 
         if (pedido != null)
         {
-            var logo = configuracoesDePedido.Logo != null ? Encoding.UTF8.GetString(configuracoesDePedido.Logo) : null;
-            var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, "teste", logo);
+            var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
 
             var message = $"Que ótima noticia, mais um pedido!\nN. do pedido : {pedido.Numero}";
             var assunto = "Novo pedido";

@@ -1,4 +1,6 @@
-﻿namespace OpenAdm.Domain.Entities.Bases;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace OpenAdm.Domain.Entities.Bases;
 
 public abstract class BaseEndereco
 {
@@ -27,4 +29,7 @@ public abstract class BaseEndereco
     public string Complemento { get; protected set; }
     public string Numero { get; protected set; }
     public string Uf { get; protected set; }
+
+    [NotMapped]
+    public string EnderecoCompleto => $"Rua: {Logradouro} n° {Numero} - {Cep}";
 }

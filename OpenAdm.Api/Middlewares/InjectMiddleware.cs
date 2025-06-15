@@ -8,6 +8,7 @@ public static class InjectMiddleware
     public static void AddMiddlewaresApi(this WebApplication app)
     {
         app.UseMiddleware<LogMiddleware>();
+        app.UseMiddleware<AutenticaParceiroMiddleware>();
         app.UseMiddleware<AuthorizeMiddleware>();
         app.UseMiddleware<AutenticaMercadoPagoMiddleware>();
         app.UseMiddleware<TryAutenticaMiddleware>();
