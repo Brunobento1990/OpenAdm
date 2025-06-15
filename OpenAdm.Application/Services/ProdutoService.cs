@@ -201,7 +201,10 @@ public class ProdutoService : IProdutoService
             await _itemTabelaDePrecoRepository.AddRangeAsync(itens);
         }
 
-        produto.Categoria.Produtos = [];
+        if (produto.Categoria != null)
+        {
+            produto.Categoria.Produtos = [];
+        }
         produto.Pesos.ForEach(x => x.Produtos = []);
         produto.Tamanhos.ForEach(x => x.Produtos = []);
 

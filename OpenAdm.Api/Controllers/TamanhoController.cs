@@ -18,7 +18,6 @@ public class TamanhoController : ControllerBase
         _tamanhoService = tamanhoService;
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     public async Task<IActionResult> List()
     {
@@ -37,7 +36,6 @@ public class TamanhoController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("get-tamanho")]
     public async Task<IActionResult> GetById([FromQuery] Guid id)
     {

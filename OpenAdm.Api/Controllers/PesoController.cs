@@ -21,7 +21,6 @@ public class PesoController : ControllerBase
         _pesoService = pesoService;
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     [ProducesResponseType<IList<PesoViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]

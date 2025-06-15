@@ -72,7 +72,6 @@ public class LojasParceirasController : ControllerBase
     }
 
     [HttpGet("list")]
-    [ResponseCache(CacheProfileName = "Default300")]
     [ProducesResponseType<IList<string>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> List()
@@ -82,7 +81,6 @@ public class LojasParceirasController : ControllerBase
     }
 
     [HttpGet("todas")]
-    [ResponseCache(CacheProfileName = "Default300")]
     [ProducesResponseType<IList<LojasParceirasViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Todas()

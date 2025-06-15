@@ -11,4 +11,7 @@ public interface IUsuarioRepository : IGenericRepository<Usuario>
     Task<IList<Usuario>> GetAllUsuariosAsync();
     Task<int> GetCountCpfAsync();
     Task<int> GetCountCnpjAsync();
+    Task AddEnderecoAsync(EnderecoUsuario endereco);
+    void EditarEndereco(EnderecoUsuario endereco);
+    Task<EnderecoUsuario?> ObterEnderecoAsync(Guid usuarioId);
 }

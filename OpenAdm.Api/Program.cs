@@ -40,8 +40,7 @@ ConfigAzure.Configure(azureKey, azureContainer);
 Criptografia.Configure(key, iv);
 EmailConfiguracaoModel.Configure(email: email, servidor: servidor, senha: senha, porta: porta);
 
-builder.Services.AddResponseCaching()
-    .AddServicesApplication();
+builder.Services.AddServicesApplication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureController();
@@ -69,7 +68,6 @@ if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
     });
     app.UseSwaggerUI();
 }
-app.UseResponseCaching();
 
 app.UseCors("base");
 

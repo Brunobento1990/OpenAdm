@@ -108,4 +108,21 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
             })
             .FirstOrDefaultAsync();
     }
+
+    public async Task AddEnderecoAsync(EnderecoUsuario endereco)
+    {
+        await ParceiroContext.EnderecoUsuario.AddAsync(endereco);
+    }
+
+    public void EditarEndereco(EnderecoUsuario endereco)
+    {
+        ParceiroContext.EnderecoUsuario.Update(endereco);
+    }
+
+    public async Task<EnderecoUsuario?> ObterEnderecoAsync(Guid usuarioId)
+    {
+        return await ParceiroContext
+            .EnderecoUsuario
+            .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId);
+    }
 }

@@ -36,16 +36,6 @@ public static class StringExtensions
         return Convert.ToUInt64(value).ToString(@"00\.000\.000\/0000\-00");
     }
 
-    public static byte[]? ParaBytes(this string? value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return null;
-        }
-
-        return Encoding.UTF8.GetBytes(value);
-    }
-
     public static string FromBytes(this byte[] value)
     {
         return Encoding.UTF8.GetString(value);

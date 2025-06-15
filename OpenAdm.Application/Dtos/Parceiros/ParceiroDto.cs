@@ -12,7 +12,7 @@ public class ParceiroDto
     public string Cnpj { get; set; } = string.Empty;
     public IList<RedeSocialDto> RedesSociais { get; set; } = [];
     public IList<TelefoneDto> Telefones { get; set; } = [];
-    public EnderecoParceiroDto? EnderecoParceiro { get; set; }
+    public EnderecoDto? EnderecoParceiro { get; set; }
 
     public void Validar()
     {
@@ -40,7 +40,7 @@ public class ParceiroDto
     }
 }
 
-public class EnderecoParceiroDto
+public class EnderecoDto
 {
     public string Cep { get; set; } = string.Empty;
     public string Logradouro { get; set; } = string.Empty;
@@ -49,6 +49,22 @@ public class EnderecoParceiroDto
     public string? Complemento { get; set; }
     public string Numero { get; set; } = string.Empty;
     public string Uf { get; set; } = string.Empty;
+
+    public void Validar()
+    {
+        Cep.ValidarNullOrEmpty("Informe o Cep")
+            .ValidarLength(8);
+        Logradouro.ValidarNullOrEmpty("Informe a rua")
+            .ValidarLength(255, "rua");
+        Bairro.ValidarNullOrEmpty("Informe o bairro")
+            .ValidarLength(255);
+        Localidade.ValidarNullOrEmpty("Informe a cidade")
+            .ValidarLength(255, "cidade");
+        Numero.ValidarNullOrEmpty("Informe o número")
+            .ValidarLength(10);
+        Uf.ValidarNullOrEmpty("Informe o estado")
+            .ValidarLength(2);
+    }
 }
 
 public class RedeSocialDto

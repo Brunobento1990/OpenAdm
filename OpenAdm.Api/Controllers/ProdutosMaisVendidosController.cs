@@ -16,7 +16,6 @@ public class ProdutosMaisVendidosController : ControllerBase
         _produtosMaisVendidosService = produtosMaisVendidosService;
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     public async Task<IActionResult> List()
     {

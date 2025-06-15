@@ -23,4 +23,22 @@ public sealed class EnderecoUsuario : BaseEndereco
     public Guid Id { get; private set; }
     public Guid UsuarioId { get; private set; }
     public Usuario Usuario { get; set; } = null!;
+
+    public void Editar(
+    string cep,
+    string logradouro,
+    string bairro,
+    string localidade,
+    string complemento,
+    string numero,
+    string uf)
+    {
+        Cep = cep;
+        Logradouro = logradouro;
+        Bairro = bairro;
+        Localidade = localidade;
+        Complemento = complemento;
+        Numero = numero;
+        Uf = uf;
+    }
 }

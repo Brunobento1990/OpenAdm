@@ -18,17 +18,10 @@ public class BannerController(IBannerService bannerService) : ControllerBase
     private readonly IBannerService _bannerService = bannerService;
 
     [HttpGet("list")]
-    [ResponseCache(CacheProfileName = "Default300")]
     public async Task<IActionResult> ListarBanners()
     {
         var bannersViewModel = await _bannerService.GetBannersAsync();
         return Ok(bannersViewModel);
-    }
-
-    [HttpGet("teste")]
-    public IActionResult Teste()
-    {
-        return Ok(Criptografia.Encrypt("User ID=postgres; Password=1234; Host=localhost; Port=4814; Database=dev; Pooling=true;"));
     }
 
     [Autentica]
@@ -53,7 +46,6 @@ public class BannerController(IBannerService bannerService) : ControllerBase
         return Ok(result);
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [Autentica]
     [IsFuncionario]
     [HttpGet("get-banner")]

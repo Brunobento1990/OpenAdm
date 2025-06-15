@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Pedidos;
@@ -13,21 +14,17 @@ namespace OpenAdm.Api.Controllers.Pedidos;
 public class CreatePedidoController : ControllerBase
 {
     private readonly ICreatePedidoService _createPedidoService;
-    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
     public CreatePedidoController(
-        ICreatePedidoService createPedidoService,
-        IUsuarioAutenticado usuarioAutenticado)
+        ICreatePedidoService createPedidoService)
     {
         _createPedidoService = createPedidoService;
-        _usuarioAutenticado = usuarioAutenticado;
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> CreatePedido(IList<ItemPedidoModel> itensPedidoModels)
+    public async Task<IActionResult> CreatePedido(PedidoCreateDto pedidoCreateDto)
     {
-        var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
-        var result = await _createPedidoService.CreatePedidoAsync(itensPedidoModels, usuario);
+        var result = await _createPedidoService.CreatePedidoAsync(pedidoCreateDto);
 
         return Ok(new { message = "Pedido criado com sucesso!", pedido = result });
     }

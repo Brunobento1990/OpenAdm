@@ -1,11 +1,11 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Dtos.Pedidos;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Application.Services.Pedidos;
 
@@ -18,7 +18,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IFaturaService _contasAReceberService;
     private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
-
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
@@ -26,7 +26,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
         ICarrinhoRepository carrinhoRepository,
         IFaturaService contasAReceberService,
         IConfiguracaoDePagamentoService configuracaoDePagamentoService,
-        IConfiguracoesDePedidoService configuracoesDePedidoService)
+        IConfiguracoesDePedidoService configuracoesDePedidoService,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
@@ -35,14 +36,13 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _contasAReceberService = contasAReceberService;
         _configuracaoDePagamentoService = configuracaoDePagamentoService;
         _configuracoesDePedidoService = configuracoesDePedidoService;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
-    public async Task<PedidoViewModel> CreatePedidoAsync(IList<ItemPedidoModel> itensPedidoModels, Usuario usuario)
+    public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
     {
-        if (itensPedidoModels.Count == 0)
-        {
-            throw new ExceptionApi("Informe os itens do pedido!");
-        }
+        pedidoCreateDto.Validar();
+        var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
 
         if (string.IsNullOrWhiteSpace(usuario.Telefone))
         {
@@ -50,7 +50,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         }
 
         var pedidoMinimo = await _configuracoesDePedidoService.GetPedidoMinimoAsync();
-        var total = itensPedidoModels.Sum(x => x.Quantidade * x.ValorUnitario);
+        var total = pedidoCreateDto.Itens.Sum(x => x.Quantidade * x.ValorUnitario);
 
         if (pedidoMinimo.PedidoMinimo > total)
         {
@@ -60,10 +60,10 @@ public sealed class CreatePedidoService : ICreatePedidoService
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id, null);
 
-        var produtosIds = itensPedidoModels.Select(x => x.ProdutoId).ToList();
+        var produtosIds = pedidoCreateDto.Itens.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
 
-        foreach (var item in itensPedidoModels)
+        foreach (var item in pedidoCreateDto.Itens)
         {
             var itemTabela = itensTabelaDePreco
                 .FirstOrDefault(itemTabelaDePreco =>
@@ -72,13 +72,22 @@ public sealed class CreatePedidoService : ICreatePedidoService
                     itemTabelaDePreco.TamanhoId == item.TamanhoId)
                 ?? throw new Exception($"Não foi possível localizar o preço do produto: {item.ProdutoId}");
 
-            if (usuario.IsAtacado && item.ValorUnitario != itemTabela.ValorUnitarioAtacado)
-            {
-                throw new Exception($"Os valores unitários do pedido estão incorretos: usuarioId: {usuario.Id}");
-            }
+            item.ValorUnitario = usuario.IsAtacado ? itemTabela.ValorUnitarioAtacado : itemTabela.ValorUnitarioVarejo;
         }
 
-        pedido.ProcessarItensPedido(itensPedidoModels);
+        pedido.ProcessarItensPedido(pedidoCreateDto.Itens);
+        pedido.EnderecoEntrega = new EnderecoEntregaPedido(
+            cep: pedidoCreateDto.EnderecoEntrega.Cep,
+            logradouro: pedidoCreateDto.EnderecoEntrega.Logradouro,
+            bairro: pedidoCreateDto.EnderecoEntrega.Bairro,
+            localidade: pedidoCreateDto.EnderecoEntrega.Localidade,
+            complemento: pedidoCreateDto.EnderecoEntrega.Complemento ?? "",
+            numero: pedidoCreateDto.EnderecoEntrega.Numero,
+            uf: pedidoCreateDto.EnderecoEntrega.Uf,
+            pedidoId: pedido.Id,
+            valorFrete: 0,
+            tipoFrete: "",
+            id: Guid.NewGuid());
 
         await _pedidoRepository.AddAsync(pedido);
         await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());

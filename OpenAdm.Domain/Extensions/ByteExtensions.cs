@@ -13,4 +13,14 @@ public static class ByteExtensions
 
         return Encoding.UTF8.GetString(value);
     }
+
+    public static byte[]? ParaBytes(this string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return Encoding.UTF8.GetBytes(value);
+    }
 }

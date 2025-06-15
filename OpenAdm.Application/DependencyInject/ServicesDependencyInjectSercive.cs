@@ -9,6 +9,7 @@ public static class ServicesDependencyInjectSercive
     public static IServiceCollection AddServicesApplication(this IServiceCollection services)
     {
         services.AddScoped<IConsultaCepService, ConsultaCepService>();
+        services.AddScoped<IEnderecoUsuarioService, EnderecoUsuarioService>();
 
         return services;
     }

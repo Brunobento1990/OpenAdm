@@ -42,7 +42,6 @@ public class ProdutoController : ControllerBase
         return Ok(result);
     }
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list-by-categorias")]
     [TryAutentica]
     [ProducesResponseType<IList<ProdutoViewModel>>(200)]

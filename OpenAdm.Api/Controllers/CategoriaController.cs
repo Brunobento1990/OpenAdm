@@ -17,7 +17,6 @@ public class CategoriaController(ICategoriaService categoriaService)
 {
     private readonly ICategoriaService _categoriaService = categoriaService;
 
-    [ResponseCache(CacheProfileName = "Default300")]
     [HttpGet("list")]
     [ProducesResponseType<IList<CategoriaViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
