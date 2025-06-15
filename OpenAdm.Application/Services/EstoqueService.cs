@@ -52,7 +52,7 @@ public class EstoqueService : IEstoqueService
             peso = pesoDb?.Descricao;
         }
 
-        return new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso);
+        return new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso, produto?.UrlFoto);
     }
 
     public async Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(FilterModel<Estoque> paginacaoEstoqueDto)
@@ -92,7 +92,7 @@ public class EstoqueService : IEstoqueService
                         .ToModel(x,
                             produtos.FirstOrDefault(p => p.Key == x.ProdutoId).Value,
                             tamanhos.FirstOrDefault(t => t.Key == x.TamanhoId).Value,
-                            pesos.FirstOrDefault(p => p.Key == x.PesoId).Value))
+                            pesos.FirstOrDefault(p => p.Key == x.PesoId).Value, null))
                 .ToList()
         };
     }
@@ -121,7 +121,7 @@ public class EstoqueService : IEstoqueService
                 peso = pesoDb?.Descricao;
             }
 
-            estoquesViewModel.Add(new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso));
+            estoquesViewModel.Add(new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso, produto?.UrlFoto));
         }
 
         return estoquesViewModel;
