@@ -422,14 +422,20 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Endereço: ").Style(titleStyle2);
-                                            text.Span(pedido.EnderecoEntrega.EnderecoCompleto).Style(titleStyleName);
+                                            text.Span("Rua: ").Style(titleStyle2);
+                                            text.Span(pedido.EnderecoEntrega.Logradouro).Style(titleStyleName);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Número: ").Style(titleStyle2);
+                                            text.Span(pedido.EnderecoEntrega.Numero).Style(titleStyleName);
                                         });
 
                                         column.Item().Text(text =>
                                         {
                                             text.Span("Cidade: ").Style(titleStyle2);
-                                            text.Span($"{pedido.EnderecoEntrega.Localidade}").Style(titleStyleName);
+                                            text.Span($"{pedido.EnderecoEntrega.Localidade} - {pedido.EnderecoEntrega.Uf}").Style(titleStyleName);
                                         });
 
                                         column.Item().Text(text =>
@@ -440,24 +446,15 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("UF: ").Style(titleStyle2);
-                                            text.Span($"{pedido.EnderecoEntrega.Uf}").Style(titleStyleName);
+                                            text.Span("CEP: ").Style(titleStyle2);
+                                            text.Span($"{pedido.EnderecoEntrega.Cep}").Style(titleStyleName);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Telefone: ").Style(titleStyle2);
-                                            text.Span(pedido.Usuario.Telefone?.FormatPhone()).Style(titleStyleName);
+                                            text.Span("Complemento: ").Style(titleStyle2);
+                                            text.Span(pedido.EnderecoEntrega.Complemento ?? "").Style(titleStyleName);
                                         });
-
-                                        if (!string.IsNullOrWhiteSpace(pedido.EnderecoEntrega.Complemento))
-                                        {
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("Complemento: ").Style(titleStyle2);
-                                                text.Span(pedido.EnderecoEntrega.Complemento).Style(titleStyleName);
-                                            });
-                                        }
                                     });
                             });
                         });
