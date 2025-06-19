@@ -125,4 +125,13 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
             .EnderecoUsuario
             .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId);
     }
+
+    public async Task<IList<Usuario>> UsuariosSemPedidoAsync()
+    {
+        return await ParceiroContext
+            .Usuarios
+            .AsNoTracking()
+            .Where(x => x.Pedidos!.Count == 0)
+            .ToListAsync();
+    }
 }

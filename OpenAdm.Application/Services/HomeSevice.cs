@@ -36,29 +36,30 @@ public class HomeSevice : IHomeSevice
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
     {
-        //var topUsuariosTotalCompra = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync();
-        //var topUsuariosTotalPedido = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync();
+        var topUsuariosTotalCompra = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync();
+        var topUsuariosTotalPedido = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync();
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
         //var faturas = await _faturaContasAReceberService.FaturasDashBoardAsync();
-        //var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
-        var pedidosEmAberto = await _pedidoRepository.GetCountPedidosEmAbertoAsync();
+        var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
+        var pedidosEmAberto = await _pedidoRepository.GetCountStatusPedidosAsync();
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
-        //var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
-        //var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
+        var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
+        var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
         var estoques = await _estoqueService.GetPosicaoDeEstoqueAsync();
         var variacaoPedido = await _pedidoRepository.ObterHomeAsync();
+        var usuariosSemPedido = await _usuarioRepository.UsuariosSemPedidoAsync();
 
         return new HomeAdmViewModel()
         {
-            //TopUsuariosTotalCompra = topUsuariosTotalCompra.Select(x => (TopUsuariosViewModel)x).ToList(),
-            //TopUsuariosTotalPedido = topUsuariosTotalPedido.Select(x => (TopUsuariosViewModel)x).ToList(),
+            TopUsuariosTotalCompra = topUsuariosTotalCompra.Select(x => (TopUsuariosViewModel)x),
+            TopUsuariosTotalPedido = topUsuariosTotalPedido.Select(x => (TopUsuariosViewModel)x),
             Movimentos = movimentos,
             //Faturas = faturas,
-            //TotalAReceber = totalAReceber,
-            PedidosEmAberto = pedidosEmAberto,
+            TotalAReceber = totalAReceber,
+            StatusPedido = pedidosEmAberto,
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
-            //QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,
-            //QuantidadeDeUsuarioCpf = quantidadeDeUsuarioCpf,
+            QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,
+            QuantidadeDeUsuarioCpf = quantidadeDeUsuarioCpf,
             PosicaoDeEstoques = estoques,
             VariacaoMensalPedido = new()
             {
@@ -68,7 +69,16 @@ public class HomeSevice : IHomeSevice
                 TotalAnoAnterior = variacaoPedido.TotalAnoAnterior,
                 AnoAtual = variacaoPedido.AnoAtual,
                 AnoAnterior = variacaoPedido.AnoAnterior
-            }
+            },
+            UsuarioSemPedido = usuariosSemPedido.Select(x => new Models.Usuarios.UsuarioViewModel()
+            {
+                Cnpj = x.Cnpj,
+                Cpf = x.Cpf,
+                Id = x.Id,
+                Nome = x.Nome,
+                Telefone = x.Telefone,
+                Numero = x.Numero
+            })
         };
     }
 }

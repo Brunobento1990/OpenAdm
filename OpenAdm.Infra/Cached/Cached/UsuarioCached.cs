@@ -122,4 +122,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<EnderecoUsuario?> ObterEnderecoAsync(Guid usuarioId)
         => _usuarioRepository.ObterEnderecoAsync(usuarioId);
+
+    public Task<IList<Usuario>> UsuariosSemPedidoAsync()
+        => _usuarioRepository.UsuariosSemPedidoAsync();
 }

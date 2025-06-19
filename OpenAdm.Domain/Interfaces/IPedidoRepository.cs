@@ -16,6 +16,6 @@ public interface IPedidoRepository : IGenericRepository<Pedido>
     Task<IList<Pedido>> GetPedidosByRelatorioPorPeriodoAsync(RelatorioPedidoDto relatorioPedidoDto);
     Task<IList<Pedido>> GetPedidosEmAbertoAsync();
     Task<IDictionary<Guid, Pedido>> GetPedidosAsync(IList<Guid> ids);
-    Task<int> GetCountPedidosEmAbertoAsync();
+    Task<IList<StatusPedidoHomeModel>> GetCountStatusPedidosAsync();
     Task<VariacaoMensalHome> ObterHomeAsync();
 }
