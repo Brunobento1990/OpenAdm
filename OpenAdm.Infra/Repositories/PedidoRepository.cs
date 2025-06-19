@@ -37,20 +37,17 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             TotalDeRegistros = totalDeRegistros
         };
     }
-    public async Task<int> GetCountPedidosEmAbertoAsync()
+    public async Task<IList<StatusPedidoHomeModel>> GetCountStatusPedidosAsync()
     {
-        try
-        {
-            return await ParceiroContext
-                .Pedidos
-                .AsNoTracking()
-                .Where(x => x.StatusPedido == StatusPedido.Aberto)
-                .CountAsync();
-        }
-        catch (Exception)
-        {
-            return 0;
-        }
+        return await ParceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .GroupBy(x => x.StatusPedido)
+            .Select(x => new StatusPedidoHomeModel()
+            {
+                Quantidade = x.Count(),
+                Status = x.FirstOrDefault()!.StatusPedido
+            }).ToListAsync();
     }
 
     public async Task<Pedido?> GetPedidoByIdAsync(Guid id)

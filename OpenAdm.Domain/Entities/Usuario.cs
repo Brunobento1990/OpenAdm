@@ -36,7 +36,7 @@ public sealed class Usuario : BaseEntity
     public bool Ativo { get; private set; }
     public bool IsAtacado => !string.IsNullOrWhiteSpace(Cnpj);
     public EnderecoUsuario? EnderecoUsuario { get; set; }
-
+    public IList<Pedido>? Pedidos { get; set; }
     public void Inativar()
     {
         Ativo = false;
