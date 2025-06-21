@@ -43,8 +43,8 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<IPedidoRepository, PedidoRepository>();
 
-        //services.AddScoped<CategoriaRepository>();
-        services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+        services.AddScoped<CategoriaRepository>();
+        services.AddScoped<ICategoriaRepository, CategoriaCached>();
 
         //services.AddScoped<ProdutoRepository>();
         services.AddScoped<IProdutoRepository, ProdutoRepository>();
