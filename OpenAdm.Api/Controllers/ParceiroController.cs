@@ -20,6 +20,8 @@ public class ParceiroController : ControllerBase
     }
 
     [HttpPut("editar")]
+    [IsFuncionario]
+    [Autentica]
     [ProducesResponseType<ParceiroViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Editar(ParceiroDto parceiroDto)
@@ -38,6 +40,8 @@ public class ParceiroController : ControllerBase
     }
 
     [HttpDelete("telefone")]
+    [IsFuncionario]
+    [Autentica]
     [ProducesResponseType(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> ExcluirTelefone([FromQuery] Guid telefoneId)
@@ -50,6 +54,8 @@ public class ParceiroController : ControllerBase
     }
 
     [HttpDelete("rede-social")]
+    [IsFuncionario]
+    [Autentica]
     [ProducesResponseType(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> ExcluirRedeSocial([FromQuery] Guid redeSocialId)
