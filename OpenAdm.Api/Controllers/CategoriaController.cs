@@ -33,7 +33,7 @@ public class CategoriaController(ICategoriaService categoriaService)
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> GetCategoriasDropDown()
     {
-        var categoriasViewModel = await _categoriaService.GetCategoriasAsync();
+        var categoriasViewModel = await _categoriaService.GetCategoriasDropDownAsync();
         return Ok(categoriasViewModel);
     }
 

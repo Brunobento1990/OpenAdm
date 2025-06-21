@@ -33,6 +33,50 @@ public class UsuarioService : IUsuarioService
         _cnpjConsultaService = cnpjConsultaService;
     }
 
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioSemValidacaoCnpjAsync(CreateUsuarioDto createUsuarioDto)
+    {
+        createUsuarioDto.Validar();
+        var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
+
+        if (usuario != null)
+            throw new ExceptionApi("Este e-mail já se encontra cadastrado!");
+
+        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cpf))
+        {
+            usuario = await _usuarioRepository.GetUsuarioByCpfAsync(createUsuarioDto.Cpf);
+            if (usuario != null)
+                throw new ExceptionApi("Este CPF já se encontra cadastrado!");
+        }
+
+        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cnpj))
+        {
+            usuario = await _usuarioRepository.GetUsuarioByCnpjAsync(createUsuarioDto.Cnpj);
+            if (usuario != null)
+                throw new ExceptionApi("Este CNPJ já se encontra cadastrado!");
+        }
+
+        if (createUsuarioDto.TipoPessoa == TipoPessoa.Juridica)
+        {
+            if (string.IsNullOrWhiteSpace(createUsuarioDto.Cnpj))
+            {
+                throw new ExceptionApi("Informe o CNPJ");
+            }
+
+            _ = await _cnpjConsultaService.ConsultaCnpjAsync(createUsuarioDto.Cnpj)
+                ?? throw new ExceptionApi("Não foi possível validar seu CNPJ na consulta");
+        }
+
+        usuario = createUsuarioDto.ToEntity();
+
+        await _usuarioRepository.AddAsync(usuario);
+
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
+        var token = _tokenService.GenerateToken(usuarioViewModel);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
+
+        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
+    }
+
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
     {
         createUsuarioDto.Validar();

@@ -34,6 +34,13 @@ public class UsuarioController : ControllerBase
         return Ok(responseCreateUsuario);
     }
 
+    [HttpPost("create-sem-validar-cnae")]
+    public async Task<IActionResult> CretaeUsuarioSemValidarCnae(CreateUsuarioDto createUsuarioDto)
+    {
+        var responseCreateUsuario = await _usuarioService.CreateUsuarioSemValidacaoCnpjAsync(createUsuarioDto);
+        return Ok(responseCreateUsuario);
+    }
+
     [HttpPost("create-admin")]
     [IsFuncionario]
     [Autentica]
