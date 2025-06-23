@@ -14,7 +14,7 @@ public interface IUsuarioService
     Task<UsuarioViewModel> GetUsuarioByIdValidacaoAsync(Guid id);
     Task<IList<UsuarioViewModel>> GetAllUsuariosAsync();
     Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto);
-    Task<ResponseLoginUsuarioViewModel> CreateUsuarioSemValidacaoCnpjAsync(CreateUsuarioDto createUsuarioDto);
+    Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto);
     Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioDto createUsuarioDto);
     Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto);
     Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto);

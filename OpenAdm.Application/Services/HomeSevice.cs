@@ -70,7 +70,16 @@ public class HomeSevice : IHomeSevice
                 AnoAtual = variacaoPedido.AnoAtual,
                 AnoAnterior = variacaoPedido.AnoAnterior
             },
-            UsuarioSemPedido = usuariosSemPedido.Select(x => new Models.Usuarios.UsuarioViewModel()
+            UsuarioSemPedidoCpf = usuariosSemPedido.Where(x => !x.IsAtacado).Select(x => new Models.Usuarios.UsuarioViewModel()
+            {
+                Cnpj = x.Cnpj,
+                Cpf = x.Cpf,
+                Id = x.Id,
+                Nome = x.Nome,
+                Telefone = x.Telefone,
+                Numero = x.Numero
+            }),
+            UsuarioSemPedidoCnpj = usuariosSemPedido.Where(x => x.IsAtacado).Select(x => new Models.Usuarios.UsuarioViewModel()
             {
                 Cnpj = x.Cnpj,
                 Cpf = x.Cpf,
