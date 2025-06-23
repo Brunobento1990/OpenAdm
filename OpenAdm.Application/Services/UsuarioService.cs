@@ -33,40 +33,15 @@ public class UsuarioService : IUsuarioService
         _cnpjConsultaService = cnpjConsultaService;
     }
 
-    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioSemValidacaoCnpjAsync(CreateUsuarioDto createUsuarioDto)
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto)
     {
-        createUsuarioDto.Validar();
-        var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
+        createUsuarioPessoaFisicaDto.Validar();
+        var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioPessoaFisicaDto.Email);
 
         if (usuario != null)
             throw new ExceptionApi("Este e-mail já se encontra cadastrado!");
 
-        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cpf))
-        {
-            usuario = await _usuarioRepository.GetUsuarioByCpfAsync(createUsuarioDto.Cpf);
-            if (usuario != null)
-                throw new ExceptionApi("Este CPF já se encontra cadastrado!");
-        }
-
-        if (!string.IsNullOrWhiteSpace(createUsuarioDto.Cnpj))
-        {
-            usuario = await _usuarioRepository.GetUsuarioByCnpjAsync(createUsuarioDto.Cnpj);
-            if (usuario != null)
-                throw new ExceptionApi("Este CNPJ já se encontra cadastrado!");
-        }
-
-        if (createUsuarioDto.TipoPessoa == TipoPessoa.Juridica)
-        {
-            if (string.IsNullOrWhiteSpace(createUsuarioDto.Cnpj))
-            {
-                throw new ExceptionApi("Informe o CNPJ");
-            }
-
-            _ = await _cnpjConsultaService.ConsultaCnpjAsync(createUsuarioDto.Cnpj)
-                ?? throw new ExceptionApi("Não foi possível validar seu CNPJ na consulta");
-        }
-
-        usuario = createUsuarioDto.ToEntity();
+        usuario = createUsuarioPessoaFisicaDto.ToEntity();
 
         await _usuarioRepository.AddAsync(usuario);
 

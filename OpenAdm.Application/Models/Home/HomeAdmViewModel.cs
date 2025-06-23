@@ -12,7 +12,8 @@ public class HomeAdmViewModel
 {
     public VariacaoMensalPedidoModel VariacaoMensalPedido { get; set; } = null!;
     public IEnumerable<EstoqueViewModel> PosicaoDeEstoques { get; set; } = [];
-    public IEnumerable<UsuarioViewModel> UsuarioSemPedido { get; set; } = [];
+    public IEnumerable<UsuarioViewModel> UsuarioSemPedidoCpf { get; set; } = [];
+    public IEnumerable<UsuarioViewModel> UsuarioSemPedidoCnpj { get; set; } = [];
     public IEnumerable<TopUsuariosViewModel> TopUsuariosTotalCompra { get; set; } = [];
     public IEnumerable<TopUsuariosViewModel> TopUsuariosTotalPedido { get; set; } = [];
     public IEnumerable<MovimentoDeProdutoDashBoardModel> Movimentos { get; set; } = [];
