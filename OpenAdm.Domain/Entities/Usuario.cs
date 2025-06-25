@@ -15,7 +15,9 @@ public sealed class Usuario : BaseEntity
         string? telefone,
         string? cnpj,
         string? cpf,
-        bool ativo)
+        bool ativo,
+        Guid? tokenEsqueceuSenha,
+        DateTime? dataExpiracaoTokenEsqueceuSenha)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Email = email;
@@ -25,6 +27,8 @@ public sealed class Usuario : BaseEntity
         Cnpj = cnpj;
         Cpf = cpf;
         Ativo = ativo;
+        TokenEsqueceuSenha = tokenEsqueceuSenha;
+        DataExpiracaoTokenEsqueceuSenha = dataExpiracaoTokenEsqueceuSenha;
     }
 
     public string Email { get; private set; }
@@ -34,17 +38,22 @@ public sealed class Usuario : BaseEntity
     public string? Cnpj { get; private set; }
     public string? Cpf { get; private set; }
     public bool Ativo { get; private set; }
+    public Guid? TokenEsqueceuSenha { get; private set; }
+    public DateTime? DataExpiracaoTokenEsqueceuSenha { get; private set; }
     public bool IsAtacado => !string.IsNullOrWhiteSpace(Cnpj);
     public EnderecoUsuario? EnderecoUsuario { get; set; }
     public IList<Pedido>? Pedidos { get; set; }
-    public void Inativar()
+    public void EsqueceuSenha()
     {
-        Ativo = false;
+        TokenEsqueceuSenha = Guid.NewGuid();
+        DataExpiracaoTokenEsqueceuSenha = DateTime.Now;
     }
 
     public void UpdateSenha(string senha)
     {
         Senha = senha;
+        TokenEsqueceuSenha = null;
+        DataExpiracaoTokenEsqueceuSenha = null;
     }
 
     public void Update(string email, string nome, string? telefone, string? cnpj, string? cpf)

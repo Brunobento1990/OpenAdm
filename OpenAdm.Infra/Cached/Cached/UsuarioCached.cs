@@ -125,4 +125,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<IList<Usuario>> UsuariosSemPedidoAsync()
         => _usuarioRepository.UsuariosSemPedidoAsync();
+
+    public Task<Usuario?> GetUsuarioByTokenEsqueceuSenhaAsync(Guid tokenEsqueceuSenha)
+        => _usuarioRepository.GetUsuarioByTokenEsqueceuSenhaAsync(tokenEsqueceuSenha);
 }

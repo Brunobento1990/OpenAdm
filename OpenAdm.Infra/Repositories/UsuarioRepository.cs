@@ -102,7 +102,9 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
                 x.Telefone,
                 x.Cnpj,
                 x.Cpf,
-                x.Ativo)
+                x.Ativo,
+                x.TokenEsqueceuSenha,
+                x.DataExpiracaoTokenEsqueceuSenha)
             {
                 EnderecoUsuario = x.EnderecoUsuario
             })
@@ -133,5 +135,12 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .Where(x => x.Pedidos!.Count == 0)
             .ToListAsync();
+    }
+
+    public async Task<Usuario?> GetUsuarioByTokenEsqueceuSenhaAsync(Guid tokenEsqueceuSenha)
+    {
+        return await ParceiroContext
+            .Usuarios
+            .FirstOrDefaultAsync(x => x.TokenEsqueceuSenha == tokenEsqueceuSenha && x.Ativo);
     }
 }

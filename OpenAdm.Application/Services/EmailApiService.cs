@@ -2,6 +2,7 @@
 using System.Net.Mail;
 using System.Net;
 using OpenAdm.Application.Models.Emails;
+using System.Net.Mime;
 
 namespace OpenAdm.Application.Services;
 
@@ -23,6 +24,11 @@ public sealed class EmailApiService : IEmailApiService
             {
                 var anexo = new Attachment(new MemoryStream(envioEmailModel.Arquivo), envioEmailModel.NomeDoArquivo, envioEmailModel.TipoDoArquivo);
                 mail.Attachments.Add(anexo);
+            }
+
+            if (!string.IsNullOrWhiteSpace(envioEmailModel.Html))
+            {
+                mail.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(envioEmailModel.Html, null, MediaTypeNames.Text.Html));
             }
 
             var smtp = new SmtpClient(fromEnvioEmailModel.Servidor, fromEnvioEmailModel.Porta)
