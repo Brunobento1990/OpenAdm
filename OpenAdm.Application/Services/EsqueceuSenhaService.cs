@@ -1,10 +1,9 @@
 ﻿using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Application.Adapters;
-using OpenAdm.Domain.Helpers;
 using OpenAdm.Application.Models.Emails;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Application.Models;
 
 namespace OpenAdm.Application.Services;
 
@@ -12,54 +11,52 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
 {
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IEmailApiService _emailService;
-    private readonly IConfiguracaoDeEmailRepository _configuracaoDeEmailRepository;
-
+    private readonly IParceiroAutenticado _parceiroAutenticado;
     public EsqueceuSenhaService(
         IUsuarioRepository usuarioRepository,
         IEmailApiService emailService,
-        IConfiguracaoDeEmailRepository configuracaoDeEmailRepository)
+        IParceiroAutenticado parceiroAutenticado)
     {
         _usuarioRepository = usuarioRepository;
         _emailService = emailService;
-        _configuracaoDeEmailRepository = configuracaoDeEmailRepository;
+        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task<bool> RecuperarSenhaAsync(EsqueceuSenhaDto esqueceuSenhaDto)
     {
-        var configuracao = await _configuracaoDeEmailRepository.GetConfiguracaoDeEmailAtivaAsync()
-            ?? throw new Exception("Configuração de e-mail não encontrada!");
-
+        var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(esqueceuSenhaDto.Email)
             ?? throw new ExceptionApi("Não foi possível localizar seu cadastro!");
 
-        var senha = GenerateSenha.Generate();
+        usuario.EsqueceuSenha();
 
-
-        var message = $"Recuperação de senha efetuada com sucesso!\nSua nova senha é {senha} .\nImportante!\nNo Próximo acesso ao nosso site, efetue a troca da senha.\nCaso não tenha feito o pedido de recuperação de senha, por favor, entre em contato com o suporte!";
-        var assunto = "Recuperação de senha";
+        var htmlEnvio = await File.ReadAllTextAsync(Path.Combine("Htmls", "EsqueceuSenha.html"));
+        htmlEnvio = htmlEnvio.Replace("***empresa***", parceiro.NomeFantasia);
+        htmlEnvio = htmlEnvio.Replace("***ecommerce***", parceiro.NomeFantasia);
+        htmlEnvio = htmlEnvio.Replace("***usuario***", usuario.Nome);
+        htmlEnvio = htmlEnvio.Replace("***link***", $"{parceiro.EmpresaOpenAdm.UrlEcommerce}/recuperar-senha/{usuario.TokenEsqueceuSenha}");
 
         var fromEnvioEmail = new FromEnvioEmailApiModel()
         {
-            Email = configuracao.Email,
+            Email = EmailConfiguracaoModel.Email,
             EnableSsl = true,
-            Porta = configuracao.Porta,
-            Senha = Criptografia.Decrypt(configuracao.Senha),
-            Servidor = configuracao.Servidor
+            Porta = EmailConfiguracaoModel.Porta,
+            Senha = EmailConfiguracaoModel.Senha,
+            Servidor = EmailConfiguracaoModel.Servidor
         };
 
         var emailModel = new ToEnvioEmailApiModel()
         {
-            Assunto = assunto,
+            Assunto = "Recuperar senha",
             Email = esqueceuSenhaDto.Email,
-            Mensagem = message
+            Mensagem = "",
+            Html = htmlEnvio
         };
 
         var result = await _emailService.SendEmailAsync(emailModel, fromEnvioEmail);
 
         if (result)
         {
-            var newSenha = PasswordAdapter.GenerateHash(senha);
-            usuario.UpdateSenha(newSenha);
             await _usuarioRepository.UpdateAsync(usuario);
         }
         else

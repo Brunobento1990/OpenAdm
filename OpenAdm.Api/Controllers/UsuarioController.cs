@@ -93,6 +93,13 @@ public class UsuarioController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("recuperar-senha")]
+    public async Task<IActionResult> RecuperarSenha(RecuperarSenhaDto recuperarSenhaDto)
+    {
+        var result = await _usuarioService.RecuperarSenhaAsync(recuperarSenhaDto);
+        return Ok(result);
+    }
+
     [Autentica]
     [HttpPut("update-senha")]
     public async Task<IActionResult> UpdateSenha(UpdateSenhaUsuarioDto updateSenhaUsuarioDto)

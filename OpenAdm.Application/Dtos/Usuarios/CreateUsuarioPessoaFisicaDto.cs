@@ -42,7 +42,7 @@ public class CreateUsuarioPessoaFisicaDto : BaseModel
             throw new ExceptionApi("CPF inválido!");
         }
 
-        Cpf = Cpf?.Replace(".", "")?.Replace("-", "");
+        Cpf = Cpf.Replace(".", "").Replace("-", "");
     }
 
     public Usuario ToEntity()
@@ -61,6 +61,8 @@ public class CreateUsuarioPessoaFisicaDto : BaseModel
             Telefone,
             cnpj: null,
             cpf: Cpf,
-            true);
+            true,
+            null,
+            null);
     }
 }

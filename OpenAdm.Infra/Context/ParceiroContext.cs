@@ -33,7 +33,6 @@ public class ParceiroContext : DbContext
     public DbSet<TabelaDePreco> TabelaDePreco { get; set; }
     public DbSet<ItemTabelaDePreco> ItensTabelaDePreco { get; set; }
     public DbSet<ProdutoMaisVendido> ProdutosMaisVendidos { get; set; }
-    public DbSet<ConfiguracaoDeEmail> ConfiguracoesDeEmail { get; set; }
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
@@ -76,7 +75,6 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new TabelaDePrecoConfiguration());
         modelBuilder.ApplyConfiguration(new ItensTabelaDePrecoConfiguration());
         modelBuilder.ApplyConfiguration(new ProdutosMaisVendidosConfiguration());
-        modelBuilder.ApplyConfiguration(new ConfiguracaoDeEmailConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracoesDePedidoConfiguration());
         modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());

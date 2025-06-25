@@ -74,7 +74,9 @@ public class CreateUsuarioDto : BaseModel
             Telefone,
             TipoPessoa == TipoPessoa.Juridica ? Cnpj : null,
             TipoPessoa == TipoPessoa.Fisica ? Cpf : null,
-            true);
+            true,
+            null,
+            null);
     }
 }
 

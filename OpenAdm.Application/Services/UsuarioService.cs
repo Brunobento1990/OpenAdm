@@ -260,4 +260,31 @@ public class UsuarioService : IUsuarioService
 
         return new ResponseLoginUsuarioViewModel(usuarioViewModel, "", "");
     }
+
+    public async Task<ResponseLoginUsuarioViewModel> RecuperarSenhaAsync(RecuperarSenhaDto recuperarSenhaDto)
+    {
+        recuperarSenhaDto.Validar();
+        var usuario = await _usuarioRepository.GetUsuarioByTokenEsqueceuSenhaAsync(recuperarSenhaDto.TokenEsqueceuSenha)
+            ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
+
+        if (!usuario.DataExpiracaoTokenEsqueceuSenha.HasValue)
+        {
+            throw new ExceptionApi("Data de expiração de token inválida, recupere a senha novamente");
+        }
+
+        if ((usuario.DataExpiracaoTokenEsqueceuSenha.Value - DateTime.Now).TotalMinutes > 120)
+        {
+            throw new ExceptionApi("Data de expiração de token expirada, recupere a senha novamente");
+        }
+
+        usuario.UpdateSenha(recuperarSenhaDto.HashSenha());
+
+        await _usuarioRepository.UpdateAsync(usuario);
+
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
+        var token = _tokenService.GenerateToken(usuarioViewModel);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
+
+        return new(usuarioViewModel, token, refreshToken);
+    }
 }
