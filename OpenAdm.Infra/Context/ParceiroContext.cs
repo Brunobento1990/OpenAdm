@@ -70,12 +70,14 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
         modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoUsuarioConfiguration());
+
+        modelBuilder.Entity<LojaParceira>().Ignore(x => x.ParceiroId);
+
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_parceiroAutenticado.ConnectionString);
-        //optionsBuilder.UseNpgsql("User ID=brunodev; Password=eA}9V$R23.4[; Host=postgres-database.ckv06mke0mu3.us-east-1.rds.amazonaws.com; Port=5432; Database=iscaslune; Pooling=true;");
         base.OnConfiguring(optionsBuilder);
     }
 }

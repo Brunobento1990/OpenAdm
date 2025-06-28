@@ -2,9 +2,9 @@
 
 namespace OpenAdm.Domain.Interfaces;
 
-public interface ILojasParceirasRepository : IGenericRepository<LojaParceira>
+public interface ILojasParceirasRepository : IGenericBaseRepository<LojaParceira>
 {
     Task<LojaParceira?> GetLojaParceiraByIdAsync(Guid id);
-    Task<IList<LojaParceira>> GetLojasParceirasAsync();
-    Task<IList<string?>> GetFotosLojasParceirasAsync();
+    Task<IList<LojaParceira>> GetLojasParceirasAsync(Guid parceiroId);
+    Task<IList<string?>> GetFotosLojasParceirasAsync(Guid parceiroId);
 }

@@ -1,24 +1,12 @@
 ﻿using OpenAdm.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public class LojasParceirasConfiguration : IEntityTypeConfiguration<LojaParceira>
+internal class LojasParceirasConfiguration : BaseEntityEmpresaConfiguration<LojaParceira>
 {
-    public void Configure(EntityTypeBuilder<LojaParceira> builder)
+    public override void Configure(EntityTypeBuilder<LojaParceira> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.DataDeCriacao)
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .HasDefaultValueSql("now()");
-        builder.Property(x => x.DataDeAtualizacao)
-            .IsRequired()
-            .ValueGeneratedOnAddOrUpdate()
-            .HasDefaultValueSql("now()");
-        builder.Property(x => x.Numero)
-            .ValueGeneratedOnAdd();
         builder.Property(x => x.NomeFoto)
             .HasMaxLength(500);
         builder.Property(x => x.Foto)
@@ -34,5 +22,7 @@ public class LojasParceirasConfiguration : IEntityTypeConfiguration<LojaParceira
         builder.Property(x => x.Nome)
             .IsRequired()
             .HasMaxLength(255);
+
+        base.Configure(builder);
     }
 }

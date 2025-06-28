@@ -5,36 +5,37 @@ using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class LojasParceirasRepository : GenericRepository<LojaParceira>, ILojasParceirasRepository
+public class LojasParceirasRepository : GenericBaseRepository<LojaParceira>, ILojasParceirasRepository
 {
-    public LojasParceirasRepository(ParceiroContext parceiroContext) : base(parceiroContext)
+    public LojasParceirasRepository(AppDbContext parceiroContext) : base(parceiroContext)
     {
     }
 
-    public async Task<IList<string?>> GetFotosLojasParceirasAsync()
+    public async Task<IList<string?>> GetFotosLojasParceirasAsync(Guid parceiroId)
     {
-        return await ParceiroContext
+        return await AppDbContext
             .LojasParceiras
             .Where(x => x.Foto != null)
-            .OrderBy(x => Guid.NewGuid())
+            .OrderByDescending(x => x.DataDeCriacao)
             .Take(5)
+            .Where(x => x.ParceiroId == parceiroId)
             .Select(x => x.Foto)
             .ToListAsync();
     }
 
     public async Task<LojaParceira?> GetLojaParceiraByIdAsync(Guid id)
     {
-        return await ParceiroContext
+        return await AppDbContext
             .LojasParceiras
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<IList<LojaParceira>> GetLojasParceirasAsync()
+    public async Task<IList<LojaParceira>> GetLojasParceirasAsync(Guid parceiroId)
     {
-        return await ParceiroContext
+        return await AppDbContext
             .LojasParceiras
             .AsNoTracking()
+            .Where(x => x.ParceiroId == parceiroId)
             .ToListAsync();
     }
 }
