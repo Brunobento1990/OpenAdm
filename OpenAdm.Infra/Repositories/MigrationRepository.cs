@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Context;
 using OpenAdm.Infra.Model;
 
@@ -31,7 +32,7 @@ public class MigrationRepository : IMigrationService
             var options = new DbContextOptionsBuilder<ParceiroContext>().Options;
             using var appDbContext = new ParceiroContext(options, new ParceiroAutenticadoV2()
             {
-                ConnectionString = stringConexao
+                ConnectionString = Criptografia.Decrypt(stringConexao)
             });
 
             await appDbContext.Database.MigrateAsync();
