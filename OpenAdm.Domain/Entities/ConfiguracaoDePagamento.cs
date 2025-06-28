@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class ConfiguracaoDePagamento : BaseEntity
+public sealed class ConfiguracaoDePagamento : BaseEntityParceiro
 {
     public ConfiguracaoDePagamento(
         Guid id,
@@ -13,8 +13,9 @@ public sealed class ConfiguracaoDePagamento : BaseEntity
         string accessToken,
         bool cobrarCpf,
         bool cobrarCnpj,
-        string? urlWebHook)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        string? urlWebHook,
+        Guid parceiroId)
+            : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         PublicKey = publicKey;
         AccessToken = accessToken;

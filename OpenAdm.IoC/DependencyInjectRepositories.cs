@@ -27,9 +27,7 @@ public static class DependencyInjectRepositories
         services.AddScoped<EmpresaOpenAdmRepository>();
         services.AddScoped<IEmpresaOpenAdmRepository, EmpresaOpenAdmCached>();
 
-        services.AddScoped<ConfiguracaoDePagamentoRepository>();
-        services.AddScoped<IConfiguracaoDePagamentoRepository, ConfiguracaoDePagamentoCached>();
-
+        services.AddScoped<IConfiguracaoDePagamentoRepository, ConfiguracaoDePagamentoRepository>();
         services.AddScoped<ILoginUsuarioRepository, LoginUsuarioRepository>();
         services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
         services.AddScoped<ITransacaoFinanceiraRepository, TransacaoFinanceiraRepository>();

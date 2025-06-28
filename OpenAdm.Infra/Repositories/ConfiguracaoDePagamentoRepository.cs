@@ -7,32 +7,29 @@ namespace OpenAdm.Infra.Repositories;
 
 public sealed class ConfiguracaoDePagamentoRepository : IConfiguracaoDePagamentoRepository
 {
-    private readonly ParceiroContext _parceiroContext;
+    private readonly AppDbContext _appDbContext;
 
-    public ConfiguracaoDePagamentoRepository(ParceiroContext parceiroContext)
+    public ConfiguracaoDePagamentoRepository(AppDbContext appDbContext)
     {
-        _parceiroContext = parceiroContext;
+        _appDbContext = appDbContext;
     }
 
     public async Task AddAsync(ConfiguracaoDePagamento configuracaoDePagamento)
     {
-        await _parceiroContext.AddAsync(configuracaoDePagamento);
-        await _parceiroContext.SaveChangesAsync();
+        await _appDbContext.AddAsync(configuracaoDePagamento);
+        await _appDbContext.SaveChangesAsync();
     }
 
-    public async Task<ConfiguracaoDePagamento?> GetAsync()
+    public async Task<ConfiguracaoDePagamento?> GetAsync(Guid parceiroId)
     {
-        return await _parceiroContext
+        return await _appDbContext
             .ConfiguracoesDePagamento
-            .AsNoTracking()
-            .OrderBy(x => x.Id)
-            .FirstOrDefaultAsync();
+            .FirstOrDefaultAsync(x => x.ParceiroId == parceiroId);
     }
 
     public async Task UpdateAsync(ConfiguracaoDePagamento configuracaoDePagamento)
     {
-        _parceiroContext.Attach(configuracaoDePagamento);
-        _parceiroContext.Update(configuracaoDePagamento);
-        await _parceiroContext.SaveChangesAsync();
+        _appDbContext.Update(configuracaoDePagamento);
+        await _appDbContext.SaveChangesAsync();
     }
 }

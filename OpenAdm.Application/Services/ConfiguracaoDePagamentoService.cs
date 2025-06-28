@@ -21,7 +21,7 @@ public class ConfiguracaoDePagamentoService : IConfiguracaoDePagamentoService
     public async Task<EfetuarCobrancaViewModel> CobrarAsync()
     {
         var configuracao = await _configuracaoDePagamentoRepository
-            .GetAsync();
+            .GetAsync(_usuarioAutenticado.ParceiroId);
 
         if (configuracao == null)
         {
@@ -49,7 +49,7 @@ public class ConfiguracaoDePagamentoService : IConfiguracaoDePagamentoService
     public async Task<ConfiguracaoDePagamentoViewModel> CreateOrUpdateAsync(ConfiguracaoDePagamentoCreateOrUpdate configuracaoDePagamentoCreateOrUpdate)
     {
         var configuracao = await _configuracaoDePagamentoRepository
-            .GetAsync();
+            .GetAsync(_usuarioAutenticado.ParceiroId);
 
         if (configuracao == null)
         {
@@ -62,7 +62,8 @@ public class ConfiguracaoDePagamentoService : IConfiguracaoDePagamentoService
                 accessToken: Criptografia.Encrypt(configuracaoDePagamentoCreateOrUpdate.AccessToken),
                 cobrarCpf: configuracaoDePagamentoCreateOrUpdate.CobrarCpf,
                 cobrarCnpj: configuracaoDePagamentoCreateOrUpdate.CobrarCnpj,
-                urlWebHook: configuracaoDePagamentoCreateOrUpdate.UrlWebHook);
+                urlWebHook: configuracaoDePagamentoCreateOrUpdate.UrlWebHook,
+                parceiroId: _usuarioAutenticado.ParceiroId);
 
             await _configuracaoDePagamentoRepository.AddAsync(configuracao);
             return (ConfiguracaoDePagamentoViewModel)configuracao;
@@ -83,7 +84,7 @@ public class ConfiguracaoDePagamentoService : IConfiguracaoDePagamentoService
     public async Task<ConfiguracaoDePagamentoViewModel?> GetAsync()
     {
         var configuracao = await _configuracaoDePagamentoRepository
-            .GetAsync();
+            .GetAsync(_usuarioAutenticado.ParceiroId);
 
         if (configuracao == null)
         {

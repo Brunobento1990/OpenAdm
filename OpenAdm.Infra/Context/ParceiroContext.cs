@@ -17,7 +17,6 @@ public class ParceiroContext : DbContext
     }
 
     public DbSet<EnderecoEntregaPedido> EnderecosEntregaPedido { get; set; }
-    public DbSet<ConfiguracaoDePagamento> ConfiguracoesDePagamento { get; set; }
     public DbSet<Banner> Banners { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
     public DbSet<Peso> Pesos { get; set; }
@@ -54,7 +53,6 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new AcessoEcommerceConfiguration());
         modelBuilder.ApplyConfiguration(new TransacaoFinanceiraConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
-        modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
         modelBuilder.ApplyConfiguration(new FaturaConfiguration());
