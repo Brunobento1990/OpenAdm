@@ -5,18 +5,18 @@ using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class ConfiguracoesDePedidoRepository :GenericRepository<ConfiguracoesDePedido> , IConfiguracoesDePedidoRepository
+public class ConfiguracoesDePedidoRepository : GenericBaseRepository<ConfiguracoesDePedido> ,IConfiguracoesDePedidoRepository
 {
-    public ConfiguracoesDePedidoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
+    public ConfiguracoesDePedidoRepository(AppDbContext appDbContext) : base(appDbContext)
     {
     }
 
-    public async Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync()
+    public async Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync(Guid parceiroId)
     {
-        return await ParceiroContext
+        return await AppDbContext
             .ConfiguracoesDePedidos
             .AsNoTracking()
             .OrderByDescending(x => x.Numero)
-            .FirstOrDefaultAsync(x => x.Ativo);
+            .FirstOrDefaultAsync(x => x.Ativo && x.ParceiroId == parceiroId);
     }
 }

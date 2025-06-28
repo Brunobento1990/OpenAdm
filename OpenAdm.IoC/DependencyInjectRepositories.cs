@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.HttpClient.Interfaces;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Azure.Storage;
 using OpenAdm.Infra.Cached.Cached;
 using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Cached.Services;
 using OpenAdm.Infra.Repositories;
-
 
 namespace OpenAdm.IoC;
 
@@ -20,6 +20,7 @@ public static class DependencyInjectRepositories
             options.InstanceName = instanceName;
         });
 
+        services.AddScoped(typeof(IGenericBaseRepository<>), typeof(GenericBaseRepository<>));
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
         services.AddScoped<IAcessoEcommerceRepository, AcessoEcommerceRepository>();
 
@@ -54,9 +55,7 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<IItensPedidoRepository, ItensPedidoRepository>();
         services.AddScoped<ITabelaDePrecoRepository, TabelaDePrecoRepository>();
-
-        services.AddScoped<ConfiguracoesDePedidoRepository>();
-        services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoCached>();
+        services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoRepository>();
         services.AddScoped<PesoRepository>();
         services.AddScoped<IPesoRepository, PesoCached>();
         services.AddScoped<TamanhoRepository>();
@@ -75,5 +74,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<IParcelaRepository, ParcelaRepository>();
         services.AddScoped<IEnderecoEntregaPedidoRepository, EnderecoEntregaPedidoRepository>();
         services.AddScoped<IParceiroRepository, ParceiroRepository>();
+        services.AddScoped<IMigrationService, MigrationRepository>();
     }
 }

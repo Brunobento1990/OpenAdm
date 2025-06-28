@@ -2,10 +2,10 @@
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class Funcionario : BaseEntity
+public sealed class Funcionario : BaseEntityParceiro
 {
-    public Funcionario(Guid id, DateTime dataDeCriacao, DateTime dataDeAtualizacao, long numero, string email, string senha, string nome, string? telefone, byte[]? avatar, bool ativo)
-        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+    public Funcionario(Guid id, DateTime dataDeCriacao, DateTime dataDeAtualizacao, long numero, string email, string senha, string nome, string? telefone, byte[]? avatar, bool ativo, Guid parceiroId)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         Email = email;
         Senha = senha;

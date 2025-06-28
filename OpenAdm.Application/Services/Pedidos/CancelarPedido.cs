@@ -11,17 +11,17 @@ namespace OpenAdm.Application.Services.Pedidos;
 public class CancelarPedido : ICancelarPedido
 {
     private readonly IPedidoRepository _pedidoRepository;
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IEmailApiService _emailService;
+    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
 
     public CancelarPedido(
         IPedidoRepository pedidoRepository,
         IEmailApiService emailService,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
+        IConfiguracoesDePedidoService configuracoesDePedidoService)
     {
         _pedidoRepository = pedidoRepository;
         _emailService = emailService;
-        _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+        _configuracoesDePedidoService = configuracoesDePedidoService;
     }
 
     public async Task<bool> CancelarAsync(CancelarPedidoDto cancelarPedidoDto)
@@ -31,7 +31,7 @@ public class CancelarPedido : ICancelarPedido
         pedido.Cancelar(cancelarPedidoDto.Motivo);
         await _pedidoRepository.UpdateAsync(pedido);
 
-        var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
+        var configuracoesDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
 
         if (configuracoesDePedido != null)
         {

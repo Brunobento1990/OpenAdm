@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class ConfiguracoesDePedido : BaseEntity
+public sealed class ConfiguracoesDePedido : BaseEntityParceiro
 {
     public ConfiguracoesDePedido(
         Guid id,
@@ -12,8 +12,9 @@ public sealed class ConfiguracoesDePedido : BaseEntity
         string emailDeEnvio,
         bool ativo,
         decimal? pedidoMinimoAtacado,
-        decimal? pedidoMinimoVarejo)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        decimal? pedidoMinimoVarejo,
+        Guid parceiroId)
+            : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         EmailDeEnvio = emailDeEnvio;
         Ativo = ativo;

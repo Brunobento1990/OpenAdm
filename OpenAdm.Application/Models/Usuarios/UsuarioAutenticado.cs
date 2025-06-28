@@ -13,6 +13,7 @@ public sealed class UsuarioAutenticado : IUsuarioAutenticado
     }
 
     public Guid Id { get; set; }
+    public Guid ParceiroId { get; set; }
     public bool IsFuncionario { get; set; }
 
     public async Task<Usuario> GetUsuarioAutenticadoAsync()

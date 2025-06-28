@@ -4,22 +4,10 @@ using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public class FuncionarioConfiguration : IEntityTypeConfiguration<Funcionario>
+internal class FuncionarioConfiguration : BaseEntityEmpresaConfiguration<Funcionario>
 {
-    public void Configure(EntityTypeBuilder<Funcionario> builder)
+    public override void Configure(EntityTypeBuilder<Funcionario> builder)
     {
-        builder.HasQueryFilter(x => x.Ativo);
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.DataDeCriacao)
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .HasDefaultValueSql("now()");
-        builder.Property(x => x.DataDeAtualizacao)
-            .IsRequired()
-            .ValueGeneratedOnAddOrUpdate()
-            .HasDefaultValueSql("now()");
-        builder.Property(x => x.Numero)
-            .ValueGeneratedOnAdd();
         builder.Property(x => x.Email)
             .IsRequired()
             .HasMaxLength(255);
@@ -31,7 +19,9 @@ public class FuncionarioConfiguration : IEntityTypeConfiguration<Funcionario>
             .HasMaxLength(255);
         builder.Property(x => x.Telefone)
             .HasMaxLength(11);
-        builder.HasIndex(x => x.Email)
+        builder.HasIndex(x => new { x.Email, x.ParceiroId })
             .IsUnique();
+
+        base.Configure(builder);
     }
 }

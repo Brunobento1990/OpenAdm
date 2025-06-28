@@ -3,6 +3,7 @@ using OpenAdm.Api;
 using OpenAdm.Api.Configure;
 using OpenAdm.Api.Middlewares;
 using OpenAdm.Application.DependencyInject;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Helpers;
@@ -34,6 +35,7 @@ var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
 var urlConsultaCnpj = VariaveisDeAmbiente.GetVariavel("ULR_CONSULTA_CNPJ");
 var instanceName = VariaveisDeAmbiente.GetVariavel("REDIS_INSTANCENAME");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
+var rodarMigration = VariaveisDeAmbiente.GetVariavel("RODAR_MIGRATION");
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
 ConfigAzure.Configure(azureKey, azureContainer);
@@ -76,5 +78,15 @@ app.AddMiddlewaresApi();
 app.UseAuthorization();
 
 app.MapControllers();
+
+if (rodarMigration?.ToLower() == "true")
+{
+    using var scope = app.Services.CreateScope();
+    var migrationServico = scope.ServiceProvider.GetService<IMigrationService>();
+    if (migrationServico != null)
+    {
+        await migrationServico.UpdateMigrationAsync();
+    }
+}
 
 app.Run();
