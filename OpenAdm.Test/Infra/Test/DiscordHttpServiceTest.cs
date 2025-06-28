@@ -10,7 +10,7 @@ public class DiscordHttpServiceTest
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public async Task NaoDeveNotificarDiscordSemWebHookId(string webHookId)
+    public async Task NaoDeveNotificarDiscordSemWebHookId(string? webHookId)
     {
         var httpClientFactory = new Mock<IHttpClientFactory>();
         var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
@@ -31,14 +31,14 @@ public class DiscordHttpServiceTest
         };
 
         await Assert.ThrowsAnyAsync<Exception>(
-            async () => await discordHttpService.NotifyExceptionAsync(discordModel, webHookId, ""));
+            async () => await discordHttpService.NotifyExceptionAsync(discordModel, webHookId!, ""));
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public async Task NaoDeveNotificarDiscordSemWebHookToken(string webHookToken)
+    public async Task NaoDeveNotificarDiscordSemWebHookToken(string? webHookToken)
     {
         var httpClientFactory = new Mock<IHttpClientFactory>();
         var discordHttpService = new DiscordHttpService(httpClientFactory.Object);
@@ -59,6 +59,6 @@ public class DiscordHttpServiceTest
         };
 
         await Assert.ThrowsAnyAsync<Exception>(
-            async () => await discordHttpService.NotifyExceptionAsync(discordModel, "123", webHookToken));
+            async () => await discordHttpService.NotifyExceptionAsync(discordModel, "123", webHookToken!));
     }
 }

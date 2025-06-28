@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenAdm.Infra.Context;
@@ -11,9 +12,11 @@ using OpenAdm.Infra.Context;
 namespace OpenAdm.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250627234512_ConfiguracaoPedidoMigration")]
+    partial class ConfiguracaoPedidoMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -120,66 +123,6 @@ namespace OpenAdm.Infra.Migrations
                         .IsUnique();
 
                     b.ToTable("EnderecoParceiro");
-                });
-
-            modelBuilder.Entity("OpenAdm.Domain.Entities.Funcionario", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<byte[]>("Avatar")
-                        .HasColumnType("bytea");
-
-                    b.Property<DateTime>("DataDeAtualizacao")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<DateTime>("DataDeCriacao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<long>("Numero")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
-
-                    b.Property<Guid>("ParceiroId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Senha")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("Telefone")
-                        .HasMaxLength(11)
-                        .HasColumnType("character varying(11)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ParceiroId");
-
-                    b.HasIndex("Email", "ParceiroId")
-                        .IsUnique();
-
-                    b.ToTable("Funcionarios");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.EmpresaOpenAdm", b =>

@@ -21,7 +21,6 @@ public class AuthorizeMiddleware
         HttpContext httpContext,
         IUsuarioAutenticado usuarioAutenticado)
     {
-
         var autenticar = httpContext.Features.Get<IEndpointFeature>()?.Endpoint?.Metadata
                 .FirstOrDefault(m => m is AutenticaAttribute) is AutenticaAttribute atributoAutorizacao;
 

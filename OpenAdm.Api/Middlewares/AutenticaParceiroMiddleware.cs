@@ -17,7 +17,8 @@ public class AutenticaParceiroMiddleware
     public async Task Invoke(
         HttpContext httpContext,
         IEmpresaOpenAdmRepository empresaOpenAdmRepository,
-        IParceiroAutenticado parceiroAutenticado)
+        IParceiroAutenticado parceiroAutenticado,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         var autenticar = httpContext.Features.Get<IEndpointFeature>()?.Endpoint?.Metadata
                 .FirstOrDefault(m => m is AcessoParceiroAttribute) is AcessoParceiroAttribute atributoAutorizacao;
@@ -39,6 +40,7 @@ public class AutenticaParceiroMiddleware
             ?? throw new ExceptionApi("Não foi possível localizar o cadastro da empresa");
 
         parceiroAutenticado.Id = empresaOpenAdm.Id;
+        usuarioAutenticado.ParceiroId = empresaOpenAdm.Id;
         parceiroAutenticado.ConnectionString = Criptografia.Decrypt(empresaOpenAdm.ConnectionString);
 
         await _next(httpContext);

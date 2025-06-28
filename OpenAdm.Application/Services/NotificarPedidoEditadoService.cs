@@ -1,25 +1,22 @@
 ﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
 
 public sealed class NotificarPedidoEditadoService : INotificarPedidoEditadoService
 {
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     //private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
 
-    public NotificarPedidoEditadoService(
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository)
+    public NotificarPedidoEditadoService(IConfiguracoesDePedidoService configuracoesDePedidoService)
     {
-        _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+        _configuracoesDePedidoService = configuracoesDePedidoService;
     }
 
     public async Task NotificarAsync(Pedido pedido)
     {
-        var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync()
-            ?? throw new Exception("Configurações de pedido inválida!");
+        var configuracoesDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
         pedido.ItensPedido = new List<ItemPedido>();
         var processarPedidoModel = new ProcessarPedidoModel()
         {

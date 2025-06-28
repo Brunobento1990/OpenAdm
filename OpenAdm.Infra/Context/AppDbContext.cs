@@ -12,11 +12,13 @@ public class AppDbContext : DbContext
     {
     }
 
+    public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
     public DbSet<EmpresaOpenAdm> Empresas { get; set; }
     public DbSet<EnderecoParceiro> EnderecoParceiro { get; set; }
     public DbSet<Parceiro> Parceiros { get; set; }
     public DbSet<TelefoneParceiro> TelefonesParceiro { get; set; }
     public DbSet<RedeSocial> RedesSociais { get; set; }
+    public DbSet<Funcionario> Funcionarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,6 +27,8 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new TelefoneParceiroConfiguration());
         modelBuilder.ApplyConfiguration(new RedeSocialConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoParceiroConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfiguracoesDePedidoConfiguration());
+        modelBuilder.ApplyConfiguration(new FuncionarioConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

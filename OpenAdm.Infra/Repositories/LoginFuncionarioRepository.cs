@@ -5,16 +5,21 @@ using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class LoginFuncionarioRepository(ParceiroContext parceiroContext)
+public class LoginFuncionarioRepository
     : ILoginFuncionarioRepository
 {
-    private readonly ParceiroContext _parceiroContext = parceiroContext;
+    private readonly AppDbContext _appDbContext;
 
-    public async Task<Funcionario?> GetFuncionarioByEmailAsync(string email)
+    public LoginFuncionarioRepository(AppDbContext appDbContext)
     {
-        return await _parceiroContext
+        _appDbContext = appDbContext;
+    }
+
+    public async Task<Funcionario?> GetFuncionarioByEmailAsync(string email, Guid parceiroId)
+    {
+        return await _appDbContext
             .Funcionarios
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Email == email);
+            .FirstOrDefaultAsync(x => x.Email == email && x.ParceiroId == parceiroId && x.Ativo);
     }
 }

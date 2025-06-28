@@ -20,7 +20,6 @@ public class ParceiroContext : DbContext
     public DbSet<EnderecoEntregaPedido> EnderecosEntregaPedido { get; set; }
     public DbSet<ConfiguracaoDePagamento> ConfiguracoesDePagamento { get; set; }
     public DbSet<Banner> Banners { get; set; }
-    public DbSet<Funcionario> Funcionarios { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
     public DbSet<Peso> Pesos { get; set; }
     public DbSet<Tamanho> Tamanhos { get; set; }
@@ -34,7 +33,6 @@ public class ParceiroContext : DbContext
     public DbSet<ItemTabelaDePreco> ItensTabelaDePreco { get; set; }
     public DbSet<ProdutoMaisVendido> ProdutosMaisVendidos { get; set; }
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
-    public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
     public DbSet<LojaParceira> LojasParceiras { get; set; }
@@ -71,11 +69,9 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
         modelBuilder.ApplyConfiguration(new PedidoConfiguration());
         modelBuilder.ApplyConfiguration(new ItensPedidoConfiguration());
-        modelBuilder.ApplyConfiguration(new FuncionarioConfiguration());
         modelBuilder.ApplyConfiguration(new TabelaDePrecoConfiguration());
         modelBuilder.ApplyConfiguration(new ItensTabelaDePrecoConfiguration());
         modelBuilder.ApplyConfiguration(new ProdutosMaisVendidosConfiguration());
-        modelBuilder.ApplyConfiguration(new ConfiguracoesDePedidoConfiguration());
         modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
         modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());

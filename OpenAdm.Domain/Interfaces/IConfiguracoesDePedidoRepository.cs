@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Interfaces;
 
-public interface IConfiguracoesDePedidoRepository : IGenericRepository<ConfiguracoesDePedido>
+public interface IConfiguracoesDePedidoRepository : IGenericBaseRepository<ConfiguracoesDePedido>
 {
-    Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync();
+    Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync(Guid parceiroId);
 }

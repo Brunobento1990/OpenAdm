@@ -2,9 +2,7 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ConfiguracoesDePedidos;
 using OpenAdm.Domain.Entities;
-using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
-using System.Text;
 
 namespace OpenAdm.Application.Services;
 
@@ -24,7 +22,7 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
     public async Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(
         UpdateConfiguracoesDePedidoDto updateConfiguracoesDePedidoDto)
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
+        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
 
         if (configuracaoDePedido == null)
         {
@@ -37,7 +35,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
                 ativo: true,
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
-                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
+                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
+                parceiroId: _usuarioAutenticado.ParceiroId);
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
@@ -49,22 +48,24 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
 
-            await _configuracoesDePedidoRepository.UpdateAsync(configuracaoDePedido);
+            _configuracoesDePedidoRepository.Update(configuracaoDePedido);
         }
+
+        await _configuracoesDePedidoRepository.SaveChangesAsync();
 
         return new ConfiguracoesDePedidoViewModel().ToModel(configuracaoDePedido);
     }
 
     public async Task<ConfiguracoesDePedidoViewModel> GetConfiguracoesDePedidoAsync()
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
+        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
         if (configuracaoDePedido == null) return new();
         return new ConfiguracoesDePedidoViewModel().ToModel(configuracaoDePedido);
     }
 
     public async Task<PedidoMinimoViewModel> GetPedidoMinimoAsync()
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync();
+        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
         if (configuracaoDePedido is null) return new();
 
         var usuarioViewModel = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
@@ -76,11 +77,5 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         {
             PedidoMinimo = pedidoMinimo
         };
-    }
-
-    private async Task<ConfiguracoesDePedido> GetAsync()
-    {
-        return await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync()
-            ?? throw new ExceptionApi("Não foi possível localizar as configurações");
     }
 }
