@@ -19,7 +19,7 @@ public class CreateLojaParceiraDto
     public string? Contato { get; set; }
     public string? NovaFoto { get; set; }
 
-    public LojaParceira ToEntity(string? nomeFoto)
+    public LojaParceira ToEntity(string? nomeFoto, long numero, Guid parceiroId)
     {
         var date = DateTime.Now;
 
@@ -27,13 +27,14 @@ public class CreateLojaParceiraDto
             Guid.NewGuid(),
             date,
             date,
-            0,
+            numero,
             Nome,
             nomeFoto,
             NovaFoto,
             Instagram,
             Facebook,
             Endereco,
-            Contato);
+            Contato,
+            parceiroId);
     }
 }

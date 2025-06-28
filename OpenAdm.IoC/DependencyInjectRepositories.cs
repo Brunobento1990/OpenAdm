@@ -31,9 +31,7 @@ public static class DependencyInjectRepositories
         services.AddScoped<ILoginUsuarioRepository, LoginUsuarioRepository>();
         services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
         services.AddScoped<ITransacaoFinanceiraRepository, TransacaoFinanceiraRepository>();
-
-        services.AddScoped<BannerRepository>();
-        services.AddScoped<IBannerRepository, BannerCached>();
+        services.AddScoped<IBannerRepository, BannerRepository>();
 
         services.AddScoped<ConfiguracaoDeFreteRepository>();
         services.AddScoped<IConfiguracaoDeFreteRepository, ConfiguracaoDeFreteCached>();

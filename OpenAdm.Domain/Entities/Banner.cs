@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class Banner : BaseEntity
+public sealed class Banner : BaseEntityParceiro
 {
     public Banner(
         Guid id,
@@ -11,8 +11,9 @@ public sealed class Banner : BaseEntity
         long numero,
         string foto,
         bool ativo,
-        string nomeFoto)
-        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        string nomeFoto,
+        Guid parceiroId)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         Foto = foto;
         Ativo = ativo;

@@ -9,6 +9,7 @@ public abstract class FilterModel<T>
     public int Take { get; set; } = 10;
     public string OrderBy { get; set; } = "Numero";
     public bool Asc { get; set; } = false;
+    public Guid ParceiroId { get; set; }
     public abstract Expression<Func<T, bool>>? GetWhereBySearch();
     public virtual Expression<Func<T, object>>? IncludeCustom()
     {

@@ -17,7 +17,6 @@ public class ParceiroContext : DbContext
     }
 
     public DbSet<EnderecoEntregaPedido> EnderecosEntregaPedido { get; set; }
-    public DbSet<Banner> Banners { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
     public DbSet<Peso> Pesos { get; set; }
     public DbSet<Tamanho> Tamanhos { get; set; }
@@ -33,12 +32,10 @@ public class ParceiroContext : DbContext
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
-    public DbSet<LojaParceira> LojasParceiras { get; set; }
     public DbSet<TopUsuario> TopUsuarios { get; set; }
     public DbSet<Fatura> Faturas { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
-    public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
     public DbSet<EnderecoUsuario> EnderecoUsuario { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,13 +47,12 @@ public class ParceiroContext : DbContext
             numero: 1,
             descricao: "E-commerce",
             ativaEcommerce: true));
-        modelBuilder.ApplyConfiguration(new AcessoEcommerceConfiguration());
+        
         modelBuilder.ApplyConfiguration(new TransacaoFinanceiraConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
         modelBuilder.ApplyConfiguration(new FaturaConfiguration());
-        modelBuilder.ApplyConfiguration(new BannerConfiguration());
         modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
         modelBuilder.ApplyConfiguration(new PesoConfiguration());
         modelBuilder.ApplyConfiguration(new PesosProdutosConfiguration());
@@ -71,14 +67,12 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new ProdutosMaisVendidosConfiguration());
         modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
-        modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoUsuarioConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_parceiroAutenticado.ConnectionString);
-        //optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=localhost; Port=4814; Database=dev; Pooling=true;");
         base.OnConfiguring(optionsBuilder);
     }
 }

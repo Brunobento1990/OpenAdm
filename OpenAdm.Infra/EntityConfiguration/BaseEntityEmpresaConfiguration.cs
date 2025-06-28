@@ -1,14 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OpenAdm.Domain.Entities.Bases;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-internal class BaseEntityEmpresaConfiguration<T> : BaseEntityConfiguration<T> where T : BaseEntityParceiro
+internal class BaseEntityEmpresaConfiguration<T> : IEntityTypeConfiguration<T> where T : BaseEntityParceiro
 {
-    public override void Configure(EntityTypeBuilder<T> builder)
+    public virtual void Configure(EntityTypeBuilder<T> builder)
     {
-        builder.HasIndex(x => x.ParceiroId);
+        builder.HasKey(x => x.Id);
+        builder.Property(x => x.DataDeCriacao)
+            .IsRequired()
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("now()");
+        builder.Property(x => x.DataDeAtualizacao)
+            .IsRequired()
+            .ValueGeneratedOnAddOrUpdate()
+            .HasDefaultValueSql("now()");
 
-        base.Configure(builder);
+        builder.HasIndex(x => x.Numero);
+        builder.HasIndex(x => x.ParceiroId);
     }
 }

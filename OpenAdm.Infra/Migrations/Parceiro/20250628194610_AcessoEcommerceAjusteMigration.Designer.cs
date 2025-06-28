@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenAdm.Infra.Context;
@@ -11,9 +12,11 @@ using OpenAdm.Infra.Context;
 namespace OpenAdm.Infra.Migrations.Parceiro
 {
     [DbContext(typeof(ParceiroContext))]
-    partial class ParceiroContextModelSnapshot : ModelSnapshot
+    [Migration("20250628194610_AcessoEcommerceAjusteMigration")]
+    partial class AcessoEcommerceAjusteMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,44 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.Banner", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("DataDeAtualizacao")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Foto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NomeFoto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Banners");
+                });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.Categoria", b =>
                 {
@@ -423,6 +464,62 @@ namespace OpenAdm.Infra.Migrations.Parceiro
                     b.HasIndex("TabelaDePrecoId");
 
                     b.ToTable("ItensTabelaDePreco");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.LojaParceira", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Contato")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime>("DataDeAtualizacao")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Endereco")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Facebook")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Foto")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Instagram")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("NomeFoto")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LojasParceiras");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.MovimentacaoDeProduto", b =>

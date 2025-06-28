@@ -13,11 +13,13 @@ public class LojasParceirasService : ILojasParceirasService
 {
     private readonly ILojasParceirasRepository _lojasParceirasRepository;
     private readonly IUploadImageBlobClient _uploadImageBlobClient;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
-    public LojasParceirasService(ILojasParceirasRepository lojasParceirasRepository, IUploadImageBlobClient uploadImageBlobClient)
+    public LojasParceirasService(ILojasParceirasRepository lojasParceirasRepository, IUploadImageBlobClient uploadImageBlobClient, IUsuarioAutenticado usuarioAutenticado)
     {
         _lojasParceirasRepository = lojasParceirasRepository;
         _uploadImageBlobClient = uploadImageBlobClient;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     public async Task<LojasParceirasViewModel> CreateLojaParceiraAsync(CreateLojaParceiraDto createLojaParceiraDto)
@@ -29,9 +31,11 @@ public class LojasParceirasService : ILojasParceirasService
             createLojaParceiraDto.NovaFoto = await _uploadImageBlobClient.UploadImageAsync(createLojaParceiraDto.NovaFoto, nomeFoto);
         }
 
-        var lojaParceira = createLojaParceiraDto.ToEntity(nomeFoto);
+        var proximoNumero = await _lojasParceirasRepository.ProximoNumeroAsync(_usuarioAutenticado.ParceiroId);
+        var lojaParceira = createLojaParceiraDto.ToEntity(nomeFoto, proximoNumero, _usuarioAutenticado.ParceiroId);
 
         await _lojasParceirasRepository.AddAsync(lojaParceira);
+        await _lojasParceirasRepository.SaveChangesAsync();
 
         return new LojasParceirasViewModel().ToModel(lojaParceira);
     }
@@ -45,7 +49,8 @@ public class LojasParceirasService : ILojasParceirasService
             await _uploadImageBlobClient.DeleteImageAsync(lojaParceira.NomeFoto);
         }
 
-        await _lojasParceirasRepository.DeleteAsync(lojaParceira);
+        _lojasParceirasRepository.Delete(lojaParceira);
+        await _lojasParceirasRepository.SaveChangesAsync();
     }
 
     public async Task<LojasParceirasViewModel> GetLojasParceirasViewModelAsync(Guid id)
@@ -57,6 +62,7 @@ public class LojasParceirasService : ILojasParceirasService
 
     public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(FilterModel<LojaParceira> paginacaoLojasParceirasDto)
     {
+        paginacaoLojasParceirasDto.ParceiroId = _usuarioAutenticado.ParceiroId;
         var paginacao = await _lojasParceirasRepository.PaginacaoAsync(paginacaoLojasParceirasDto);
 
         return new PaginacaoViewModel<LojasParceirasViewModel>()
@@ -73,12 +79,12 @@ public class LojasParceirasService : ILojasParceirasService
 
     public async Task<IList<string?>> ListLojasParceirasViewModelAsync()
     {
-        return await _lojasParceirasRepository.GetFotosLojasParceirasAsync();
+        return await _lojasParceirasRepository.GetFotosLojasParceirasAsync(_usuarioAutenticado.ParceiroId);
     }
 
     public async Task<IList<LojasParceirasViewModel>> TodasLojasAsync()
     {
-        var lojasParceiras = await _lojasParceirasRepository.GetLojasParceirasAsync();
+        var lojasParceiras = await _lojasParceirasRepository.GetLojasParceirasAsync(_usuarioAutenticado.ParceiroId);
 
         return lojasParceiras.Select(x => new LojasParceirasViewModel().ToModel(x)).ToList();
     }
@@ -113,7 +119,8 @@ public class LojasParceirasService : ILojasParceirasService
             updateLojaParceiraDto.Endereco,
             updateLojaParceiraDto.Contato);
 
-        await _lojasParceirasRepository.UpdateAsync(lojaParceira);
+        _lojasParceirasRepository.Update(lojaParceira);
+        await _lojasParceirasRepository.SaveChangesAsync();
 
         return new LojasParceirasViewModel().ToModel(lojaParceira);
     }

@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class LojaParceira : BaseEntity
+public sealed class LojaParceira : BaseEntityParceiro
 {
     public LojaParceira(
         Guid id,
@@ -15,8 +15,9 @@ public sealed class LojaParceira : BaseEntity
         string? instagram,
         string? facebook,
         string? endereco,
-        string? contato)
-        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        string? contato,
+        Guid parceiroId)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         NomeFoto = nomeFoto;
         Foto = foto;

@@ -5,24 +5,23 @@ using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Infra.Repositories;
 
-public class BannerRepository(ParceiroContext parceiroContext)
-        : GenericRepository<Banner>(parceiroContext), IBannerRepository
+public class BannerRepository(AppDbContext parceiroContext)
+        : GenericBaseRepository<Banner>(parceiroContext), IBannerRepository
 {
     public async Task<Banner?> GetBannerByIdAsync(Guid id)
     {
-        return await ParceiroContext
+        return await AppDbContext
             .Banners
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<IList<Banner>> GetBannersAsync()
+    public async Task<IList<Banner>> GetBannersAsync(Guid parceiroId)
     {
-        return await ParceiroContext
+        return await AppDbContext
             .Banners
-            .OrderBy(x => Guid.NewGuid())
+            .OrderByDescending(x => x.DataDeCriacao)
             .Take(5)
-            .Where(x => x.Ativo)
+            .Where(x => x.Ativo && x.ParceiroId == parceiroId)
             .ToListAsync();
     }
 }
