@@ -31,9 +31,6 @@ public class ParceiroContext : DbContext
     public DbSet<ProdutoMaisVendido> ProdutosMaisVendidos { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
-    public DbSet<Fatura> Faturas { get; set; }
-    public DbSet<Parcela> Parcelas { get; set; }
-    public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
     public DbSet<EnderecoUsuario> EnderecoUsuario { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,10 +43,7 @@ public class ParceiroContext : DbContext
             descricao: "E-commerce",
             ativaEcommerce: true));
 
-        modelBuilder.ApplyConfiguration(new TransacaoFinanceiraConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
-        modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
-        modelBuilder.ApplyConfiguration(new FaturaConfiguration());
         modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
         modelBuilder.ApplyConfiguration(new PesoConfiguration());
         modelBuilder.ApplyConfiguration(new PesosProdutosConfiguration());

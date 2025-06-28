@@ -15,8 +15,6 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IProcessarPedidoService _processarPedidoService;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly ICarrinhoRepository _carrinhoRepository;
-    private readonly IFaturaService _contasAReceberService;
-    private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     public CreatePedidoService(
@@ -24,8 +22,6 @@ public sealed class CreatePedidoService : ICreatePedidoService
         IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         ICarrinhoRepository carrinhoRepository,
-        IFaturaService contasAReceberService,
-        IConfiguracaoDePagamentoService configuracaoDePagamentoService,
         IConfiguracoesDePedidoService configuracoesDePedidoService,
         IUsuarioAutenticado usuarioAutenticado)
     {
@@ -33,8 +29,6 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _processarPedidoService = processarPedidoService;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _carrinhoRepository = carrinhoRepository;
-        _contasAReceberService = contasAReceberService;
-        _configuracaoDePagamentoService = configuracaoDePagamentoService;
         _configuracoesDePedidoService = configuracoesDePedidoService;
         _usuarioAutenticado = usuarioAutenticado;
     }
@@ -92,24 +86,6 @@ public sealed class CreatePedidoService : ICreatePedidoService
         await _pedidoRepository.AddAsync(pedido);
         await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());
         await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
-
-        var configPagamento = await _configuracaoDePagamentoService.CobrarAsync();
-
-        if (!configPagamento.Cobrar)
-        {
-            await _contasAReceberService.CriarContasAReceberAsync(new()
-            {
-                DataDoPrimeiroVencimento = DateTime.Now.AddMonths(1),
-                Desconto = null,
-                MeioDePagamento = null,
-                Observacao = $"Pedido: {pedido.Numero}",
-                PedidoId = pedido.Id,
-                QuantidadeDeParcelas = 1,
-                Total = pedido.ValorTotal,
-                UsuarioId = pedido.UsuarioId,
-                Tipo = TipoFaturaEnum.A_Receber
-            });
-        }
 
         return new PedidoViewModel().ForModel(pedido);
     }

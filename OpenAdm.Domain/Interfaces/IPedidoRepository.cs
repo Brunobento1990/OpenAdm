@@ -8,7 +8,6 @@ public interface IPedidoRepository : IGenericRepository<Pedido>
 {
     Task<Pedido?> GetPedidoByIdAsync(Guid id);
     Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id);
-    Task<Pedido?> GetPedidoParaGerarPixByIdAsync(Guid id);
     Task<IList<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido);
     Task<int> GetQuantidadeDePedidoPorUsuarioAsync(Guid usuarioId);
     Task<decimal> GetTotalPedidoPorUsuarioAsync(Guid usuarioId);

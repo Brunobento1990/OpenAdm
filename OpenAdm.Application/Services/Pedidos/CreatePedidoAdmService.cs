@@ -12,16 +12,13 @@ namespace OpenAdm.Application.Services.Pedidos;
 public class CreatePedidoAdmService : ICreatePedidoAdmService
 {
     private readonly IPedidoRepository _pedidoRepository;
-    private readonly IFaturaService _faturaService;
     private readonly IUsuarioService _usuarioService;
 
     public CreatePedidoAdmService(
         IPedidoRepository pedidoRepository,
-        IFaturaService faturaService,
         IUsuarioService usuarioService)
     {
         _pedidoRepository = pedidoRepository;
-        _faturaService = faturaService;
         _usuarioService = usuarioService;
     }
 
@@ -54,19 +51,6 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
         }
 
         await _pedidoRepository.AddAsync(pedido);
-
-        await _faturaService.CriarContasAReceberAsync(new()
-        {
-            DataDoPrimeiroVencimento = DateTime.Now.AddMonths(1),
-            Desconto = null,
-            MeioDePagamento = null,
-            Observacao = $"Pedido: {pedido.Numero}",
-            PedidoId = pedido.Id,
-            QuantidadeDeParcelas = 1,
-            Total = pedido.ValorTotal,
-            UsuarioId = pedido.UsuarioId,
-            Tipo = TipoFaturaEnum.A_Receber
-        });
 
         return true;
     }

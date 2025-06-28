@@ -10,7 +10,6 @@ public class HomeSevice : IHomeSevice
 {
     private readonly ITopUsuariosRepository _topUsuariosRepository;
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
-    private readonly IParcelaService _faturaContasAReceberService;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IAcessoEcommerceService _acessoEcommerceService;
     private readonly IUsuarioRepository _usuarioRepository;
@@ -19,7 +18,6 @@ public class HomeSevice : IHomeSevice
     public HomeSevice(
         ITopUsuariosRepository topUsuariosRepository,
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
-        IParcelaService faturaContasAReceberService,
         IPedidoRepository pedidoRepository,
         IAcessoEcommerceService acessoEcommerceService,
         IUsuarioRepository usuarioRepository,
@@ -28,7 +26,6 @@ public class HomeSevice : IHomeSevice
     {
         _topUsuariosRepository = topUsuariosRepository;
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
-        _faturaContasAReceberService = faturaContasAReceberService;
         _pedidoRepository = pedidoRepository;
         _acessoEcommerceService = acessoEcommerceService;
         _usuarioRepository = usuarioRepository;
@@ -41,8 +38,6 @@ public class HomeSevice : IHomeSevice
         var topUsuariosTotalCompra = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync(_usuarioAutenticado.ParceiroId);
         var topUsuariosTotalPedido = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync(_usuarioAutenticado.ParceiroId);
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
-        //var faturas = await _faturaContasAReceberService.FaturasDashBoardAsync();
-        var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
         var pedidosEmAberto = await _pedidoRepository.GetCountStatusPedidosAsync();
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
         var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
@@ -56,8 +51,7 @@ public class HomeSevice : IHomeSevice
             TopUsuariosTotalCompra = topUsuariosTotalCompra.Select(x => (TopUsuariosViewModel)x),
             TopUsuariosTotalPedido = topUsuariosTotalPedido.Select(x => (TopUsuariosViewModel)x),
             Movimentos = movimentos,
-            //Faturas = faturas,
-            TotalAReceber = totalAReceber,
+            TotalAReceber = 0,
             StatusPedido = pedidosEmAberto,
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
             QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,

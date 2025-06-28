@@ -27,7 +27,6 @@ public sealed class Pedido : BaseEntity
     public string? MotivoCancelamento { get; private set; }
     public Usuario Usuario { get; set; } = null!;
     public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
-    public Fatura? Fatura { get; set; }
     public decimal ValorTotal { get { return ItensPedido.Sum(x => x.ValorTotal); } }
     public IList<ItemPedido> ItensPedido { get; set; } = [];
 

@@ -25,8 +25,6 @@ public class PedidoViewModel : BaseViewModel
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
 
-        TotalAReceber = entity.Fatura?.ValorAPagarAReceber ?? 0;
-
         return this;
     }
 
@@ -43,8 +41,6 @@ public class PedidoViewModel : BaseViewModel
 
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
-
-        TotalAReceber = entity.Fatura?.ValorAPagarAReceber ?? 0;
 
         return this;
     }

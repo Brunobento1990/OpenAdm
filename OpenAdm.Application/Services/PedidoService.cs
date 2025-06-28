@@ -44,15 +44,6 @@ public class PedidoService(
         };
     }
 
-    public async Task<PedidoViewModel> GetParaGerarPixAsync(Guid pedidoId)
-    {
-        var pedido = await _pedidoRepository.GetPedidoParaGerarPixByIdAsync(pedidoId)
-            ?? throw new ExceptionApi($"Pedido não localizado: {pedidoId}");
-        var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
-
-        return pedidoViewModel;
-    }
-
     public async Task<IDictionary<Guid, PedidoViewModel>> GetPedidosAsync(IList<Guid> ids)
     {
         var pedidos = await _pedidoRepository.GetPedidosAsync(ids);

@@ -19,7 +19,6 @@ public class PedidoServiceTest
     private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepositoryMock;
     private readonly Mock<IPdfPedidoService> _pdfPedidoService;
     private readonly Mock<ICarrinhoRepository> _carrinhoRepository;
-    private readonly Mock<IFaturaService> _contasAReceberService;
     private readonly Mock<IConfiguracaoDePagamentoService> _configuracaoDePagamentoService;
     private readonly Mock<IConfiguracoesDePedidoService> _configuracoesDePedidoService;
     public PedidoServiceTest()
@@ -29,7 +28,6 @@ public class PedidoServiceTest
         _itemTabelaDePrecoRepositoryMock = new();
         _pdfPedidoService = new();
         _carrinhoRepository = new();
-        _contasAReceberService = new();
         _configuracaoDePagamentoService = new();
         _configuracoesDePedidoService = new();
     }

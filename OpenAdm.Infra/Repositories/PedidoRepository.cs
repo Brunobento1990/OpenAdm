@@ -202,18 +202,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return pedidos.Sum(x => x.ValorTotal);
     }
 
-    public async Task<Pedido?> GetPedidoParaGerarPixByIdAsync(Guid id)
-    {
-        return await
-            ParceiroContext
-            .Pedidos
-            .AsNoTracking()
-            .Include(x => x.ItensPedido)
-            .Include(x => x.Fatura!.Parcelas)
-                .ThenInclude(x => x.Transacoes)
-            .FirstOrDefaultAsync(x => x.Id == id);
-    }
-
     public async Task<VariacaoMensalHome> ObterHomeAsync()
     {
         var hoje = DateTime.Today;

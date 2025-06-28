@@ -14,15 +14,12 @@ public static class DependencyInjectyApplication
     {
         services.AddScoped<IParceiroServico, ParceiroServico>();
         services.AddScoped<IAtualizarSenhaUsuarioAdmService, AtualizarSenhaUsuarioAdmService>();
-        services.AddScoped<IGerarPixPedidoService, GerarPixPedidoService>();
         services.AddScoped<IAcessoEcommerceService, AcessoEcommerceService>();
         services.AddScoped<ICnpjConsultaService, CnpjConsultaService>();
         services.AddScoped<ICancelarPedido, CancelarPedido>();
         services.AddScoped<ICreatePedidoAdmService, CreatePedidoAdmService>();
-        services.AddScoped<ITransacaoFinanceiraService, TransacaoFinanceiraService>();
         services.AddScoped<IEnderecoEntregaPedidoService, EnderecoEntregaPedidoService>();
         services.AddScoped<IConfiguracaoDePagamentoService, ConfiguracaoDePagamentoService>();
-        services.AddScoped<IFaturaService, FaturaService>();
         services.AddScoped<IMovimentacaoDeProdutoRelatorioService, MovimentacaoDeProdutoRelatorioService>();
         services.AddScoped<ITopUsuarioService, TopUsuarioService>();
         services.AddScoped<IEmailApiService, EmailApiService>();
@@ -49,7 +46,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<ILojasParceirasService, LojasParceirasService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IProdutosMaisVendidosService, ProdutosMaisVendidosService>();
-        services.AddScoped<IParcelaService, ParcelaService>();
         services.AddScoped<IGetCountCarrinhoService, GetCountCarrinhoService>();
         services.AddScoped<IAddCarrinhoService, AddCarrinhoService>();
         services.AddScoped<IGetCarrinhoService, GetCarrinhoService>();

@@ -1,6 +1,5 @@
 ﻿using OpenAdm.Application.Models.Estoques;
 using OpenAdm.Application.Models.MovimentacaoDeProdutos;
-using OpenAdm.Application.Models.ParcelasModel;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Application.Models.TopUsuarios;
 using OpenAdm.Application.Models.Usuarios;
@@ -17,7 +16,7 @@ public class HomeAdmViewModel
     public IEnumerable<TopUsuariosViewModel> TopUsuariosTotalCompra { get; set; } = [];
     public IEnumerable<TopUsuariosViewModel> TopUsuariosTotalPedido { get; set; } = [];
     public IEnumerable<MovimentoDeProdutoDashBoardModel> Movimentos { get; set; } = [];
-    public IEnumerable<ParcelaPagaDashBoardModel> Faturas { get; set; } = [];
+    //public IEnumerable<ParcelaPagaDashBoardModel> Faturas { get; set; } = [];
     public decimal TotalAReceber { get; set; }
     public IEnumerable<StatusPedidoHomeModel> StatusPedido { get; set; } = [];
     public long QuantidadeDeAcessoEcommerce { get; set; }

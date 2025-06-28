@@ -12,6 +12,5 @@ public interface IPedidoService
     Task<IDictionary<Guid, PedidoViewModel>> GetPedidosAsync(IList<Guid> ids);
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
     Task<PedidoViewModel> GetAsync(Guid pedidoId);
-    Task<PedidoViewModel> GetParaGerarPixAsync(Guid pedidoId);
     Task<byte[]> PedidoProducaoAsync(RelatorioProducaoDto relatorioProducaoDto);
 }
