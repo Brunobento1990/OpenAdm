@@ -128,4 +128,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<Usuario?> GetUsuarioByTokenEsqueceuSenhaAsync(Guid tokenEsqueceuSenha)
         => _usuarioRepository.GetUsuarioByTokenEsqueceuSenhaAsync(tokenEsqueceuSenha);
+
+    public void Update(Usuario entity)
+        => _usuarioRepository.Update(entity);
 }

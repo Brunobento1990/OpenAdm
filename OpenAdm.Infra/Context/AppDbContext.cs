@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<TelefoneParceiro> TelefonesParceiro { get; set; }
     public DbSet<RedeSocial> RedesSociais { get; set; }
     public DbSet<Funcionario> Funcionarios { get; set; }
+    public DbSet<ConfiguracaoDePagamento> ConfiguracoesDePagamento { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +30,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new EnderecoParceiroConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracoesDePedidoConfiguration());
         modelBuilder.ApplyConfiguration(new FuncionarioConfiguration());
+        modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

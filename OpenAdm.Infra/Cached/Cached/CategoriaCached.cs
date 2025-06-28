@@ -86,4 +86,7 @@ public class CategoriaCached(CategoriaRepository categoriaRepository,
 
     public Task<Categoria> AdicionarAsync(Categoria entity)
         => _categoriaRepository.AdicionarAsync(entity);
+
+    public void Update(Categoria entity)
+        => _categoriaRepository.Update(entity);
 }

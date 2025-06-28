@@ -103,4 +103,7 @@ public class PesoCached : IPesoRepository
 
     public Task<Peso> AdicionarAsync(Peso entity)
         => _pesoRepository.AdicionarAsync(entity);
+
+    public void Update(Peso entity)
+        => _pesoRepository.Update(entity);
 }

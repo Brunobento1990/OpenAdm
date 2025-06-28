@@ -56,4 +56,50 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
             ValorUnitarioVarejo = x.ValorUnitarioVarejo
         }).ToList();
     }
+
+    public async Task UpdatePrecoPorPesoAsync(UpdateItensTabelaDePrecoPorPesoDto updateItensTabelaDePrecoPorPesoDto)
+    {
+        var itens = await _itemTabelaDePrecoRepository.ObterPorPesoIdAsync(updateItensTabelaDePrecoPorPesoDto.PesoId);
+        if (itens.Count == 0)
+        {
+            throw new ExceptionApi("Não há itens a serem atualizados");
+        }
+
+        foreach (var item in itens)
+        {
+            item.Update(
+                valorUnitarioAtacado: updateItensTabelaDePrecoPorPesoDto.ValorUnitarioAtacado,
+                valorUnitarioVarejo: updateItensTabelaDePrecoPorPesoDto.ValorUnitarioVarejo,
+                tamanhoId: item.TamanhoId,
+                pesoId: item.PesoId,
+                produtoId: item.ProdutoId);
+
+            _itemTabelaDePrecoRepository.Update(item);
+        }
+
+        await _itemTabelaDePrecoRepository.SaveChangesAsync();
+    }
+
+    public async Task UpdatePrecoPorTamanhoAsync(UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto)
+    {
+        var itens = await _itemTabelaDePrecoRepository.ObterPorTamanhoIdAsync(updateItensTabelaDePrecoPorTamanhoDto.TamanhoId);
+        if (itens.Count == 0)
+        {
+            throw new ExceptionApi("Não há itens a serem atualizados");
+        }
+
+        foreach (var item in itens)
+        {
+            item.Update(
+                valorUnitarioAtacado: updateItensTabelaDePrecoPorTamanhoDto.ValorUnitarioAtacado,
+                valorUnitarioVarejo: updateItensTabelaDePrecoPorTamanhoDto.ValorUnitarioVarejo,
+                tamanhoId: item.TamanhoId,
+                pesoId: item.PesoId,
+                produtoId: item.ProdutoId);
+
+            _itemTabelaDePrecoRepository.Update(item);
+        }
+
+        await _itemTabelaDePrecoRepository.SaveChangesAsync();
+    }
 }
