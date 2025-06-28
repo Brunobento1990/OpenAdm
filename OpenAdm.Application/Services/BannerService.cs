@@ -9,23 +9,32 @@ using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Application.Services;
 
-public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobClient uploadImageBlobClient)
+public class BannerService
     : IBannerService
 {
-    private readonly IBannerRepository _bannerRepository = bannerRepository;
-    private readonly IUploadImageBlobClient _uploadImageBlobClient = uploadImageBlobClient;
+    private readonly IBannerRepository _bannerRepository;
+    private readonly IUploadImageBlobClient _uploadImageBlobClient;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
     private const string ERRO_NOT_FOUND = "Não foi possível localizar o banner!";
+
+    public BannerService(IBannerRepository bannerRepository, IUploadImageBlobClient uploadImageBlobClient, IUsuarioAutenticado usuarioAutenticado)
+    {
+        _bannerRepository = bannerRepository;
+        _uploadImageBlobClient = uploadImageBlobClient;
+        _usuarioAutenticado = usuarioAutenticado;
+    }
 
     public async Task<BannerViewModel> CreateBannerAsync(BannerCreateDto bannerCreateDto)
     {
         bannerCreateDto.Validar();
         var nomeFoto = $"{Guid.NewGuid()}.jpeg";
         var foto = await _uploadImageBlobClient.UploadImageAsync(bannerCreateDto.NovaFoto, nomeFoto);
+        var proximoNumero = await _bannerRepository.ProximoNumeroAsync(_usuarioAutenticado.ParceiroId);
 
-        var banner = bannerCreateDto.ToEntity(nomeFoto, foto);
+        var banner = bannerCreateDto.ToEntity(nomeFoto, foto, _usuarioAutenticado.ParceiroId, proximoNumero);
 
         await _bannerRepository.AddAsync(banner);
-
+        await _bannerRepository.SaveChangesAsync();
         return new BannerViewModel().ToModel(banner);
     }
 
@@ -39,9 +48,8 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
         if (!resultBlobDelete)
             throw new ExceptionApi("Não foi possível excluir a foto do banner, tente novamente mais tarde, ou entre em contato com o suporte!");
 
-        var result = await _bannerRepository.DeleteAsync(banner);
-
-        if (!result) throw new ExceptionApi("Não foi possivel excluir o banner");
+        _bannerRepository.Delete(banner);
+        await _bannerRepository.SaveChangesAsync();
     }
 
     public async Task<BannerViewModel> EditBannerAsync(BannerEditDto bannerEditDto)
@@ -67,7 +75,8 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 
         banner.Update(foto, nomeFoto, bannerEditDto.Ativo);
 
-        await _bannerRepository.UpdateAsync(banner);
+        _bannerRepository.Update(banner);
+        await _bannerRepository.SaveChangesAsync();
 
         return new BannerViewModel().ToModel(banner);
     }
@@ -82,7 +91,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 
     public async Task<IList<BannerViewModel>> GetBannersAsync()
     {
-        var banners = await _bannerRepository.GetBannersAsync();
+        var banners = await _bannerRepository.GetBannersAsync(_usuarioAutenticado.ParceiroId);
 
         return banners
             .Select(banner => new BannerViewModel().ToModel(banner))
@@ -91,6 +100,7 @@ public class BannerService(IBannerRepository bannerRepository, IUploadImageBlobC
 
     public async Task<PaginacaoViewModel<BannerViewModel>> GetPaginacaoAsync(FilterModel<Banner> paginacaoBannerDto)
     {
+        paginacaoBannerDto.ParceiroId = _usuarioAutenticado.ParceiroId;
         var paginacao = await _bannerRepository.PaginacaoAsync(paginacaoBannerDto);
 
         return new()

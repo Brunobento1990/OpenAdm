@@ -1,27 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
 
-public class BannerConfiguration : IEntityTypeConfiguration<Banner>
+internal class BannerConfiguration : BaseEntityEmpresaConfiguration<Banner>
 {
-    public void Configure(EntityTypeBuilder<Banner> builder)
+    public override void Configure(EntityTypeBuilder<Banner> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.DataDeCriacao)
-            .IsRequired()
-            .ValueGeneratedOnAdd()
-            .HasDefaultValueSql("now()");
-        builder.Property(x => x.DataDeAtualizacao)
-            .IsRequired()
-            .ValueGeneratedOnAddOrUpdate()
-            .HasDefaultValueSql("now()");
         builder.Property(x => x.Numero)
             .ValueGeneratedOnAdd();
         builder.Property(x => x.Foto)
             .IsRequired();
         builder.Property(x => x.Ativo)
             .IsRequired();
+
+        base.Configure(builder);
     }
 }

@@ -11,5 +11,6 @@ internal class AcessoEcommerceConfiguration : IEntityTypeConfiguration<AcessoEco
         builder.HasKey(e => e.Id);
 
         builder.HasIndex(x => x.DataDeCriacao);
+        builder.HasIndex(x => x.ParceiroId);
     }
 }

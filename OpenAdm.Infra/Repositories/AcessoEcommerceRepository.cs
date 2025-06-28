@@ -7,31 +7,31 @@ namespace OpenAdm.Infra.Repositories;
 
 public class AcessoEcommerceRepository : IAcessoEcommerceRepository
 {
-    private readonly ParceiroContext _parceiroContext;
+    private readonly AppDbContext _appDbContext;
 
-    public AcessoEcommerceRepository(ParceiroContext parceiroContext)
+    public AcessoEcommerceRepository(AppDbContext appDbContext)
     {
-        _parceiroContext = parceiroContext;
+        _appDbContext = appDbContext;
     }
 
     public async Task AddAsync(AcessoEcommerce acessoEcommerce)
     {
-        await _parceiroContext.AddAsync(acessoEcommerce);
-        await _parceiroContext.SaveChangesAsync();
+        await _appDbContext.AddAsync(acessoEcommerce);
+        await _appDbContext.SaveChangesAsync();
     }
 
     public async Task EditAsync(AcessoEcommerce acessoEcommerce)
     {
-        await _parceiroContext
+        await _appDbContext
             .AcessosEcommerce
             .Where(x => x.Id == acessoEcommerce.Id)
             .ExecuteUpdateAsync(x => x.SetProperty(y => y.Quantidade, acessoEcommerce.Quantidade));
     }
 
-    public async Task<AcessoEcommerce?> ObterPorDataAsync(int ano, int mes)
+    public async Task<AcessoEcommerce?> ObterPorDataAsync(int ano, int mes, Guid parceiroId)
     {
-        return await _parceiroContext
+        return await _appDbContext
             .AcessosEcommerce
-            .FirstOrDefaultAsync(x => x.DataDeCriacao.Date.Year == ano && x.DataDeCriacao.Month == mes);
+            .FirstOrDefaultAsync(x => x.DataDeCriacao.Date.Year == ano && x.DataDeCriacao.Month == mes && x.ParceiroId == parceiroId);
     }
 }

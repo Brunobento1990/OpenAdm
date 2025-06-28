@@ -15,7 +15,7 @@ public class BannerCreateDto
         }
     }
 
-    public Banner ToEntity(string nomeFoto, string foto)
+    public Banner ToEntity(string nomeFoto, string foto, Guid parceiroId, long numero)
     {
         if (string.IsNullOrWhiteSpace(foto))
         {
@@ -24,6 +24,6 @@ public class BannerCreateDto
 
         NovaFoto = foto;
         var date = DateTime.Now;
-        return new Banner(Guid.NewGuid(), date, date, 0, NovaFoto, true, nomeFoto);
+        return new Banner(Guid.NewGuid(), date, date, numero, NovaFoto, true, nomeFoto, parceiroId);
     }
 }

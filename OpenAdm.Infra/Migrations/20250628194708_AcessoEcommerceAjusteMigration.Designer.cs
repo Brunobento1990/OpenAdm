@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenAdm.Infra.Context;
@@ -11,9 +12,11 @@ using OpenAdm.Infra.Context;
 namespace OpenAdm.Infra.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628194708_AcessoEcommerceAjusteMigration")]
+    partial class AcessoEcommerceAjusteMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,49 +49,6 @@ namespace OpenAdm.Infra.Migrations
                     b.ToTable("AcessosEcommerce");
                 });
 
-            modelBuilder.Entity("OpenAdm.Domain.Entities.Banner", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime>("DataDeAtualizacao")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<DateTime>("DataDeCriacao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<string>("Foto")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("NomeFoto")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("Numero")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
-
-                    b.Property<Guid>("ParceiroId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Numero");
-
-                    b.ToTable("Banners");
-                });
-
             modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracaoDePagamento", b =>
                 {
                     b.Property<Guid>("Id")
@@ -117,7 +77,10 @@ namespace OpenAdm.Infra.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
 
                     b.Property<Guid>("ParceiroId")
                         .HasColumnType("uuid");
@@ -133,7 +96,7 @@ namespace OpenAdm.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Numero");
+                    b.HasIndex("ParceiroId");
 
                     b.ToTable("ConfiguracoesDePagamento");
                 });
@@ -163,7 +126,10 @@ namespace OpenAdm.Infra.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
 
                     b.Property<Guid>("ParceiroId")
                         .HasColumnType("uuid");
@@ -178,7 +144,7 @@ namespace OpenAdm.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Numero");
+                    b.HasIndex("ParceiroId");
 
                     b.ToTable("ConfiguracoesDePedidos");
                 });
@@ -268,7 +234,10 @@ namespace OpenAdm.Infra.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<long>("Numero")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
 
                     b.Property<Guid>("ParceiroId")
                         .HasColumnType("uuid");
@@ -284,7 +253,7 @@ namespace OpenAdm.Infra.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Numero");
+                    b.HasIndex("ParceiroId");
 
                     b.HasIndex("Email", "ParceiroId")
                         .IsUnique();

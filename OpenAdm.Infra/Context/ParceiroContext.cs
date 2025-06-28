@@ -17,7 +17,6 @@ public class ParceiroContext : DbContext
     }
 
     public DbSet<EnderecoEntregaPedido> EnderecosEntregaPedido { get; set; }
-    public DbSet<Banner> Banners { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
     public DbSet<Peso> Pesos { get; set; }
     public DbSet<Tamanho> Tamanhos { get; set; }
@@ -38,7 +37,6 @@ public class ParceiroContext : DbContext
     public DbSet<Fatura> Faturas { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
-    public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
     public DbSet<EnderecoUsuario> EnderecoUsuario { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,13 +48,12 @@ public class ParceiroContext : DbContext
             numero: 1,
             descricao: "E-commerce",
             ativaEcommerce: true));
-        modelBuilder.ApplyConfiguration(new AcessoEcommerceConfiguration());
+        
         modelBuilder.ApplyConfiguration(new TransacaoFinanceiraConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
         modelBuilder.ApplyConfiguration(new FaturaConfiguration());
-        modelBuilder.ApplyConfiguration(new BannerConfiguration());
         modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
         modelBuilder.ApplyConfiguration(new PesoConfiguration());
         modelBuilder.ApplyConfiguration(new PesosProdutosConfiguration());
@@ -78,7 +75,7 @@ public class ParceiroContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_parceiroAutenticado.ConnectionString);
-        //optionsBuilder.UseNpgsql("User ID=postgres; Password=1234; Host=localhost; Port=4814; Database=dev; Pooling=true;");
+        //optionsBuilder.UseNpgsql("User ID=brunodev; Password=eA}9V$R23.4[; Host=postgres-database.ckv06mke0mu3.us-east-1.rds.amazonaws.com; Port=5432; Database=iscaslune; Pooling=true;");
         base.OnConfiguring(optionsBuilder);
     }
 }

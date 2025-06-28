@@ -6,5 +6,5 @@ public interface IAcessoEcommerceRepository
 {
     Task AddAsync(AcessoEcommerce acessoEcommerce);
     Task EditAsync(AcessoEcommerce acessoEcommerce);
-    Task<AcessoEcommerce?> ObterPorDataAsync(int ano, int mes);
+    Task<AcessoEcommerce?> ObterPorDataAsync(int ano, int mes, Guid parceiroId);
 }

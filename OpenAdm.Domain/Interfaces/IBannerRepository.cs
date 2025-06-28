@@ -2,8 +2,8 @@
 
 namespace OpenAdm.Domain.Interfaces;
 
-public interface IBannerRepository : IGenericRepository<Banner>
+public interface IBannerRepository : IGenericBaseRepository<Banner>
 {
-    Task<IList<Banner>> GetBannersAsync();
+    Task<IList<Banner>> GetBannersAsync(Guid parceiroId);
     Task<Banner?> GetBannerByIdAsync(Guid id);
 }
