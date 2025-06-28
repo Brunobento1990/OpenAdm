@@ -94,6 +94,11 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
     public Task<int> SaveChangesAsync()
         => ParceiroContext.SaveChangesAsync();
 
+    public void Update(T entity)
+    {
+        ParceiroContext.Update(entity);
+    }
+
     public async Task<T> UpdateAsync(T entity)
     {
         ParceiroContext.Attach(entity);

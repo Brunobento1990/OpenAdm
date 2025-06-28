@@ -55,4 +55,20 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
             .Where(x => produtosIds.Contains(x.ProdutoId))
             .ToListAsync();
     }
+
+    public async Task<IList<ItemTabelaDePreco>> ObterPorPesoIdAsync(Guid pesoId)
+    {
+        return await ParceiroContext
+            .ItensTabelaDePreco
+            .Where(x => x.PesoId == pesoId)
+            .ToListAsync();
+    }
+
+    public async Task<IList<ItemTabelaDePreco>> ObterPorTamanhoIdAsync(Guid tamanhoId)
+    {
+        return await ParceiroContext
+            .ItensTabelaDePreco
+            .Where(x => x.TamanhoId == tamanhoId)
+            .ToListAsync();
+    }
 }

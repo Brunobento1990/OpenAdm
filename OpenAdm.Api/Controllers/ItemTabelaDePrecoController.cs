@@ -42,6 +42,28 @@ public class ItemTabelaDePrecoController : ControllerBase
         return Ok();
     }
 
+    [HttpPut("atualizar-por-peso")]
+    public async Task<IActionResult> AtualizarPorPeso(UpdateItensTabelaDePrecoPorPesoDto updateItensTabelaDePrecoPorPesoDto)
+    {
+        await _itemTabelaDePrecoService.UpdatePrecoPorPesoAsync(updateItensTabelaDePrecoPorPesoDto);
+
+        return Ok(new
+        {
+            Resultado = true,
+        });
+    }
+
+    [HttpPut("atualizar-por-tamanho")]
+    public async Task<IActionResult> AtualizarPorTamanho(UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto)
+    {
+        await _itemTabelaDePrecoService.UpdatePrecoPorTamanhoAsync(updateItensTabelaDePrecoPorTamanhoDto);
+
+        return Ok(new
+        {
+            Resultado = true,
+        });
+    }
+
     [HttpGet("obter-itens")]
     [ProducesResponseType<IList<ItensTabelaDePrecoViewModel>>(200)]
     [ProducesResponseType<IList<ErrorResponse>>(400)]

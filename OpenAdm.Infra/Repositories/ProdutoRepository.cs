@@ -281,9 +281,4 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Produtos
             .FirstOrDefaultAsync(x => x.Id == id);
     }
-
-    public void Update(Produto produto)
-    {
-        ParceiroContext.Produtos.Update(produto);
-    }
 }

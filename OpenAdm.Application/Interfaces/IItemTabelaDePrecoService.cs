@@ -9,4 +9,6 @@ public interface IItemTabelaDePrecoService
     Task CreateListItemTabelaDePrecoAsync(IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto);
     Task DeleteItemAsync(Guid id);
     Task<IList<ItensTabelaDePrecoViewModel>> ObterItensDaTabelaDePrecoAsync(Guid tebaleDePrecoId);
+    Task UpdatePrecoPorPesoAsync(UpdateItensTabelaDePrecoPorPesoDto updateItensTabelaDePrecoPorPesoDto);
+    Task UpdatePrecoPorTamanhoAsync(UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto);
 }
