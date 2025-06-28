@@ -15,7 +15,7 @@ public class HomeSevice : IHomeSevice
     private readonly IAcessoEcommerceService _acessoEcommerceService;
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IEstoqueService _estoqueService;
-
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
     public HomeSevice(
         ITopUsuariosRepository topUsuariosRepository,
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
@@ -23,7 +23,8 @@ public class HomeSevice : IHomeSevice
         IPedidoRepository pedidoRepository,
         IAcessoEcommerceService acessoEcommerceService,
         IUsuarioRepository usuarioRepository,
-        IEstoqueService estoqueService)
+        IEstoqueService estoqueService,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _topUsuariosRepository = topUsuariosRepository;
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
@@ -32,12 +33,13 @@ public class HomeSevice : IHomeSevice
         _acessoEcommerceService = acessoEcommerceService;
         _usuarioRepository = usuarioRepository;
         _estoqueService = estoqueService;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
     {
-        var topUsuariosTotalCompra = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync();
-        var topUsuariosTotalPedido = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync();
+        var topUsuariosTotalCompra = await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync(_usuarioAutenticado.ParceiroId);
+        var topUsuariosTotalPedido = await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync(_usuarioAutenticado.ParceiroId);
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
         //var faturas = await _faturaContasAReceberService.FaturasDashBoardAsync();
         var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();

@@ -18,11 +18,11 @@ public class TesteController : Controller
     //[HttpGet]
     //public async Task<IActionResult> Teste()
     //{
-    //    var banners = await _appDbContext.LojasParceiras.ToListAsync();
+    //    var banners = await _appDbContext.TopUsuarios.ToListAsync();
 
-    //    var query = $@"insert into ""LojasParceiras"" 
-    //        (""Id"", ""DataDeCriacao"", ""DataDeAtualizacao"", ""Numero"", ""Foto"", ""Instagram"", ""NomeFoto"", ""Facebook"", ""Endereco"", ""Contato"", ""Nome"",""ParceiroId"")
-    //        values {string.Join(",\n", banners.Select(x => $"('{x.Id}','{x.DataDeCriacao:yyyy-MM-dd HH:mm:ss}','{x.DataDeAtualizacao:yyyy-MM-dd HH:mm:ss}',{x.Numero}, '{x.Foto}', '{x.Instagram ?? "NULL"}', '{x.NomeFoto}', '{x.Facebook ?? "NULL"}', '{x.Endereco ?? "NULL"}', '{x.Contato ?? "NULL"}', '{x.Nome}','f63c3d3a-09f6-4094-852d-708e6078e95b')"))}";
+    //    var query = $@"insert into ""TopUsuarios"" 
+    //        (""Id"", ""DataDeCriacao"", ""DataDeAtualizacao"", ""Numero"", ""TotalCompra"", ""TotalPedidos"", ""UsuarioId"", ""Usuario"",""ParceiroId"")
+    //        values {string.Join(",\n", banners.Select(x => $"('{x.Id}','{x.DataDeCriacao:yyyy-MM-dd HH:mm:ss}','{x.DataDeAtualizacao:yyyy-MM-dd HH:mm:ss}',{x.Numero}, {x.TotalCompra}, {x.TotalPedidos}, '{x.UsuarioId}', '{x.Usuario}','c29f2d59-10a3-4b2e-bc97-5ef8047d7cec')"))}";
 
     //    return Ok(query);
     //}

@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
     public DbSet<Banner> Banners { get; set; }
     public DbSet<LojaParceira> LojasParceiras { get; set; }
+    public DbSet<TopUsuario> TopUsuarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -37,6 +38,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new AcessoEcommerceConfiguration());
         modelBuilder.ApplyConfiguration(new BannerConfiguration());
         modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());
+        modelBuilder.ApplyConfiguration(new TopUsuariosConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

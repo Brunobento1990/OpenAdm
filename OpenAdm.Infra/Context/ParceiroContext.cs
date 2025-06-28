@@ -29,10 +29,8 @@ public class ParceiroContext : DbContext
     public DbSet<TabelaDePreco> TabelaDePreco { get; set; }
     public DbSet<ItemTabelaDePreco> ItensTabelaDePreco { get; set; }
     public DbSet<ProdutoMaisVendido> ProdutosMaisVendidos { get; set; }
-    public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
-    public DbSet<TopUsuario> TopUsuarios { get; set; }
     public DbSet<Fatura> Faturas { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
@@ -47,10 +45,9 @@ public class ParceiroContext : DbContext
             numero: 1,
             descricao: "E-commerce",
             ativaEcommerce: true));
-        
+
         modelBuilder.ApplyConfiguration(new TransacaoFinanceiraConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoEntregaPedidoConfiguration());
-        modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
         modelBuilder.ApplyConfiguration(new FaturaConfiguration());
         modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
