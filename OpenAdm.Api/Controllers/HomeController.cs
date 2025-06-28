@@ -21,6 +21,8 @@ public class HomeController : ControllerBase
     [HttpGet("adm")]
     [ProducesResponseType<HomeAdmViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
+    [Autentica]
+    [IsFuncionario]
     public async Task<IActionResult> ListAdm()
     {
         var home = await _homeEcommerSevice.GetHomeAdmAsync();

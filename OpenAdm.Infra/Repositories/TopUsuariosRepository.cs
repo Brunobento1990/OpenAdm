@@ -7,43 +7,45 @@ namespace OpenAdm.Infra.Repositories;
 
 public class TopUsuariosRepository : ITopUsuariosRepository
 {
-    private readonly ParceiroContext _parceiroContext;
+    private readonly AppDbContext _appDbContext;
 
-    public TopUsuariosRepository(ParceiroContext parceiroContext)
+    public TopUsuariosRepository(AppDbContext appDbContext)
     {
-        _parceiroContext = parceiroContext;
+        _appDbContext = appDbContext;
     }
 
     public async Task AddAsync(TopUsuario topUsuario)
     {
-        await _parceiroContext.AddAsync(topUsuario);
-        await _parceiroContext.SaveChangesAsync();
+        await _appDbContext.AddAsync(topUsuario);
+        await _appDbContext.SaveChangesAsync();
     }
 
-    public async Task<TopUsuario?> GetByUsuarioIdAsync(Guid usuarioId)
+    public async Task<TopUsuario?> GetByUsuarioIdAsync(Guid usuarioId, Guid parceiroId)
     {
-        return await _parceiroContext
+        return await _appDbContext
             .TopUsuarios
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId);
+            .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId && x.ParceiroId == parceiroId);
     }
 
-    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalCompraAsync()
+    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalCompraAsync(Guid parceiroId)
     {
-        return await _parceiroContext
+        return await _appDbContext
             .TopUsuarios
             .AsNoTracking()
+            .Where(x => x.ParceiroId == parceiroId)
             .OrderByDescending(x => x.TotalCompra)
             .Skip(0)
             .Take(3)
             .ToListAsync();
     }
 
-    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalPedidosAsync()
+    public async Task<IList<TopUsuario>> GetTopTresUsuariosToTalPedidosAsync(Guid parceiroId)
     {
-        return await _parceiroContext
+        return await _appDbContext
             .TopUsuarios
             .AsNoTracking()
+            .Where(x => x.ParceiroId == parceiroId)
             .OrderByDescending(x => x.TotalPedidos)
             .Skip(0)
             .Take(3)
@@ -52,8 +54,8 @@ public class TopUsuariosRepository : ITopUsuariosRepository
 
     public async Task UpdateAsync(TopUsuario topUsuario)
     {
-        _parceiroContext.Attach(topUsuario);
-        _parceiroContext.Update(topUsuario);
-        await _parceiroContext.SaveChangesAsync();
+        _appDbContext.Attach(topUsuario);
+        _appDbContext.Update(topUsuario);
+        await _appDbContext.SaveChangesAsync();
     }
 }

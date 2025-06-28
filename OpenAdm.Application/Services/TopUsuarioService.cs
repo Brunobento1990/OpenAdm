@@ -7,14 +7,16 @@ namespace OpenAdm.Application.Services;
 public sealed class TopUsuarioService : ITopUsuarioService
 {
     private readonly ITopUsuariosRepository _topUsuariosRepository;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
-    public TopUsuarioService(ITopUsuariosRepository topUsuariosRepository)
+    public TopUsuarioService(ITopUsuariosRepository topUsuariosRepository, IUsuarioAutenticado usuarioAutenticado)
     {
         _topUsuariosRepository = topUsuariosRepository;
+        _usuarioAutenticado = usuarioAutenticado;
     }
     public async Task AddOrUpdateTopUsuarioAsync(Pedido pedido)
     {
-        var topUsuario = await _topUsuariosRepository.GetByUsuarioIdAsync(pedido.UsuarioId);
+        var topUsuario = await _topUsuariosRepository.GetByUsuarioIdAsync(pedido.UsuarioId, _usuarioAutenticado.ParceiroId);
 
         if (topUsuario != null)
         {
@@ -31,9 +33,10 @@ public sealed class TopUsuarioService : ITopUsuarioService
             date,
             0,
             pedido.ValorTotal,
-        1,
+            1,
         pedido.UsuarioId,
-        pedido.Usuario.Nome);
+        pedido.Usuario.Nome,
+        _usuarioAutenticado.ParceiroId);
 
         await _topUsuariosRepository.AddAsync(topUsuario);
     }

@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class TopUsuario : BaseEntity
+public sealed class TopUsuario : BaseEntityParceiro
 {
     public TopUsuario(
         Guid id,
@@ -12,8 +12,9 @@ public sealed class TopUsuario : BaseEntity
         decimal totalCompra,
         int totalPedidos,
         Guid usuarioId,
-        string usuario)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        string usuario,
+        Guid parceiroId)
+            : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         TotalCompra = totalCompra;
         TotalPedidos = totalPedidos;
