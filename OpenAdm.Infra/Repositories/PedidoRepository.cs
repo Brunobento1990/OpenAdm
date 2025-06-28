@@ -221,7 +221,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         var anoAtual = hoje.Year;
         var anoAnterior = anoAtual - 1;
 
-        // Obter totais de cada ano
         var totais = await ParceiroContext
             .Pedidos
             .AsNoTracking()
@@ -237,14 +236,19 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             })
             .ToListAsync();
 
-        // Extrair os valores
         var totalAnoAtual = totais.FirstOrDefault(x => x.Ano == anoAtual)?.Total ?? 0;
         var totalAnoAnterior = totais.FirstOrDefault(x => x.Ano == anoAnterior)?.Total ?? 0;
 
-        // Calcular variação em porcentagem
-        var variacao = totalAnoAnterior == 0
-            ? (totalAnoAtual > 0 ? 100 : 0)
-            : ((totalAnoAtual - totalAnoAnterior) / totalAnoAnterior) * 100;
+        decimal variacao = 0;
+
+        if (totalAnoAnterior == 0)
+        {
+            variacao = totalAnoAtual == 0 ? 0 : 100;
+        }
+        else
+        {
+            variacao = (decimal)(totalAnoAtual - totalAnoAnterior) / totalAnoAnterior * 100;
+        }
 
         return new VariacaoMensalHome()
         {
