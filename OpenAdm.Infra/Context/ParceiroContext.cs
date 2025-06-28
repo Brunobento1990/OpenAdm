@@ -16,7 +16,6 @@ public class ParceiroContext : DbContext
         _parceiroAutenticado = parceiroAutenticado;
     }
 
-
     public DbSet<EnderecoEntregaPedido> EnderecosEntregaPedido { get; set; }
     public DbSet<ConfiguracaoDePagamento> ConfiguracoesDePagamento { get; set; }
     public DbSet<Banner> Banners { get; set; }

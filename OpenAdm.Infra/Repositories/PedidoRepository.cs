@@ -223,17 +223,17 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
         // Obter totais de cada ano
         var totais = await ParceiroContext
-            .ItensPedidos
+            .Pedidos
             .AsNoTracking()
             .Where(i =>
-                i.Pedido.DataDeCriacao.Month == mes &&
-                (i.Pedido.DataDeCriacao.Year == anoAtual || i.Pedido.DataDeCriacao.Year == anoAnterior)
+                i.DataDeCriacao.Month == mes &&
+                (i.DataDeCriacao.Year == anoAtual || i.DataDeCriacao.Year == anoAnterior)
             )
-            .GroupBy(i => i.Pedido.DataDeCriacao.Year)
+            .GroupBy(i => i.DataDeCriacao.Year)
             .Select(g => new
             {
                 Ano = g.Key,
-                Total = g.Sum(i => i.Quantidade)
+                Total = g.Count()
             })
             .ToListAsync();
 
@@ -251,7 +251,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             Mes = mes,
             TotalAnoAnterior = totalAnoAnterior,
             TotalAnoAtual = totalAnoAtual,
-            Porcentagem = Math.Round(variacao, 2),
+            Porcentagem = variacao,
             AnoAnterior = anoAnterior,
             AnoAtual = anoAtual
         };
