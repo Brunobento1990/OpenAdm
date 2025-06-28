@@ -28,15 +28,6 @@ public sealed class LojaParceira : BaseEntityParceiro
         Nome = nome;
     }
 
-    public LojaParceira(
-        Guid id,
-        DateTime dataDeCriacao,
-        DateTime dataDeAtualizacao,
-        long numero)
-        : base(id, dataDeCriacao, dataDeAtualizacao, numero, Guid.NewGuid())
-    {
-    }
-
     public string? NomeFoto { get; private set; }
     public string Nome { get; private set; }
     public string? Foto { get; private set; }

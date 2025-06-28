@@ -32,7 +32,6 @@ public class ParceiroContext : DbContext
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<Estoque> Estoques { get; set; }
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
-    public DbSet<LojaParceira> LojasParceiras { get; set; }
     public DbSet<TopUsuario> TopUsuarios { get; set; }
     public DbSet<Fatura> Faturas { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
@@ -68,11 +67,7 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new ProdutosMaisVendidosConfiguration());
         modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
-        modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoUsuarioConfiguration());
-
-        modelBuilder.Entity<LojaParceira>().Ignore(x => x.ParceiroId);
-
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

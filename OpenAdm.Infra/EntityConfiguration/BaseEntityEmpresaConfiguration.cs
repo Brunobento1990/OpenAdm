@@ -19,5 +19,6 @@ internal class BaseEntityEmpresaConfiguration<T> : IEntityTypeConfiguration<T> w
             .HasDefaultValueSql("now()");
 
         builder.HasIndex(x => x.Numero);
+        builder.HasIndex(x => x.ParceiroId);
     }
 }
