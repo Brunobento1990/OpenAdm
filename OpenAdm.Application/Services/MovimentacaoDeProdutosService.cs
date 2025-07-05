@@ -160,7 +160,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
         return _movimentacaoDeProdutoRelatorioService.ObterPdfAsync(
             movimentacoesRelatorio,
-            "Iscas lune",
+            parceiro.NomeFantasia,
             relatorioMovimentoDeProdutoDto.DataInicial,
             relatorioMovimentoDeProdutoDto.DataFinal,
             logo,

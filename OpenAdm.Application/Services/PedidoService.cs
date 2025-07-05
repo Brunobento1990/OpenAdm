@@ -130,7 +130,7 @@ public class PedidoService(
 
         return _pdfPedidoService.ProducaoPedido(
             itensProducao.OrderBy(x => x.Produto).ToList(),
-            "Iscas lune",
+            parceiro.NomeFantasia,
             logo,
             pedidos);
     }

@@ -15,7 +15,7 @@ public interface IUsuarioService
     Task<IList<UsuarioViewModel>> GetAllUsuariosAsync();
     Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto);
     Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto);
-    Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioDto createUsuarioDto);
+    Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioAdminDto createUsuarioDto);
     Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto);
     Task<ResponseLoginUsuarioViewModel> RecuperarSenhaAsync(RecuperarSenhaDto recuperarSenhaDto);
     Task TrocarSenhaAsync(UpdateSenhaUsuarioDto updateSenhaUsuarioDto);
