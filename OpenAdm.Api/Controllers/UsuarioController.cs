@@ -44,7 +44,7 @@ public class UsuarioController : ControllerBase
     [HttpPost("create-admin")]
     [IsFuncionario]
     [Autentica]
-    public async Task<IActionResult> CreateUsuarioNoAdmin(CreateUsuarioDto createUsuarioDto)
+    public async Task<IActionResult> CreateUsuarioNoAdmin(CreateUsuarioAdminDto createUsuarioDto)
     {
         var responseCreateUsuario = await _usuarioService.CreateUsuarioNoAdminAsync(createUsuarioDto);
         return Ok(responseCreateUsuario);

@@ -230,7 +230,7 @@ public class UsuarioService : IUsuarioService
         return usuarioViewModel;
     }
 
-    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioDto createUsuarioDto)
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioAdminDto createUsuarioDto)
     {
         createUsuarioDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);

@@ -21,6 +21,13 @@ public class CnpjConsultaService : ICnpjConsultaService
             throw new ExceptionApi("CNPJ inválido");
         }
 
-        return await _cnpjHttpService.ConsultarCnpjAsync(cnpj);
+        var response = await _cnpjHttpService.ConsultarCnpjAsync(cnpj);
+
+        if (string.IsNullOrWhiteSpace(response.NomeFantasia))
+        {
+            response.NomeFantasia = response.RazaoSocial;
+        }
+
+        return response;
     }
 }
