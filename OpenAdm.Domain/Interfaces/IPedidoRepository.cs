@@ -7,6 +7,7 @@ namespace OpenAdm.Domain.Interfaces;
 public interface IPedidoRepository : IGenericRepository<Pedido>
 {
     Task<Pedido?> GetPedidoByIdAsync(Guid id);
+    Task<Pedido?> GetPedidoByUsuarioIdAsync(Guid usuarioId);
     Task<Pedido?> GetPedidoCompletoByIdAsync(Guid id);
     Task<Pedido?> GetPedidoParaGerarPixByIdAsync(Guid id);
     Task<IList<Pedido>> GetPedidosByUsuarioIdAsync(Guid usuarioId, int statusPedido);

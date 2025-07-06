@@ -1,4 +1,5 @@
 ﻿using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Domain.Interfaces;
 
@@ -16,4 +17,5 @@ public interface IUsuarioRepository : IGenericRepository<Usuario>
     Task AddEnderecoAsync(EnderecoUsuario endereco);
     void EditarEndereco(EnderecoUsuario endereco);
     Task<EnderecoUsuario?> ObterEnderecoAsync(Guid usuarioId);
+    Task<PaginacaoViewModel<Usuario>> ListarUltimoPedidoAsync(int page, bool isJuridico, string? search);
 }

@@ -131,4 +131,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public void Update(Usuario entity)
         => _usuarioRepository.Update(entity);
+
+    public Task<PaginacaoViewModel<Usuario>> ListarUltimoPedidoAsync(int page, bool isJuridico, string? search)
+        => _usuarioRepository.ListarUltimoPedidoAsync(page, isJuridico, search);
 }

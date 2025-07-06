@@ -260,4 +260,13 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             AnoAtual = anoAtual
         };
     }
+
+    public async Task<Pedido?> GetPedidoByUsuarioIdAsync(Guid usuarioId)
+    {
+        return await ParceiroContext
+            .Pedidos
+            .OrderByDescending(x => x.DataDeCriacao)
+            .Include(x => x.ItensPedido)
+            .FirstOrDefaultAsync(x => x.UsuarioId == usuarioId);
+    }
 }
