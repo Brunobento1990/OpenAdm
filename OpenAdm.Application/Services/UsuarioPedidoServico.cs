@@ -53,7 +53,7 @@ internal class UsuarioPedidoServico : IUsuarioPedidoServico
 
         return new()
         {
-            Dados = usuariosPedidos.OrderBy(x => x.NumeroDoPedido),
+            Dados = usuariosPedidos,
             TotalPagina = paginacao.TotalPaginas,
         };
     }

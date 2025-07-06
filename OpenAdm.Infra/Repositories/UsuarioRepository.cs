@@ -153,6 +153,7 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
         var query = ParceiroContext
             .Usuarios
             .AsNoTracking()
+            .OrderBy(x => x.Numero)
             .Where(x => x.Ativo);
 
         if (!string.IsNullOrWhiteSpace(search))
