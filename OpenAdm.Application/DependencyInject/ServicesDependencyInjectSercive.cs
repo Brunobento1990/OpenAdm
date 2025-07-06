@@ -10,6 +10,7 @@ public static class ServicesDependencyInjectSercive
     {
         services.AddScoped<IConsultaCepService, ConsultaCepService>();
         services.AddScoped<IEnderecoUsuarioService, EnderecoUsuarioService>();
+        services.AddScoped<IUsuarioPedidoServico, UsuarioPedidoServico>();
 
         return services;
     }

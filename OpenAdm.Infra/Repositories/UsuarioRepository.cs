@@ -4,6 +4,10 @@ using OpenAdm.Infra.Context;
 using OpenAdm.Domain.Entities;
 using Npgsql;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Model;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using OpenAdm.Infra.Extensions.IQueryable;
+using StackExchange.Redis;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -142,5 +146,38 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Usuarios
             .FirstOrDefaultAsync(x => x.TokenEsqueceuSenha == tokenEsqueceuSenha && x.Ativo);
+    }
+
+    public async Task<PaginacaoViewModel<Usuario>> ListarUltimoPedidoAsync(int page, bool isJuridico, string? search)
+    {
+        var query = ParceiroContext
+            .Usuarios
+            .AsNoTracking()
+            .Where(x => x.Ativo);
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(x => EF.Functions.ILike(EF.Functions.Unaccent(x.Cpf!), $"%{search}%") ||
+                    EF.Functions.ILike(EF.Functions.Unaccent(x.Cnpj!), $"%{search}%") ||
+                    EF.Functions.ILike(EF.Functions.Unaccent(x.Nome), $"%{search}%"));
+        }
+
+        if (isJuridico)
+        {
+            query = query.Where(x => !string.IsNullOrWhiteSpace(x.Cnpj));
+        }
+        else
+        {
+            query = query.Where(x => !string.IsNullOrWhiteSpace(x.Cpf));
+        }
+
+        var totalPaginas = await query.TotalPage(10);
+        var values = await query.Paginate(page, 10).ToListAsync();
+
+        return new()
+        {
+            TotalPaginas = totalPaginas,
+            Values = values,
+        };
     }
 }

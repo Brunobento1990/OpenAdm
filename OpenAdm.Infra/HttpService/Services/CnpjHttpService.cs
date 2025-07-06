@@ -41,6 +41,6 @@ public class CnpjHttpService : IHttpClientConsultaCnpj
         }
 
         return JsonSerializer.Deserialize<ConsultaCnpjResponse>(body, JsonSerializerOptionsApi.Options())
-            ?? throw new ExceptionApi("Não foi possível efetuar a consulta do seu CNPJ!"); ;
+            ?? throw new ExceptionApi("Não foi possível efetuar a consulta do seu CNPJ!");
     }
 }
