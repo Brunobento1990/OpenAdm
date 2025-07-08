@@ -281,4 +281,11 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Produtos
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<Produto?> GetProdutoByIdExcluirAsync(Guid id)
+    {
+        return await ParceiroContext
+            .Produtos
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 }

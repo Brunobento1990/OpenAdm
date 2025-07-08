@@ -62,7 +62,7 @@ public class ProdutoService : IProdutoService
     public async Task DeleteProdutoAsync(Guid id)
     {
 
-        var produto = await _produtoRepository.GetProdutoByIdAsync(id)
+        var produto = await _produtoRepository.GetProdutoByIdExcluirAsync(id)
             ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         if (!string.IsNullOrWhiteSpace(produto.NomeFoto))
