@@ -188,7 +188,8 @@ public class ProdutoCached : IProdutoRepository
         => _produtoRepository.AdicionarAsync(entity);
 
     public void Update(Produto produto)
-    {
-        throw new NotImplementedException();
-    }
+        => _produtoRepository.Update(produto);
+
+    public Task<Produto?> GetProdutoByIdExcluirAsync(Guid id)
+        => _produtoRepository.GetProdutoByIdExcluirAsync(id);
 }
