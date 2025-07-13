@@ -36,6 +36,20 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
         return new(usuarioViewModel, token, refreshToken);
     }
 
+    public async Task<ResponseLoginUsuarioViewModel> LoginGoogleAsync(RequestLoginGoogle requestLoginGoogle)
+    {
+        var resultadoToken = await _tokenService.ValidarTokenGoogleAsync(requestLoginGoogle.Jwt);
+
+        var usuario = await _loginUsuarioRepository.LoginComGoogleAsync(resultadoToken.Email)
+            ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
+
+        var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
+        var token = _tokenService.GenerateToken(usuarioViewModel);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
+
+        return new(usuarioViewModel, token, refreshToken);
+    }
+
     public async Task<ResponseLoginUsuarioViewModel> LoginV2Async(RequestLoginUsuario requestLogin)
     {
         requestLogin.Validar();

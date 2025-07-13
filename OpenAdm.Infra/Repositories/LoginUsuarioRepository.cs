@@ -17,4 +17,12 @@ public class LoginUsuarioRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Cpf == email || x.Cnpj == email);
     }
+
+    public async Task<Usuario?> LoginComGoogleAsync(string email)
+    {
+        return await _parceiroContext
+            .Usuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Email == email);
+    }
 }

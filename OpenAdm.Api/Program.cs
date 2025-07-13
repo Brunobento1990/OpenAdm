@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 DotEnv.Load();
 
+var googleClientId = VariaveisDeAmbiente.GetVariavel("GOOGLE_CLIENT_ID");
 var keyJwt = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
 var issue = VariaveisDeAmbiente.GetVariavel("JWT_ISSUE");
 var audience = VariaveisDeAmbiente.GetVariavel("JWT_AUDIENCE");
@@ -37,7 +38,7 @@ var instanceName = VariaveisDeAmbiente.GetVariavel("REDIS_INSTANCENAME");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
 var rodarMigration = VariaveisDeAmbiente.GetVariavel("RODAR_MIGRATION");
 
-ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate);
+ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate, googleClientId);
 ConfigAzure.Configure(azureKey, azureContainer);
 Criptografia.Configure(key, iv);
 EmailConfiguracaoModel.Configure(email: email, servidor: servidor, senha: senha, porta: porta);

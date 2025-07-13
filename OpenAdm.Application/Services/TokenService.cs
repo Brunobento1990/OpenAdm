@@ -1,7 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Google.Apis.Auth;
+using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Funcionarios;
 using OpenAdm.Application.Models.Tokens;
+using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -98,5 +100,26 @@ public class TokenService : ITokenService
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
         return [.. claims];
+    }
+
+    public async Task<TokenResponseGoogleModel> ValidarTokenGoogleAsync(string token)
+    {
+        try
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { ConfiguracaoDeToken.ClientIdGoogle }
+            });
+
+            return new TokenResponseGoogleModel()
+            {
+                Email = payload.Email,
+                Foto = payload.Picture
+            };
+        }
+        catch (InvalidJwtException ex)
+        {
+            throw new ExceptionApi(ex.Message);
+        }
     }
 }
