@@ -38,6 +38,15 @@ public class LoginController : ControllerBase
         return Ok(responselogin);
     }
 
+    [HttpPost("usuario/google")]
+    [ProducesResponseType<ResponseLoginUsuarioViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> LoginUsuarioGoogle(RequestLoginGoogle requestLoginGoogle)
+    {
+        var responselogin = await _loginUsuarioService.LoginGoogleAsync(requestLoginGoogle);
+        return Ok(responselogin);
+    }
+
     [HttpPost("usuario-v2")]
     [ProducesResponseType<ResponseLoginUsuarioViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]

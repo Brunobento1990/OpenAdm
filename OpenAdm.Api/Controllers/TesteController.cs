@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using OpenAdm.Infra.Context;
 
 namespace OpenAdm.Api.Controllers;

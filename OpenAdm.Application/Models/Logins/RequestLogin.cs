@@ -8,6 +8,11 @@ public class RequestLogin
     public string Senha { get; set; } = string.Empty;
 }
 
+public class RequestLoginGoogle
+{
+    public string Jwt { get; set; } = string.Empty;
+}
+
 public class RequestLoginUsuario
 {
     public string CpfCnpj { get; set; } = string.Empty;
