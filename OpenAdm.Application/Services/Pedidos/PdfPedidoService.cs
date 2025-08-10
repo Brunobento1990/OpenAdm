@@ -58,6 +58,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
         var titleStyle = TextStyle.Default.FontSize(18).SemiBold();
         var titleStyle2 = TextStyle.Default.FontSize(10).SemiBold();
         var titleStyleName = TextStyle.Default.FontSize(10);
+        var titleStyleName2 = TextStyle.Default.FontSize(18);
 
         void HeaderCustom(IContainer container)
         {
@@ -361,14 +362,14 @@ public sealed class PdfPedidoService : IPdfPedidoService
                                         {
                                             column.Item().Text(text =>
                                             {
-                                                text.Span("Remetente: ").Style(titleStyle2);
-                                                text.Span(parceiro.NomeFantasia).Style(titleStyleName);
+                                                text.Span("Remetente: ").Style(titleStyle);
+                                                text.Span(parceiro.NomeFantasia).Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
                                             {
-                                                text.Span("Rua: ").Style(titleStyle2);
-                                                text.Span(parceiro.EnderecoParceiro.Logradouro).Style(titleStyleName);
+                                                text.Span("Rua: ").Style(titleStyle);
+                                                text.Span(parceiro.EnderecoParceiro.Logradouro).Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
@@ -379,26 +380,26 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                                             column.Item().Text(text =>
                                             {
-                                                text.Span("Cidade: ").Style(titleStyle2);
-                                                text.Span($"{parceiro.EnderecoParceiro.Localidade} - {pedido.EnderecoEntrega.Uf}").Style(titleStyleName);
+                                                text.Span("Cidade: ").Style(titleStyle);
+                                                text.Span($"{parceiro.EnderecoParceiro.Localidade} - {pedido.EnderecoEntrega.Uf}").Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
                                             {
-                                                text.Span("Bairro: ").Style(titleStyle2);
-                                                text.Span($"{parceiro.EnderecoParceiro.Bairro}").Style(titleStyleName);
+                                                text.Span("Bairro: ").Style(titleStyle);
+                                                text.Span($"{parceiro.EnderecoParceiro.Bairro}").Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
                                             {
-                                                text.Span("CEP: ").Style(titleStyle2);
-                                                text.Span($"{parceiro.EnderecoParceiro.Cep}").Style(titleStyleName);
+                                                text.Span("CEP: ").Style(titleStyle);
+                                                text.Span($"{parceiro.EnderecoParceiro.Cep}").Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
                                             {
-                                                text.Span("Complemento: ").Style(titleStyle2);
-                                                text.Span(parceiro.EnderecoParceiro.Complemento ?? "").Style(titleStyleName);
+                                                text.Span("Complemento: ").Style(titleStyle);
+                                                text.Span(parceiro.EnderecoParceiro.Complemento ?? "").Style(titleStyleName2);
                                             });
                                         });
                                 });
@@ -413,50 +414,50 @@ public sealed class PdfPedidoService : IPdfPedidoService
                                     {
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Pedido: ").Style(titleStyle2);
-                                            text.Span($"{pedido.Numero}").Style(titleStyleName);
+                                            text.Span("Pedido: ").Style(titleStyle);
+                                            text.Span($"{pedido.Numero}").Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Destinatário: ").Style(titleStyle2);
-                                            text.Span(pedido.Usuario.Nome).Style(titleStyleName);
+                                            text.Span("Destinatário: ").Style(titleStyle);
+                                            text.Span(pedido.Usuario.Nome).Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Rua: ").Style(titleStyle2);
-                                            text.Span(pedido.EnderecoEntrega.Logradouro).Style(titleStyleName);
+                                            text.Span("Rua: ").Style(titleStyle);
+                                            text.Span(pedido.EnderecoEntrega.Logradouro).Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Número: ").Style(titleStyle2);
-                                            text.Span(pedido.EnderecoEntrega.Numero).Style(titleStyleName);
+                                            text.Span("Número: ").Style(titleStyle);
+                                            text.Span(pedido.EnderecoEntrega.Numero).Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Cidade: ").Style(titleStyle2);
-                                            text.Span($"{pedido.EnderecoEntrega.Localidade} - {pedido.EnderecoEntrega.Uf}").Style(titleStyleName);
+                                            text.Span("Cidade: ").Style(titleStyle);
+                                            text.Span($"{pedido.EnderecoEntrega.Localidade} - {pedido.EnderecoEntrega.Uf}").Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Bairro: ").Style(titleStyle2);
-                                            text.Span($"{pedido.EnderecoEntrega.Bairro}").Style(titleStyleName);
+                                            text.Span("Bairro: ").Style(titleStyle);
+                                            text.Span($"{pedido.EnderecoEntrega.Bairro}").Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("CEP: ").Style(titleStyle2);
-                                            text.Span($"{pedido.EnderecoEntrega.Cep}").Style(titleStyleName);
+                                            text.Span("CEP: ").Style(titleStyle);
+                                            text.Span($"{pedido.EnderecoEntrega.Cep}").Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
                                         {
-                                            text.Span("Complemento: ").Style(titleStyle2);
-                                            text.Span(pedido.EnderecoEntrega.Complemento ?? "").Style(titleStyleName);
+                                            text.Span("Complemento: ").Style(titleStyle);
+                                            text.Span(pedido.EnderecoEntrega.Complemento ?? "").Style(titleStyleName2);
                                         });
                                     });
                             });
