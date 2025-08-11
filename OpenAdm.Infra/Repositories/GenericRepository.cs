@@ -48,6 +48,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
     public virtual async Task<PaginacaoViewModel<T>> PaginacaoAsync(FilterModel<T> filterModel)
     {
         var include = filterModel.IncludeCustom();
+        var includes = filterModel.IncludeCustomList();
         var select = filterModel.SelectCustom();
 
         var query = ParceiroContext
@@ -55,11 +56,20 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
             .AsNoTracking()
             .WhereIsNotNull(filterModel.GetWhereBySearch());
 
+
+
         if (include != null)
         {
             query = query.Include(include);
         }
-        ;
+
+        if (includes?.Count > 0)
+        {
+            foreach (var inc in includes)
+            {
+                query = query.Include(inc);
+            }
+        }
 
         if (select != null)
         {

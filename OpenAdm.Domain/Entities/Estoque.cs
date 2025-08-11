@@ -34,7 +34,10 @@ public sealed class Estoque : BaseEntity
     }
 
     public Guid ProdutoId { get; private set; }
+    public Produto Produto { get; set; } = null!;
     public Guid? TamanhoId { get; private set; }
+    public Tamanho? Tamanho { get; set; }
     public Guid? PesoId { get; private set; }
+    public Peso? Peso { get; set; }
     public decimal Quantidade { get; private set; }
 }

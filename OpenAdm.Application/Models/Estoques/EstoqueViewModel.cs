@@ -11,6 +11,23 @@ public class EstoqueViewModel : BaseModel
     public string? Tamanho { get; set; }
     public string? Peso { get; set; }
 
+    public static explicit operator EstoqueViewModel(Estoque estoque)
+    {
+        return new EstoqueViewModel
+        {
+            Id = estoque.Id,
+            Tamanho = estoque.Tamanho?.Descricao,
+            Peso = estoque.Peso?.Descricao,
+            DataDeCriacao = estoque.DataDeCriacao,
+            DataDeAtualizacao = estoque.DataDeAtualizacao,
+            Produto = estoque.Produto?.Descricao,
+            Quantidade = estoque.Quantidade,
+            ProdutoId = estoque.ProdutoId,
+            Numero = estoque.Numero,
+            Foto = estoque.Produto?.UrlFoto
+        };
+    }
+
     public EstoqueViewModel ToModel(Estoque estoque, string? produto, string? tamanho, string? peso, string? foto)
     {
         Id = estoque.Id;

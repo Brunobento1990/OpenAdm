@@ -16,6 +16,17 @@ public static class StringExtensions
                              value.Substring(7, 4));
     }
 
+    public static string RemoverAcentos(this string text)
+    {
+        string withDiacritics = "ÄÅÁÂÀÃäáâàãÉÊËÈéêëèÍÎÏÌíîïìÖÓÔÒÕöóôòõÜÚÛüúûùÇç";
+        string withoutDiacritics = "AAAAAAaaaaaEEEEeeeeIIIIiiiiOOOOOoooooUUUuuuuCc";
+        for (int i = 0; i < withDiacritics.Length; i++)
+        {
+            text = text.Replace(withDiacritics[i].ToString(), withoutDiacritics[i].ToString());
+        }
+        return text;
+    }
+
     public static string FormatCpf(this string value)
     {
         return Convert.ToUInt64(value).ToString(@"000\.000\.000\-00");

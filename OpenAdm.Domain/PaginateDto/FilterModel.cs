@@ -15,6 +15,10 @@ public abstract class FilterModel<T>
     {
         return null;
     }
+    public virtual IList<Expression<Func<T, object>>>? IncludeCustomList()
+    {
+        return null;
+    }
     public virtual Expression<Func<T, T>>? SelectCustom()
     {
         return null;

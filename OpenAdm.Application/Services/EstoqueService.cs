@@ -58,42 +58,12 @@ public class EstoqueService : IEstoqueService
     public async Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(FilterModel<Estoque> paginacaoEstoqueDto)
     {
         var paginacao = await _estoqueRepository.PaginacaoAsync(paginacaoEstoqueDto);
-        var produtosids = paginacao
-            .Values
-            .DistinctBy(x => x.ProdutoId)
-            .Select(x => x.ProdutoId)
-            .ToList();
-
-        var tamanhosIds = paginacao
-            .Values.Where(x => x.TamanhoId != null)
-            .DistinctBy(x => x.TamanhoId)
-            .Select(x => x.TamanhoId!.Value)
-            .ToList();
-
-        var pesosIds = paginacao
-            .Values
-            .Where(x => x.PesoId != null)
-            .DistinctBy(x => x.PesoId)
-            .Select(x => x.PesoId!.Value)
-            .ToList();
-
-        var produtos = await _produtoRepository.GetDescricaoDeProdutosAsync(produtosids);
-        var tamanhos = await _tamanhoRepository.GetDescricaoTamanhosAsync(tamanhosIds);
-        var pesos = await _pesoRepository.GetDescricaoPesosAsync(pesosIds);
 
         return new PaginacaoViewModel<EstoqueViewModel>()
         {
             TotalDeRegistros = paginacao.TotalDeRegistros,
             TotalPaginas = paginacao.TotalPaginas,
-            Values = paginacao
-                .Values
-                .Select(x =>
-                    new EstoqueViewModel()
-                        .ToModel(x,
-                            produtos.FirstOrDefault(p => p.Key == x.ProdutoId).Value,
-                            tamanhos.FirstOrDefault(t => t.Key == x.TamanhoId).Value,
-                            pesos.FirstOrDefault(p => p.Key == x.PesoId).Value, null))
-                .ToList()
+            Values = paginacao.Values.Select(x => (EstoqueViewModel)x).ToList()
         };
     }
 
