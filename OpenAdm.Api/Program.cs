@@ -86,7 +86,7 @@ if (rodarMigration?.ToLower() == "true")
     var migrationServico = scope.ServiceProvider.GetService<IMigrationService>();
     if (migrationServico != null)
     {
-        await migrationServico.UpdateMigrationAsync();
+        await migrationServico.UpdateMigrationAsync(VariaveisDeAmbiente.GetVariavel("AMBIENTE"));
     }
 }
 

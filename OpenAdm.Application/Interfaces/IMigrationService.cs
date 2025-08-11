@@ -2,5 +2,5 @@
 
 public interface IMigrationService
 {
-    Task UpdateMigrationAsync();
+    Task UpdateMigrationAsync(string ambiente);
 }
