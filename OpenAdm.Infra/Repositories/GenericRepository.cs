@@ -50,13 +50,13 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         var include = filterModel.IncludeCustom();
         var includes = filterModel.IncludeCustomList();
         var select = filterModel.SelectCustom();
+        var where = filterModel.Where();
 
         var query = ParceiroContext
             .Set<T>()
             .AsNoTracking()
-            .WhereIsNotNull(filterModel.GetWhereBySearch());
-
-
+            .WhereIsNotNull(filterModel.GetWhereBySearch())
+            .WhereIsNotNull(where);
 
         if (include != null)
         {

@@ -19,6 +19,10 @@ public abstract class FilterModel<T>
     {
         return null;
     }
+    public virtual Expression<Func<T, bool>>? Where()
+    {
+        return null;
+    }
     public virtual Expression<Func<T, T>>? SelectCustom()
     {
         return null;
