@@ -6,6 +6,8 @@ public class EstoqueViewModel : BaseModel
 {
     public decimal Quantidade { get; set; }
     public Guid ProdutoId { get; set; }
+    public Guid? PesoId { get; set; }
+    public Guid? TamanhoId { get; set; }
     public string? Produto { get; set; }
     public string? Foto { get; set; }
     public string? Tamanho { get; set; }
@@ -24,7 +26,9 @@ public class EstoqueViewModel : BaseModel
             Quantidade = estoque.Quantidade,
             ProdutoId = estoque.ProdutoId,
             Numero = estoque.Numero,
-            Foto = estoque.Produto?.UrlFoto
+            Foto = estoque.Produto?.UrlFoto,
+            PesoId = estoque.PesoId,
+            TamanhoId = estoque.TamanhoId
         };
     }
 

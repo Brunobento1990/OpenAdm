@@ -3,6 +3,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -11,17 +12,22 @@ using System.Text;
 
 namespace OpenAdm.Application.Services;
 
-public class PedidoService(
-    IPedidoRepository pedidoRepository,
-    IItensPedidoRepository itensPedidoRepository,
-    IPdfPedidoService pdfPedidoService,
-    IParceiroAutenticado parceiroAutenticado)
-    : IPedidoService
+public class PedidoService : IPedidoService
 {
-    private readonly IPedidoRepository _pedidoRepository = pedidoRepository;
-    private readonly IItensPedidoRepository _itensPedidoRepository = itensPedidoRepository;
-    private readonly IPdfPedidoService _pdfPedidoService = pdfPedidoService;
-    private readonly IParceiroAutenticado _parceiroAutenticado = parceiroAutenticado;
+    private readonly IPedidoRepository _pedidoRepository;
+    private readonly IItensPedidoRepository _itensPedidoRepository;
+    private readonly IPdfPedidoService _pdfPedidoService;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
+    private readonly IEstoqueRepository _estoqueRepository;
+
+    public PedidoService(IPedidoRepository pedidoRepository, IItensPedidoRepository itensPedidoRepository, IPdfPedidoService pdfPedidoService, IParceiroAutenticado parceiroAutenticado, IEstoqueRepository estoqueRepository)
+    {
+        _pedidoRepository = pedidoRepository;
+        _itensPedidoRepository = itensPedidoRepository;
+        _pdfPedidoService = pdfPedidoService;
+        _parceiroAutenticado = parceiroAutenticado;
+        _estoqueRepository = estoqueRepository;
+    }
 
     public async Task<PedidoViewModel> GetAsync(Guid pedidoId)
     {
@@ -35,12 +41,35 @@ public class PedidoService(
     public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(FilterModel<Pedido> paginacaoPedidoDto)
     {
         var paginacao = await _pedidoRepository.PaginacaoAsync(paginacaoPedidoDto);
+        var pedidosViewModel = paginacao.Values
+            .Select(x => new PedidoViewModel().ForModel(x))
+            .ToList();
+
+        var pedidosEmAberto = pedidosViewModel.Where(x => x.StatusPedido == StatusPedido.Aberto);
+
+        var itens = pedidosEmAberto.SelectMany(x => x.ItensPedido).ToList();
+        var produtosIds = pedidosEmAberto.SelectMany(x => x.ItensPedido.Select(y => y.ProdutoId).Distinct()).ToList();
+
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+
+        foreach (var item in itens)
+        {
+            var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId
+                && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
+
+            if (estoque == null)
+            {
+                continue;
+            }
+
+            item.TemEstoqueDisponivel = estoque.Quantidade >= item.Quantidade;
+        }
 
         return new PaginacaoViewModel<PedidoViewModel>()
         {
             TotalPaginas = paginacao.TotalPaginas,
             TotalDeRegistros = paginacao.TotalDeRegistros,
-            Values = paginacao.Values.Select(x => new PedidoViewModel().ForModel(x)).ToList()
+            Values = pedidosViewModel
         };
     }
 

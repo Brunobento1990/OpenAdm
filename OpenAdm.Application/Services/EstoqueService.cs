@@ -36,23 +36,7 @@ public class EstoqueService : IEstoqueService
         var estoque = await _estoqueRepository.GetEstoqueAsync(x => x.Id == id)
             ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
 
-        var produto = await _produtoRepository.GetProdutoByIdAsync(estoque.ProdutoId);
-        var peso = string.Empty;
-        var tamanho = string.Empty;
-
-        if (estoque.TamanhoId != null)
-        {
-            var tamanhoDb = await _tamanhoRepository.GetTamanhoByIdAsync(estoque.TamanhoId.Value);
-            tamanho = tamanhoDb?.Descricao;
-        }
-
-        if (estoque.PesoId != null)
-        {
-            var pesoDb = await _pesoRepository.GetPesoByIdAsync(estoque.PesoId.Value);
-            peso = pesoDb?.Descricao;
-        }
-
-        return new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso, produto?.UrlFoto);
+        return (EstoqueViewModel)estoque;
     }
 
     public async Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(FilterModel<Estoque> paginacaoEstoqueDto)
@@ -208,7 +192,10 @@ public class EstoqueService : IEstoqueService
 
     public async Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto)
     {
-        var estoque = await _estoqueRepository.GetEstoqueAsync(x => x.ProdutoId == updateEstoqueDto.ProdutoId)
+        var estoque = await _estoqueRepository.GetEstoqueAsync(
+            x => x.ProdutoId == updateEstoqueDto.ProdutoId &&
+            x.PesoId == updateEstoqueDto.PesoId &&
+            x.TamanhoId == updateEstoqueDto.TamanhoId)
             ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
 
         estoque.UpdateEstoqueAtual(updateEstoqueDto.Quantidade);

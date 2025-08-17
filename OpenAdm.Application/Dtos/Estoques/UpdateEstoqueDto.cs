@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace OpenAdm.Application.Dtos.Estoques;
+﻿namespace OpenAdm.Application.Dtos.Estoques;
 
 public class UpdateEstoqueDto
 {
-    [Required]
     public Guid ProdutoId { get; set; }
-    [Required]
+    public Guid? PesoId { get; set; }
+    public Guid? TamanhoId { get; set; }
     public decimal Quantidade { get; set; }
 }

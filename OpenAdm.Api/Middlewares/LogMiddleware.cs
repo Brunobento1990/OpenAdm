@@ -1,4 +1,5 @@
-﻿using OpenAdm.Application.Dtos.Response;
+﻿
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.HttpService.Interfaces;
 using OpenAdm.Infra.Model;

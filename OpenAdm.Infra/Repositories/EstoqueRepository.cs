@@ -22,6 +22,9 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
         return await ParceiroContext
             .Estoques
             .AsNoTracking()
+            .Include(x => x.Produto)
+            .Include(x => x.Tamanho)
+            .Include(x => x.Peso)
             .FirstOrDefaultAsync(where);
     }
 
@@ -31,6 +34,16 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
             .Estoques
             .OrderByDescending(x => x.DataDeAtualizacao)
             .Take(3)
+            .ToListAsync();
+    }
+
+    public async Task<IList<Estoque>> GetPosicaoEstoqueDosProdutosAsync(IList<Guid> produtosIds)
+    {
+        return await ParceiroContext
+            .Estoques
+            .AsNoTracking()
+            .Where(x => produtosIds.Contains(x.ProdutoId))
+            .OrderByDescending(x => x.DataDeAtualizacao)
             .ToListAsync();
     }
 

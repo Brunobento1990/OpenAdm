@@ -11,6 +11,7 @@ public class PedidoViewModel : BaseViewModel
     public decimal TotalItens { get; set; }
     public decimal TotalAReceber { get; set; }
     public string Usuario { get; set; } = string.Empty;
+    public bool TemEstoqueDisponivel => ItensPedido.Where(x => x.TemEstoqueDisponivel).Count() == ItensPedido.Count;
     public IList<ItensPedidoViewModel> ItensPedido { get; set; } = [];
 
     public PedidoViewModel ForModelPedidoEmAberto(Pedido entity)
