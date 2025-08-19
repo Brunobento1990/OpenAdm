@@ -54,7 +54,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext
             .Pedidos
-            .AsNoTracking()
             .IgnoreQueryFilters()
             .Include(x => x.Usuario)
             .Include(x => x.ItensPedido)

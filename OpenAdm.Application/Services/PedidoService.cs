@@ -45,10 +45,10 @@ public class PedidoService : IPedidoService
             .Select(x => new PedidoViewModel().ForModel(x))
             .ToList();
 
-        var pedidosEmAberto = pedidosViewModel.Where(x => x.StatusPedido == StatusPedido.Aberto);
+        var pedidosParaVerificarEstoque = pedidosViewModel.Where(x => x.StatusPedido != StatusPedido.Cancelado && x.StatusPedido != StatusPedido.Entregue);
 
-        var itens = pedidosEmAberto.SelectMany(x => x.ItensPedido).ToList();
-        var produtosIds = pedidosEmAberto.SelectMany(x => x.ItensPedido.Select(y => y.ProdutoId).Distinct()).ToList();
+        var itens = pedidosParaVerificarEstoque.SelectMany(x => x.ItensPedido).ToList();
+        var produtosIds = pedidosParaVerificarEstoque.SelectMany(x => x.ItensPedido.Select(y => y.ProdutoId).Distinct()).ToList();
 
         var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
 
@@ -59,6 +59,7 @@ public class PedidoService : IPedidoService
 
             if (estoque == null)
             {
+                item.TemEstoqueDisponivel = false;
                 continue;
             }
 

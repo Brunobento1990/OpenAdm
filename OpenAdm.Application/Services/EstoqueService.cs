@@ -6,6 +6,7 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OpenAdm.Application.Services;
 
@@ -192,15 +193,29 @@ public class EstoqueService : IEstoqueService
 
     public async Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto)
     {
+        var date = DateTime.Now;
         var estoque = await _estoqueRepository.GetEstoqueAsync(
             x => x.ProdutoId == updateEstoqueDto.ProdutoId &&
             x.PesoId == updateEstoqueDto.PesoId &&
             x.TamanhoId == updateEstoqueDto.TamanhoId)
             ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
 
+        var movimento = new MovimentacaoDeProduto(
+            Guid.NewGuid(),
+            date,
+            date,
+            0,
+            quantidadeMovimentada: estoque.Quantidade - updateEstoqueDto.Quantidade,
+            tipoMovimentacaoDeProduto: updateEstoqueDto.Quantidade > estoque.Quantidade ? TipoMovimentacaoDeProduto.Entrada : TipoMovimentacaoDeProduto.Saida,
+            estoque.ProdutoId,
+            estoque.TamanhoId,
+            estoque.PesoId,
+            $"Estoque atualizado: {date:dd/MM/yyyy HH:mm}");
+
         estoque.UpdateEstoqueAtual(updateEstoqueDto.Quantidade);
 
         await _estoqueRepository.UpdateAsync(estoque);
+        await _movimentacaoDeProdutoRepository.AddAsync(movimento);
 
         return true;
     }

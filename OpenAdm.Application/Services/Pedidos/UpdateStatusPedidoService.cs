@@ -36,7 +36,7 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
             ?? throw new ExceptionApi("Não foi possível localizar o pedido");
         pedido.UpdateStatus(updateStatusPedidoDto.StatusPedido);
 
-        await _pedidoRepository.UpdateAsync(pedido);
+        _pedidoRepository.Update(pedido);
 
         if (pedido.StatusPedido == StatusPedido.Entregue)
         {
@@ -45,6 +45,8 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
             await _movimentacaoDeProdutosService.MovimentarItensPedidoAsync(pedido.ItensPedido);
             await _estoqueService.MovimentacaoDePedidoEntregueAsync(pedido.ItensPedido);
         }
+
+        await _pedidoRepository.SaveChangesAsync();
 
         return new PedidoViewModel().ForModel(pedido);
     }

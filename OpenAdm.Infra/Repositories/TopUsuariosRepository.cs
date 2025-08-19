@@ -17,7 +17,6 @@ public class TopUsuariosRepository : ITopUsuariosRepository
     public async Task AddAsync(TopUsuario topUsuario)
     {
         await _appDbContext.AddAsync(topUsuario);
-        await _appDbContext.SaveChangesAsync();
     }
 
     public async Task<TopUsuario?> GetByUsuarioIdAsync(Guid usuarioId, Guid parceiroId)

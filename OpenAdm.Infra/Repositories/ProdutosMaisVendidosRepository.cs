@@ -21,22 +21,22 @@ public sealed class ProdutosMaisVendidosRepository : IProdutosMaisVendidosReposi
             return;
         }
         await _parceiroContext.AddRangeAsync(produtosMaisVendidos);
-        await _parceiroContext.SaveChangesAsync();
     }
 
     public async Task<IList<ProdutoMaisVendido>> GetProdutosMaisVendidosAsync(IList<Guid> produtosIds)
     {
         return await _parceiroContext
             .ProdutosMaisVendidos
-            .AsNoTracking()
             .Where(x => produtosIds.Contains(x.ProdutoId))
             .ToListAsync();
     }
 
-    public async Task UpdateRangeAsync(IList<ProdutoMaisVendido> produtosMaisVendidos)
+    public void UpdateRange(IList<ProdutoMaisVendido> produtosMaisVendidos)
     {
-        _parceiroContext.AttachRange(produtosMaisVendidos);
+        if (produtosMaisVendidos.Count == 0)
+        {
+            return;
+        }
         _parceiroContext.UpdateRange(produtosMaisVendidos);
-        await _parceiroContext.SaveChangesAsync();
     }
 }

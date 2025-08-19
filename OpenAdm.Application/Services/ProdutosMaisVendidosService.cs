@@ -80,6 +80,6 @@ public sealed class ProdutosMaisVendidosService : IProdutosMaisVendidosService
         }
 
         await _produtosMaisVendidosRepository.AddRangeAsync(add);
-        await _produtosMaisVendidosRepository.UpdateRangeAsync(updates);
+        _produtosMaisVendidosRepository.UpdateRange(updates);
     }
 }

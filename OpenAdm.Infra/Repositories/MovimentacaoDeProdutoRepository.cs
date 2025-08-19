@@ -14,7 +14,6 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
     public async Task AddRangeAsync(IList<MovimentacaoDeProduto> movimentacaoDeProdutos)
     {
         await ParceiroContext.AddRangeAsync(movimentacaoDeProdutos);
-        await ParceiroContext.SaveChangesAsync();
     }
 
     public async Task<IDictionary<int, List<MovimentacaoDeProduto>>> CountTresMesesAsync(DateTime dataInicio, DateTime dataFinal)

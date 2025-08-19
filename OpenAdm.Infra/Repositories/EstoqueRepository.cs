@@ -21,7 +21,6 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
     {
         return await ParceiroContext
             .Estoques
-            .AsNoTracking()
             .Include(x => x.Produto)
             .Include(x => x.Tamanho)
             .Include(x => x.Peso)
