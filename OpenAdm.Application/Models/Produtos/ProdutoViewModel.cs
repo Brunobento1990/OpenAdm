@@ -45,4 +45,33 @@ public class ProdutoViewModel : BaseModel
         InativoEcommerce = entity.InativoEcommerce;
         return this;
     }
+
+    public ProdutoViewModel ToViewModel(Produto entity)
+    {
+        Foto = entity.UrlFoto;
+        Id = entity.Id;
+        DataDeCriacao = entity.DataDeCriacao;
+        DataDeAtualizacao = entity.DataDeAtualizacao;
+        Numero = entity.Numero;
+        Descricao = entity.Descricao;
+        EspecificacaoTecnica = entity.EspecificacaoTecnica;
+        Tamanhos = entity
+            .Tamanhos
+            .OrderBy(x => x.Numero)
+            .Select(x => new TamanhoViewModel().ToModel(x))
+            .ToList();
+        Pesos = entity
+            .Pesos
+            .OrderBy(x => x.Numero)
+            .Select(x => new PesoViewModel().ToModel(x))
+            .ToList();
+
+        if (entity.Categoria != null)
+            Categoria = new CategoriaViewModel().ToViewModel(entity.Categoria);
+
+        CategoriaId = entity.CategoriaId;
+        Referencia = entity.Referencia;
+        InativoEcommerce = entity.InativoEcommerce;
+        return this;
+    }
 }

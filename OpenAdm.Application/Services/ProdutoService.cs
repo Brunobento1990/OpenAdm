@@ -219,18 +219,29 @@ public class ProdutoService : IProdutoService
         var isAtacado = usuario?.IsAtacado == true;
         var produtosViewModel = new List<ProdutoViewModel>();
 
+        var precoPorTamanho = itensTabelaDePreco
+        .Where(x => x.TamanhoId != null)
+        .ToDictionary(
+            x => (x.ProdutoId, x.TamanhoId),
+            x => x
+        );
+
+        var precoPorPeso = itensTabelaDePreco
+            .Where(x => x.PesoId != null)
+            .ToDictionary(
+                x => (x.ProdutoId, x.PesoId),
+                x => x
+            );
+
         foreach (var produto in produtos)
         {
-            var produtoViewModel = new ProdutoViewModel().ToModel(produto);
+            var produtoViewModel = new ProdutoViewModel().ToViewModel(produto);
 
             if (produtoViewModel.Tamanhos != null)
             {
                 foreach (var tamanho in produtoViewModel.Tamanhos)
                 {
-                    var preco = itensTabelaDePreco.FirstOrDefault(
-                        x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
-
-                    if (preco != null)
+                    if (precoPorTamanho.TryGetValue((produto.Id, tamanho.Id), out var preco))
                     {
                         tamanho.PrecoProduto = new PrecoProdutoViewModel()
                         {
@@ -247,10 +258,7 @@ public class ProdutoService : IProdutoService
             {
                 foreach (var peso in produtoViewModel.Pesos)
                 {
-                    var preco = itensTabelaDePreco.FirstOrDefault(
-                       x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
-
-                    if (preco != null)
+                    if (precoPorPeso.TryGetValue((produto.Id, peso.Id), out var preco))
                     {
                         peso.PrecoProduto = new PrecoProdutoViewModel()
                         {

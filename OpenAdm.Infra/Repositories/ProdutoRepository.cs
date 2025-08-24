@@ -33,7 +33,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         var produtos = await ParceiroContext
             .Produtos
             .AsNoTracking()
-            .AsQueryable()
+            //.AsSplitQuery()
             .OrderBy(x => x.Numero)
             .Include(x => x.Categoria)
             .Include(x => x.Tamanhos)
@@ -46,36 +46,36 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Take(_take)
             .ToListAsync();
 
-        if (produtos.Count > 0)
-        {
-            produtos.ForEach(produto =>
-            {
-                if (paginacaoProdutoEcommerceDto.PesoId != null && paginacaoProdutoEcommerceDto.PesoId != Guid.Empty)
-                {
-                    produto.Pesos = produto.Pesos.Where(peso => peso.Id == paginacaoProdutoEcommerceDto.PesoId.Value).ToList();
-                }
+        //if (produtos.Count > 0)
+        //{
+        //    produtos.ForEach(produto =>
+        //    {
+        //        if (paginacaoProdutoEcommerceDto.PesoId != null && paginacaoProdutoEcommerceDto.PesoId != Guid.Empty)
+        //        {
+        //            produto.Pesos = produto.Pesos.Where(peso => peso.Id == paginacaoProdutoEcommerceDto.PesoId.Value).ToList();
+        //        }
 
-                if (paginacaoProdutoEcommerceDto.TamanhoId != null && paginacaoProdutoEcommerceDto.TamanhoId != Guid.Empty)
-                {
-                    produto.Tamanhos = produto.Tamanhos.Where(tamanho => tamanho.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value).ToList();
-                }
+        //        if (paginacaoProdutoEcommerceDto.TamanhoId != null && paginacaoProdutoEcommerceDto.TamanhoId != Guid.Empty)
+        //        {
+        //            produto.Tamanhos = produto.Tamanhos.Where(tamanho => tamanho.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value).ToList();
+        //        }
 
-                produto.Categoria.Produtos = new();
-                produto.Tamanhos.ForEach(tamanho =>
-                {
-                    tamanho.Produtos = new();
-                });
+        //        produto.Categoria.Produtos = new();
+        //        produto.Tamanhos.ForEach(tamanho =>
+        //        {
+        //            tamanho.Produtos = new();
+        //        });
 
-                produto.Pesos.ForEach(peso =>
-                {
-                    peso.Produtos = new();
-                });
-            });
-        }
+        //        produto.Pesos.ForEach(peso =>
+        //        {
+        //            peso.Produtos = new();
+        //        });
+        //    });
+        //}
 
         var totalPages = await ParceiroContext
             .Produtos
-            .AsQueryable()
+            .AsNoTracking()
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)

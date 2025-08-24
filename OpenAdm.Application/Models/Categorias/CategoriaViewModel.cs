@@ -23,4 +23,17 @@ public class CategoriaViewModel : BaseModel
 
         return this;
     }
+
+    public CategoriaViewModel ToViewModel(Categoria entity)
+    {
+        Id = entity.Id;
+        DataDeCriacao = entity.DataDeCriacao;
+        DataDeAtualizacao = entity.DataDeAtualizacao;
+        Numero = entity.Numero;
+        Descricao = entity.Descricao;
+        Foto = entity.Foto;
+        InativoEcommerce = entity.InativoEcommerce;
+
+        return this;
+    }
 }
