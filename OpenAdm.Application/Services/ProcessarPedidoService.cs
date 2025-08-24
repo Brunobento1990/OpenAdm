@@ -54,7 +54,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
                 Number = $"55{configuracoesDePedido.WhatsApp.LimparMascaraTelefone()}",
                 MediaType = "document",
                 MimeType = "application/pdf",
-                Caption = $"{parceiro.NomeFantasia}\nÓtima noticia, o cliente {pedido.Usuario.Nome} fez um novo pedido \n N°{pedido.Numero}",
+                Caption = $"{parceiro.NomeFantasia}\nÓtima noticia, o cliente {pedido.Usuario.Nome} fez um novo pedido \nNúmero do pedido: {pedido.Numero}",
                 Media = Convert.ToBase64String(pdf),
                 FileName = $"pedido-{pedido.Numero}.pdf",
                 Delay = 0,

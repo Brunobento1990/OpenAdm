@@ -19,7 +19,7 @@ public class ChatWppHttpClient : IChatWppHttpClient
         var client = _httpClientFactory.CreateClient($"{HttpServiceEnum.WhatsApp}");
 
         var response = await client.PostAsync("/message/sendMedia/open-adm", JsonSerializerOptionsApi.ToJson(enviarPDFWppDTO));
-        var responseBody = await response.Content.ReadAsStringAsync();
+        //var responseBody = await response.Content.ReadAsStringAsync();
         return response.IsSuccessStatusCode;
     }
 }
