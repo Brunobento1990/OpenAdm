@@ -13,7 +13,9 @@ public static class DependencyInjectIHttpClient
         string urlApiCep,
         string urlMercadoPago,
         string urlConsultaCnpj,
-        string urlApiViaCep)
+        string urlApiViaCep,
+        string urlWhatsApp,
+        string keyWhatsApp)
     {
         services.AddTransient<IHttpClientCep, CepHttpService>();
         services.AddTransient<IDiscordHttpService, DiscordHttpService>();
@@ -42,6 +44,14 @@ public static class DependencyInjectIHttpClient
         services.AddHttpClient(HttpServiceEnum.ConsultaCep.ToString(), x =>
         {
             x.BaseAddress = new Uri(urlApiViaCep);
+        });
+
+        services.AddScoped<IChatWppHttpClient, ChatWppHttpClient>();
+
+        services.AddHttpClient(HttpServiceEnum.WhatsApp.ToString(), x =>
+        {
+            x.BaseAddress = new Uri(urlWhatsApp);
+            x.DefaultRequestHeaders.Add("apiKey", keyWhatsApp);
         });
     }
 }

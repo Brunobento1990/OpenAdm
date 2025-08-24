@@ -6,10 +6,12 @@ using OpenAdm.Application.DependencyInject;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Tokens;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
 using QuestPDF.Infrastructure;
+using System.Threading.Channels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,8 @@ var pgString = VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION");
 var redisString = VariaveisDeAmbiente.GetVariavel("REDIS_URL");
 var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
 var urlApiCep = VariaveisDeAmbiente.GetVariavel("URL_API_CEP");
+var urlWhatsApp = VariaveisDeAmbiente.GetVariavel("URL_API_WHATSAPP");
+var apiKeyWhatsApp = VariaveisDeAmbiente.GetVariavel("API_KEY_WHATSAPP");
 var urlApiViaCep = VariaveisDeAmbiente.GetVariavel("URL_API_VIA_CEP");
 var urlApiMercadoPago = VariaveisDeAmbiente.GetVariavel("URL_API_MERCADO_PAGO");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
@@ -52,7 +56,7 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
-builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj, urlApiViaCep);
+builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj, urlApiViaCep, urlWhatsApp, apiKeyWhatsApp);
 
 QuestPDF.Settings.License = LicenseType.Community;
 

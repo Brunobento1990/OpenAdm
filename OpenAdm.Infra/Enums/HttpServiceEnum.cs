@@ -7,4 +7,5 @@ public enum HttpServiceEnum
     Discord,
     CepHttpService,
     ConsultaCep,
+    WhatsApp,
 }

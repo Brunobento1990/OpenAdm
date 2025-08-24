@@ -2,6 +2,7 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ConfiguracoesDePedidos;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services;
@@ -36,7 +37,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 ativo: true,
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
-                parceiroId: _usuarioAutenticado.ParceiroId);
+                parceiroId: _usuarioAutenticado.ParceiroId,
+                whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone());
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
@@ -46,7 +48,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 emailDeEnvio: updateConfiguracoesDePedidoDto.EmailDeEnvio,
                 ativo: true,
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
-                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo);
+                pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
+                whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone());
 
             _configuracoesDePedidoRepository.Update(configuracaoDePedido);
         }

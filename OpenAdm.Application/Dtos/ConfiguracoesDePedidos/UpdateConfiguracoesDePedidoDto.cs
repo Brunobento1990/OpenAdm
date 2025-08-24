@@ -8,7 +8,7 @@ public class UpdateConfiguracoesDePedidoDto
     [DataType(DataType.EmailAddress)]
     [MaxLength(255)]
     public string EmailDeEnvio { get; set; } = string.Empty;
-
+    public string? WhatsApp { get; set; }
     public decimal? PedidoMinimoAtacado { get; set; }
     public decimal? PedidoMinimoVarejo { get; set; }
 }

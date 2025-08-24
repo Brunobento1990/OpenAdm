@@ -5,6 +5,7 @@ namespace OpenAdm.Application.Models.ConfiguracoesDePedidos;
 public class ConfiguracoesDePedidoViewModel : BaseModel
 {
     public string EmailDeEnvio { get; set; } = string.Empty;
+    public string? WhatsApp { get; set; }
     public decimal? PedidoMinimoAtacado { get; set; }
     public decimal? PedidoMinimoVarejo { get; set; }
 
@@ -17,6 +18,7 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
         EmailDeEnvio = configuracoesDePedido.EmailDeEnvio;
         PedidoMinimoAtacado = configuracoesDePedido.PedidoMinimoAtacado;
         PedidoMinimoVarejo = configuracoesDePedido.PedidoMinimoVarejo;
+        WhatsApp = configuracoesDePedido.WhatsApp;
 
         return this;
     }
