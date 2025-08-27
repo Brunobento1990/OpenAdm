@@ -20,7 +20,8 @@ public class MovimentacaoDeProdutoRepository : GenericRepository<MovimentacaoDeP
     {
         return await ParceiroContext
             .MovimentacoesDeProdutos
-            .Where(m => m.DataDeCriacao >= dataInicio && m.DataDeCriacao <= dataFinal)
+            .Where(m => m.DataDeCriacao >= dataInicio && m.DataDeCriacao <= dataFinal 
+                && m.TipoMovimentacaoDeProduto == Domain.Enuns.TipoMovimentacaoDeProduto.Saida)
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,

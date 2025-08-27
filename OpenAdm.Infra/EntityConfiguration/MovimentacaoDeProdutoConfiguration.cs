@@ -27,6 +27,7 @@ public class MovimentacaoDeProdutoConfiguration : IEntityTypeConfiguration<Movim
         builder.Property(x => x.ProdutoId)
             .IsRequired();
         builder.HasIndex(x => x.ProdutoId);
+        builder.HasIndex(x => x.TipoMovimentacaoDeProduto);
         builder.Property(x => x.Observacao)
             .HasMaxLength(255);
     }
