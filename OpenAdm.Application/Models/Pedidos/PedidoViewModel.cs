@@ -20,7 +20,9 @@ public class PedidoViewModel : BaseViewModel
             var porcentagens = ItensPedido.Select(x =>
             {
                 if (x.Quantidade == 0) return 100m;
-                return Math.Min(100m, (x.EstoqueAtual * 100m) / x.Quantidade);
+                if (x.EstoqueAtual <= 0) return 0m;
+                var porcentagem = (x.EstoqueAtual * 100m) / x.Quantidade;
+                return Math.Min(100m, porcentagem);
             });
 
             return porcentagens.Min();
