@@ -30,7 +30,7 @@ public class PedidoViewModel : BaseViewModel
             var percentualAtendido = (totalAtendido / (decimal)totalPedido) * 100m;
             decimal percentualFaltante = 100m - percentualAtendido;
 
-            return percentualFaltante;
+            return Math.Round(percentualFaltante, 0);
         }
     }
     public string Usuario { get; set; } = string.Empty;
