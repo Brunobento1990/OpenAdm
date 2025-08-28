@@ -60,10 +60,12 @@ public class PedidoService : IPedidoService
             if (estoque == null)
             {
                 item.TemEstoqueDisponivel = false;
+                item.EstoqueAtual = 0;
                 continue;
             }
 
             item.TemEstoqueDisponivel = estoque.Quantidade >= item.Quantidade;
+            item.EstoqueAtual = estoque.Quantidade;
         }
 
         return new PaginacaoViewModel<PedidoViewModel>()
