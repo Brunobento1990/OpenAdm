@@ -17,15 +17,17 @@ public class PedidoViewModel : BaseViewModel
             if (ItensPedido == null || !ItensPedido.Any())
                 return 0;
 
+            // Calcula a porcentagem de cada item individualmente
             var porcentagens = ItensPedido.Select(x =>
             {
-                if (x.Quantidade == 0) return 100m;
-                if (x.EstoqueAtual <= 0) return 0m;
+                if (x.Quantidade <= 0) return 100m; // Se não há quantidade solicitada, considera 100%
+                if (x.EstoqueAtual <= 0) return 0m; // Se não há estoque, considera 0%
                 var porcentagem = (x.EstoqueAtual * 100m) / x.Quantidade;
-                return Math.Min(100m, porcentagem);
+                return Math.Max(0m, Math.Min(100m, porcentagem)); // Limita entre 0 e 100
             });
 
-            return porcentagens.Min();
+            // Retorna o menor percentual entre os itens
+            return Math.Round(porcentagens.Min(), 0); // Arredonda para facilitar exibição no front
         }
     }
     public string Usuario { get; set; } = string.Empty;
