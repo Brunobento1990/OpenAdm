@@ -17,7 +17,7 @@ public class ItensPedidoViewModel : BaseModel
     public decimal ValorUnitario { get; set; }
     public decimal Quantidade { get; set; }
     public decimal ValorTotal { get; set; }
-    public decimal EstoqueAtual { get; set; }
+    public decimal EstoqueDisponivel { get; set; }
     public bool TemEstoqueDisponivel { get; set; }
     public ItensPedidoViewModel ToModel(ItemPedido entity)
     {

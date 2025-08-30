@@ -10,7 +10,7 @@ public class PedidoViewModel : BaseViewModel
     public decimal ValorTotal { get; set; }
     public decimal TotalItens { get; set; }
     public decimal TotalAReceber { get; set; }
-    public decimal PorcentagemEstoqueDisponivel
+    public decimal PorcentagemEstoqueAtendido
     {
         get
         {
@@ -18,19 +18,12 @@ public class PedidoViewModel : BaseViewModel
                 return 0;
 
             var totalPedido = ItensPedido.Sum(x => x.Quantidade);
-
-            var totalAtendido = ItensPedido.Sum(x =>
-            {
-                var disponivel = x.EstoqueAtual < 0 ? 0 : x.EstoqueAtual;
-                return Math.Min(x.Quantidade, disponivel);
-            });
+            var totalAtendido = ItensPedido.Sum(x => x.EstoqueDisponivel);
 
             if (totalPedido == 0) return 0;
 
             var percentualAtendido = (totalAtendido / (decimal)totalPedido) * 100m;
-            decimal percentualFaltante = 100m - percentualAtendido;
-
-            return Math.Round(percentualFaltante, 0);
+            return Math.Round(percentualAtendido, 0);
         }
     }
     public string Usuario { get; set; } = string.Empty;

@@ -35,6 +35,27 @@ public class PedidoService : IPedidoService
             ?? throw new ExceptionApi($"Pedido não localizado: {pedidoId}");
         var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
 
+        if(pedidoViewModel.StatusPedido == StatusPedido.Cancelado || 
+            pedidoViewModel.StatusPedido == StatusPedido.Entregue)
+            return pedidoViewModel;
+
+        var produtosIds = pedidoViewModel.ItensPedido.DistinctBy(x => x.ProdutoId).Select(x => x.ProdutoId).ToList();
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+
+        foreach (var item in pedidoViewModel.ItensPedido)
+        {
+            var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId
+                && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
+
+            if (estoque == null || estoque.Quantidade <= 0)
+            {
+                item.EstoqueDisponivel = 0;
+                continue;
+            }
+
+            item.EstoqueDisponivel = estoque.Quantidade;
+        }
+
         return pedidoViewModel;
     }
 
@@ -57,15 +78,15 @@ public class PedidoService : IPedidoService
             var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId
                 && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
 
-            if (estoque == null)
+            if (estoque == null || estoque.Quantidade <= 0)
             {
                 item.TemEstoqueDisponivel = false;
-                item.EstoqueAtual = 0;
+                item.EstoqueDisponivel = 0;
                 continue;
             }
 
             item.TemEstoqueDisponivel = estoque.Quantidade >= item.Quantidade;
-            item.EstoqueAtual = estoque.Quantidade;
+            item.EstoqueDisponivel = estoque.Quantidade > item.Quantidade ? item.Quantidade : estoque.Quantidade;
         }
 
         return new PaginacaoViewModel<PedidoViewModel>()
