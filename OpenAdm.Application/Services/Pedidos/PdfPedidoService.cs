@@ -381,7 +381,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
                                             column.Item().Text(text =>
                                             {
                                                 text.Span("Cidade: ").Style(titleStyle);
-                                                text.Span($"{parceiro.EnderecoParceiro.Localidade} - {pedido.EnderecoEntrega.Uf}").Style(titleStyleName2);
+                                                text.Span($"{parceiro.EnderecoParceiro.Localidade} - {parceiro.EnderecoParceiro.Uf}").Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
