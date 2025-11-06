@@ -9,9 +9,9 @@ namespace OpenAdm.Application.Dtos.Usuarios;
 public class CreateUsuarioAdminDto : BaseModel
 {
     public string Nome { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Senha { get; set; } = string.Empty;
-    public string ReSenha { get; set; } = string.Empty;
+    public string? Email { get; set; }
+    public string? Senha { get; set; }
+    public string? ReSenha { get; set; }
     public string Telefone { get; set; } = string.Empty;
     public string? Cnpj { get; set; } = string.Empty;
     public string? Cpf { get; set; } = string.Empty;
@@ -19,15 +19,15 @@ public class CreateUsuarioAdminDto : BaseModel
 
     public void Validar()
     {
-        if (string.IsNullOrWhiteSpace(Cpf) && string.IsNullOrWhiteSpace(Cnpj))
-        {
-            throw new ExceptionApi("Informe o CNPJ ou o CPF");
-        }
+        //if (string.IsNullOrWhiteSpace(Cpf) && string.IsNullOrWhiteSpace(Cnpj))
+        //{
+        //    throw new ExceptionApi("Informe o CNPJ ou o CPF");
+        //}
 
-        if (!string.IsNullOrWhiteSpace(Cpf) && !string.IsNullOrWhiteSpace(Cnpj))
-        {
-            throw new ExceptionApi("Informe o CNPJ ou o CPF");
-        }
+        //if (!string.IsNullOrWhiteSpace(Cpf) && !string.IsNullOrWhiteSpace(Cnpj))
+        //{
+        //    throw new ExceptionApi("Informe o CNPJ ou o CPF");
+        //}
 
         if (string.IsNullOrWhiteSpace(Nome))
         {
@@ -39,24 +39,22 @@ public class CreateUsuarioAdminDto : BaseModel
             throw new ExceptionApi("Informe o telefone");
         }
 
-        if (string.IsNullOrWhiteSpace(Senha) || string.IsNullOrWhiteSpace(ReSenha))
-        {
-            throw new ExceptionApi("Senhas inválidas");
-        }
+        //if (string.IsNullOrWhiteSpace(Senha) || string.IsNullOrWhiteSpace(ReSenha))
+        //{
+        //    throw new ExceptionApi("Senhas inválidas");
+        //}
 
-        if (!Senha.Equals(ReSenha))
+        if (!string.IsNullOrWhiteSpace(Senha) && !string.IsNullOrWhiteSpace(ReSenha) && !Senha.Equals(ReSenha))
         {
             throw new ExceptionApi("As senha não conferem!");
         }
 
-        Cpf = Cpf?.Replace(".", "")?.Replace("-", "");
-        Cnpj = Cnpj?.Replace(".", "")?.Replace("-", "")?.Replace("/", "");
+        Cpf = string.IsNullOrWhiteSpace(Cpf) ? null : Cpf?.Replace(".", "")?.Replace("-", "");
+        Cnpj = string.IsNullOrWhiteSpace(Cnpj) ? null : Cnpj?.Replace(".", "")?.Replace("-", "")?.Replace("/", "");
     }
 
     public Usuario ToEntity()
     {
-        var senha = PasswordAdapter.GenerateHash(Senha);
-
         var date = DateTime.Now;
 
         var usuario = new Usuario(
@@ -64,8 +62,8 @@ public class CreateUsuarioAdminDto : BaseModel
             date,
             date,
             0,
-            Email,
-            senha,
+            Email ?? "",
+            senha: string.IsNullOrWhiteSpace(Senha) ? "" : PasswordAdapter.GenerateHash(Senha),
             Nome,
             Telefone,
             Cnpj,

@@ -233,7 +233,7 @@ public class UsuarioService : IUsuarioService
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioAdminDto createUsuarioDto)
     {
         createUsuarioDto.Validar();
-        var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
+        Usuario? usuario = string.IsNullOrWhiteSpace(createUsuarioDto.Email) ? null : await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
 
         if (usuario != null)
             throw new ExceptionApi("Este e-mail já se encontra cadastrado!");

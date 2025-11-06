@@ -5,9 +5,7 @@ using OpenAdm.Domain.Entities;
 using Npgsql;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Model;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using OpenAdm.Infra.Extensions.IQueryable;
-using StackExchange.Redis;
 
 namespace OpenAdm.Infra.Repositories;
 
