@@ -18,6 +18,8 @@ public class ProdutoService : IProdutoService
     private readonly IUploadImageBlobClient _uploadImageBlobClient;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
+    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IEstoqueRepository _estoqueRepository;
 
     public ProdutoService(
         IProdutoRepository produtoRepository,
@@ -25,7 +27,9 @@ public class ProdutoService : IProdutoService
         ITamanhosProdutoRepository tamanhosProdutoRepository,
         IUploadImageBlobClient uploadImageBlobClient,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
-        IUsuarioAutenticado usuarioAutenticado)
+        IUsuarioAutenticado usuarioAutenticado,
+        IConfiguracoesDePedidoService configuracoesDePedidoService,
+        IEstoqueRepository estoqueRepository)
     {
         _produtoRepository = produtoRepository;
         _pesosProdutosRepository = pesosProdutosRepository;
@@ -33,6 +37,8 @@ public class ProdutoService : IProdutoService
         _uploadImageBlobClient = uploadImageBlobClient;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _usuarioAutenticado = usuarioAutenticado;
+        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _estoqueRepository = estoqueRepository;
     }
 
     public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
@@ -120,6 +126,32 @@ public class ProdutoService : IProdutoService
         var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
         var produtosViewModel = await MapearProdutosAsync(paginacao.Values);
 
+        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+
+        if (config.VendaDeProdutoComEstoque)
+        {
+            var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosViewModel.Select(x => x.Id).ToList());
+
+            foreach (var produto in produtosViewModel)
+            {
+                if (produto.Tamanhos != null)
+                {
+                    foreach (var tamanho in produto.Tamanhos)
+                    {
+                        tamanho.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id && x.Quantidade > 0);
+                    }
+                }
+
+                if (produto.Pesos != null)
+                {
+                    foreach (var peso in produto.Pesos)
+                    {
+                        peso.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id && x.Quantidade > 0);
+                    }
+                }
+            }
+        }
+
         return new PaginacaoViewModel<ProdutoViewModel>()
         {
             TotalDeRegistros = paginacao.TotalDeRegistros,
@@ -132,6 +164,32 @@ public class ProdutoService : IProdutoService
     {
         var produtos = await _produtoRepository.GetProdutosByCategoriaIdAsync(categoriaId);
         var produtosViewModel = await MapearProdutosAsync(produtos);
+
+        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+
+        if (config.VendaDeProdutoComEstoque)
+        {
+            var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtos.Select(x => x.Id).ToList());
+
+            foreach (var produto in produtosViewModel)
+            {
+                if (produto.Tamanhos != null)
+                {
+                    foreach (var tamanho in produto.Tamanhos)
+                    {
+                        tamanho.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id && x.Quantidade > 0);
+                    }
+                }
+
+                if (produto.Pesos != null)
+                {
+                    foreach (var peso in produto.Pesos)
+                    {
+                        peso.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id && x.Quantidade > 0);
+                    }
+                }
+            }
+        }
 
         return produtosViewModel;
     }

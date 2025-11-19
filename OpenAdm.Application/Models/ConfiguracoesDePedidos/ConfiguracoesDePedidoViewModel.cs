@@ -8,6 +8,8 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
     public string? WhatsApp { get; set; }
     public decimal? PedidoMinimoAtacado { get; set; }
     public decimal? PedidoMinimoVarejo { get; set; }
+    public bool VendaDeProdutoComEstoque { get; set; } = false;
+
 
     public ConfiguracoesDePedidoViewModel ToModel(ConfiguracoesDePedido configuracoesDePedido)
     {
@@ -19,6 +21,7 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
         PedidoMinimoAtacado = configuracoesDePedido.PedidoMinimoAtacado;
         PedidoMinimoVarejo = configuracoesDePedido.PedidoMinimoVarejo;
         WhatsApp = configuracoesDePedido.WhatsApp;
+        VendaDeProdutoComEstoque = configuracoesDePedido.VendaDeProdutoComEstoque;
 
         return this;
     }

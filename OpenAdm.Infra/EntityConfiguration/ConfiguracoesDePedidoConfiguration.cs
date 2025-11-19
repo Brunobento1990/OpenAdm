@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OpenAdm.Domain.Entities;
 
 namespace OpenAdm.Infra.EntityConfiguration;
@@ -16,6 +17,10 @@ internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfigurati
             .HasPrecision(12, 2);
         builder.Property(x => x.PedidoMinimoVarejo)
             .HasPrecision(12, 2);
+
+        builder.Property(x => x.VendaDeProdutoComEstoque)
+            .IsRequired()
+            .HasDefaultValue(false);
 
         base.Configure(builder);
     }

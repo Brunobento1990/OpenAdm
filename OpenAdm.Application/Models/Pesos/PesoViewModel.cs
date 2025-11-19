@@ -8,6 +8,8 @@ public class PesoViewModel : BaseModel
     public string Descricao { get; set; } = string.Empty;
     public decimal? PesoReal { get; set; }
     public PrecoProdutoViewModel? PrecoProduto { get; set; }
+    public bool TemEstoqueDisponivel { get; set; } = true;
+
     public PesoViewModel ToModel(Peso entity)
     {
         Id = entity.Id;

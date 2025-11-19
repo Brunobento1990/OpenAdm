@@ -38,7 +38,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
                 parceiroId: _usuarioAutenticado.ParceiroId,
-                whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone());
+                whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
+                vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque);
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
@@ -49,7 +50,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 ativo: true,
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
-                whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone());
+                whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
+                vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque);
 
             _configuracoesDePedidoRepository.Update(configuracaoDePedido);
         }

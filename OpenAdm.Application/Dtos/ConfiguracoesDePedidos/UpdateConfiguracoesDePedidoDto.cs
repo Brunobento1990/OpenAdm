@@ -11,4 +11,5 @@ public class UpdateConfiguracoesDePedidoDto
     public string? WhatsApp { get; set; }
     public decimal? PedidoMinimoAtacado { get; set; }
     public decimal? PedidoMinimoVarejo { get; set; }
+    public bool VendaDeProdutoComEstoque { get; set; } = false;
 }
