@@ -13,7 +13,7 @@ public interface IUsuarioService
     Task<UsuarioViewModel> GetUsuarioByIdAdmAsync(Guid id);
     Task<UsuarioViewModel> GetUsuarioByIdValidacaoAsync(Guid id);
     Task<IList<UsuarioViewModel>> GetAllUsuariosAsync();
-    Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto);
+    Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto, bool ativo = true);
     Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto);
     Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioAdminDto createUsuarioDto);
     Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto);
@@ -22,4 +22,5 @@ public interface IUsuarioService
     Task<PaginacaoViewModel<UsuarioViewModel>> PaginacaoAsync(FilterModel<Usuario> paginacaoUsuarioDto);
     Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoDropDown<Usuario> paginacaoUsuarioDropDown);
     Task<bool> TemTelefoneCadastradoAsync();
+    Task<bool> AtivarBloquearAsync(Guid id);
 }

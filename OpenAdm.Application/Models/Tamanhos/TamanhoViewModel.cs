@@ -6,6 +6,7 @@ namespace OpenAdm.Application.Models.Tamanhos;
 public class TamanhoViewModel : BaseModel
 {
     public decimal? PesoReal { get; set; }
+    public decimal? Quantidade { get; set; }
     public string Descricao { get; set; } = string.Empty;
     public bool TemEstoqueDisponivel { get; set; } = true;
     public PrecoProdutoViewModel? PrecoProduto { get; set; }

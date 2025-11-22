@@ -131,25 +131,7 @@ public class ProdutoService : IProdutoService
         if (config.VendaDeProdutoComEstoque)
         {
             var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosViewModel.Select(x => x.Id).ToList());
-
-            foreach (var produto in produtosViewModel)
-            {
-                if (produto.Tamanhos != null)
-                {
-                    foreach (var tamanho in produto.Tamanhos)
-                    {
-                        tamanho.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id && x.Quantidade > 0);
-                    }
-                }
-
-                if (produto.Pesos != null)
-                {
-                    foreach (var peso in produto.Pesos)
-                    {
-                        peso.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id && x.Quantidade > 0);
-                    }
-                }
-            }
+            MapearEstoque(produtosViewModel, estoques);
         }
 
         return new PaginacaoViewModel<ProdutoViewModel>()
@@ -170,28 +152,36 @@ public class ProdutoService : IProdutoService
         if (config.VendaDeProdutoComEstoque)
         {
             var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtos.Select(x => x.Id).ToList());
-
-            foreach (var produto in produtosViewModel)
-            {
-                if (produto.Tamanhos != null)
-                {
-                    foreach (var tamanho in produto.Tamanhos)
-                    {
-                        tamanho.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id && x.Quantidade > 0);
-                    }
-                }
-
-                if (produto.Pesos != null)
-                {
-                    foreach (var peso in produto.Pesos)
-                    {
-                        peso.TemEstoqueDisponivel = estoques.Any(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id && x.Quantidade > 0);
-                    }
-                }
-            }
+            MapearEstoque(produtosViewModel, estoques);
         }
 
         return produtosViewModel;
+    }
+
+    private static void MapearEstoque(IList<ProdutoViewModel> produtosViewModel, IList<Estoque> estoques)
+    {
+        foreach (var produto in produtosViewModel)
+        {
+            if (produto.Tamanhos != null)
+            {
+                foreach (var tamanho in produto.Tamanhos)
+                {
+                    var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
+                    tamanho.TemEstoqueDisponivel = estoqueItem?.Quantidade > 0;
+                    tamanho.Quantidade = estoqueItem?.Quantidade;
+                }
+            }
+
+            if (produto.Pesos != null)
+            {
+                foreach (var peso in produto.Pesos)
+                {
+                    var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
+                    peso.TemEstoqueDisponivel = estoqueItem?.Quantidade > 0;
+                    peso.Quantidade = estoqueItem?.Quantidade;
+                }
+            }
+        }
     }
 
     public async Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id)

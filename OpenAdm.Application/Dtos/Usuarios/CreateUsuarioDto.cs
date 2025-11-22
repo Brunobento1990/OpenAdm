@@ -58,7 +58,7 @@ public class CreateUsuarioDto : BaseModel
         Cnpj = Cnpj?.Replace(".", "")?.Replace("-", "")?.Replace("/", "");
     }
 
-    public Usuario ToEntity()
+    public Usuario ToEntity(bool ativo)
     {
         var senha = PasswordAdapter.GenerateHash(Senha);
 
@@ -74,7 +74,7 @@ public class CreateUsuarioDto : BaseModel
             Telefone,
             TipoPessoa == TipoPessoa.Juridica ? Cnpj : null,
             TipoPessoa == TipoPessoa.Fisica ? Cpf : null,
-            true,
+            ativo,
             null,
             null);
     }

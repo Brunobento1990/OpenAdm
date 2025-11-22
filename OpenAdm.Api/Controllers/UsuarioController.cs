@@ -28,9 +28,16 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost("create")]
-    public async Task<IActionResult> CretaeUsuario(CreateUsuarioDto createUsuarioDto)
+    public async Task<IActionResult> CreateUsuario(CreateUsuarioDto createUsuarioDto)
     {
         var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto);
+        return Ok(responseCreateUsuario);
+    }
+
+    [HttpPost("create-inativo")]
+    public async Task<IActionResult> CreateUsuarioInativo(CreateUsuarioDto createUsuarioDto)
+    {
+        var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto, ativo: false);
         return Ok(responseCreateUsuario);
     }
 
@@ -48,6 +55,15 @@ public class UsuarioController : ControllerBase
     {
         var responseCreateUsuario = await _usuarioService.CreateUsuarioNoAdminAsync(createUsuarioDto);
         return Ok(responseCreateUsuario);
+    }
+
+    [HttpPut("ativar-inativar")]
+    [IsFuncionario]
+    [Autentica]
+    public async Task<IActionResult> AtivarInativar(Guid id)
+    {
+        var resultado = await _usuarioService.AtivarBloquearAsync(id);
+        return Ok(resultado);
     }
 
     [Autentica]

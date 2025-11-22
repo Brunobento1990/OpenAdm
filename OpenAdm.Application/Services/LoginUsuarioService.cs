@@ -29,6 +29,11 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
         if (usuario == null || !PasswordAdapter.VerifyPassword(requestLogin.Senha, usuario.Senha))
             throw new ExceptionApi("Usuário ou senha inválidos!");
 
+        if (!usuario.Ativo)
+        {
+            throw new ExceptionApi("Usuário inativo. Entre em contato com o administrador do sistema.");
+        }
+
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);
         var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
@@ -43,6 +48,11 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
         var usuario = await _loginUsuarioRepository.LoginComGoogleAsync(resultadoToken.Email)
             ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
 
+        if (!usuario.Ativo)
+        {
+            throw new ExceptionApi("Usuário inativo. Entre em contato com o administrador do sistema.");
+        }
+
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);
         var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
@@ -55,8 +65,12 @@ public class LoginUsuarioService(ILoginUsuarioRepository loginUsuarioRepository,
         requestLogin.Validar();
         var usuario = await _loginUsuarioRepository.LoginAsync(requestLogin.CpfCnpj.Replace(".", "").Replace("-", "").Replace("/", ""));
 
+
         if (usuario == null || !PasswordAdapter.VerifyPassword(requestLogin.Senha, usuario.Senha))
             throw new ExceptionApi("Usuário ou senha inválidos!");
+
+        if (!usuario.Ativo)
+            throw new ExceptionApi("Usuário inativo. Entre em contato com o administrador do sistema.");
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = _tokenService.GenerateToken(usuarioViewModel);

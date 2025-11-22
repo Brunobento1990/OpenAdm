@@ -64,4 +64,9 @@ public sealed class Usuario : BaseEntity
         Nome = nome;
         Telefone = telefone;
     }
+
+    public void AtivarBloquear()
+    {
+        Ativo = !Ativo;
+    }
 }

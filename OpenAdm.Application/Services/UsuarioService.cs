@@ -52,7 +52,7 @@ public class UsuarioService : IUsuarioService
         return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
     }
 
-    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto)
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto, bool ativo = true)
     {
         createUsuarioDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
@@ -89,11 +89,17 @@ public class UsuarioService : IUsuarioService
             }
         }
 
-        usuario = createUsuarioDto.ToEntity();
+        usuario = createUsuarioDto.ToEntity(ativo);
 
         await _usuarioRepository.AddAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
+
+        if (!ativo)
+        {
+            return new ResponseLoginUsuarioViewModel(usuarioViewModel, "", "");
+        }
+
         var token = _tokenService.GenerateToken(usuarioViewModel);
         var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
 
@@ -218,6 +224,16 @@ public class UsuarioService : IUsuarioService
     {
         var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
         return !string.IsNullOrWhiteSpace(usuario.Telefone);
+    }
+
+    public async Task<bool> AtivarBloquearAsync(Guid id)
+    {
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
+            ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
+        usuario.AtivarBloquear();
+        await _usuarioRepository.UpdateAsync(usuario);
+        return true;
+
     }
 
     public async Task<UsuarioViewModel> GetUsuarioByIdValidacaoAsync(Guid id)
