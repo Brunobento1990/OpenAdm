@@ -158,7 +158,7 @@ public class ProdutoService : IProdutoService
         return produtosViewModel;
     }
 
-    private static void MapearEstoque(IList<ProdutoViewModel> produtosViewModel, IList<Estoque> estoques)
+    public static void MapearEstoque(IList<ProdutoViewModel> produtosViewModel, IList<Estoque> estoques)
     {
         foreach (var produto in produtosViewModel)
         {
