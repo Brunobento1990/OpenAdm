@@ -1,6 +1,4 @@
-﻿using OpenAdm.Domain.Entities;
-using OpenAdm.Application.Models.Usuarios;
-using OpenAdm.Application.Services.Carrinhos;
+﻿using OpenAdm.Application.Services.Carrinhos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Carrinho;
 using OpenAdm.Test.Domain.Builder;
@@ -11,26 +9,15 @@ namespace OpenAdm.Test.Application.Test;
 public class CarrinhoServiceTest
 {
     private readonly Mock<IUsuarioAutenticado> _usuarioAutenticado;
-    private readonly Mock<IProdutoRepository> _produtoRepository;
-    private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepository;
-    private readonly CarrinhoRepositoryMemory _carrinhoRepository;
     private readonly AddCarrinhoService _addCarrinhoService;
-    private readonly GetCarrinhoService _getCarrinhoService;
     private readonly GetCountCarrinhoService _getCountCarrinhoService;
 
     public CarrinhoServiceTest()
     {
+        var carrinhoRepository = new CarrinhoRepositoryMemory();
         _usuarioAutenticado = new();
-        _produtoRepository = new();
-        _itemTabelaDePrecoRepository = new();
-        _carrinhoRepository = new CarrinhoRepositoryMemory();
-        _addCarrinhoService = new AddCarrinhoService(_carrinhoRepository, _usuarioAutenticado.Object);
-        _getCarrinhoService = new GetCarrinhoService(
-            _carrinhoRepository,
-            _produtoRepository.Object,
-            _itemTabelaDePrecoRepository.Object,
-            _usuarioAutenticado.Object);
-        _getCountCarrinhoService = new GetCountCarrinhoService(_carrinhoRepository, _usuarioAutenticado.Object);
+        _addCarrinhoService = new AddCarrinhoService(carrinhoRepository, _usuarioAutenticado.Object);
+        _getCountCarrinhoService = new GetCountCarrinhoService(carrinhoRepository, _usuarioAutenticado.Object);
     }
 
     [Fact]
