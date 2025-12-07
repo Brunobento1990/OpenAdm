@@ -167,8 +167,8 @@ public class ProdutoService : IProdutoService
                 foreach (var tamanho in produto.Tamanhos)
                 {
                     var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
-                    tamanho.TemEstoqueDisponivel = estoqueItem?.Quantidade > 0;
-                    tamanho.Quantidade = estoqueItem?.Quantidade;
+                    tamanho.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
+                    tamanho.Quantidade = estoqueItem?.QuantidadeDisponivel;
                 }
             }
 
@@ -177,8 +177,8 @@ public class ProdutoService : IProdutoService
                 foreach (var peso in produto.Pesos)
                 {
                     var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
-                    peso.TemEstoqueDisponivel = estoqueItem?.Quantidade > 0;
-                    peso.Quantidade = estoqueItem?.Quantidade;
+                    peso.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
+                    peso.Quantidade = estoqueItem?.QuantidadeDisponivel;
                 }
             }
         }

@@ -78,8 +78,8 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                         Id = x.Id,
                         Descricao = x.Descricao,
                         Numero = x.Numero,
-                        TemEstoqueDisponivel = estoqueItem?.Quantidade > 0,
-                        Quantidade = estoqueItem?.Quantidade,
+                        TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0,
+                        Quantidade = estoqueItem?.QuantidadeDisponivel,
                         PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
                         {
                             Quantidade = (decimal)(carrinho?

@@ -33,7 +33,7 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
     public async Task<PedidoViewModel> UpdateStatusPedidoAsync(UpdateStatusPedidoDto updateStatusPedidoDto)
     {
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(updateStatusPedidoDto.PedidoId)
-            ?? throw new ExceptionApi("Não foi possível localizar o pedido");
+                     ?? throw new ExceptionApi("Não foi possível localizar o pedido");
         pedido.UpdateStatus(updateStatusPedidoDto.StatusPedido);
 
         _pedidoRepository.Update(pedido);
@@ -44,6 +44,11 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
             await _topUsuarioService.AddOrUpdateTopUsuarioAsync(pedido);
             await _movimentacaoDeProdutosService.MovimentarItensPedidoAsync(pedido.ItensPedido);
             await _estoqueService.MovimentacaoDePedidoEntregueAsync(pedido.ItensPedido);
+        }
+
+        if (pedido.StatusPedido == StatusPedido.Cancelado)
+        {
+            await _estoqueService.MovimentacaoDePedidoCanceladoOuExcluidoAsync(pedido.ItensPedido);
         }
 
         await _pedidoRepository.SaveChangesAsync();

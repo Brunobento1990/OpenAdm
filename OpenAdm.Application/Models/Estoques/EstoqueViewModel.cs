@@ -5,6 +5,8 @@ namespace OpenAdm.Application.Models.Estoques;
 public class EstoqueViewModel : BaseModel
 {
     public decimal Quantidade { get; set; }
+    public decimal QuantidadeDisponivel { get; set; }
+    public decimal QuantidadeReservada { get; set; }
     public Guid ProdutoId { get; set; }
     public Guid? PesoId { get; set; }
     public Guid? TamanhoId { get; set; }
@@ -28,7 +30,9 @@ public class EstoqueViewModel : BaseModel
             Numero = estoque.Numero,
             Foto = estoque.Produto?.UrlFoto,
             PesoId = estoque.PesoId,
-            TamanhoId = estoque.TamanhoId
+            TamanhoId = estoque.TamanhoId,
+            QuantidadeDisponivel = estoque.QuantidadeDisponivel,
+            QuantidadeReservada = estoque.QuantidadeReservada
         };
     }
 
@@ -44,6 +48,8 @@ public class EstoqueViewModel : BaseModel
         ProdutoId = estoque.ProdutoId;
         Numero = estoque.Numero;
         Foto = foto;
+        QuantidadeDisponivel = estoque.QuantidadeDisponivel;
+        QuantidadeReservada = estoque.QuantidadeReservada;
         return this;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using OpenAdm.Application.Dtos.Pedidos;
-using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
@@ -7,7 +6,6 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
-using System.Threading.Channels;
 
 namespace OpenAdm.Application.Services.Pedidos;
 
@@ -93,11 +91,6 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
         await _pedidoRepository.AddAsync(pedido);
         await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());
-
-        //if (!_channel.Channel.Writer.TryWrite(pedido))
-        //{
-        //    await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
-        //}
 
         await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
 

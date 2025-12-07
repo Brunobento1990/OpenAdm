@@ -22,6 +22,10 @@ public class EstoqueConfiguration : IEntityTypeConfiguration<Estoque>
         builder.Property(x => x.Quantidade)
             .IsRequired()
             .HasPrecision(12, 2);
+        builder.Property(x => x.QuantidadeReservada)
+            .IsRequired()
+            .HasDefaultValue(0)
+            .HasPrecision(12, 2);
         builder.Property(x => x.ProdutoId)
             .IsRequired();
         builder.HasIndex(x => x.ProdutoId);

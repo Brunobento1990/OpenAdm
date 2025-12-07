@@ -17,6 +17,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     private readonly IChatWppHttpClient _chatWppHttpClient;
+    private readonly IEstoqueService _estoqueService;
 
     public ProcessarPedidoService(
         IPedidoRepository pedidoRepository,
@@ -24,7 +25,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
         IEmailApiService emailService,
         IParceiroAutenticado parceiroAutenticado,
         IConfiguracoesDePedidoService configuracoesDePedidoService,
-        IChatWppHttpClient chatWppHttpClient)
+        IChatWppHttpClient chatWppHttpClient, IEstoqueService estoqueService)
     {
         _pedidoRepository = pedidoRepository;
         _pdfPedidoService = pdfPedidoService;
@@ -32,6 +33,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
         _parceiroAutenticado = parceiroAutenticado;
         _configuracoesDePedidoService = configuracoesDePedidoService;
         _chatWppHttpClient = chatWppHttpClient;
+        _estoqueService = estoqueService;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId)
@@ -44,6 +46,8 @@ public class ProcessarPedidoService : IProcessarPedidoService
         {
             return;
         }
+        
+        await _estoqueService.ReservarEstoqueNovoPedidoAsync(pedido);
 
         var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
 
@@ -54,7 +58,8 @@ public class ProcessarPedidoService : IProcessarPedidoService
                 Number = $"55{configuracoesDePedido.WhatsApp.LimparMascaraTelefone()}",
                 MediaType = "document",
                 MimeType = "application/pdf",
-                Caption = $"{parceiro.NomeFantasia}\nÓtima noticia, o cliente {pedido.Usuario.Nome} fez um novo pedido \nNúmero do pedido: {pedido.Numero}",
+                Caption =
+                    $"{parceiro.NomeFantasia}\nÓtima noticia, o cliente {pedido.Usuario.Nome} fez um novo pedido \nNúmero do pedido: {pedido.Numero}",
                 Media = Convert.ToBase64String(pdf),
                 FileName = $"pedido-{pedido.Numero}.pdf",
                 Delay = 0,

@@ -6,7 +6,6 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace OpenAdm.Application.Services;
 
@@ -35,7 +34,7 @@ public class EstoqueService : IEstoqueService
     public async Task<EstoqueViewModel> GetEstoqueViewModelAsync(Guid id)
     {
         var estoque = await _estoqueRepository.GetEstoqueAsync(x => x.Id == id)
-            ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
+                      ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
 
         return (EstoqueViewModel)estoque;
     }
@@ -76,67 +75,112 @@ public class EstoqueService : IEstoqueService
                 peso = pesoDb?.Descricao;
             }
 
-            estoquesViewModel.Add(new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso, produto?.UrlFoto));
+            estoquesViewModel.Add(new EstoqueViewModel().ToModel(estoque, produto?.Descricao, tamanho, peso,
+                produto?.UrlFoto));
         }
 
         return estoquesViewModel;
     }
 
-    public async Task<bool> MovimentacaoDePedidoEntregueAsync(IList<ItemPedido> itens)
+    public async Task ReservarEstoqueNovoPedidoAsync(Pedido pedido)
     {
-        var estoques = new List<Estoque>();
+        var estoques = await _estoqueRepository
+            .GetPosicaoEstoqueDosProdutosAsync(pedido.ItensPedido.Select(x => x.ProdutoId).ToList());
 
-        foreach (var item in itens)
+        var addEstoques = new List<Estoque>();
+        var updateEstoques = new List<Estoque>();
+
+        foreach (var item in pedido.ItensPedido)
         {
             var estoque = estoques
-                .FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
+                .FirstOrDefault(x =>
+                    x.ProdutoId == item.ProdutoId &&
                     x.PesoId == item.PesoId &&
                     x.TamanhoId == item.TamanhoId);
 
             if (estoque == null)
             {
-                estoque = await GetEstoqueLocalAsync(
-                    item.ProdutoId,
-                    item.PesoId,
-                    item.TamanhoId);
+                estoque = addEstoques.FirstOrDefault(x =>
+                    x.ProdutoId == item.ProdutoId &&
+                    x.PesoId == item.PesoId &&
+                    x.TamanhoId == item.TamanhoId);
 
                 if (estoque == null)
                 {
-                    estoque ??= new Estoque(
-                        Guid.NewGuid(),
-                        DateTime.Now,
-                        DateTime.Now,
-                        0,
-                        item.ProdutoId,
-                        -item.Quantidade,
-                        item.TamanhoId,
-                        item.PesoId);
-                }
-                else
-                {
-                    estoque.UpdateEstoque(item.Quantidade, TipoMovimentacaoDeProduto.Saida);
+                    addEstoques.Add(Estoque.NovoEstoque(quantidade: 0, produtoId: item.ProdutoId,
+                        tamanhoId: item.TamanhoId,
+                        pesoId: item.PesoId));
+                    continue;
                 }
 
-                estoques.Add(estoque);
+                estoque.ReservaEstoque(item.Quantidade);
                 continue;
             }
 
-            estoque.UpdateEstoque(item.Quantidade, TipoMovimentacaoDeProduto.Saida);
+            estoque.ReservaEstoque(item.Quantidade);
+
+            if (!updateEstoques.Any(x =>
+                    x.ProdutoId == item.ProdutoId &&
+                    x.PesoId == item.PesoId &&
+                    x.TamanhoId == item.TamanhoId))
+            {
+                updateEstoques.Add(estoque);
+            }
         }
 
-        var estoquesAdd = estoques.Where(x => x.Numero == 0).ToList();
-        var estoquesUpdate = estoques.Where(x => x.Numero > 0).ToList();
+        _estoqueRepository.UpdateRange(updateEstoques);
+        await _estoqueRepository.AddRangeAsync(addEstoques);
 
-        if (estoquesUpdate.Count > 0)
+        await _estoqueRepository.SaveChangesAsync();
+    }
+
+    public async Task<bool> MovimentacaoDePedidoEntregueAsync(IList<ItemPedido> itens)
+    {
+        var estoques =
+            await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(itens.Select(x => x.ProdutoId).ToList());
+
+        foreach (var item in itens)
         {
-            _estoqueRepository.UpdateRange(estoquesUpdate);
+            var estoque = estoques
+                .FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
+                                     x.PesoId == item.PesoId &&
+                                     x.TamanhoId == item.TamanhoId);
+
+            estoque?.PedidoEntregue(item.Quantidade);
         }
 
-        if (estoquesAdd.Count > 0)
+        if (estoques.Count <= 0)
         {
-            await _estoqueRepository.AddRangeAsync(estoquesAdd);
+            return true;
         }
 
+        _estoqueRepository.UpdateRange(estoques);
+        await _estoqueRepository.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> MovimentacaoDePedidoCanceladoOuExcluidoAsync(IList<ItemPedido> itens)
+    {
+        var estoques =
+            await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(itens.Select(x => x.ProdutoId).ToList());
+
+        foreach (var item in itens)
+        {
+            var estoque = estoques
+                .FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
+                                     x.PesoId == item.PesoId &&
+                                     x.TamanhoId == item.TamanhoId);
+
+            estoque?.PedidoCanceladoExcluido(item.Quantidade);
+        }
+
+        if (estoques.Count <= 0)
+        {
+            return true;
+        }
+
+        _estoqueRepository.UpdateRange(estoques);
         await _estoqueRepository.SaveChangesAsync();
 
         return true;
@@ -153,8 +197,9 @@ public class EstoqueService : IEstoqueService
 
         if (estoque == null)
         {
-            var newQuantidade = movimentacaoDeProdutoDto.TipoMovimentacaoDeProduto == TipoMovimentacaoDeProduto.Saida ?
-                -movimentacaoDeProdutoDto.Quantidade : movimentacaoDeProdutoDto.Quantidade;
+            var newQuantidade = movimentacaoDeProdutoDto.TipoMovimentacaoDeProduto == TipoMovimentacaoDeProduto.Saida
+                ? -movimentacaoDeProdutoDto.Quantidade
+                : movimentacaoDeProdutoDto.Quantidade;
 
             estoque = new Estoque(
                 Guid.NewGuid(),
@@ -170,7 +215,8 @@ public class EstoqueService : IEstoqueService
         }
         else
         {
-            estoque.UpdateEstoque(movimentacaoDeProdutoDto.Quantidade, movimentacaoDeProdutoDto.TipoMovimentacaoDeProduto);
+            estoque.UpdateEstoque(movimentacaoDeProdutoDto.Quantidade,
+                movimentacaoDeProdutoDto.TipoMovimentacaoDeProduto);
             await _estoqueRepository.UpdateAsync(estoque);
         }
 
@@ -194,11 +240,10 @@ public class EstoqueService : IEstoqueService
     public async Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto)
     {
         var date = DateTime.Now;
-        var estoque = await _estoqueRepository.GetEstoqueAsync(
-            x => x.ProdutoId == updateEstoqueDto.ProdutoId &&
-            x.PesoId == updateEstoqueDto.PesoId &&
-            x.TamanhoId == updateEstoqueDto.TamanhoId)
-            ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
+        var estoque = await _estoqueRepository.GetEstoqueAsync(x => x.ProdutoId == updateEstoqueDto.ProdutoId &&
+                                                                    x.PesoId == updateEstoqueDto.PesoId &&
+                                                                    x.TamanhoId == updateEstoqueDto.TamanhoId)
+                      ?? throw new ExceptionApi("Não foi possível localizar o cadastro de estoque!");
 
         var movimento = new MovimentacaoDeProduto(
             Guid.NewGuid(),
@@ -206,7 +251,9 @@ public class EstoqueService : IEstoqueService
             date,
             0,
             quantidadeMovimentada: estoque.Quantidade - updateEstoqueDto.Quantidade,
-            tipoMovimentacaoDeProduto: updateEstoqueDto.Quantidade > estoque.Quantidade ? TipoMovimentacaoDeProduto.Entrada : TipoMovimentacaoDeProduto.Saida,
+            tipoMovimentacaoDeProduto: updateEstoqueDto.Quantidade > estoque.Quantidade
+                ? TipoMovimentacaoDeProduto.Entrada
+                : TipoMovimentacaoDeProduto.Saida,
             estoque.ProdutoId,
             estoque.TamanhoId,
             estoque.PesoId,
@@ -223,8 +270,8 @@ public class EstoqueService : IEstoqueService
     private async Task<Estoque?> GetEstoqueLocalAsync(Guid produtoId, Guid? pesoId, Guid? tamanhoId)
     {
         return await _estoqueRepository
-                .GetEstoqueAsync(x => x.ProdutoId == produtoId &&
-                    x.PesoId == pesoId &&
-                    x.TamanhoId == tamanhoId);
+            .GetEstoqueAsync(x => x.ProdutoId == produtoId &&
+                                  x.PesoId == pesoId &&
+                                  x.TamanhoId == tamanhoId);
     }
 }

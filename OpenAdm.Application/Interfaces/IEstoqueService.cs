@@ -9,8 +9,10 @@ public interface IEstoqueService
 {
     Task<bool> MovimentacaoDeProdutoAsync(MovimentacaoDeProdutoDto movimentacaoDeProdutoDto);
     Task<bool> MovimentacaoDePedidoEntregueAsync(IList<ItemPedido> itens);
+    Task<bool> MovimentacaoDePedidoCanceladoOuExcluidoAsync(IList<ItemPedido> itens);
     Task<PaginacaoViewModel<EstoqueViewModel>> GetPaginacaoAsync(FilterModel<Estoque> paginacaoEstoqueDto);
     Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto);
     Task<EstoqueViewModel> GetEstoqueViewModelAsync(Guid id);
     Task<IList<EstoqueViewModel>> GetPosicaoDeEstoqueAsync();
+    Task ReservarEstoqueNovoPedidoAsync(Pedido pedido);
 }
