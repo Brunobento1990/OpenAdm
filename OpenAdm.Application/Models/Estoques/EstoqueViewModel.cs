@@ -11,6 +11,7 @@ public class EstoqueViewModel : BaseModel
     public Guid? PesoId { get; set; }
     public Guid? TamanhoId { get; set; }
     public string? Produto { get; set; }
+    public string? Categoria { get; set; }
     public string? Foto { get; set; }
     public string? Tamanho { get; set; }
     public string? Peso { get; set; }
@@ -32,7 +33,8 @@ public class EstoqueViewModel : BaseModel
             PesoId = estoque.PesoId,
             TamanhoId = estoque.TamanhoId,
             QuantidadeDisponivel = estoque.QuantidadeDisponivel,
-            QuantidadeReservada = estoque.QuantidadeReservada
+            QuantidadeReservada = estoque.QuantidadeReservada,
+            Categoria = estoque.Produto?.Categoria?.Descricao,
         };
     }
 

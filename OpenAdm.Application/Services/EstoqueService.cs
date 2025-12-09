@@ -186,6 +186,28 @@ public class EstoqueService : IEstoqueService
         return true;
     }
 
+    public async Task<PosicaoDeEstoqueRelatorioViewModel> PosicaoEstoqueRelatorioAsync(
+        PosicaoDeEstoqueRelatorioDto posicaoDeEstoqueRelatorioDto)
+    {
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueRelatorioAsync(
+            produtos: posicaoDeEstoqueRelatorioDto.Produtos,
+            pesos: posicaoDeEstoqueRelatorioDto.Pesos,
+            tamanhos: posicaoDeEstoqueRelatorioDto.Tamanhos,
+            categorias: posicaoDeEstoqueRelatorioDto.Categorias);
+
+        var estoquesViewModel = new List<EstoqueViewModel>();
+
+        foreach (var estoque in estoques)
+        {
+            estoquesViewModel.Add((EstoqueViewModel)estoque);
+        }
+
+        return new PosicaoDeEstoqueRelatorioViewModel()
+        {
+            Itens = estoquesViewModel
+        };
+    }
+
     public async Task<bool> MovimentacaoDeProdutoAsync(MovimentacaoDeProdutoDto movimentacaoDeProdutoDto)
     {
         var estoque = await GetEstoqueLocalAsync(

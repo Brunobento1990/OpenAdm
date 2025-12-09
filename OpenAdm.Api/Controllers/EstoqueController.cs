@@ -2,6 +2,7 @@
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Estoques;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models.Estoques;
 using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
@@ -58,5 +59,13 @@ public class EstoqueController : ControllerBase
     {
         var paginacao = await _estoqueservice.GetPaginacaoAsync(paginacaoEstoqueDto);
         return Ok(paginacao);
+    }
+
+    [HttpPost("posicao-estoque-relatorio")]
+    [ProducesResponseType<PosicaoDeEstoqueRelatorioViewModel>(200)]
+    public async Task<IActionResult> PosicaoEstoqueRelatorio(PosicaoDeEstoqueRelatorioDto posicaoDeEstoqueRelatorioDto)
+    {
+        var dados = await _estoqueservice.PosicaoEstoqueRelatorioAsync(posicaoDeEstoqueRelatorioDto);
+        return Ok(dados);
     }
 }

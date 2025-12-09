@@ -36,6 +36,43 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
             .ToListAsync();
     }
 
+    public async Task<IList<Estoque>> GetPosicaoEstoqueRelatorioAsync(
+        ICollection<Guid>? produtos,
+        ICollection<Guid>? pesos,
+        ICollection<Guid>? tamanhos,
+        ICollection<Guid>? categorias)
+    {
+        var query = ParceiroContext
+            .Estoques
+            .AsNoTracking()
+            .Include(x => x.Produto.Categoria)
+            .Include(x => x.Tamanho)
+            .Include(x => x.Peso)
+            .AsQueryable();
+
+        if (produtos?.Count > 0)
+        {
+            query = query.Where(x => produtos.Contains(x.ProdutoId));
+        }
+
+        if (pesos?.Count > 0)
+        {
+            query = query.Where(x => x.PesoId != null && pesos.Contains(x.PesoId.Value));
+        }
+
+        if (tamanhos?.Count > 0)
+        {
+            query = query.Where(x => x.TamanhoId != null && tamanhos.Contains(x.TamanhoId.Value));
+        }
+
+        if (categorias?.Count > 0)
+        {
+            query = query.Where(x => categorias.Contains(x.Produto.CategoriaId));
+        }
+
+        return await query.ToListAsync();
+    }
+
     public async Task<IList<Estoque>> GetPosicaoEstoqueDosProdutosAsync(IList<Guid> produtosIds)
     {
         return await ParceiroContext

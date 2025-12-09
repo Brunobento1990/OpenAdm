@@ -7,6 +7,9 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IEstoqueService
 {
+    Task<PosicaoDeEstoqueRelatorioViewModel> PosicaoEstoqueRelatorioAsync(
+        PosicaoDeEstoqueRelatorioDto posicaoDeEstoqueRelatorioDto);
+
     Task<bool> MovimentacaoDeProdutoAsync(MovimentacaoDeProdutoDto movimentacaoDeProdutoDto);
     Task<bool> MovimentacaoDePedidoEntregueAsync(IList<ItemPedido> itens);
     Task<bool> MovimentacaoDePedidoCanceladoOuExcluidoAsync(IList<ItemPedido> itens);
