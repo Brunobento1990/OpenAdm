@@ -19,6 +19,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
+    private readonly IEstoqueRepository _estoqueRepository;
+
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
@@ -27,7 +29,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
         IFaturaService contasAReceberService,
         IConfiguracaoDePagamentoService configuracaoDePagamentoService,
         IConfiguracoesDePedidoService configuracoesDePedidoService,
-        IUsuarioAutenticado usuarioAutenticado)
+        IUsuarioAutenticado usuarioAutenticado,
+        IEstoqueRepository estoqueRepository)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
@@ -37,6 +40,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _configuracaoDePagamentoService = configuracaoDePagamentoService;
         _configuracoesDePedidoService = configuracoesDePedidoService;
         _usuarioAutenticado = usuarioAutenticado;
+        _estoqueRepository = estoqueRepository;
     }
 
     public async Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
@@ -49,10 +53,14 @@ public sealed class CreatePedidoService : ICreatePedidoService
             throw new ExceptionApi("Seu cadastro esta incompleto, acesse sua conta e cadastre seu telefone!");
         }
 
-        var pedidoMinimo = await _configuracoesDePedidoService.GetPedidoMinimoAsync();
+        var configuracaoDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
         var total = pedidoCreateDto.Itens.Sum(x => x.Quantidade * x.ValorUnitario);
 
-        if (pedidoMinimo.PedidoMinimo > total)
+        var pedidoMinimo = usuario.IsAtacado
+            ? configuracaoDePedido.PedidoMinimoAtacado
+            : configuracaoDePedido.PedidoMinimoVarejo;
+
+        if (pedidoMinimo > total)
         {
             throw new ExceptionApi("Seu pedido não atingiu o mínimo de valor!");
         }
@@ -63,19 +71,39 @@ public sealed class CreatePedidoService : ICreatePedidoService
         var produtosIds = pedidoCreateDto.Itens.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
 
+        var estoques = configuracaoDePedido.VendaDeProdutoComEstoque
+            ? await _estoqueRepository
+                .GetPosicaoEstoqueDosProdutosAsync(produtosIds)
+            : [];
+
         foreach (var item in pedidoCreateDto.Itens)
         {
             var itemTabela = itensTabelaDePreco
-                .FirstOrDefault(itemTabelaDePreco =>
-                    itemTabelaDePreco.ProdutoId == item.ProdutoId &&
-                    itemTabelaDePreco.PesoId == item.PesoId &&
-                    itemTabelaDePreco.TamanhoId == item.TamanhoId)
-                ?? throw new Exception($"Não foi possível localizar o preço do produto: {item.ProdutoId}");
+                                 .FirstOrDefault(itemTabelaDePreco =>
+                                     itemTabelaDePreco.ProdutoId == item.ProdutoId &&
+                                     itemTabelaDePreco.PesoId == item.PesoId &&
+                                     itemTabelaDePreco.TamanhoId == item.TamanhoId)
+                             ?? throw new Exception($"Não foi possível localizar o preço do produto: {item.ProdutoId}");
 
             item.ValorUnitario = usuario.IsAtacado ? itemTabela.ValorUnitarioAtacado : itemTabela.ValorUnitarioVarejo;
+
+            if (configuracaoDePedido.VendaDeProdutoComEstoque)
+            {
+                var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
+                                                           x.PesoId == item.PesoId &&
+                                                           x.TamanhoId == item.TamanhoId)
+                              ?? throw new Exception(
+                                  $"Não foi possível localizar o estoque do produto: {item.ProdutoId}");
+
+                if (estoque.QuantidadeDisponivel < item.Quantidade)
+                {
+                    throw new Exception($"Não há estoque disponível do produto: {item.ProdutoId}, a quantidade disponível é : {estoque.Quantidade}");
+                }
+            }
         }
 
         pedido.ProcessarItensPedido(pedidoCreateDto.Itens);
+        
         pedido.EnderecoEntrega = new EnderecoEntregaPedido(
             cep: pedidoCreateDto.EnderecoEntrega.Cep,
             logradouro: pedidoCreateDto.EnderecoEntrega.Logradouro,
@@ -92,7 +120,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         await _pedidoRepository.AddAsync(pedido);
         await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());
 
-        await _processarPedidoService.ProcessarCreateAsync(pedido.Id);
+        await _processarPedidoService.ProcessarCreateAsync(pedido.Id, configuracaoDePedido);
 
         var configPagamento = await _configuracaoDePagamentoService.CobrarAsync();
 

@@ -3,6 +3,7 @@ using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models;
+using OpenAdm.Application.Models.ConfiguracoesDePedidos;
 using OpenAdm.Application.Models.Emails;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
@@ -15,7 +16,6 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IEmailApiService _emailService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     private readonly IChatWppHttpClient _chatWppHttpClient;
     private readonly IEstoqueService _estoqueService;
 
@@ -24,21 +24,18 @@ public class ProcessarPedidoService : IProcessarPedidoService
         IPdfPedidoService pdfPedidoService,
         IEmailApiService emailService,
         IParceiroAutenticado parceiroAutenticado,
-        IConfiguracoesDePedidoService configuracoesDePedidoService,
         IChatWppHttpClient chatWppHttpClient, IEstoqueService estoqueService)
     {
         _pedidoRepository = pedidoRepository;
         _pdfPedidoService = pdfPedidoService;
         _emailService = emailService;
         _parceiroAutenticado = parceiroAutenticado;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
         _chatWppHttpClient = chatWppHttpClient;
         _estoqueService = estoqueService;
     }
 
-    public async Task ProcessarCreateAsync(Guid pedidoId)
+    public async Task ProcessarCreateAsync(Guid pedidoId, ConfiguracoesDePedidoViewModel configuracoesDePedido)
     {
-        var configuracoesDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
         var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId);
 

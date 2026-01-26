@@ -15,9 +15,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
 
     public override async Task<PaginacaoViewModel<Pedido>> PaginacaoAsync(FilterModel<Pedido> filterModel)
     {
-        var include = filterModel.IncludeCustom();
-        var select = filterModel.SelectCustom();
-
         var query = ParceiroContext
             .Pedidos
             .AsNoTracking()

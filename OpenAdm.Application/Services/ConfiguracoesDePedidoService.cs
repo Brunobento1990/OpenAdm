@@ -23,7 +23,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
     public async Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(
         UpdateConfiguracoesDePedidoDto updateConfiguracoesDePedidoDto)
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
+        var configuracaoDePedido =
+            await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
 
         if (configuracaoDePedido == null)
         {
@@ -63,20 +64,29 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 
     public async Task<ConfiguracoesDePedidoViewModel> GetConfiguracoesDePedidoAsync()
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
-        if (configuracaoDePedido == null) return new();
+        var configuracaoDePedido =
+            await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
+        if (configuracaoDePedido == null)
+        {
+            return new()
+            {
+                VendaDeProdutoComEstoque = false
+            };
+        }
+
         return new ConfiguracoesDePedidoViewModel().ToModel(configuracaoDePedido);
     }
 
     public async Task<PedidoMinimoViewModel> GetPedidoMinimoAsync()
     {
-        var configuracaoDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
+        var configuracaoDePedido =
+            await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
         if (configuracaoDePedido is null) return new();
 
         var usuarioViewModel = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
-        var pedidoMinimo = usuarioViewModel.IsAtacado ?
-            configuracaoDePedido.PedidoMinimoAtacado :
-            configuracaoDePedido.PedidoMinimoVarejo;
+        var pedidoMinimo = usuarioViewModel.IsAtacado
+            ? configuracaoDePedido.PedidoMinimoAtacado
+            : configuracaoDePedido.PedidoMinimoVarejo;
 
         return new PedidoMinimoViewModel()
         {
