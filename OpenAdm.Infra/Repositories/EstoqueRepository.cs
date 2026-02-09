@@ -36,6 +36,25 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
             .ToListAsync();
     }
 
+    public async Task<IDictionary<Guid, Estoque>> GetPosicaoEstoqueAsync(ICollection<Guid> ids)
+    {
+        return await ParceiroContext
+            .Estoques
+            .Where(x => ids.Contains(x.Id))
+            .ToDictionaryAsync(x => x.Id);
+    }
+
+    public async Task<IList<Estoque>> PosicaoEstoqueDoProdutoAsync(Guid produtoId)
+    {
+        return await ParceiroContext
+            .Estoques
+            .Include(x => x.Produto)
+            .Include(x => x.Peso)
+            .Include(x => x.Tamanho)
+            .Where(x => x.ProdutoId == produtoId)
+            .ToListAsync();
+    }
+
     public async Task<IList<Estoque>> GetPosicaoEstoqueRelatorioAsync(
         ICollection<Guid>? produtos,
         ICollection<Guid>? pesos,

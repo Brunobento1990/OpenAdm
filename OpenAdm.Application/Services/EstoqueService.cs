@@ -134,6 +134,37 @@ public class EstoqueService : IEstoqueService
         await _estoqueRepository.SaveChangesAsync();
     }
 
+    public async Task<TodosEstoquesDoProdutoViewModel> TodosEstoquesDoProdutoAsync(Guid produtoId)
+    {
+        var estoques = await _estoqueRepository.PosicaoEstoqueDoProdutoAsync(produtoId);
+
+        var estoquesViewModel = estoques.Select(x => (EstoqueViewModel)x).ToList();
+
+        return new()
+        {
+            Dados = estoquesViewModel
+        };
+    }
+
+    public async Task AtualizarEstoquesAsync(UpdateEstoquesDto updateEstoqueDto)
+    {
+        var estoques =
+            await _estoqueRepository.GetPosicaoEstoqueAsync(updateEstoqueDto.Dados.Select(x => x.Id).ToList());
+
+        foreach (var item in updateEstoqueDto.Dados)
+        {
+            if (!estoques.TryGetValue(item.Id, out var estoque))
+            {
+                continue;
+            }
+
+            estoque.UpdateEstoqueAtual(item.Quantidade ?? 0);
+            _estoqueRepository.Update(estoque);
+        }
+
+        await _estoqueRepository.SaveChangesAsync();
+    }
+
     public async Task<bool> MovimentacaoDePedidoEntregueAsync(IList<ItemPedido> itens)
     {
         var estoques =

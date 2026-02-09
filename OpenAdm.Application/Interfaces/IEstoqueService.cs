@@ -18,4 +18,6 @@ public interface IEstoqueService
     Task<EstoqueViewModel> GetEstoqueViewModelAsync(Guid id);
     Task<IList<EstoqueViewModel>> GetPosicaoDeEstoqueAsync();
     Task ReservarEstoqueNovoPedidoAsync(Pedido pedido);
+    Task<TodosEstoquesDoProdutoViewModel> TodosEstoquesDoProdutoAsync(Guid produtoId);
+    Task AtualizarEstoquesAsync(UpdateEstoquesDto updateEstoqueDto);
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Estoques;
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Estoques;
 using OpenAdm.Infra.Paginacao;
@@ -41,6 +42,17 @@ public class EstoqueController : ControllerBase
         return Ok(estoqueViewModel);
     }
 
+    [HttpPut("update-estoques")]
+    public async Task<IActionResult> UpdateEstoques(UpdateEstoquesDto updateEstoqueDto)
+    {
+        await _estoqueservice.AtualizarEstoquesAsync(updateEstoqueDto);
+
+        return Ok(new
+        {
+            resultado = true
+        });
+    }
+
     [HttpPut("update")]
     public async Task<IActionResult> UpdateEstoque(UpdateEstoqueDto updateEstoqueDto)
     {
@@ -66,6 +78,15 @@ public class EstoqueController : ControllerBase
     public async Task<IActionResult> PosicaoEstoqueRelatorio(PosicaoDeEstoqueRelatorioDto posicaoDeEstoqueRelatorioDto)
     {
         var dados = await _estoqueservice.PosicaoEstoqueRelatorioAsync(posicaoDeEstoqueRelatorioDto);
+        return Ok(dados);
+    }
+
+    [HttpGet("posicao-estoque-produto")]
+    [ProducesResponseType<TodosEstoquesDoProdutoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> TodosEstoqueProduto([FromQuery] Guid produtoId)
+    {
+        var dados = await _estoqueservice.TodosEstoquesDoProdutoAsync(produtoId);
         return Ok(dados);
     }
 }
