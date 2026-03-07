@@ -1,4 +1,5 @@
 ﻿using OpenAdm.Domain.Entities.Bases;
+using OpenAdm.Domain.Extensions;
 
 namespace OpenAdm.Domain.Entities;
 
@@ -18,7 +19,7 @@ public sealed class Usuario : BaseEntity
         bool ativo,
         Guid? tokenEsqueceuSenha,
         DateTime? dataExpiracaoTokenEsqueceuSenha)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Email = email;
         Senha = senha;
@@ -37,12 +38,17 @@ public sealed class Usuario : BaseEntity
     public string? Telefone { get; private set; }
     public string? Cnpj { get; private set; }
     public string? Cpf { get; private set; }
+
+    public string? CpfOuCnpjFormatado => !string.IsNullOrWhiteSpace(Cnpj) ? Cnpj.FormatCnpj() :
+        !string.IsNullOrWhiteSpace(Cpf) ? Cpf.FormatCpf() : null;
+
     public bool Ativo { get; private set; }
     public Guid? TokenEsqueceuSenha { get; private set; }
     public DateTime? DataExpiracaoTokenEsqueceuSenha { get; private set; }
     public bool IsAtacado => !string.IsNullOrWhiteSpace(Cnpj);
     public EnderecoUsuario? EnderecoUsuario { get; set; }
     public IList<Pedido>? Pedidos { get; set; }
+
     public void EsqueceuSenha()
     {
         TokenEsqueceuSenha = Guid.NewGuid();
