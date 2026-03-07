@@ -379,8 +379,8 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                                             column.Item().Text(text =>
                                             {
-                                                text.Span("Número: ").Style(titleStyle2);
-                                                text.Span(parceiro.EnderecoParceiro.Numero).Style(titleStyleName);
+                                                text.Span("Número: ").Style(titleStyle);
+                                                text.Span(parceiro.EnderecoParceiro.Numero).Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
