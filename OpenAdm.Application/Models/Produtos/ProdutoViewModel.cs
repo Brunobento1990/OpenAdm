@@ -17,6 +17,7 @@ public class ProdutoViewModel : BaseModel
     public string? Referencia { get; private set; }
     public decimal? Peso { get; set; }
     public bool InativoEcommerce { get; set; }
+    public bool VendaSomenteComEstoqueDisponivel { get; set; }
     public ProdutoViewModel ToModel(Produto entity)
     {
         Foto = entity.UrlFoto;
@@ -26,6 +27,7 @@ public class ProdutoViewModel : BaseModel
         Numero = entity.Numero;
         Descricao = entity.Descricao;
         EspecificacaoTecnica = entity.EspecificacaoTecnica;
+        VendaSomenteComEstoqueDisponivel = entity.VendaSomenteComEstoqueDisponivel;
         Tamanhos = entity
             .Tamanhos
             .OrderBy(x => x.Numero)

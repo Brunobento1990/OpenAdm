@@ -20,6 +20,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
         "Valor unitário",
         "Total"
     };
+
     private readonly IList<string> _colunsNameProducao = new List<string>()
     {
         "REF",
@@ -29,6 +30,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
         "Peso",
         "Quantidade"
     };
+
     private readonly IList<string> _colunsNamePedidoRelatorio = new List<string>()
     {
         "N.",
@@ -37,17 +39,20 @@ public sealed class PdfPedidoService : IPdfPedidoService
         "Quantidade itens",
         "Total"
     };
+
     private static readonly IList<int> _colunsWidt = new List<int>()
     {
-        60,150,80,70,90,50
+        60, 150, 80, 70, 90, 50
     };
+
     private static readonly IList<int> _colunsWidtProducao = new List<int>()
     {
-        60,150,80,70,90,50
+        60, 150, 80, 70, 90, 50
     };
+
     private static readonly IList<int> _colunsWidtRelatorio = new List<int>()
     {
-        70,90,170,90,90
+        70, 90, 170, 90, 90
     };
 
 
@@ -106,6 +111,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
                             text.Span(pedido.Usuario.Cnpj.FormatCnpj()).Style(titleStyleName);
                         });
                     }
+
                     if (!string.IsNullOrWhiteSpace(pedido.Usuario.Cpf))
                     {
                         column.Item().Text(text =>
@@ -118,9 +124,9 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                 if (parceiro.Logo != null)
                 {
-                    row.ConstantItem(50).Height(50).Width(50).Image(Convert.FromBase64String(parceiro.Logo.FromBytes()));
+                    row.ConstantItem(50).Height(50).Width(50)
+                        .Image(Convert.FromBase64String(parceiro.Logo.FromBytes()));
                 }
-
             });
         }
 
@@ -178,40 +184,40 @@ public sealed class PdfPedidoService : IPdfPedidoService
                             foreach (var item in itensGroup)
                             {
                                 table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Produto.Referencia)
-                                .FontSize(8);
+                                    .Cell()
+                                    .Element(CellTableStyle)
+                                    .Text(item.Produto.Referencia)
+                                    .FontSize(8);
 
                                 table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Produto.Descricao)
-                                .FontSize(8);
+                                    .Cell()
+                                    .Element(CellTableStyle)
+                                    .Text(item.Produto.Descricao)
+                                    .FontSize(8);
 
                                 table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Tamanho?.Descricao ?? item.Peso?.Descricao)
-                                .FontSize(8);
+                                    .Cell()
+                                    .Element(CellTableStyle)
+                                    .Text(item.Tamanho?.Descricao ?? item.Peso?.Descricao)
+                                    .FontSize(8);
 
                                 table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Quantidade.FormatMoney())
-                                .FontSize(8);
+                                    .Cell()
+                                    .Element(CellTableStyle)
+                                    .Text(item.Quantidade.FormatMoney())
+                                    .FontSize(8);
 
                                 table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.ValorUnitario.FormatMoney())
-                                .FontSize(8);
+                                    .Cell()
+                                    .Element(CellTableStyle)
+                                    .Text(item.ValorUnitario.FormatMoney())
+                                    .FontSize(8);
 
                                 table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.ValorTotal.FormatMoney())
-                                .FontSize(8);
+                                    .Cell()
+                                    .Element(CellTableStyle)
+                                    .Text(item.ValorTotal.FormatMoney())
+                                    .FontSize(8);
                             }
                         }
 
@@ -248,17 +254,16 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         if (tamamhosItens.Count() > 0)
                         {
                             table
-                            .Cell()
-                            .Element(CellStyleHeaderTable)
-                            .Text($"Tamanhos")
-                            .FontSize(10);
+                                .Cell()
+                                .Element(CellStyleHeaderTable)
+                                .Text($"Tamanhos")
+                                .FontSize(10);
                         }
 
                         var count = 0;
 
                         foreach (var tamanhoGroup in tamamhosItens)
                         {
-
                             if (count > 0)
                             {
                                 table.Cell();
@@ -296,10 +301,10 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         if (pesosItens.Count() > 0)
                         {
                             table
-                            .Cell()
-                            .Element(CellStyleHeaderTable)
-                            .Text($"Pesos")
-                            .FontSize(10);
+                                .Cell()
+                                .Element(CellStyleHeaderTable)
+                                .Text($"Pesos")
+                                .FontSize(10);
                         }
 
                         count = 0;
@@ -381,7 +386,9 @@ public sealed class PdfPedidoService : IPdfPedidoService
                                             column.Item().Text(text =>
                                             {
                                                 text.Span("Cidade: ").Style(titleStyle);
-                                                text.Span($"{parceiro.EnderecoParceiro.Localidade} - {parceiro.EnderecoParceiro.Uf}").Style(titleStyleName2);
+                                                text.Span(
+                                                        $"{parceiro.EnderecoParceiro.Localidade} - {parceiro.EnderecoParceiro.Uf}")
+                                                    .Style(titleStyleName2);
                                             });
 
                                             column.Item().Text(text =>
@@ -399,7 +406,8 @@ public sealed class PdfPedidoService : IPdfPedidoService
                                             column.Item().Text(text =>
                                             {
                                                 text.Span("Complemento: ").Style(titleStyle);
-                                                text.Span(parceiro.EnderecoParceiro.Complemento ?? "").Style(titleStyleName2);
+                                                text.Span(parceiro.EnderecoParceiro.Complemento ?? "")
+                                                    .Style(titleStyleName2);
                                             });
                                         });
                                 });
@@ -426,6 +434,20 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                                         column.Item().Text(text =>
                                         {
+                                            text.Span("CPF/CNPJ: ").Style(titleStyle);
+                                            text.Span(pedido.Usuario.CpfOuCnpjFormatado).Style(titleStyleName2);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
+                                            text.Span("Telefone: ").Style(titleStyle);
+                                            text.Span(!string.IsNullOrWhiteSpace(pedido.Usuario.Telefone)
+                                                ? pedido.Usuario.Telefone?.FormatPhone()
+                                                : "").Style(titleStyleName2);
+                                        });
+
+                                        column.Item().Text(text =>
+                                        {
                                             text.Span("Rua: ").Style(titleStyle);
                                             text.Span(pedido.EnderecoEntrega.Logradouro).Style(titleStyleName2);
                                         });
@@ -439,7 +461,9 @@ public sealed class PdfPedidoService : IPdfPedidoService
                                         column.Item().Text(text =>
                                         {
                                             text.Span("Cidade: ").Style(titleStyle);
-                                            text.Span($"{pedido.EnderecoEntrega.Localidade} - {pedido.EnderecoEntrega.Uf}").Style(titleStyleName2);
+                                            text.Span(
+                                                    $"{pedido.EnderecoEntrega.Localidade} - {pedido.EnderecoEntrega.Uf}")
+                                                .Style(titleStyleName2);
                                         });
 
                                         column.Item().Text(text =>
@@ -464,7 +488,6 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         });
                     });
                 }
-
             }).GeneratePdf();
 
         return pdf;
@@ -505,7 +528,6 @@ public sealed class PdfPedidoService : IPdfPedidoService
                 {
                     row.ConstantItem(50).Width(50).Height(50).Image(Convert.FromBase64String(relatorioPedidoDto.Logo));
                 }
-
             });
         }
 
@@ -558,34 +580,34 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         foreach (var item in relatorioPedidoDto.RelatorioItensPedidoDto)
                         {
                             table
-                            .Cell()
-                            .Element(CellTableStyle)
-                            .Text($"#{item.Numero}")
-                            .FontSize(8);
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text($"#{item.Numero}")
+                                .FontSize(8);
 
                             table
-                            .Cell()
-                            .Element(CellTableStyle)
-                            .Text(item.DataDeCadastro.DateTimeToString())
-                            .FontSize(8);
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.DataDeCadastro.DateTimeToString())
+                                .FontSize(8);
 
                             table
-                            .Cell()
-                            .Element(CellTableStyle)
-                            .Text(item.Cliente)
-                            .FontSize(8);
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.Cliente)
+                                .FontSize(8);
 
                             table
-                            .Cell()
-                            .Element(CellTableStyle)
-                            .Text(item.Quantidade.FormatMoney())
-                            .FontSize(8);
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.Quantidade.FormatMoney())
+                                .FontSize(8);
 
                             table
-                            .Cell()
-                            .Element(CellTableStyle)
-                            .Text(item.Total.FormatMoney())
-                            .FontSize(8);
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.Total.FormatMoney())
+                                .FontSize(8);
                         }
 
                         table.Cell();
@@ -595,9 +617,9 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
                         table
                             .Cell()
-                        .Element(CellTableStyle)
+                            .Element(CellTableStyle)
                             .Text($"Total : {relatorioPedidoDto.Total.FormatMoney()}")
-                        .FontSize(8);
+                            .FontSize(8);
 
                         var tamamhosItens = itensPedido
                             .OrderBy(x => x.Tamanho?.Numero)
@@ -617,17 +639,16 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         if (tamamhosItens.Any())
                         {
                             table
-                            .Cell()
-                            .Element(CellStyleHeaderTable)
-                            .Text($"Tamanhos")
-                            .FontSize(10);
+                                .Cell()
+                                .Element(CellStyleHeaderTable)
+                                .Text($"Tamanhos")
+                                .FontSize(10);
                         }
 
                         var count = 0;
 
                         foreach (var tamanhoGroup in tamamhosItens)
                         {
-
                             if (count > 0)
                             {
                                 table.Cell();
@@ -663,10 +684,10 @@ public sealed class PdfPedidoService : IPdfPedidoService
                         if (pesosItens.Any())
                         {
                             table
-                            .Cell()
-                            .Element(CellStyleHeaderTable)
-                            .Text($"Pesos")
-                            .FontSize(10);
+                                .Cell()
+                                .Element(CellStyleHeaderTable)
+                                .Text($"Pesos")
+                                .FontSize(10);
                         }
 
                         count = 0;
@@ -727,16 +748,12 @@ public sealed class PdfPedidoService : IPdfPedidoService
 
             container.Row(row =>
             {
-                row.RelativeItem().Column(column =>
-                {
-                    column.Item().Text($"#{nomeFantasia}").Style(titleStyle);
-                });
+                row.RelativeItem().Column(column => { column.Item().Text($"#{nomeFantasia}").Style(titleStyle); });
 
                 if (!string.IsNullOrWhiteSpace(logo))
                 {
                     row.ConstantItem(50).Height(50).Width(50).Image(Convert.FromBase64String(logo));
                 }
-
             });
         }
 

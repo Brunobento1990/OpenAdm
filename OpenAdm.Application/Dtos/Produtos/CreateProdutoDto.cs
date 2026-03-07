@@ -15,6 +15,7 @@ public class CreateProdutoDto
     public Guid? TabelaDePrecoId { get; set; }
     public IList<Guid>? TamanhosIds { get; set; }
     public IList<Guid>? PesosIds { get; set; }
+    public bool VendaSomenteComEstoqueDisponivel { get; set; }
 
     public IList<CreateItemProdutoTabelaDePrecoDto> ItensTabelaDePreco { get; set; } = [];
     public IList<ItemTabelaDePreco>? ObterItensTabelaDePreco()
@@ -43,7 +44,8 @@ public class CreateProdutoDto
             Referencia,
             NovaFoto,
             nomeFoto,
-            false);
+            false,
+            VendaSomenteComEstoqueDisponivel);
 
         produto.ItensTabelaDePreco = ObterItensTabelaDePreco() ?? [];
 

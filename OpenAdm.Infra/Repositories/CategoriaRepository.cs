@@ -43,7 +43,8 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
                         x.Referencia,
                         x.UrlFoto,
                         x.NomeFoto,
-                        x.InativoEcommerce))
+                        x.InativoEcommerce,
+                        x.VendaSomenteComEstoqueDisponivel))
                 .OrderBy(x => x.Numero)
                 .Take(3)];
         }
