@@ -58,6 +58,8 @@ builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
 builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj, urlApiViaCep, urlWhatsApp, apiKeyWhatsApp);
 
+builder.ConfigureLog();
+
 QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();

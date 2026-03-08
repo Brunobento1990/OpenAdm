@@ -4,6 +4,7 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.HttpService.Interfaces;
 using OpenAdm.Infra.Model;
 using System.Text.Json;
+using Serilog;
 
 namespace OpenAdm.Api.Midlewares;
 
@@ -30,23 +31,16 @@ public class LogMiddleware
         }
         catch (ExceptionUnauthorize ex)
         {
-            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 401;
             await HandleError(httpContext, ex.Message);
         }
         catch (ExceptionApi ex)
         {
-            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 400;
-            if (ex.EnviarErroDiscord)
-            {
-                await NotificarDiscord(ex.Message, discordHttpService);
-            }
             await HandleError(httpContext, ex.Message);
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro: {ex.InnerException?.Message ?? ex.Message}");
             _statusCode = 400;
 
             if (_development)
@@ -55,37 +49,13 @@ public class LogMiddleware
             }
             else
             {
-                await NotificarDiscord(ex.Message, discordHttpService);
                 await HandleError(
                     httpContext,
                     _erroGenerico);
             }
         }
     }
-
-    static async Task NotificarDiscord(string mensagem, IDiscordHttpService discordHttpService)
-    {
-        var webHookId = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_ID");
-        var webHookToken = VariaveisDeAmbiente.GetVariavel("DISCORD_WEB_HOOK_TOKEN");
-
-        var discordModel = new DiscordModel()
-        {
-            Content = "Error expeptions",
-            Username = "Error",
-            Embeds =
-            [
-                new()
-                {
-                    Description = mensagem,
-                    Title = "Error api",
-                    Color = 0xFF0000
-                }
-            ]
-        };
-
-        await discordHttpService.NotifyExceptionAsync(discordModel, webHookId, webHookToken);
-    }
-
+    
     public async Task HandleError(HttpContext httpContext, string mensagem)
     {
         httpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
@@ -95,6 +65,7 @@ public class LogMiddleware
         {
             Mensagem = mensagem
         };
+        Log.Error(mensagem);
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
     }
 }

@@ -13,7 +13,7 @@ public class CotacaoFreteResponse
     {
         if (!decimal.TryParse(Valorpac, out var _) || !decimal.TryParse(Valorsedex, out var _))
         {
-            throw new ExceptionApi("Não foi possível cotar o frete", enviarErroDiscord: true);
+            throw new ExceptionApi("Não foi possível cotar o frete");
         }
     }
 }

@@ -31,7 +31,7 @@ public sealed class MercadoPagoHttpService : IHttpClientMercadoPago
         {
             var error = await response.Content.ReadAsStringAsync();
             Console.WriteLine(error);
-            throw new ExceptionApi($"Não foi possível gerar o pagamento.", enviarErroDiscord: true);
+            throw new ExceptionApi($"Não foi possível gerar o pagamento.");
         }
 
         return JsonSerializer.Deserialize<MercadoPagoResponse>(body, JsonSerializerOptionsApi.Options())

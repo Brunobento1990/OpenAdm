@@ -37,7 +37,7 @@ public class GerarPixPedidoService : IGerarPixPedidoService
         gerarPixParcelaDto.Validar();
         var fatura = await _faturaRepository.GetByPedidoIdAsync(gerarPixParcelaDto.PedidoId);
         var configuracaoPagamento = await _configuracaoDePagamentoService.GetAsync()
-                ?? throw new ExceptionApi("Não há configuração de pagamento para o mercado pago!", enviarErroDiscord: true);
+                ?? throw new ExceptionApi("Não há configuração de pagamento para o mercado pago!");
 
         if (string.IsNullOrWhiteSpace(configuracaoPagamento.UrlWebHook))
         {
