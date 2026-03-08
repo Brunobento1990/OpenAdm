@@ -67,9 +67,8 @@ public class ProdutoService : IProdutoService
 
     public async Task DeleteProdutoAsync(Guid id)
     {
-
         var produto = await _produtoRepository.GetProdutoByIdExcluirAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o produto");
+                      ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         if (!string.IsNullOrWhiteSpace(produto.NomeFoto))
         {
@@ -95,7 +94,8 @@ public class ProdutoService : IProdutoService
         return produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
     }
 
-    public async Task<IEnumerable<ProdutoViewModel>> GetDropDownPaginacaoAsync(PaginacaoDropDown<Produto> paginacaoDropDown)
+    public async Task<IEnumerable<ProdutoViewModel>> GetDropDownPaginacaoAsync(
+        PaginacaoDropDown<Produto> paginacaoDropDown)
     {
         var produtos = await _produtoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
         return produtos.Select(x => new ProdutoViewModel().ToModel(x));
@@ -121,7 +121,8 @@ public class ProdutoService : IProdutoService
         };
     }
 
-    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
+    public async Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(
+        PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
         var produtosViewModel = await MapearProdutosAsync(paginacao.Values);
@@ -130,8 +131,28 @@ public class ProdutoService : IProdutoService
 
         if (config.VendaDeProdutoComEstoque)
         {
-            var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosViewModel.Select(x => x.Id).ToList());
+            var estoques =
+                await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosViewModel.Select(x => x.Id)
+                    .ToList());
             MapearEstoque(produtosViewModel, estoques);
+        }
+        else
+        {
+            var produtosComControleDeEstoque =
+                produtosViewModel.Where(x => x.VendaSomenteComEstoqueDisponivel).ToList();
+
+            if (produtosComControleDeEstoque.Count > 0)
+            {
+                var estoques =
+                    await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosComControleDeEstoque
+                        .Select(x => x.Id)
+                        .ToList());
+
+                foreach (var produto in produtosComControleDeEstoque)
+                {
+                    MapearProdutoEstoque(produto, estoques);
+                }
+            }
         }
 
         return new PaginacaoViewModel<ProdutoViewModel>()
@@ -151,8 +172,21 @@ public class ProdutoService : IProdutoService
 
         if (config.VendaDeProdutoComEstoque)
         {
-            var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtos.Select(x => x.Id).ToList());
+            var estoques =
+                await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtos.Select(x => x.Id).ToList());
             MapearEstoque(produtosViewModel, estoques);
+        }
+        else
+        {
+            var produtosComControleDeEstoque =
+                produtosViewModel.Where(x => x.VendaSomenteComEstoqueDisponivel).ToList();
+
+            if (produtosComControleDeEstoque.Count > 0)
+            {
+                var estoques =
+                    await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtos.Select(x => x.Id).ToList());
+                MapearEstoque(produtosComControleDeEstoque, estoques);
+            }
         }
 
         return produtosViewModel;
@@ -162,24 +196,29 @@ public class ProdutoService : IProdutoService
     {
         foreach (var produto in produtosViewModel)
         {
-            if (produto.Tamanhos != null)
-            {
-                foreach (var tamanho in produto.Tamanhos)
-                {
-                    var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
-                    tamanho.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
-                    tamanho.Quantidade = estoqueItem?.QuantidadeDisponivel;
-                }
-            }
+            MapearProdutoEstoque(produto, estoques);
+        }
+    }
 
-            if (produto.Pesos != null)
+    private static void MapearProdutoEstoque(ProdutoViewModel produto, IList<Estoque> estoques)
+    {
+        if (produto.Tamanhos != null)
+        {
+            foreach (var tamanho in produto.Tamanhos)
             {
-                foreach (var peso in produto.Pesos)
-                {
-                    var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
-                    peso.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
-                    peso.Quantidade = estoqueItem?.QuantidadeDisponivel;
-                }
+                var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
+                tamanho.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
+                tamanho.Quantidade = estoqueItem?.QuantidadeDisponivel;
+            }
+        }
+
+        if (produto.Pesos != null)
+        {
+            foreach (var peso in produto.Pesos)
+            {
+                var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
+                peso.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
+                peso.Quantidade = estoqueItem?.QuantidadeDisponivel;
             }
         }
     }
@@ -187,7 +226,7 @@ public class ProdutoService : IProdutoService
     public async Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id)
     {
         var produto = await _produtoRepository.GetProdutoByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o produto");
+                      ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         return new ProdutoViewModel().ToModel(produto);
     }
@@ -195,7 +234,7 @@ public class ProdutoService : IProdutoService
     public async Task InativarAtivarEcommerceAsync(Guid id)
     {
         var produto = await _produtoRepository.GetProdutoByIdParaEditarAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o produto");
+                      ?? throw new ExceptionApi("Não foi possível localizar o produto");
         produto.InativarAtivarEcommerce();
 
         await _produtoRepository.UpdateAsync(produto);
@@ -205,7 +244,7 @@ public class ProdutoService : IProdutoService
     {
         updateProdutoDto.Validar();
         var produto = await _produtoRepository.GetProdutoByIdParaEditarAsync(updateProdutoDto.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar o produto");
+                      ?? throw new ExceptionApi("Não foi possível localizar o produto");
 
         var foto = produto.UrlFoto;
         var nomeFoto = produto.NomeFoto;
@@ -254,6 +293,7 @@ public class ProdutoService : IProdutoService
         {
             produto.Categoria.Produtos = [];
         }
+
         produto.Pesos.ForEach(x => x.Produtos = []);
         produto.Tamanhos.ForEach(x => x.Produtos = []);
 
@@ -269,11 +309,11 @@ public class ProdutoService : IProdutoService
         var produtosViewModel = new List<ProdutoViewModel>();
 
         var precoPorTamanho = itensTabelaDePreco
-        .Where(x => x.TamanhoId != null)
-        .ToDictionary(
-            x => (x.ProdutoId, x.TamanhoId),
-            x => x
-        );
+            .Where(x => x.TamanhoId != null)
+            .ToDictionary(
+                x => (x.ProdutoId, x.TamanhoId),
+                x => x
+            );
 
         var precoPorPeso = itensTabelaDePreco
             .Where(x => x.PesoId != null)
@@ -296,8 +336,7 @@ public class ProdutoService : IProdutoService
                         {
                             ProdutoId = produto.Id,
                             TamanhoId = tamanho.Id,
-                            ValorUnitario = isAtacado ?
-                                preco.ValorUnitarioAtacado : preco.ValorUnitarioVarejo
+                            ValorUnitario = isAtacado ? preco.ValorUnitarioAtacado : preco.ValorUnitarioVarejo
                         };
                     }
                 }
@@ -313,12 +352,12 @@ public class ProdutoService : IProdutoService
                         {
                             ProdutoId = produto.Id,
                             PesoId = peso.Id,
-                            ValorUnitario = isAtacado ?
-                                preco.ValorUnitarioAtacado : preco.ValorUnitarioVarejo
+                            ValorUnitario = isAtacado ? preco.ValorUnitarioAtacado : preco.ValorUnitarioVarejo
                         };
                     }
                 }
             }
+
             produtosViewModel.Add(produtoViewModel);
         }
 

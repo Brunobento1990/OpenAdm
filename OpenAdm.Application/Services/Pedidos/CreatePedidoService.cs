@@ -71,10 +71,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
         var produtosIds = pedidoCreateDto.Itens.Select(x => x.ProdutoId).ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
 
-        var estoques = configuracaoDePedido.VendaDeProdutoComEstoque
-            ? await _estoqueRepository
-                .GetPosicaoEstoqueDosProdutosAsync(produtosIds)
-            : [];
+        var estoques = await _estoqueRepository
+            .GetPosicaoEstoqueDosProdutosAsync(produtosIds);
 
         foreach (var item in pedidoCreateDto.Itens)
         {
@@ -87,7 +85,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
             item.ValorUnitario = usuario.IsAtacado ? itemTabela.ValorUnitarioAtacado : itemTabela.ValorUnitarioVarejo;
 
-            if (configuracaoDePedido.VendaDeProdutoComEstoque)
+            if (configuracaoDePedido.VendaDeProdutoComEstoque || itemTabela.Produto.VendaSomenteComEstoqueDisponivel)
             {
                 var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
                                                            x.PesoId == item.PesoId &&
@@ -97,13 +95,14 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
                 if (estoque.QuantidadeDisponivel < item.Quantidade)
                 {
-                    throw new Exception($"Não há estoque disponível do produto: {item.ProdutoId}, a quantidade disponível é : {estoque.Quantidade}");
+                    throw new Exception(
+                        $"Não há estoque disponível do produto: {itemTabela.Produto.Descricao}, a quantidade disponível é : {estoque.Quantidade}");
                 }
             }
         }
 
         pedido.ProcessarItensPedido(pedidoCreateDto.Itens);
-        
+
         pedido.EnderecoEntrega = new EnderecoEntregaPedido(
             cep: pedidoCreateDto.EnderecoEntrega.Cep,
             logradouro: pedidoCreateDto.EnderecoEntrega.Logradouro,

@@ -43,12 +43,8 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         var produtos = await _produtoRepository.GetProdutosByListIdAsync(produtosIds);
 
         var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
-        IList<Estoque> estoques = new List<Estoque>();
 
-        if (config.VendaDeProdutoComEstoque)
-        {
-            estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
-        }
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
 
         foreach (var produto in produtos)
         {
@@ -69,7 +65,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                 .OrderBy(x => x.Numero)
                 .Select(x =>
                 {
-                    var estoqueItem = config.VendaDeProdutoComEstoque
+                    var estoqueItem = config.VendaDeProdutoComEstoque || produto.VendaSomenteComEstoqueDisponivel
                         ? estoques.FirstOrDefault(f => f.ProdutoId == produto.Id && f.TamanhoId == x.Id)
                         : null;
 
@@ -78,7 +74,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                         Id = x.Id,
                         Descricao = x.Descricao,
                         Numero = x.Numero,
-                        TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0,
+                        TemEstoqueDisponivel = estoqueItem == null || estoqueItem.QuantidadeDisponivel > 0,
                         Quantidade = estoqueItem?.QuantidadeDisponivel,
                         PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
                         {
@@ -103,7 +99,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                 .OrderBy(x => x.Numero)
                 .Select(x =>
                 {
-                    var estoqueItem = config.VendaDeProdutoComEstoque
+                    var estoqueItem = config.VendaDeProdutoComEstoque || produto.VendaSomenteComEstoqueDisponivel
                         ? estoques.FirstOrDefault(f => f.ProdutoId == produto.Id && f.PesoId == x.Id)
                         : null;
 
@@ -113,7 +109,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                         Descricao = x.Descricao,
                         Numero = x.Numero,
                         Quantidade = estoqueItem?.Quantidade,
-                        TemEstoqueDisponivel = estoqueItem?.Quantidade > 0,
+                        TemEstoqueDisponivel = estoqueItem == null || estoqueItem.QuantidadeDisponivel > 0,
                         PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
                         {
                             Quantidade = (decimal)(carrinho?
