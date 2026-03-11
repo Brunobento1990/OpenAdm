@@ -30,8 +30,6 @@ var pgString = VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION");
 var redisString = VariaveisDeAmbiente.GetVariavel("REDIS_URL");
 var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
 var urlApiCep = VariaveisDeAmbiente.GetVariavel("URL_API_CEP");
-var urlWhatsApp = VariaveisDeAmbiente.GetVariavel("URL_API_WHATSAPP");
-var apiKeyWhatsApp = VariaveisDeAmbiente.GetVariavel("API_KEY_WHATSAPP");
 var urlApiViaCep = VariaveisDeAmbiente.GetVariavel("URL_API_VIA_CEP");
 var urlApiMercadoPago = VariaveisDeAmbiente.GetVariavel("URL_API_MERCADO_PAGO");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
@@ -56,7 +54,9 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
-builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj, urlApiViaCep, urlWhatsApp, apiKeyWhatsApp);
+builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj, urlApiViaCep,
+    builder.Configuration);
+builder.Services.ConfigurarJobs(builder.Configuration, pgString);
 
 builder.ConfigureLog();
 
@@ -71,10 +71,7 @@ app.UseRouting();
 
 if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
 {
-    app.UseSwagger(c =>
-    {
-        c.RouteTemplate = "swagger/{documentName}/swagger.json";
-    });
+    app.UseSwagger(c => { c.RouteTemplate = "swagger/{documentName}/swagger.json"; });
     app.UseSwaggerUI();
 }
 

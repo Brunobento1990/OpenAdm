@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Infra.Enums;
 using OpenAdm.Infra.HttpService.Interfaces;
@@ -14,44 +15,34 @@ public static class DependencyInjectIHttpClient
         string urlMercadoPago,
         string urlConsultaCnpj,
         string urlApiViaCep,
-        string urlWhatsApp,
-        string keyWhatsApp)
+        IConfiguration configuration)
     {
-        services.AddTransient<IHttpClientCep, CepHttpService>();
-        services.AddTransient<IDiscordHttpService, DiscordHttpService>();
-        services.AddTransient<IHttpClientMercadoPago, MercadoPagoHttpService>();
-        services.AddTransient<IHttpClientConsultaCnpj, CnpjHttpService>();
-        services.AddHttpClient(HttpServiceEnum.Discord.ToString(), x =>
-        {
-            x.BaseAddress = new Uri(url);
-        });
+        var urlWhatsApp = configuration["WhatsApp:BaseUrl"]!;
+        var apiKeyWhatsApp = configuration["WhatsApp:ApiKey"]!;
 
-        services.AddHttpClient(HttpServiceEnum.MercadoPago.ToString(), x =>
-        {
-            x.BaseAddress = new Uri(urlMercadoPago);
-        });
+        services.AddScoped<IHttpClientCep, CepHttpService>();
+        services.AddScoped<IDiscordHttpService, DiscordHttpService>();
+        services.AddScoped<IHttpClientMercadoPago, MercadoPagoHttpService>();
+        services.AddScoped<IHttpClientConsultaCnpj, CnpjHttpService>();
+        services.AddScoped<IWhatsAppHttpClient, WhatsAppHttpClient>();
+        
+        services.AddHttpClient(HttpServiceEnum.Discord.ToString(), x => { x.BaseAddress = new Uri(url); });
 
-        services.AddHttpClient(HttpServiceEnum.CepHttpService.ToString(), x =>
-        {
-            x.BaseAddress = new Uri(urlApiCep);
-        });
+        services.AddHttpClient(HttpServiceEnum.MercadoPago.ToString(),
+            x => { x.BaseAddress = new Uri(urlMercadoPago); });
 
-        services.AddHttpClient(HttpServiceEnum.ConsultaCnpj.ToString(), x =>
-        {
-            x.BaseAddress = new Uri(urlConsultaCnpj);
-        });
+        services.AddHttpClient(HttpServiceEnum.CepHttpService.ToString(), x => { x.BaseAddress = new Uri(urlApiCep); });
 
-        services.AddHttpClient(HttpServiceEnum.ConsultaCep.ToString(), x =>
-        {
-            x.BaseAddress = new Uri(urlApiViaCep);
-        });
+        services.AddHttpClient(HttpServiceEnum.ConsultaCnpj.ToString(),
+            x => { x.BaseAddress = new Uri(urlConsultaCnpj); });
 
-        services.AddScoped<IChatWppHttpClient, ChatWppHttpClient>();
+        services.AddHttpClient(HttpServiceEnum.ConsultaCep.ToString(), x => { x.BaseAddress = new Uri(urlApiViaCep); });
+
 
         services.AddHttpClient(HttpServiceEnum.WhatsApp.ToString(), x =>
         {
             x.BaseAddress = new Uri(urlWhatsApp);
-            x.DefaultRequestHeaders.Add("apiKey", keyWhatsApp);
+            x.DefaultRequestHeaders.Add("apiKey", apiKeyWhatsApp);
         });
     }
 }

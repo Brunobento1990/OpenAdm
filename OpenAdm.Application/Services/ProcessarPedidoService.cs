@@ -16,7 +16,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IEmailApiService _emailService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
-    private readonly IChatWppHttpClient _chatWppHttpClient;
+    private readonly IWhatsAppHttpClient _whatsAppHttpClient;
     private readonly IEstoqueService _estoqueService;
 
     public ProcessarPedidoService(
@@ -24,13 +24,13 @@ public class ProcessarPedidoService : IProcessarPedidoService
         IPdfPedidoService pdfPedidoService,
         IEmailApiService emailService,
         IParceiroAutenticado parceiroAutenticado,
-        IChatWppHttpClient chatWppHttpClient, IEstoqueService estoqueService)
+        IWhatsAppHttpClient whatsAppHttpClient, IEstoqueService estoqueService)
     {
         _pedidoRepository = pedidoRepository;
         _pdfPedidoService = pdfPedidoService;
         _emailService = emailService;
         _parceiroAutenticado = parceiroAutenticado;
-        _chatWppHttpClient = chatWppHttpClient;
+        _whatsAppHttpClient = whatsAppHttpClient;
         _estoqueService = estoqueService;
     }
 
@@ -65,7 +65,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
                 Mentioned = null!
             };
 
-            var resultado = await _chatWppHttpClient.EnviarPdfAsync(payload);
+            var resultado = await _whatsAppHttpClient.EnviarPdfAsync(payload);
 
             if (resultado)
             {

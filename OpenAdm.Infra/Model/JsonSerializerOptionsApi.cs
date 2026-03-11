@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Text;
+using Serilog;
 
 namespace OpenAdm.Infra.Model;
 
@@ -8,14 +9,27 @@ public static class JsonSerializerOptionsApi
 {
     private static readonly JsonSerializerOptions _options = new()
     {
-
         PropertyNameCaseInsensitive = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         WriteIndented = true
     };
+
     public static JsonSerializerOptions Options()
     {
         return _options;
+    }
+
+    public static T? FromJson<T>(this Stream json)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<T>(json, _options);
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Erro ao desserealizar JSON");
+            return default;
+        }
     }
 
     public static StringContent ToJson<T>(T body)
