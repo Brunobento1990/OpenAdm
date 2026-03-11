@@ -8,5 +8,5 @@ public class StatusConexaoWhatsAppResponse
 public class InstanciaStatusConexaoWhatsAppResponse
 {
     public string? State { get; set; }
-    public bool Conectado => State?.ToLower() == "connected";
+    public bool Conectado => State?.ToLower() == "connected" || State?.ToLower() == "open";
 }
