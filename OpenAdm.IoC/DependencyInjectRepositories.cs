@@ -12,7 +12,8 @@ namespace OpenAdm.IoC;
 
 public static class DependencyInjectRepositories
 {
-    public static void InjectRepositories(this IServiceCollection services, string connectionString, string instanceName)
+    public static void InjectRepositories(this IServiceCollection services, string connectionString,
+        string instanceName)
     {
         services.AddStackExchangeRedisCache(options =>
         {
@@ -67,5 +68,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<IEnderecoEntregaPedidoRepository, EnderecoEntregaPedidoRepository>();
         services.AddScoped<IParceiroRepository, ParceiroRepository>();
         services.AddScoped<IMigrationService, MigrationRepository>();
+        services.AddScoped<IConfiguracaoDeFreteRepository, ConfiguracaoDeFreteRepository>();
     }
 }

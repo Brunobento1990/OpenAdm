@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Models.Tokens;
-using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Text;
+using OpenAdm.Api.Extensions;
 
 namespace OpenAdm.Api.Midlewares;
 
 public class AuthorizeMiddleware
 {
     private readonly RequestDelegate _next;
+
     public AuthorizeMiddleware(RequestDelegate next)
     {
         _next = next;
@@ -21,19 +22,20 @@ public class AuthorizeMiddleware
         HttpContext httpContext,
         IUsuarioAutenticado usuarioAutenticado)
     {
-        var autenticar = httpContext.Features.Get<IEndpointFeature>()?.Endpoint?.Metadata
-                .FirstOrDefault(m => m is AutenticaAttribute) is AutenticaAttribute atributoAutorizacao;
-
-        if (!autenticar)
+        if (!httpContext.TemAtributo<AutenticaAttribute>())
         {
             await _next(httpContext);
             return;
         }
 
-        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").Last()
-            ?? throw new ExceptionUnauthorize("Por favor, efetue o login novamente");
+        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").Last();
 
-        var keyJwt = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            await httpContext.RetornarErro("Por favor, efetue o login novamente",
+                httpStatusCode: HttpStatusCode.Unauthorized);
+            return;
+        }
 
         try
         {
@@ -51,26 +53,30 @@ public class AuthorizeMiddleware
 
             var jwtToken = (JwtSecurityToken)validatedToken;
 
-            var id = jwtToken.Claims.FirstOrDefault(c => c.Type == "Id")?.Value
-                ?? throw new ExceptionUnauthorize("Token inválido");
+            var id = jwtToken.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
             var isFuncionario = jwtToken.Claims.FirstOrDefault(c => c.Type == "IsFuncionario")?.Value;
 
             if (!Guid.TryParse(id, out Guid idParse))
             {
-                throw new ExceptionUnauthorize("Por favor, efetue o login novamente");
+                await httpContext.RetornarErro("Por favor, efetue o login novamente",
+                    httpStatusCode: HttpStatusCode.Unauthorized);
+                return;
             }
 
             usuarioAutenticado.Id = idParse;
-            usuarioAutenticado.IsFuncionario = !string.IsNullOrWhiteSpace(isFuncionario) && isFuncionario == "TRUE";
-
+            usuarioAutenticado.IsFuncionario = isFuncionario == "TRUE";
         }
         catch (SecurityTokenExpiredException)
         {
-            throw new ExceptionUnauthorize("Sessão expirada, efetue o login novamente!");
+            await httpContext.RetornarErro("Sessão expirada, efetue o login novamente!",
+                httpStatusCode: HttpStatusCode.Unauthorized);
+            return;
         }
         catch (Exception)
         {
-            throw new ExceptionUnauthorize("Efetue o login novamente!");
+            await httpContext.RetornarErro("Efetue o login novamente!",
+                httpStatusCode: HttpStatusCode.Unauthorized);
+            return;
         }
 
         await _next(httpContext);

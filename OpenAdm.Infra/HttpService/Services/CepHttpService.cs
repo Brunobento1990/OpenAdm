@@ -1,5 +1,4 @@
 ﻿using OpenAdm.Application.HttpClient.Interfaces;
-using OpenAdm.Application.HttpClient.Request;
 using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.Enums;
@@ -30,22 +29,6 @@ public sealed class CepHttpService : IHttpClientCep
         var body = await response.Content.ReadAsStreamAsync();
 
         return JsonSerializer.Deserialize<ConsultaCepResponse>(body, JsonSerializerOptionsApi.Options())
-            ?? throw new ExceptionApi($"Erro ao consultar o CEP: {cepOrigem}");
-    }
-
-    public async Task<CotacaoFreteResponse> CotarFreteAsync(CotacaoFreteRequest cotacaoFreteRequest)
-    {
-        var client = _httpClientFactory.CreateClient($"{HttpServiceEnum.CepHttpService}");
-        var url = $"ws/json-frete/{cotacaoFreteRequest.CepOrigem}/{cotacaoFreteRequest.CepDestino}/{cotacaoFreteRequest.Peso}/{cotacaoFreteRequest.Altura}/{cotacaoFreteRequest.Largura}/{cotacaoFreteRequest.Comprimento}/{cotacaoFreteRequest.ChaveDeAcesso}";
-        var response = await client.GetAsync(url);
-        var body = await response.Content.ReadAsStringAsync();
-        if (!response.IsSuccessStatusCode)
-        {
-            var erro = string.IsNullOrWhiteSpace(body) ? "Erro na cotação de frete" : body;
-            throw new Exception(erro);
-        }
-
-        return JsonSerializer.Deserialize<CotacaoFreteResponse>(body, JsonSerializerOptionsApi.Options())
-            ?? throw new Exception("Erro ao desserealizar response da api cotação de frete");
+               ?? throw new ExceptionApi($"Erro ao consultar o CEP: {cepOrigem}");
     }
 }

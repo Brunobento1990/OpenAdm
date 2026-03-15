@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Infra.Enums;
@@ -19,26 +20,31 @@ public static class DependencyInjectIHttpClient
     {
         var urlWhatsApp = configuration["WhatsApp:BaseUrl"]!;
         var apiKeyWhatsApp = configuration["WhatsApp:ApiKey"]!;
+        var urlApiFrete = configuration["ApiFrete:BaseUrl"]!;
+        var userAgentFrete = configuration["ApiFrete:UserAgent"]!;
+
 
         services.AddScoped<IHttpClientCep, CepHttpService>();
         services.AddScoped<IDiscordHttpService, DiscordHttpService>();
         services.AddScoped<IHttpClientMercadoPago, MercadoPagoHttpService>();
         services.AddScoped<IHttpClientConsultaCnpj, CnpjHttpService>();
-        services.AddScoped<IWhatsAppHttpClient, WhatsAppHttpClient>();
-        
-        services.AddHttpClient(HttpServiceEnum.Discord.ToString(), x => { x.BaseAddress = new Uri(url); });
+        services.AddScoped<IHttpClientWhatsApp, HttpClientWhatsApp>();
+        services.AddScoped<IHttpClientFrete, HttpClientFrete>();
 
+        services.AddHttpClient(HttpServiceEnum.Discord.ToString(), x => { x.BaseAddress = new Uri(url); });
         services.AddHttpClient(HttpServiceEnum.MercadoPago.ToString(),
             x => { x.BaseAddress = new Uri(urlMercadoPago); });
-
         services.AddHttpClient(HttpServiceEnum.CepHttpService.ToString(), x => { x.BaseAddress = new Uri(urlApiCep); });
-
         services.AddHttpClient(HttpServiceEnum.ConsultaCnpj.ToString(),
             x => { x.BaseAddress = new Uri(urlConsultaCnpj); });
-
         services.AddHttpClient(HttpServiceEnum.ConsultaCep.ToString(), x => { x.BaseAddress = new Uri(urlApiViaCep); });
-
-
+        services.AddHttpClient(HttpServiceEnum.Frete.ToString(),
+            x =>
+            {
+                x.BaseAddress = new Uri(urlApiFrete);
+                x.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue($"({userAgentFrete})"));
+                x.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
         services.AddHttpClient(HttpServiceEnum.WhatsApp.ToString(), x =>
         {
             x.BaseAddress = new Uri(urlWhatsApp);

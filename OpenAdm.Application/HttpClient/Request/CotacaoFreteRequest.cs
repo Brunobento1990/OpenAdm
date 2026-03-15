@@ -2,11 +2,23 @@
 
 public class CotacaoFreteRequest
 {
-    public string CepOrigem { get; set; } = string.Empty;
-    public string CepDestino { get; set; } = string.Empty;
-    public string Peso { get; set; } = string.Empty;
-    public string Altura { get; set; } = string.Empty;
-    public string Largura { get; set; } = string.Empty;
-    public string Comprimento { get; set; } = string.Empty;
-    public string ChaveDeAcesso { get; set; } = string.Empty;
+    public CepCotacaoFreteRequest From { get; set; } = new();
+    public CepCotacaoFreteRequest To { get; set; } = new();
+    public ICollection<ProdutoCotacaoFreteRequest> Products { get; set; } = [];
+}
+
+public class CepCotacaoFreteRequest
+{
+    public string Postal_code { get; set; } = string.Empty;
+}
+
+public class ProdutoCotacaoFreteRequest
+{
+    public string Id { get; set; } = string.Empty;
+    public decimal Width { get; set; }
+    public decimal Height { get; set; }
+    public decimal Length { get; set; }
+    public decimal Weight { get; set; }
+    public decimal Insurance_value { get; set; }
+    public int Quantity { get; set; }
 }

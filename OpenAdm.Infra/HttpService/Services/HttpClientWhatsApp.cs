@@ -8,12 +8,12 @@ using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Infra.HttpService.Services;
 
-public class WhatsAppHttpClient : IWhatsAppHttpClient
+public class HttpClientWhatsApp : IHttpClientWhatsApp
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _instance = "open-adm";
 
-    public WhatsAppHttpClient(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public HttpClientWhatsApp(IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _httpClientFactory = httpClientFactory;
         var instance = configuration["WhatsApp:Instance"];

@@ -31,7 +31,7 @@ public class ConexaoWhatsAppJob : BaseJob, IJobInfo
         try
         {
             using var scoped = _serviceProvider.CreateScope();
-            var servicoConexaoWhatsApp = scoped.ServiceProvider.GetService<IWhatsAppHttpClient>();
+            var servicoConexaoWhatsApp = scoped.ServiceProvider.GetService<IHttpClientWhatsApp>();
 
             if (servicoConexaoWhatsApp == null)
             {
@@ -43,6 +43,7 @@ public class ConexaoWhatsAppJob : BaseJob, IJobInfo
 
             if (response.Result?.Instance?.Conectado == true)
             {
+                Log.Information("Status conexão whats app OK");
                 return;
             }
 

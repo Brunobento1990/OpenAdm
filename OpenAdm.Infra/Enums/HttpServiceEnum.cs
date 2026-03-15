@@ -8,4 +8,5 @@ public enum HttpServiceEnum
     CepHttpService,
     ConsultaCep,
     WhatsApp,
+    Frete,
 }

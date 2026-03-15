@@ -4,7 +4,7 @@ using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Application.HttpClient.Interfaces;
 
-public interface IWhatsAppHttpClient
+public interface IHttpClientWhatsApp
 {
     Task<bool> EnviarPdfAsync(EnviarPDFWppDTO enviarPDFWppDTO);
     Task<ResultPartner<StatusConexaoWhatsAppResponse>> StatusConexaoAsync();

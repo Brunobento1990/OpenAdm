@@ -45,7 +45,7 @@ public class PaginacaoEstoqueDto : FilterModel<Estoque>
         var combinedFilter = filtros[0];
         for (int i = 1; i < filtros.Count; i++)
         {
-            combinedFilter = CombineExpressions(combinedFilter, filtros[i], Expression.OrElse);
+            combinedFilter = CombineExpressions(combinedFilter, filtros[i], Expression.AndAlso);
         }
 
         return CombineExpressions(baseExpression, combinedFilter, Expression.AndAlso);
