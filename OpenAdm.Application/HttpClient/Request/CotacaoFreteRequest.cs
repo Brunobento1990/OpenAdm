@@ -19,6 +19,5 @@ public class ProdutoCotacaoFreteRequest
     public decimal Height { get; set; }
     public decimal Length { get; set; }
     public decimal Weight { get; set; }
-    public decimal Insurance_value { get; set; }
     public int Quantity { get; set; }
 }

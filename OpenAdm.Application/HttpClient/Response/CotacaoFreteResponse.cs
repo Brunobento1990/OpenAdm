@@ -24,9 +24,12 @@ public class CotacaoFreteResponse
     [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public decimal Discount { get; set; }
 
-    [JsonPropertyName("currency")] public string Currency { get; set; } = string.Empty;
-    [JsonPropertyName("delivery_time")] public int DeliveryTime { get; set; }
-    [JsonPropertyName("delivery_range")] public DeliveryRange? DeliveryRange { get; set; }
+    [JsonPropertyName("currency")] 
+    public string Currency { get; set; } = string.Empty;
+    [JsonPropertyName("delivery_time")] 
+    public int DeliveryTime { get; set; }
+    [JsonPropertyName("delivery_range")] 
+    public DeliveryRange? DeliveryRange { get; set; }
 
     [JsonPropertyName("custom_delivery_time")]
     public int CustomDeliveryTime { get; set; }

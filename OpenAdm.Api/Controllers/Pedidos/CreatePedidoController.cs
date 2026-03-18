@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Api.Extensions;
 using OpenAdm.Application.Dtos.Pedidos;
+using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces.Pedidos;
-using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model.Pedidos;
+using OpenAdm.Application.Models.Pedidos;
 
 namespace OpenAdm.Api.Controllers.Pedidos;
 
 [ApiController]
 [Route("pedidos")]
-[Autentica]
-[AcessoParceiro]
 public class CreatePedidoController : ControllerBase
 {
     private readonly ICreatePedidoService _createPedidoService;
@@ -22,10 +21,14 @@ public class CreatePedidoController : ControllerBase
     }
 
     [HttpPost("create")]
+    [Autentica]
+    [AcessoParceiro]
+    [ProducesResponseType<CriarPedidoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> CreatePedido(PedidoCreateDto pedidoCreateDto)
     {
         var result = await _createPedidoService.CreatePedidoAsync(pedidoCreateDto);
 
-        return Ok(new { message = "Pedido criado com sucesso!", pedido = result });
+        return result.ToActionResult();
     }
 }

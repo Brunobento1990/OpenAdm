@@ -5,14 +5,15 @@ namespace OpenAdm.Application.Dtos.Pesos;
 
 public class CreatePesoDto
 {
-    [Required]
-    [MaxLength(255)]
-    public string Descricao { get; set; } = string.Empty;
+    [Required] [MaxLength(255)] public string Descricao { get; set; } = string.Empty;
     public decimal? PesoReal { get; set; }
+    public decimal? AlturaReal { get; set; }
+    public decimal? LarguraReal { get; set; }
+    public decimal? ComprimentoReal { get; set; }
 
     public Peso ToEntity()
     {
         var date = DateTime.Now;
-        return new Peso(Guid.NewGuid(), date, date, 0, Descricao, PesoReal);
+        return new Peso(Guid.NewGuid(), date, date, 0, Descricao, PesoReal, AlturaReal, LarguraReal, ComprimentoReal);
     }
 }

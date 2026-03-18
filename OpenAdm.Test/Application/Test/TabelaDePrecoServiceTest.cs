@@ -18,18 +18,17 @@ public class TabelaDePrecoServiceTest
 
         var pesos = new List<Peso>()
         {
-            new Peso(pesoId, date, date, 0, "Peso", 0)
+            new Peso(pesoId, date, date, 0, "Peso", 0, null, null, null)
         };
 
         var tamanhos = new List<Tamanho>()
         {
-            new Tamanho(tamanhoId, date, date, 0, "Tamanho", 0)
+            new Tamanho(tamanhoId, date, date, 0, "Tamanho", 0, null, null, null)
         };
 
         var tabelaDePrecoDto = new CreateTabelaDePrecoDto()
         {
             Descricao = "Teste service",
-            
         };
 
         var tamanhosIds = tamanhos.Select(x => x.Id).ToList();
@@ -49,7 +48,8 @@ public class TabelaDePrecoServiceTest
                 x.GetPesosByIdsAsync(pesosIds))
             .ReturnsAsync(pesos);
 
-        var service = new TabelaDePrecoService(tabelaDePrecoRepositoryMock.Object, tamanhosRepositoryMock.Object, pesosRepositoryMock.Object);
+        var service = new TabelaDePrecoService(tabelaDePrecoRepositoryMock.Object, tamanhosRepositoryMock.Object,
+            pesosRepositoryMock.Object);
 
         var tabelaDePrecoViewModel = await service.CreateTabelaDePrecoAsync(tabelaDePrecoDto);
 
@@ -66,13 +66,12 @@ public class TabelaDePrecoServiceTest
         var tamanhosRepositoryMock = new Mock<ITamanhoRepository>();
         var pesosRepositoryMock = new Mock<IPesoRepository>();
 
-        tabelaDePrecoRepositoryMock.Setup(
-            (x) => x.GetTabelaDePrecoByIdAsync(tabelaDePreco.Id))
+        tabelaDePrecoRepositoryMock.Setup((x) => x.GetTabelaDePrecoByIdAsync(tabelaDePreco.Id))
             .ReturnsAsync(tabelaDePreco);
 
-        var service = new TabelaDePrecoService(tabelaDePrecoRepositoryMock.Object, tamanhosRepositoryMock.Object, pesosRepositoryMock.Object);
+        var service = new TabelaDePrecoService(tabelaDePrecoRepositoryMock.Object, tamanhosRepositoryMock.Object,
+            pesosRepositoryMock.Object);
 
-        await Assert.ThrowsAsync<ExceptionApi>(
-            async () => await service.DeleteTabelaDePrecoAsync(tabelaDePreco.Id));
+        await Assert.ThrowsAsync<ExceptionApi>(async () => await service.DeleteTabelaDePrecoAsync(tabelaDePreco.Id));
     }
 }

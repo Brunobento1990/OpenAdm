@@ -61,5 +61,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<IRelatorioPedidoPorPeriodo, RelatorioPedidoPorPeriodo>();
         services.AddScoped<INotificarPedidoEditadoService, NotificarPedidoEditadoService>();
         services.AddScoped<IConfiguracaoDeFreteService, ConfiguracaoDeFreteService>();
+        services.AddScoped<IFreteService, FreteService>();
     }
 }

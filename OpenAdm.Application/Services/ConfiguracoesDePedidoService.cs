@@ -11,13 +11,16 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 {
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
+    private readonly IConfiguracaoDeFreteService _configuracaoDeFreteService;
 
     public ConfiguracoesDePedidoService(
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
-        IUsuarioAutenticado usuarioAutenticado)
+        IUsuarioAutenticado usuarioAutenticado,
+        IConfiguracaoDeFreteService configuracaoDeFreteService)
     {
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _usuarioAutenticado = usuarioAutenticado;
+        _configuracaoDeFreteService = configuracaoDeFreteService;
     }
 
     public async Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(
@@ -92,5 +95,32 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         {
             PedidoMinimo = pedidoMinimo
         };
+    }
+
+    public async Task<TodasConfiguracoesViewModel> GetTodasConfiguracoesAsync()
+    {
+        var configuracaoDePedido = await GetPedidoMinimoAsync();
+        var resultadoConfiguracaoDeFrete = await _configuracaoDeFreteService.ObterAsync();
+
+        var config = new TodasConfiguracoesViewModel()
+        {
+            PedidoMinimo = configuracaoDePedido.PedidoMinimo
+        };
+
+        if (resultadoConfiguracaoDeFrete.Result == null || !resultadoConfiguracaoDeFrete.Result.Ativo)
+        {
+            config.CobrarFrete = false;
+        }
+        else
+        {
+            var usuarioViewModel = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
+
+            config.CobrarFrete
+                = usuarioViewModel.IsAtacado
+                    ? resultadoConfiguracaoDeFrete.Result.CobrarCnpj
+                    : resultadoConfiguracaoDeFrete.Result.CobrarCpf;
+        }
+
+        return config;
     }
 }

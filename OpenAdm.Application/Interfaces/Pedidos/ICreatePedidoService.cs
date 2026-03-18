@@ -2,10 +2,11 @@
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Model.Pedidos;
 using OpenAdm.Application.Dtos.Pedidos;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Application.Interfaces.Pedidos;
 
 public interface ICreatePedidoService
 {
-    Task<PedidoViewModel> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto);
+    Task<ResultPartner<CriarPedidoViewModel>> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto);
 }

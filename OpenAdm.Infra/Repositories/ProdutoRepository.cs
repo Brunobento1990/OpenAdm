@@ -14,21 +14,27 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 {
     private const int _take = 6;
 
-    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
+    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(
+        PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
-        var newPage = paginacaoProdutoEcommerceDto.Page == 0 ? paginacaoProdutoEcommerceDto.Page : paginacaoProdutoEcommerceDto.Page - 1;
+        var newPage = paginacaoProdutoEcommerceDto.Page == 0
+            ? paginacaoProdutoEcommerceDto.Page
+            : paginacaoProdutoEcommerceDto.Page - 1;
 
         Expression<Func<Produto, bool>>? where =
-            paginacaoProdutoEcommerceDto.CategoriaId == null || paginacaoProdutoEcommerceDto.CategoriaId == Guid.Empty ? null :
-            x => x.CategoriaId == paginacaoProdutoEcommerceDto.CategoriaId.Value;
+            paginacaoProdutoEcommerceDto.CategoriaId == null || paginacaoProdutoEcommerceDto.CategoriaId == Guid.Empty
+                ? null
+                : x => x.CategoriaId == paginacaoProdutoEcommerceDto.CategoriaId.Value;
 
         Expression<Func<Produto, bool>>? wherePesos =
-            paginacaoProdutoEcommerceDto.PesoId == null || paginacaoProdutoEcommerceDto.PesoId == Guid.Empty ? null :
-            x => x.Pesos.Any(p => p.Id == paginacaoProdutoEcommerceDto.PesoId.Value);
+            paginacaoProdutoEcommerceDto.PesoId == null || paginacaoProdutoEcommerceDto.PesoId == Guid.Empty
+                ? null
+                : x => x.Pesos.Any(p => p.Id == paginacaoProdutoEcommerceDto.PesoId.Value);
 
         Expression<Func<Produto, bool>>? whereTamanhos =
-            paginacaoProdutoEcommerceDto.TamanhoId == null || paginacaoProdutoEcommerceDto.TamanhoId == Guid.Empty ? null :
-            x => x.Tamanhos.Any(p => p.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value);
+            paginacaoProdutoEcommerceDto.TamanhoId == null || paginacaoProdutoEcommerceDto.TamanhoId == Guid.Empty
+                ? null
+                : x => x.Tamanhos.Any(p => p.Id == paginacaoProdutoEcommerceDto.TamanhoId.Value);
 
         var produtos = await ParceiroContext
             .Produtos
@@ -94,14 +100,14 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .ProdutosMaisVendidos
             .AsNoTracking()
             .Select(x =>
-                    new ProdutoMaisVendido(
-                        x.Id,
-                        x.DataDeCriacao,
-                        x.DataDeAtualizacao,
-                        x.Numero,
-                        x.QuantidadeProdutos / x.QuantidadePedidos,
-                        x.QuantidadePedidos,
-                        x.ProdutoId))
+                new ProdutoMaisVendido(
+                    x.Id,
+                    x.DataDeCriacao,
+                    x.DataDeAtualizacao,
+                    x.Numero,
+                    x.QuantidadeProdutos / x.QuantidadePedidos,
+                    x.QuantidadePedidos,
+                    x.ProdutoId))
             .ToListAsync();
 
         var produtosIds = produtosMaisVendidos
@@ -160,15 +166,19 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 produto.Tamanhos = tamanhos
                     .Where(x => x.ProdutoId == produto.Id)
                     .Select(tm =>
-                        new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal)
-                     )
+                        new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao,
+                            tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal, tm.Tamanho.AlturaReal,
+                            tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal)
+                    )
                     .ToList();
 
                 produto.Pesos = pesos
                     .Where(x => x.ProdutoId == produto.Id)
                     .Select(tm =>
-                        new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao, tm.Peso.PesoReal)
-                     )
+                        new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero,
+                            tm.Peso.Descricao, tm.Peso.PesoReal, tm.Peso.AlturaReal,
+                            tm.Peso.LarguraReal, tm.Peso.ComprimentoReal)
+                    )
                     .ToList();
             });
         }
@@ -191,14 +201,8 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         produtos.ForEach(produto =>
         {
             produto.Categoria.Produtos = new();
-            produto.Pesos.ForEach(peso =>
-            {
-                peso.Produtos = new();
-            });
-            produto.Tamanhos.ForEach(tamanho =>
-            {
-                tamanho.Produtos = new();
-            });
+            produto.Pesos.ForEach(peso => { peso.Produtos = new(); });
+            produto.Tamanhos.ForEach(tamanho => { tamanho.Produtos = new(); });
         });
 
         return produtos;
@@ -216,10 +220,10 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         if (produto != null)
         {
             var tamanhos = await ParceiroContext
-            .TamanhosProdutos
-            .Include(x => x.Tamanho)
-            .Where(x => x.ProdutoId == produto.Id)
-            .ToListAsync();
+                .TamanhosProdutos
+                .Include(x => x.Tamanho)
+                .Where(x => x.ProdutoId == produto.Id)
+                .ToListAsync();
 
             var pesos = await ParceiroContext
                 .PesosProdutos
@@ -232,15 +236,19 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             produto.Tamanhos = tamanhos
                 .Where(x => x.ProdutoId == produto.Id)
                 .Select(tm =>
-                    new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao, tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal)
-                 )
+                    new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao,
+                        tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal, tm.Tamanho.AlturaReal,
+                        tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal)
+                )
                 .ToList();
 
             produto.Pesos = pesos
                 .Where(x => x.ProdutoId == produto.Id)
                 .Select(tm =>
-                    new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero, tm.Peso.Descricao, tm.Peso.PesoReal)
-                 )
+                    new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero,
+                        tm.Peso.Descricao, tm.Peso.PesoReal, tm.Peso.AlturaReal,
+                        tm.Peso.LarguraReal, tm.Peso.ComprimentoReal)
+                )
                 .ToList();
         }
 

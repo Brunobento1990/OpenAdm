@@ -1,6 +1,7 @@
 using OpenAdm.Application.Dtos.ConfiguracoesDeFreteDTO;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ConfiguracaoDeFreteModel;
+using OpenAdm.Application.Models.ConfiguracoesDePagamentos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -11,12 +12,43 @@ public class ConfiguracaoDeFreteService : IConfiguracaoDeFreteService
 {
     private readonly IConfiguracaoDeFreteRepository _configuracaoDeFreteRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
     public ConfiguracaoDeFreteService(IConfiguracaoDeFreteRepository configuracaoDeFreteRepository,
-        IParceiroAutenticado parceiroAutenticado)
+        IParceiroAutenticado parceiroAutenticado, IUsuarioAutenticado usuarioAutenticado)
     {
         _configuracaoDeFreteRepository = configuracaoDeFreteRepository;
         _parceiroAutenticado = parceiroAutenticado;
+        _usuarioAutenticado = usuarioAutenticado;
+    }
+
+    public async Task<EfetuarCobrancaViewModel> CobrarAsync()
+    {
+        var configuracao = await _configuracaoDeFreteRepository
+            .ObterDoParceiroAsync(_usuarioAutenticado.ParceiroId);
+
+        if (configuracao == null || !configuracao.Ativo || string.IsNullOrWhiteSpace(configuracao.Token))
+        {
+            return new()
+            {
+                Cobrar = false
+            };
+        }
+
+        var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
+
+        if (usuario.IsAtacado)
+        {
+            return new()
+            {
+                Cobrar = configuracao.CobrarCnpj
+            };
+        }
+
+        return new()
+        {
+            Cobrar = configuracao.CobrarCpf
+        };
     }
 
     public async Task<ResultPartner<ConfiguracaoDeFreteViewModel>> ObterAsync()

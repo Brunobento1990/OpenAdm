@@ -1,4 +1,4 @@
-﻿using OpenAdm.Application.Dtos.EnderecosDeEntregasPedidos;
+﻿using OpenAdm.Application.Attributes;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Extensions;
 
@@ -40,31 +40,30 @@ public class ParceiroDto
     }
 }
 
-public class EnderecoDto
+public class EnderecoDto : ValidarBaseDTO
 {
+    [ValidaString(erro: "Informe o CEP", erroMaxLength: "O CEP deve conter no máximo 8 caracteres", maxLength: 8)]
     public string Cep { get; set; } = string.Empty;
-    public string Logradouro { get; set; } = string.Empty;
-    public string Bairro { get; set; } = string.Empty;
-    public string Localidade { get; set; } = string.Empty;
-    public string? Complemento { get; set; }
-    public string Numero { get; set; } = string.Empty;
-    public string Uf { get; set; } = string.Empty;
 
-    public void Validar()
-    {
-        Cep.ValidarNullOrEmpty("Informe o Cep")
-            .ValidarLength(8);
-        Logradouro.ValidarNullOrEmpty("Informe a rua")
-            .ValidarLength(255, "rua");
-        Bairro.ValidarNullOrEmpty("Informe o bairro")
-            .ValidarLength(255);
-        Localidade.ValidarNullOrEmpty("Informe a cidade")
-            .ValidarLength(255, "cidade");
-        Numero.ValidarNullOrEmpty("Informe o número")
-            .ValidarLength(10);
-        Uf.ValidarNullOrEmpty("Informe o estado")
-            .ValidarLength(2);
-    }
+    [ValidaString(erro: "Informe a rua", erroMaxLength: "A rua deve conter no máximo 255 caracteres")]
+    public string Logradouro { get; set; } = string.Empty;
+
+    [ValidaString(erro: "Informe o bairro", erroMaxLength: "O bairro deve conter no máximo 255 caracteres")]
+    public string Bairro { get; set; } = string.Empty;
+
+    [ValidaString(erro: "Informe a cidade", erroMaxLength: "A cidade deve conter no máximo 255 caracteres")]
+    public string Localidade { get; set; } = string.Empty;
+
+    [ValidaStringLength(erroMaxLength: "O complemento deve conter no máximo 255 caracteres")]
+    public string? Complemento { get; set; }
+
+    [ValidaString(erro: "Informe o número", erroMaxLength: "O número deve conter no máximo 10 caracteres",
+        maxLength: 10)]
+    public string Numero { get; set; } = string.Empty;
+
+    [ValidaString(erro: "Informe o estado", erroMaxLength: "O estado deve conter no máximo 2 caracteres",
+        maxLength: 2)]
+    public string Uf { get; set; } = string.Empty;
 }
 
 public class RedeSocialDto

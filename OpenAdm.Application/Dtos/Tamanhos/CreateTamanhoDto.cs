@@ -5,14 +5,16 @@ namespace OpenAdm.Application.Dtos.Tamanhos;
 
 public class CreateTamanhoDto
 {
-    [Required]
-    [MaxLength(255)]
-    public string Descricao { get; set; } = string.Empty;
+    [Required] [MaxLength(255)] public string Descricao { get; set; } = string.Empty;
     public decimal PesoReal { get; set; }
+    public decimal? AlturaReal { get; set; }
+    public decimal? LarguraReal { get; set; }
+    public decimal? ComprimentoReal { get; set; }
 
     public Tamanho ToEntity()
     {
         var date = DateTime.Now;
-        return new Tamanho(Guid.NewGuid(), date, date, 0, Descricao, PesoReal);
+        return new Tamanho(Guid.NewGuid(), date, date, 0, Descricao, PesoReal, AlturaReal, LarguraReal,
+            ComprimentoReal);
     }
 }

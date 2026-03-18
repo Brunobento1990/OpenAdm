@@ -27,7 +27,7 @@ public class TamanhoService : ITamanhoService
     public async Task DeleteTamanhoAsync(Guid id)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
+                      ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
         await _tamanhoRepository.DeleteAsync(tamanho);
     }
@@ -60,7 +60,7 @@ public class TamanhoService : ITamanhoService
     public async Task<TamanhoViewModel> GetTamanhoViewModelAsync(Guid id)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
+                      ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
         return new TamanhoViewModel().ToModel(tamanho);
     }
@@ -74,9 +74,10 @@ public class TamanhoService : ITamanhoService
     public async Task<TamanhoViewModel> UpdateTamanhoAsync(UpdateTamanhoDto updateTamanhoDto)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(updateTamanhoDto.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
+                      ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
-        tamanho.Update(updateTamanhoDto.Descricao, updateTamanhoDto.PesoReal);
+        tamanho.Update(updateTamanhoDto.Descricao, updateTamanhoDto.PesoReal, updateTamanhoDto.AlturaReal,
+            updateTamanhoDto.LarguraReal, updateTamanhoDto.ComprimentoReal);
 
         await _tamanhoRepository.UpdateAsync(tamanho);
         return new TamanhoViewModel().ToModel(tamanho);

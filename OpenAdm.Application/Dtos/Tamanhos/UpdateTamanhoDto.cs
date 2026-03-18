@@ -1,13 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace OpenAdm.Application.Dtos.Tamanhos;
 
-namespace OpenAdm.Application.Dtos.Tamanhos;
-
-public class UpdateTamanhoDto
+public class UpdateTamanhoDto : CreateTamanhoDto
 {
     public Guid Id { get; set; }
-
-    [Required]
-    [MaxLength(255)]
-    public string Descricao { get; set; } = string.Empty;
-    public decimal? PesoReal { get; set; }
 }

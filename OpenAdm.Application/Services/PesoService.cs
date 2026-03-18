@@ -27,7 +27,7 @@ public class PesoService : IPesoService
     public async Task DeletePesoAsync(Guid id)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o peso");
+                   ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
         await _pesoRepository.DeleteAsync(peso);
     }
@@ -68,7 +68,7 @@ public class PesoService : IPesoService
     public async Task<PesoViewModel> GetPesoViewModelAsync(Guid id)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o peso");
+                   ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
         return new PesoViewModel().ToModel(peso);
     }
@@ -76,9 +76,10 @@ public class PesoService : IPesoService
     public async Task<PesoViewModel> UpdatePesoAsync(UpdatePesoDto updatePesoDto)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(updatePesoDto.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar o peso");
+                   ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
-        peso.Update(updatePesoDto.Descricao, updatePesoDto.PesoReal);
+        peso.Update(updatePesoDto.Descricao, updatePesoDto.PesoReal, updatePesoDto.AlturaReal,
+            updatePesoDto.LarguraReal, updatePesoDto.ComprimentoReal);
 
         await _pesoRepository.UpdateAsync(peso);
 
