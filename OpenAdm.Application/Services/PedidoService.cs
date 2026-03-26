@@ -9,6 +9,7 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using System.Reactive.Linq;
 using System.Text;
+using OpenAdm.Application.Queries;
 
 namespace OpenAdm.Application.Services;
 
@@ -19,23 +20,30 @@ public class PedidoService : IPedidoService
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly IEstoqueRepository _estoqueRepository;
+    private readonly ICobrancaPedidoQueryService _cobrancaPedidoQueryService;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
 
-    public PedidoService(IPedidoRepository pedidoRepository, IItensPedidoRepository itensPedidoRepository, IPdfPedidoService pdfPedidoService, IParceiroAutenticado parceiroAutenticado, IEstoqueRepository estoqueRepository)
+    public PedidoService(IPedidoRepository pedidoRepository, IItensPedidoRepository itensPedidoRepository,
+        IPdfPedidoService pdfPedidoService, IParceiroAutenticado parceiroAutenticado,
+        IEstoqueRepository estoqueRepository, ICobrancaPedidoQueryService cobrancaPedidoQueryService,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _pedidoRepository = pedidoRepository;
         _itensPedidoRepository = itensPedidoRepository;
         _pdfPedidoService = pdfPedidoService;
         _parceiroAutenticado = parceiroAutenticado;
         _estoqueRepository = estoqueRepository;
+        _cobrancaPedidoQueryService = cobrancaPedidoQueryService;
+        _usuarioAutenticado = usuarioAutenticado;
     }
 
     public async Task<PedidoViewModel> GetAsync(Guid pedidoId)
     {
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
-            ?? throw new ExceptionApi($"Pedido não localizado: {pedidoId}");
+                     ?? throw new ExceptionApi($"Pedido não localizado: {pedidoId}");
         var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
 
-        if(pedidoViewModel.StatusPedido == StatusPedido.Cancelado || 
+        if (pedidoViewModel.StatusPedido == StatusPedido.Cancelado ||
             pedidoViewModel.StatusPedido == StatusPedido.Entregue)
             return pedidoViewModel;
 
@@ -45,7 +53,7 @@ public class PedidoService : IPedidoService
         foreach (var item in pedidoViewModel.ItensPedido)
         {
             var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId
-                && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
+                                                       && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
 
             if (estoque == null || estoque.Quantidade <= 0)
             {
@@ -66,17 +74,19 @@ public class PedidoService : IPedidoService
             .Select(x => new PedidoViewModel().ForModel(x))
             .ToList();
 
-        var pedidosParaVerificarEstoque = pedidosViewModel.Where(x => x.StatusPedido != StatusPedido.Cancelado && x.StatusPedido != StatusPedido.Entregue);
+        var pedidosParaVerificarEstoque = pedidosViewModel.Where(x =>
+            x.StatusPedido != StatusPedido.Cancelado && x.StatusPedido != StatusPedido.Entregue);
 
         var itens = pedidosParaVerificarEstoque.SelectMany(x => x.ItensPedido).ToList();
-        var produtosIds = pedidosParaVerificarEstoque.SelectMany(x => x.ItensPedido.Select(y => y.ProdutoId).Distinct()).ToList();
+        var produtosIds = pedidosParaVerificarEstoque.SelectMany(x => x.ItensPedido.Select(y => y.ProdutoId).Distinct())
+            .ToList();
 
         var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
 
         foreach (var item in itens)
         {
             var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId
-                && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
+                                                       && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
 
             if (estoque == null || estoque.Quantidade <= 0)
             {
@@ -97,13 +107,16 @@ public class PedidoService : IPedidoService
         };
     }
 
-    public async Task<PedidoViewModel> GetParaGerarPixAsync(Guid pedidoId)
+    public async Task<ResultPartner<PedidoCobrancaQuery>> GetParaGerarPixAsync(Guid pedidoId)
     {
-        var pedido = await _pedidoRepository.GetPedidoParaGerarPixByIdAsync(pedidoId)
-            ?? throw new ExceptionApi($"Pedido não localizado: {pedidoId}");
-        var pedidoViewModel = new PedidoViewModel().ForModel(pedido);
+        var pedido = await _cobrancaPedidoQueryService.ObterAsync(pedidoId, _usuarioAutenticado.Id);
 
-        return pedidoViewModel;
+        if (pedido == null)
+        {
+            return (ResultPartner<PedidoCobrancaQuery>)"Não foi possível obter o pedido";
+        }
+
+        return (ResultPartner<PedidoCobrancaQuery>)pedido;
     }
 
     public async Task<IDictionary<Guid, PedidoViewModel>> GetPedidosAsync(IList<Guid> ids)
@@ -151,14 +164,14 @@ public class PedidoService : IPedidoService
         }
 
         var itensProducao = new List<ItemPedidoProducaoViewModel>();
-        var pedidos = itens.DistinctBy(x => x.PedidoId).Select(x => $"#{x.Pedido.Numero} - {x.Pedido.Usuario.Nome}").ToList();
+        var pedidos = itens.DistinctBy(x => x.PedidoId).Select(x => $"#{x.Pedido.Numero} - {x.Pedido.Usuario.Nome}")
+            .ToList();
 
         foreach (var item in itens)
         {
-            var itemProducao = itensProducao.FirstOrDefault(
-                x => x.ProdutoId == item.ProdutoId &&
-                x.PesoId == item.PesoId &&
-                x.TamanhoId == item.TamanhoId);
+            var itemProducao = itensProducao.FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
+                                                                 x.PesoId == item.PesoId &&
+                                                                 x.TamanhoId == item.TamanhoId);
 
             if (itemProducao != null)
             {

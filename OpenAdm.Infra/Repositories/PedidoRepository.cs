@@ -205,6 +205,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Pedidos
             .AsNoTracking()
             .Include(x => x.ItensPedido)
+            .Include(x => x.EnderecoEntrega)
             .Include(x => x.Fatura!.Parcelas)
                 .ThenInclude(x => x.Transacoes)
             .FirstOrDefaultAsync(x => x.Id == id);

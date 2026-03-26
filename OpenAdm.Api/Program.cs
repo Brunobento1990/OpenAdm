@@ -45,7 +45,8 @@ ConfigAzure.Configure(azureKey, azureContainer);
 Criptografia.Configure(key, iv);
 EmailConfiguracaoModel.Configure(email: email, servidor: servidor, senha: senha, porta: porta);
 
-builder.Services.AddServicesApplication();
+builder.Services.InjectCqs()
+    .AddServicesApplication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureController();

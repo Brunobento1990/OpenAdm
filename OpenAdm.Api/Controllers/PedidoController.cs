@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Api.Extensions;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Application.Queries;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Paginacao;
 
@@ -58,11 +60,11 @@ public class PedidoController : ControllerBase
     }
 
     [HttpGet("get-gerar-pix")]
-    [ProducesResponseType<PedidoViewModel>(200)]
+    [ProducesResponseType<PedidoCobrancaQuery>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> GetGerarPix(Guid pedidoId)
     {
         var pedido = await _pedidoService.GetParaGerarPixAsync(pedidoId);
-        return Ok(pedido);
+        return pedido.ToActionResult();
     }
 }

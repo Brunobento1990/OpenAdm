@@ -31,7 +31,8 @@ public class AutenticaParceiroMiddleware
 
         if (string.IsNullOrWhiteSpace(origem))
         {
-            throw new ExceptionApi("Não foi possível autenticar a origem da requisição");
+            await httpContext.RetornarErroAsync($"Não foi possível autenticar a origem da requisição: origem => {origem}");
+            return;
         }
 
         var empresaOpenAdm = await empresaOpenAdmRepository.ObterPorOrigemAsync(origem!)

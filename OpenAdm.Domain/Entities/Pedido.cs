@@ -15,7 +15,7 @@ public sealed class Pedido : BaseEntity
         StatusPedido statusPedido,
         Guid usuarioId,
         string? motivoCancelamento)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         StatusPedido = statusPedido;
         UsuarioId = usuarioId;
@@ -28,7 +28,17 @@ public sealed class Pedido : BaseEntity
     public Usuario Usuario { get; set; } = null!;
     public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
     public Fatura? Fatura { get; set; }
-    public decimal ValorTotal { get { return ItensPedido.Sum(x => x.ValorTotal); } }
+
+    public decimal ValorTotal
+    {
+        get { return ItensPedido.Sum(x => x.ValorTotal); }
+    }
+
+    public decimal ValorTotalCobrar
+    {
+        get { return ItensPedido.Sum(x => x.ValorTotal) + (EnderecoEntrega?.ValorFrete ?? 0); }
+    }
+
     public IList<ItemPedido> ItensPedido { get; set; } = [];
 
     public void UpdateStatus(StatusPedido statusPedido)

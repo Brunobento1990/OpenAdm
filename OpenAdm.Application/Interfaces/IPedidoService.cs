@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Models.Pedidos;
+using OpenAdm.Application.Queries;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
 
@@ -12,6 +13,6 @@ public interface IPedidoService
     Task<IDictionary<Guid, PedidoViewModel>> GetPedidosAsync(IList<Guid> ids);
     Task<List<PedidoViewModel>> GetPedidosUsuarioAsync(int statusPedido, Guid usuarioId);
     Task<PedidoViewModel> GetAsync(Guid pedidoId);
-    Task<PedidoViewModel> GetParaGerarPixAsync(Guid pedidoId);
+    Task<ResultPartner<PedidoCobrancaQuery>> GetParaGerarPixAsync(Guid pedidoId);
     Task<byte[]> PedidoProducaoAsync(RelatorioProducaoDto relatorioProducaoDto);
 }

@@ -1,4 +1,5 @@
 ﻿using OpenAdm.Application.Dtos.Bases;
+using OpenAdm.Application.Models.EnderecosEntregasPedido;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 
@@ -10,6 +11,8 @@ public class PedidoViewModel : BaseViewModel
     public decimal ValorTotal { get; set; }
     public decimal TotalItens { get; set; }
     public decimal TotalAReceber { get; set; }
+    public EnderecoEntregaPedidoViewModel? EnderecoEntrega { get; set; }
+
     public decimal PorcentagemEstoqueAtendido
     {
         get
@@ -26,6 +29,7 @@ public class PedidoViewModel : BaseViewModel
             return Math.Round(percentualAtendido, 0);
         }
     }
+
     public string Usuario { get; set; } = string.Empty;
     public bool TemEstoqueDisponivel => ItensPedido.Where(x => x.TemEstoqueDisponivel).Count() == ItensPedido.Count;
     public IList<ItensPedidoViewModel> ItensPedido { get; set; } = [];
@@ -61,6 +65,9 @@ public class PedidoViewModel : BaseViewModel
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
 
+        EnderecoEntrega = entity.EnderecoEntrega == null
+            ? null
+            : (EnderecoEntregaPedidoViewModel)entity.EnderecoEntrega;
         TotalAReceber = entity.Fatura?.ValorAPagarAReceber ?? 0;
 
         return this;

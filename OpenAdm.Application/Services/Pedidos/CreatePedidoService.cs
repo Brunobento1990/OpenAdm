@@ -47,7 +47,12 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
     public async Task<ResultPartner<CriarPedidoViewModel>> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
     {
-        pedidoCreateDto.Validar();
+        var erro = pedidoCreateDto.Validar();
+        if (!string.IsNullOrEmpty(erro))
+        {
+            return (ResultPartner<CriarPedidoViewModel>)erro;
+        }
+
         var usuario = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
 
         if (string.IsNullOrWhiteSpace(usuario.Telefone))

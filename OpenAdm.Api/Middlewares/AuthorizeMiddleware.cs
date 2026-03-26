@@ -32,7 +32,7 @@ public class AuthorizeMiddleware
 
         if (string.IsNullOrWhiteSpace(token))
         {
-            await httpContext.RetornarErro("Por favor, efetue o login novamente",
+            await httpContext.RetornarErroAsync("Por favor, efetue o login novamente",
                 httpStatusCode: HttpStatusCode.Unauthorized);
             return;
         }
@@ -58,7 +58,7 @@ public class AuthorizeMiddleware
 
             if (!Guid.TryParse(id, out Guid idParse))
             {
-                await httpContext.RetornarErro("Por favor, efetue o login novamente",
+                await httpContext.RetornarErroAsync("Por favor, efetue o login novamente",
                     httpStatusCode: HttpStatusCode.Unauthorized);
                 return;
             }
@@ -68,13 +68,13 @@ public class AuthorizeMiddleware
         }
         catch (SecurityTokenExpiredException)
         {
-            await httpContext.RetornarErro("Sessão expirada, efetue o login novamente!",
+            await httpContext.RetornarErroAsync("Sessão expirada, efetue o login novamente!",
                 httpStatusCode: HttpStatusCode.Unauthorized);
             return;
         }
         catch (Exception)
         {
-            await httpContext.RetornarErro("Efetue o login novamente!",
+            await httpContext.RetornarErroAsync("Efetue o login novamente!",
                 httpStatusCode: HttpStatusCode.Unauthorized);
             return;
         }
