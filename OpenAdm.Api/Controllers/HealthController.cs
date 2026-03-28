@@ -1,6 +1,14 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace OpenAdm.Api.Controllers;
 
-public class HealthController
+[ApiController]
+[Route("health")]
+public class HealthController : ControllerBase
 {
-    
+    [HttpGet]
+    public IActionResult Get()
+    {
+        return Ok("Ok");
+    }
 }
