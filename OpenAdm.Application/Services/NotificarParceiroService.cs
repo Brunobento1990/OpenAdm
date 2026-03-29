@@ -28,7 +28,7 @@ public class NotificarParceiroService : INotificarParceiroService
         {
             await _httpClientWhatsApp.EnviarMsgAsync(new()
             {
-                Number =  parceiroTelefone.Telefone,
+                Number =  $"55{parceiroTelefone.Telefone}",
                 Text = msg
             });
         }
