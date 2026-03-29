@@ -20,19 +20,22 @@ public sealed class ParcelaService : IParcelaService
     private readonly IUpdateStatusPedidoService _updateStatusPedidoService;
     private readonly IPedidoService _pedidoService;
     private readonly ITransacaoFinanceiraRepository _transacaoFinanceiraRepository;
+    private readonly INotificarParceiroService _notificarParceiroService;
 
     public ParcelaService(
         IParcelaRepository parcelaRepository,
         IFaturaService contasAReceberService,
         IUpdateStatusPedidoService updateStatusPedidoService,
         IPedidoService pedidoService,
-        ITransacaoFinanceiraRepository transacaoFinanceiraRepository)
+        ITransacaoFinanceiraRepository transacaoFinanceiraRepository,
+        INotificarParceiroService notificarParceiroService)
     {
         _parcelaRepository = parcelaRepository;
         _contasAReceberService = contasAReceberService;
         _updateStatusPedidoService = updateStatusPedidoService;
         _pedidoService = pedidoService;
         _transacaoFinanceiraRepository = transacaoFinanceiraRepository;
+        _notificarParceiroService = notificarParceiroService;
     }
 
     public async Task<ParcelaViewModel> AddAsync(ParcelaCriarDto parcelaCriarDto)
@@ -100,6 +103,19 @@ public sealed class ParcelaService : IParcelaService
                 StatusPedido = StatusPedido.Faturado
             });
         }
+
+        var msg = $@"🔔 *Novo pagamento recebido no e-commerce*
+                    💰 *Valor:* {parcela.Valor.FormatMoney()}
+                    🧾 *Pedido:* {parcela.Fatura.Pedido?.Numero}
+                    👤 *Cliente:* {parcela.Fatura.Usuario.Nome}
+                    💳 *Pagamento:* Pix
+                    📅 *Data:* {DateTime.Now.DateTimeToString()}
+
+                    ✅ O pedido foi marcado como *pago* e já pode seguir para separação/envio.
+
+                    Acesse o painel para mais detalhes.";
+
+        await _notificarParceiroService.NotificarViaWhatsAppAsync(msg);
     }
 
     public async Task<ParcelaViewModel> EditarAsync(ParcelaEditDto parcelaEditDto)

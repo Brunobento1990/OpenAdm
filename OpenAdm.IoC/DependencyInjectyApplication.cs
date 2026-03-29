@@ -64,7 +64,8 @@ public static class DependencyInjectyApplication
         services.AddScoped<IConfiguracaoDeFreteService, ConfiguracaoDeFreteService>();
         services.AddScoped<IFreteService, FreteService>();
         services.AddScoped<ICobrancaPedidoService, CobrancaPedidoService>();
-        
+        services.AddScoped<INotificarParceiroService, NotificarParceiroService>();
+
         services.AddKeyedScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>(MeioDePagamentoEnum.Pix);
     }
 }

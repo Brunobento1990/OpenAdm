@@ -29,7 +29,15 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
 
         var response = await client.PostAsync($"message/sendMedia/{_instance}",
             JsonSerializerOptionsApi.ToJson(enviarPDFWppDTO));
-        //var responseBody = await response.Content.ReadAsStringAsync();
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> EnviarMsgAsync(EnviarMsgWppDTO enviarMsgWppDTO)
+    {
+        var client = _httpClientFactory.CreateClient($"{HttpServiceEnum.WhatsApp}");
+
+        var response = await client.PostAsync($"message/sendText/{_instance}",
+            JsonSerializerOptionsApi.ToJson(enviarMsgWppDTO));
         return response.IsSuccessStatusCode;
     }
 
