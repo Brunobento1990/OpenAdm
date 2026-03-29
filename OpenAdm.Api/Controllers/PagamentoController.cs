@@ -24,8 +24,11 @@ public class PagamentoController : ControllerBase
     [ProducesResponseType(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     [AutenticaMercadoPago]
-    public async Task<IActionResult> PagamentoWebHook([FromBody] NotificationFaturaWebHook body)
+    public async Task<IActionResult> PagamentoWebHook([FromBody] NotificationFaturaWebHook body,
+        [FromQuery] Guid parceiroId)
     {
+        Log.Warning($"ParceiroId: {parceiroId}");
+
         if (body?.Data != null && (body?.Action == "payment.update" || body?.Action == "payment.updated"))
         {
             if (!string.IsNullOrWhiteSpace(body.Data.Id))
