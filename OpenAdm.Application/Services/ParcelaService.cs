@@ -71,6 +71,12 @@ public sealed class ParcelaService : IParcelaService
             return;
         }
 
+        if (parcela.Quitada)
+        {
+            Log.Warning("Parcela quitada");
+            return;
+        }
+
         await _parcelaRepository
             .AdicionarTransacaoAsync(
                 new TransacaoFinanceira(

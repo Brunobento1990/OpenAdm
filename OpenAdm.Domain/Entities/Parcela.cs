@@ -18,7 +18,7 @@ public sealed class Parcela : BaseEntity
         Guid faturaId,
         string? idExterno,
         decimal? desconto)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         DataDeVencimento = dataDeVencimento;
         NumeroDaParcela = numeroDaParcela;
@@ -38,6 +38,8 @@ public sealed class Parcela : BaseEntity
     public string? Observacao { get; private set; }
     public string? IdExterno { get; private set; }
     public Guid FaturaId { get; private set; }
+    public bool Quitada => Status == StatusParcelaEnum.Pago;
+
     public StatusParcelaEnum Status
     {
         get
@@ -55,7 +57,9 @@ public sealed class Parcela : BaseEntity
             return StatusParcelaEnum.Pendente;
         }
     }
+
     public Fatura Fatura { get; set; } = null!;
+
     public decimal ValorAPagarAReceber
     {
         get
@@ -65,6 +69,7 @@ public sealed class Parcela : BaseEntity
             return valor < 0 ? 0 : valor;
         }
     }
+
     public decimal ValorPagoRecebido
     {
         get
@@ -75,11 +80,13 @@ public sealed class Parcela : BaseEntity
             }
 
             Func<TransacaoFinanceira, bool> wherePagosRecebidos =
-                Fatura.Tipo == TipoFaturaEnum.A_Pagar ? x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida
+                Fatura.Tipo == TipoFaturaEnum.A_Pagar
+                    ? x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida
                     : x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada;
             Func<TransacaoFinanceira, bool> whereEstorno =
-                Fatura.Tipo == TipoFaturaEnum.A_Pagar ? x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada
-                : x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida;
+                Fatura.Tipo == TipoFaturaEnum.A_Pagar
+                    ? x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada
+                    : x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida;
 
             var totalTransacoesPagos = Transacoes.Where(wherePagosRecebidos)
                 .Sum(x => x.Valor);
@@ -92,7 +99,11 @@ public sealed class Parcela : BaseEntity
         }
     }
 
-    public bool Vencida { get => DataDeVencimento.Date < DateTime.Now.Date; }
+    public bool Vencida
+    {
+        get => DataDeVencimento.Date < DateTime.Now.Date;
+    }
+
     public IList<TransacaoFinanceira>? Transacoes { get; set; }
 
     public void Edit(
@@ -108,10 +119,12 @@ public sealed class Parcela : BaseEntity
         Desconto = desconto;
         Observacao = observacao;
     }
+
     public void TirarDiferenca(decimal diferenca)
     {
         Valor -= diferenca;
     }
+
     public void AdicionarDiferenca(decimal diferenca)
     {
         Valor += diferenca;
@@ -130,7 +143,9 @@ public sealed class Parcela : BaseEntity
             parcelaId: Id,
             dataDePagamento: dataDePagamento,
             valor: valor,
-            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.A_Pagar ? TipoTransacaoFinanceiraEnum.Saida : TipoTransacaoFinanceiraEnum.Entrada,
+            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.A_Pagar
+                ? TipoTransacaoFinanceiraEnum.Saida
+                : TipoTransacaoFinanceiraEnum.Entrada,
             meioDePagamento: meioDePagamento,
             observacao: observacao ?? $"Pagamento da parcela: {NumeroDaParcela}");
     }
@@ -141,7 +156,9 @@ public sealed class Parcela : BaseEntity
             parcelaId: Id,
             dataDePagamento: DateTime.Now,
             valor: ValorPagoRecebido,
-            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.A_Pagar ? TipoTransacaoFinanceiraEnum.Entrada : TipoTransacaoFinanceiraEnum.Saida,
+            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.A_Pagar
+                ? TipoTransacaoFinanceiraEnum.Entrada
+                : TipoTransacaoFinanceiraEnum.Saida,
             meioDePagamento: null,
             observacao: $"Estorno da parcela: {NumeroDaParcela}");
     }
@@ -155,7 +172,7 @@ public sealed class Parcela : BaseEntity
         Guid faturaId,
         string? idExterno,
         decimal? desconto
-        )
+    )
     {
         return new Parcela(
             id: Guid.NewGuid(),
