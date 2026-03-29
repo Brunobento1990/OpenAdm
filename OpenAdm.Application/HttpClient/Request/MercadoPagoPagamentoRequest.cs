@@ -1,6 +1,6 @@
 ﻿namespace OpenAdm.Application.HttpClient.Request;
 
-public class MercadoPagoRequest
+public class MercadoPagoPagamentoRequest
 {
     public decimal Transaction_amount { get; set; }
     public string? Description { get; set; }

@@ -6,12 +6,10 @@ using OpenAdm.Application.DependencyInject;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Tokens;
-using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
 using QuestPDF.Infrastructure;
-using System.Threading.Channels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +29,6 @@ var redisString = VariaveisDeAmbiente.GetVariavel("REDIS_URL");
 var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
 var urlApiCep = VariaveisDeAmbiente.GetVariavel("URL_API_CEP");
 var urlApiViaCep = VariaveisDeAmbiente.GetVariavel("URL_API_VIA_CEP");
-var urlApiMercadoPago = VariaveisDeAmbiente.GetVariavel("URL_API_MERCADO_PAGO");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
 var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
@@ -55,7 +52,7 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
-builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiMercadoPago, urlConsultaCnpj, urlApiViaCep,
+builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlConsultaCnpj, urlApiViaCep,
     builder.Configuration);
 builder.Services.ConfigurarJobs(builder.Configuration, pgString);
 

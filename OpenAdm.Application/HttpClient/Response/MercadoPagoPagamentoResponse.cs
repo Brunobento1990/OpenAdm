@@ -2,7 +2,7 @@
 
 namespace OpenAdm.Application.HttpClient.Response;
 
-public class MercadoPagoResponse
+public class MercadoPagoPagamentoResponse
 {
     public long Id { get; set; }
     public DateTime Date_created { get; set; }

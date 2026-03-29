@@ -198,12 +198,14 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return pedidos.Sum(x => x.ValorTotal);
     }
 
-    public async Task<Pedido?> GetPedidoParaGerarPixByIdAsync(Guid id)
+    public async Task<Pedido?> ObterPedidoParaCobrancaAsync(Guid id)
     {
         return await
             ParceiroContext
             .Pedidos
             .AsNoTracking()
+            .AsSplitQuery()
+            .Include(x => x.Usuario)
             .Include(x => x.ItensPedido)
             .Include(x => x.EnderecoEntrega)
             .Include(x => x.Fatura!.Parcelas)

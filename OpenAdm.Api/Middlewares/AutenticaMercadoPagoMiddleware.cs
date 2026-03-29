@@ -1,22 +1,26 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using OpenAdm.Api.Attributes;
+﻿using OpenAdm.Api.Attributes;
+using OpenAdm.Api.Extensions;
+using OpenAdm.Domain.Helpers;
+using OpenAdm.Domain.Interfaces;
+using Serilog;
 
 namespace OpenAdm.Api.Middlewares;
 
 public class AutenticaMercadoPagoMiddleware
 {
     private readonly RequestDelegate _next;
+
     public AutenticaMercadoPagoMiddleware(RequestDelegate next)
     {
         _next = next;
     }
 
-    public async Task Invoke(HttpContext httpContext)
+    public async Task Invoke(
+        HttpContext httpContext,
+        IEmpresaOpenAdmRepository empresaOpenAdmRepository,
+        IParceiroAutenticado parceiroAutenticado)
     {
-        var autenticar = httpContext.Features.Get<IEndpointFeature>()?.Endpoint?.Metadata
-                .FirstOrDefault(m => m is AutenticaMercadoPagoAttribute) is AutenticaMercadoPagoAttribute atributoAutorizacao;
-
-        if (!autenticar)
+        if (!httpContext.TemAtributo<AutenticaMercadoPagoAttribute>())
         {
             await _next(httpContext);
             return;
@@ -25,16 +29,31 @@ public class AutenticaMercadoPagoMiddleware
         var header = httpContext.Request.Headers["X-Signature"].FirstOrDefault();
         var header2 = httpContext.Request.Headers["x-signature"].FirstOrDefault();
 
-        Console.WriteLine($"header: {header}");
-        Console.WriteLine($"header2: {header2}");
-
         if (string.IsNullOrWhiteSpace(header) && string.IsNullOrWhiteSpace(header2))
         {
+            Log.Warning("Não passou porque não pegou os signatures");
             return;
         }
 
-        Console.WriteLine("Processou o midleware com sucesso");
+        var parceiroIdString = httpContext.Request.RouteValues["parceiroId"]?.ToString();
+
+        if (!string.IsNullOrEmpty(parceiroIdString) || !Guid.TryParse(parceiroIdString, out Guid parceiroId))
+        {
+            Log.Warning("Não passou porque não pegou o parceiroId");
+            return;
+        }
+
+        var empresaOpenAdm = await empresaOpenAdmRepository.ObterPorIdAsync(parceiroId);
+
+        if (empresaOpenAdm == null)
+        {
+            Log.Warning("Não passou porque não pegou o parceiro");
+            return;
+        }
+
+        parceiroAutenticado.Id = empresaOpenAdm.Id;
+        parceiroAutenticado.ConnectionString = Criptografia.Decrypt(empresaOpenAdm.ConnectionString);
+
         await _next(httpContext);
-        Console.WriteLine("Processou o midleware com sucesso 2");
     }
 }

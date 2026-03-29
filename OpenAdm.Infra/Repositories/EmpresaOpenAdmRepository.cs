@@ -21,4 +21,12 @@ public class EmpresaOpenAdmRepository : IEmpresaOpenAdmRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(x => (x.UrlEcommerce == origem || x.UrlAdmin == origem) && x.Ativo);
     }
+
+    public async Task<EmpresaOpenAdm?> ObterPorIdAsync(Guid id)
+    {
+        return await _appDbContext
+            .Empresas
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.Ativo);
+    }
 }

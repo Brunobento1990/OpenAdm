@@ -4,7 +4,6 @@ using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ContasAReceberModel;
-using OpenAdm.Application.Models.Pagamentos;
 using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Api.Controllers;
@@ -17,11 +16,12 @@ namespace OpenAdm.Api.Controllers;
 public class FaturaController : ControllerBase
 {
     private readonly IFaturaService _faturaService;
-    private readonly IGerarPixPedidoService _gerarPixPedidoService;
-    public FaturaController(IFaturaService faturaService, IGerarPixPedidoService gerarPixPedidoService)
+    private readonly IGerarCobrancaPedidoService _gerarCobrancaPedidoService;
+
+    public FaturaController(IFaturaService faturaService, IGerarCobrancaPedidoService gerarCobrancaPedidoService)
     {
         _faturaService = faturaService;
-        _gerarPixPedidoService = gerarPixPedidoService;
+        _gerarCobrancaPedidoService = gerarCobrancaPedidoService;
     }
 
     [HttpPost("criar")]
@@ -39,15 +39,6 @@ public class FaturaController : ControllerBase
     public async Task<IActionResult> Get([FromQuery] Guid id)
     {
         var result = await _faturaService.GetCompletaAsync(id);
-        return Ok(result);
-    }
-
-    [HttpPost("gerar-pix")]
-    [ProducesResponseType<PagamentoViewModel>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> GerarPix(GerarPixParcelaDto gerarPixParcelaDto)
-    {
-        var result = await _gerarPixPedidoService.GerarPixAsync(gerarPixParcelaDto);
         return Ok(result);
     }
 }

@@ -15,7 +15,7 @@ public sealed class Fatura : BaseEntity
         Guid? pedidoId,
         DateTime? dataDeFechamento,
         TipoFaturaEnum tipo)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Status = status;
         UsuarioId = usuarioId;
@@ -29,12 +29,25 @@ public sealed class Fatura : BaseEntity
     public Guid UsuarioId { get; private set; }
     public Usuario Usuario { get; set; } = null!;
     public Guid? PedidoId { get; private set; }
+    public bool Quitada => ValorPagoRecebido >= Total;
     public Pedido? Pedido { get; set; }
     public DateTime? DataDeFechamento { get; private set; }
     public IList<Parcela> Parcelas { get; set; } = [];
-    public decimal Total { get { return Parcelas.Sum(x => x.Valor); } }
-    public decimal ValorAPagarAReceber { get { return Parcelas.Sum(x => x.ValorAPagarAReceber); } }
-    public decimal ValorPagoRecebido { get { return Parcelas.Sum(x => x.ValorPagoRecebido); } }
+
+    public decimal Total
+    {
+        get { return Parcelas.Sum(x => x.Valor); }
+    }
+
+    public decimal ValorAPagarAReceber
+    {
+        get { return Parcelas.Sum(x => x.ValorAPagarAReceber); }
+    }
+
+    public decimal ValorPagoRecebido
+    {
+        get { return Parcelas.Sum(x => x.ValorPagoRecebido); }
+    }
 
     public void Fechar()
     {

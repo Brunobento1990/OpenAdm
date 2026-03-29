@@ -5,4 +5,5 @@ namespace OpenAdm.Domain.Interfaces;
 public interface IEmpresaOpenAdmRepository
 {
     Task<EmpresaOpenAdm?> ObterPorOrigemAsync(string origem);
+    Task<EmpresaOpenAdm?> ObterPorIdAsync(Guid id);
 }

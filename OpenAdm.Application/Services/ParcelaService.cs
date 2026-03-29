@@ -9,6 +9,7 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using Serilog;
 
 namespace OpenAdm.Application.Services;
 
@@ -19,6 +20,7 @@ public sealed class ParcelaService : IParcelaService
     private readonly IUpdateStatusPedidoService _updateStatusPedidoService;
     private readonly IPedidoService _pedidoService;
     private readonly ITransacaoFinanceiraRepository _transacaoFinanceiraRepository;
+
     public ParcelaService(
         IParcelaRepository parcelaRepository,
         IFaturaService contasAReceberService,
@@ -58,14 +60,14 @@ public sealed class ParcelaService : IParcelaService
     {
         if (string.IsNullOrWhiteSpace(notificationFaturaWebHook.Data?.Id))
         {
-            Console.WriteLine("data id inválido");
+            Log.Warning("data id inválido");
             return;
         }
 
         var parcela = await _parcelaRepository.GetByIdExternoAsync(notificationFaturaWebHook.Data.Id);
         if (parcela == null)
         {
-            Console.WriteLine("Não encontrou a parcela");
+            Log.Warning("Não encontrou a parcela");
             return;
         }
 
@@ -83,7 +85,8 @@ public sealed class ParcelaService : IParcelaService
                     meioDePagamento: MeioDePagamentoEnum.Pix,
                     observacao: "Pagamento efetuado web hook mercado pago"));
 
-        if (parcela.Fatura != null && parcela.Fatura.PedidoId.HasValue && parcela.Valor >= parcela.Fatura.Pedido?.ValorTotal)
+        if (parcela.Fatura != null && parcela.Fatura.PedidoId.HasValue &&
+            parcela.Valor >= parcela.Fatura.Pedido?.ValorTotal)
         {
             Console.WriteLine("Atualizando status pedido");
             await _updateStatusPedidoService.UpdateStatusPedidoAsync(new()
@@ -97,7 +100,7 @@ public sealed class ParcelaService : IParcelaService
     public async Task<ParcelaViewModel> EditarAsync(ParcelaEditDto parcelaEditDto)
     {
         var parcela = await _parcelaRepository.GetByIdAsync(parcelaEditDto.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar a parcela");
+                      ?? throw new ExceptionApi("Não foi possível localizar a parcela");
 
         parcela.Edit(
             dataDeVencimento: parcelaEditDto.DataDeVencimento,
@@ -114,7 +117,7 @@ public sealed class ParcelaService : IParcelaService
     public async Task<ParcelaViewModel> EditAsync(FaturaEdit faturaAReceberEdit)
     {
         var fatura = await _parcelaRepository.GetByIdAsync(faturaAReceberEdit.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
+                     ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
 
         fatura.Edit(
             dataDeVencimento: faturaAReceberEdit.DataDeVencimento,
@@ -131,7 +134,7 @@ public sealed class ParcelaService : IParcelaService
     public async Task<bool> EstornarAsync(Guid id)
     {
         var parcela = await _parcelaRepository.GetByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
+                      ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
         var transacao = parcela.Estornar();
 
@@ -148,7 +151,7 @@ public sealed class ParcelaService : IParcelaService
     public async Task<bool> ExcluirAsync(Guid id)
     {
         var parcela = await _parcelaRepository.GetByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a parcela");
+                      ?? throw new ExceptionApi("Não foi possível localizar a parcela");
 
         if (!string.IsNullOrWhiteSpace(parcela.IdExterno))
         {
@@ -171,18 +174,19 @@ public sealed class ParcelaService : IParcelaService
                 Mes = item.Key.ConverterMesIntEmNome(),
                 Count = item.Value
                     .Where(x => x.Parcela != null &&
-                        x.Parcela.Fatura.Tipo == TipoFaturaEnum.A_Receber &&
-                        !x.EhEstorno)
+                                x.Parcela.Fatura.Tipo == TipoFaturaEnum.A_Receber &&
+                                !x.EhEstorno)
                     .Sum(x => x.Valor)
             });
         }
+
         return faturasPagaDashBoardModel;
     }
 
     public async Task<ParcelaViewModel> GetByIdAsync(Guid id)
     {
         var parcela = await _parcelaRepository.GetByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
+                      ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
         return (ParcelaViewModel)parcela;
     }
@@ -204,7 +208,7 @@ public sealed class ParcelaService : IParcelaService
         pagarFaturaAReceberDto.Validar();
 
         var parcela = await _parcelaRepository.GetByIdAsync(pagarFaturaAReceberDto.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
+                      ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
         var transacao = parcela.Pagar(
             valor: pagarFaturaAReceberDto.Valor,
@@ -223,7 +227,8 @@ public sealed class ParcelaService : IParcelaService
         return (ParcelaViewModel)parcela;
     }
 
-    public async Task<PaginacaoViewModel<ParcelaViewModel>> PaginacaoAsync(FilterModel<Parcela> paginacaoFaturaAReceberDto)
+    public async Task<PaginacaoViewModel<ParcelaViewModel>> PaginacaoAsync(
+        FilterModel<Parcela> paginacaoFaturaAReceberDto)
     {
         var paginacao = await _parcelaRepository
             .PaginacaoAsync(paginacaoFaturaAReceberDto);
@@ -244,6 +249,7 @@ public sealed class ParcelaService : IParcelaService
             {
                 parcelaViewModel.NumeroDoPedido = pedido.Numero;
             }
+
             parcelasViewModel.Add(parcelaViewModel);
         }
 

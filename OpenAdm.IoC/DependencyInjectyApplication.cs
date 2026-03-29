@@ -5,6 +5,7 @@ using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Services;
 using OpenAdm.Application.Services.Carrinhos;
 using OpenAdm.Application.Services.Pedidos;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.IoC;
 
@@ -14,7 +15,7 @@ public static class DependencyInjectyApplication
     {
         services.AddScoped<IParceiroServico, ParceiroServico>();
         services.AddScoped<IAtualizarSenhaUsuarioAdmService, AtualizarSenhaUsuarioAdmService>();
-        services.AddScoped<IGerarPixPedidoService, GerarPixPedidoService>();
+        services.AddScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>();
         services.AddScoped<IAcessoEcommerceService, AcessoEcommerceService>();
         services.AddScoped<ICnpjConsultaService, CnpjConsultaService>();
         services.AddScoped<ICancelarPedido, CancelarPedido>();
@@ -62,5 +63,8 @@ public static class DependencyInjectyApplication
         services.AddScoped<INotificarPedidoEditadoService, NotificarPedidoEditadoService>();
         services.AddScoped<IConfiguracaoDeFreteService, ConfiguracaoDeFreteService>();
         services.AddScoped<IFreteService, FreteService>();
+        services.AddScoped<ICobrancaPedidoService, CobrancaPedidoService>();
+        
+        services.AddKeyedScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>(MeioDePagamentoEnum.Pix);
     }
 }

@@ -83,4 +83,19 @@ public sealed class Pedido : BaseEntity
                     x.Quantidade))
             .ToList();
     }
+
+    public string? PodeCobrar()
+    {
+        if (StatusPedido == StatusPedido.Cancelado)
+        {
+            return "Este pedido se encontra cancelado";
+        }
+
+        if (Fatura != null && Fatura.Quitada)
+        {
+            return "Este pedido se encontra pago";
+        }
+
+        return null;
+    }
 }

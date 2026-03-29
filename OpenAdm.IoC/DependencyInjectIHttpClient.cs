@@ -13,7 +13,6 @@ public static class DependencyInjectIHttpClient
     public static void InjectHttpClient(this IServiceCollection services,
         string url,
         string urlApiCep,
-        string urlMercadoPago,
         string urlConsultaCnpj,
         string urlApiViaCep,
         IConfiguration configuration)
@@ -22,6 +21,7 @@ public static class DependencyInjectIHttpClient
         var apiKeyWhatsApp = configuration["WhatsApp:ApiKey"]!;
         var urlApiFrete = configuration["ApiFrete:BaseUrl"]!;
         var userAgentFrete = configuration["ApiFrete:UserAgent"]!;
+        var urlApiMercadoPago = configuration["ApiMercadoPago:BaseUrl"]!;
 
 
         services.AddScoped<IHttpClientCep, CepHttpService>();
@@ -33,7 +33,7 @@ public static class DependencyInjectIHttpClient
 
         services.AddHttpClient(HttpServiceEnum.Discord.ToString(), x => { x.BaseAddress = new Uri(url); });
         services.AddHttpClient(HttpServiceEnum.MercadoPago.ToString(),
-            x => { x.BaseAddress = new Uri(urlMercadoPago); });
+            x => { x.BaseAddress = new Uri(urlApiMercadoPago); });
         services.AddHttpClient(HttpServiceEnum.CepHttpService.ToString(), x => { x.BaseAddress = new Uri(urlApiCep); });
         services.AddHttpClient(HttpServiceEnum.ConsultaCnpj.ToString(),
             x => { x.BaseAddress = new Uri(urlConsultaCnpj); });

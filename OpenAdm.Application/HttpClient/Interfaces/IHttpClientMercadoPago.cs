@@ -5,5 +5,5 @@ namespace OpenAdm.Application.HttpClient.Interfaces;
 
 public interface IHttpClientMercadoPago
 {
-    Task<MercadoPagoResponse> PostAsync(MercadoPagoRequest mercadoPagoRequest, string accessToken, string idempotencyKey);
+    Task<MercadoPagoPagamentoResponse> GerarPagamentoAsync(MercadoPagoPagamentoRequest mercadoPagoPagamentoRequest, string accessToken, string idempotencyKey);
 }

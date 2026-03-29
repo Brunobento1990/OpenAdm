@@ -10,7 +10,8 @@ public class EmpresaOpenAdmCached : IEmpresaOpenAdmRepository
     private readonly ICachedService<EmpresaOpenAdm> _cachedService;
     private readonly EmpresaOpenAdmRepository _empresaOpenAdmRepository;
 
-    public EmpresaOpenAdmCached(ICachedService<EmpresaOpenAdm> cachedService, EmpresaOpenAdmRepository empresaOpenAdmRepository)
+    public EmpresaOpenAdmCached(ICachedService<EmpresaOpenAdm> cachedService,
+        EmpresaOpenAdmRepository empresaOpenAdmRepository)
     {
         _cachedService = cachedService;
         _empresaOpenAdmRepository = empresaOpenAdmRepository;
@@ -31,4 +32,7 @@ public class EmpresaOpenAdmCached : IEmpresaOpenAdmRepository
 
         return empresa;
     }
+
+    public Task<EmpresaOpenAdm?> ObterPorIdAsync(Guid id)
+        => _empresaOpenAdmRepository.ObterPorIdAsync(id);
 }
