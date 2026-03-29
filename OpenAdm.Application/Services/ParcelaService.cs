@@ -104,16 +104,8 @@ public sealed class ParcelaService : IParcelaService
             });
         }
 
-        var msg = $@"🔔 *Novo pagamento recebido no e-commerce*
-                    💰 *Valor:* {parcela.Valor.FormatMoney()}
-                    🧾 *Pedido:* {parcela.Fatura.Pedido?.Numero}
-                    👤 *Cliente:* {parcela.Fatura.Usuario.Nome}
-                    💳 *Pagamento:* Pix
-                    📅 *Data:* {DateTime.Now.DateTimeToString()}
-
-                    ✅ O pedido foi marcado como *pago* e já pode seguir para separação/envio.
-
-                    Acesse o painel para mais detalhes.";
+        var msg =
+            $"🔔 *Novo pagamento recebido no e-commerce*\n💰 *Valor:* {parcela.Valor.FormatMoney()}\n🧾 *Pedido:* {parcela.Fatura.Pedido?.Numero}\n👤 *Cliente:* {parcela.Fatura.Usuario.Nome}\n💳 *Pagamento:* Pix\n📅 *Data:* {DateTime.Now.DateTimeToString()}\n✅ O pedido foi marcado como *pago* e já pode seguir para separação/envio.\nAcesse o painel ADM para mais detalhes.";
 
         await _notificarParceiroService.NotificarViaWhatsAppAsync(msg);
     }
