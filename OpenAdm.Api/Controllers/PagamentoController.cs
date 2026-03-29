@@ -3,8 +3,6 @@ using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
-using System.Text.Json;
-using Serilog;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -27,22 +25,10 @@ public class PagamentoController : ControllerBase
     public async Task<IActionResult> PagamentoWebHook([FromBody] NotificationFaturaWebHook body,
         [FromQuery] Guid parceiroId)
     {
-        Log.Warning($"ParceiroId: {parceiroId}");
-
-        if (body?.Data != null && (body?.Action == "payment.update" || body?.Action == "payment.updated"))
+        if (body?.Data != null && (body?.Action == "payment.update" || body?.Action == "payment.updated") &&
+            !string.IsNullOrWhiteSpace(body.Data.Id))
         {
-            if (!string.IsNullOrWhiteSpace(body.Data.Id))
-            {
-                await _faturaContasAReceberService.BaixarFaturaWebHookAsync(body);
-            }
-            else
-            {
-                Log.Warning("Não ha ID no Data");
-            }
-        }
-        else
-        {
-            Log.Warning($"Não achou o body: {JsonSerializer.Serialize(body)}");
+            await _faturaContasAReceberService.BaixarFaturaWebHookAsync(body);
         }
 
         return Ok();

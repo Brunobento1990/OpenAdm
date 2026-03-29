@@ -8,6 +8,9 @@ public class PesoViewModel : BaseModel
     public string Descricao { get; set; } = string.Empty;
     public decimal? PesoReal { get; set; }
     public decimal? Quantidade { get; set; }
+    public decimal? AlturaReal { get; set; }
+    public decimal? LarguraReal { get; set; }
+    public decimal? ComprimentoReal { get; set; }
     public PrecoProdutoViewModel? PrecoProduto { get; set; }
     public bool TemEstoqueDisponivel { get; set; } = true;
 
@@ -19,6 +22,9 @@ public class PesoViewModel : BaseModel
         DataDeAtualizacao = entity.DataDeAtualizacao;
         Numero = entity.Numero;
         PesoReal = entity.PesoReal;
+        AlturaReal = entity.AlturaReal;
+        LarguraReal = entity.LarguraReal;
+        ComprimentoReal = entity.ComprimentoReal;
         return this;
     }
 }

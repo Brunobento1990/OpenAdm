@@ -83,12 +83,11 @@ public sealed class ParcelaService : IParcelaService
                     valor: parcela.Valor,
                     tipoTransacaoFinanceira: TipoTransacaoFinanceiraEnum.Entrada,
                     meioDePagamento: MeioDePagamentoEnum.Pix,
-                    observacao: "Pagamento efetuado web hook mercado pago"));
+                    observacao: "Pagamento efetuado via web hook mercado pago"));
 
-        if (parcela.Fatura != null && parcela.Fatura.PedidoId.HasValue &&
+        if (parcela.Fatura.PedidoId.HasValue &&
             parcela.Valor >= parcela.Fatura.Pedido?.ValorTotal)
         {
-            Console.WriteLine("Atualizando status pedido");
             await _updateStatusPedidoService.UpdateStatusPedidoAsync(new()
             {
                 PedidoId = parcela.Fatura.PedidoId.Value,
