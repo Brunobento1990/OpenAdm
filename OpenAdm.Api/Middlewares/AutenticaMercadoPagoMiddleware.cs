@@ -35,8 +35,8 @@ public class AutenticaMercadoPagoMiddleware
             return;
         }
 
-        var parceiroIdString = httpContext.Request.QueryString.Value;
-
+        var parceiroIdString = httpContext.Request.Query["parceiroId"].ToString();
+        
         if (!string.IsNullOrEmpty(parceiroIdString) || !Guid.TryParse(parceiroIdString, out Guid parceiroId))
         {
             Log.Warning($"Não passou porque não pegou o parceiroId: {parceiroIdString}");
