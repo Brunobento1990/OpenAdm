@@ -60,9 +60,11 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
         return await ParceiroContext
             .Parcelas
             .AsNoTracking()
+            .Include(x => x.Fatura.Usuario)
             .Include(x => x.Transacoes)
             .Include(x => x.Fatura)
                 .ThenInclude(x => x.Pedido!.ItensPedido)
+            .AsSingleQuery()
             .FirstOrDefaultAsync(x => x.IdExterno == idExterno);
     }
 
@@ -101,8 +103,8 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .AsNoTracking()
             .Include(x => x.Fatura)
             .Where(m => m.DataDeCriacao.Month >= mes &&
-                m.DataDeCriacao.Year == ano &&
-                m.Fatura.Tipo == faturaEnum)
+                        m.DataDeCriacao.Year == ano &&
+                        m.Fatura.Tipo == faturaEnum)
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,
