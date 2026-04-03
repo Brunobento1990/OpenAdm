@@ -32,7 +32,6 @@ var urlApiViaCep = VariaveisDeAmbiente.GetVariavel("URL_API_VIA_CEP");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
 var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
-var urlConsultaCnpj = VariaveisDeAmbiente.GetVariavel("ULR_CONSULTA_CNPJ");
 var instanceName = VariaveisDeAmbiente.GetVariavel("REDIS_INSTANCENAME");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
 var rodarMigration = VariaveisDeAmbiente.GetVariavel("RODAR_MIGRATION");
@@ -52,7 +51,7 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
-builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlConsultaCnpj, urlApiViaCep,
+builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiViaCep,
     builder.Configuration);
 builder.Services.ConfigurarJobs(builder.Configuration, pgString);
 

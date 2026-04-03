@@ -365,3 +365,5 @@ FodyWeavers.xsd
 .env
 /OpenAdm.Api/.env
 /OpenAdm.Api/.env
+.vscode
+.idea

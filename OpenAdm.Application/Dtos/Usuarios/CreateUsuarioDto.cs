@@ -54,8 +54,16 @@ public class CreateUsuarioDto : BaseModel
             throw new ExceptionApi("CPF inválido!");
         }
 
-        Cpf = Cpf?.Replace(".", "")?.Replace("-", "");
-        Cnpj = Cnpj?.Replace(".", "")?.Replace("-", "")?.Replace("/", "");
+        if (TipoPessoa == TipoPessoa.Juridica)
+        {
+            Cpf = null;
+            Cnpj = Cnpj?.Replace(".", "")?.Replace("-", "")?.Replace("/", "")?.Trim();
+        }
+        else
+        {
+            Cpf = Cpf?.Replace(".", "")?.Replace("-", "")?.Trim();
+            Cnpj = null;
+        }
     }
 
     public Usuario ToEntity(bool ativo)

@@ -13,7 +13,6 @@ public static class DependencyInjectIHttpClient
     public static void InjectHttpClient(this IServiceCollection services,
         string url,
         string urlApiCep,
-        string urlConsultaCnpj,
         string urlApiViaCep,
         IConfiguration configuration)
     {
@@ -22,6 +21,7 @@ public static class DependencyInjectIHttpClient
         var urlApiFrete = configuration["ApiFrete:BaseUrl"]!;
         var userAgentFrete = configuration["ApiFrete:UserAgent"]!;
         var urlApiMercadoPago = configuration["ApiMercadoPago:BaseUrl"]!;
+        var urlApiConsultaCep = configuration["ApiConsultaCnpj:BaseUrl"]!;
 
 
         services.AddScoped<IHttpClientCep, CepHttpService>();
@@ -36,7 +36,7 @@ public static class DependencyInjectIHttpClient
             x => { x.BaseAddress = new Uri(urlApiMercadoPago); });
         services.AddHttpClient(HttpServiceEnum.CepHttpService.ToString(), x => { x.BaseAddress = new Uri(urlApiCep); });
         services.AddHttpClient(HttpServiceEnum.ConsultaCnpj.ToString(),
-            x => { x.BaseAddress = new Uri(urlConsultaCnpj); });
+            x => { x.BaseAddress = new Uri(urlApiConsultaCep); });
         services.AddHttpClient(HttpServiceEnum.ConsultaCep.ToString(), x => { x.BaseAddress = new Uri(urlApiViaCep); });
         services.AddHttpClient(HttpServiceEnum.Frete.ToString(),
             x =>
