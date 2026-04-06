@@ -13,15 +13,16 @@ public class CancelarPedido : ICancelarPedido
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IEmailApiService _emailService;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
-
+    private readonly IEstoqueService _estoqueService;
     public CancelarPedido(
         IPedidoRepository pedidoRepository,
         IEmailApiService emailService,
-        IConfiguracoesDePedidoService configuracoesDePedidoService)
+        IConfiguracoesDePedidoService configuracoesDePedidoService, IEstoqueService estoqueService)
     {
         _pedidoRepository = pedidoRepository;
         _emailService = emailService;
         _configuracoesDePedidoService = configuracoesDePedidoService;
+        _estoqueService = estoqueService;
     }
 
     public async Task<bool> CancelarAsync(CancelarPedidoDto cancelarPedidoDto)
@@ -30,6 +31,8 @@ public class CancelarPedido : ICancelarPedido
             ?? throw new ExceptionApi("Não foi possível localizar o pedido");
         pedido.Cancelar(cancelarPedidoDto.Motivo);
         await _pedidoRepository.UpdateAsync(pedido);
+        
+        await _estoqueService.MovimentacaoDePedidoCanceladoOuExcluidoAsync(pedido.ItensPedido);
 
         var configuracoesDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
 

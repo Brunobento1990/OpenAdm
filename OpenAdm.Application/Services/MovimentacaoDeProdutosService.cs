@@ -19,6 +19,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
     private readonly IMovimentacaoDeProdutoRelatorioService _movimentacaoDeProdutoRelatorioService;
     private readonly ICategoriaRepository _categoriaRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
+
     public MovimentacaoDeProdutosService(
         IMovimentacaoDeProdutoRepository movimentacaoDeProdutorepository,
         IProdutoRepository produtoRepository,
@@ -119,20 +120,20 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         }
 
         var groupedByPesos = movimentacoes
-             .Where(x => x.PesoId != null)
-             .GroupBy(p => p.PesoId)
-             .Select(group => new
-             {
-                 Peso = group.Key!.Value
-             });
+            .Where(x => x.PesoId != null)
+            .GroupBy(p => p.PesoId)
+            .Select(group => new
+            {
+                Peso = group.Key!.Value
+            });
 
         var groupedByTamanhos = movimentacoes
-             .Where(x => x.TamanhoId != null)
-             .GroupBy(p => p.TamanhoId)
-             .Select(group => new
-             {
-                 Tamanho = group.Key!.Value
-             });
+            .Where(x => x.TamanhoId != null)
+            .GroupBy(p => p.TamanhoId)
+            .Select(group => new
+            {
+                Tamanho = group.Key!.Value
+            });
 
         foreach (var peso in groupedByPesos)
         {
@@ -206,9 +207,11 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                 .Select(x =>
                     new MovimentacaoDeProdutoViewModel()
                         .ToModel(x,
-                            produtos.FirstOrDefault(p => p.Key == x.ProdutoId).Value,
-                            pesos.FirstOrDefault(p => p.Key == x.PesoId).Value,
-                            tamanhos.FirstOrDefault(t => t.Key == x.TamanhoId).Value))
+                            produtos.TryGetValue(x.ProdutoId, out var produto) ? produto : "",
+                            x.PesoId.HasValue && pesos.TryGetValue(x.PesoId.Value, out var peso) ? peso : "",
+                            x.TamanhoId.HasValue && tamanhos.TryGetValue(x.TamanhoId.Value, out var tamanho)
+                                ? tamanho
+                                : ""))
                 .ToList(),
             TotalDeRegistros = paginacao.TotalDeRegistros
         };
@@ -228,7 +231,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
             tamanhoId: x.TamanhoId,
             pesoId: x.PesoId,
             observacao: null
-            )).ToList();
+        )).ToList();
         await _movimentacaoDeProdutorepository.AddRangeAsync(movimentos);
     }
 
