@@ -55,6 +55,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         var query = ParceiroContext
             .Set<T>()
             .AsNoTracking()
+            .AsSplitQuery()
             .WhereIsNotNull(filterModel.GetWhereBySearch())
             .WhereIsNotNull(where);
 

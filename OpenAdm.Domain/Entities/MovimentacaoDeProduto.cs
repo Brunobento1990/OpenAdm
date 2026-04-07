@@ -29,7 +29,10 @@ public sealed class MovimentacaoDeProduto : BaseEntity
     public decimal QuantidadeMovimentada { get; private set; }
     public TipoMovimentacaoDeProduto TipoMovimentacaoDeProduto { get; private set; }
     public Guid ProdutoId { get; private set; }
+    public Produto Produto { get; set; } = null!;
     public Guid? TamanhoId { get; private set; }
+    public Tamanho? Tamanho { get; set; }
     public Guid? PesoId { get; private set; }
+    public Peso? Peso { get; set; }
     public string? Observacao { get; private set; }
 }

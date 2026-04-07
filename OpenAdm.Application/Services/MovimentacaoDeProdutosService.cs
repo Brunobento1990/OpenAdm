@@ -176,29 +176,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         var paginacao = await _movimentacaoDeProdutorepository
             .PaginacaoAsync(paginacaoMovimentacaoDeProdutoDto);
 
-        var produtosids = paginacao
-            .Values
-            .DistinctBy(x => x.ProdutoId)
-            .Select(x => x.ProdutoId)
-            .ToList();
-
-        var tamanhosIds = paginacao
-            .Values.Where(x => x.TamanhoId != null)
-            .DistinctBy(x => x.TamanhoId)
-            .Select(x => x.TamanhoId!.Value)
-            .ToList();
-
-        var pesosIds = paginacao
-            .Values
-            .Where(x => x.PesoId != null)
-            .DistinctBy(x => x.PesoId)
-            .Select(x => x.PesoId!.Value)
-            .ToList();
-
-        var produtos = await _produtoRepository.GetDescricaoDeProdutosAsync(produtosids);
-        var tamanhos = await _tamanhoRepository.GetDescricaoTamanhosAsync(tamanhosIds);
-        var pesos = await _pesoRepository.GetDescricaoPesosAsync(pesosIds);
-
         return new PaginacaoViewModel<MovimentacaoDeProdutoViewModel>()
         {
             TotalPaginas = paginacao.TotalPaginas,
@@ -207,11 +184,9 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
                 .Select(x =>
                     new MovimentacaoDeProdutoViewModel()
                         .ToModel(x,
-                            produtos.TryGetValue(x.ProdutoId, out var produto) ? produto : "",
-                            x.PesoId.HasValue && pesos.TryGetValue(x.PesoId.Value, out var peso) ? peso : "",
-                            x.TamanhoId.HasValue && tamanhos.TryGetValue(x.TamanhoId.Value, out var tamanho)
-                                ? tamanho
-                                : ""))
+                            x.Produto?.Descricao ?? "",
+                            x.Peso?.Descricao ?? "",
+                            x.Tamanho?.Descricao ?? ""))
                 .ToList(),
             TotalDeRegistros = paginacao.TotalDeRegistros
         };
