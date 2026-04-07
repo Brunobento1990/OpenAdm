@@ -80,8 +80,7 @@ public class PaginacaoEstoqueDto : FilterModel<Estoque>
 
         var search = Search.RemoverAcentos();
 
-        return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Numero.ToString()), $"%{search}%") ||
-            EF.Functions.ILike(EF.Functions.Unaccent(x.Produto.Descricao), $"%{search}%");
+        return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Produto.Descricao), $"%{search}%");
     }
 }
 
