@@ -46,8 +46,8 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.AddAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuarioViewModel);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
+        var token = _tokenService.GenerateToken(usuario.Id, false);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
 
         return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
     }
@@ -100,8 +100,8 @@ public class UsuarioService : IUsuarioService
             return new ResponseLoginUsuarioViewModel(usuarioViewModel, "", "");
         }
 
-        var token = _tokenService.GenerateToken(usuarioViewModel);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
+        var token = _tokenService.GenerateToken(usuario.Id, false);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
 
         return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
     }
@@ -203,8 +203,8 @@ public class UsuarioService : IUsuarioService
 
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuarioViewModel);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
+        var token = _tokenService.GenerateToken(usuario.Id, false);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
 
         return new(usuarioViewModel, token, refreshToken);
     }
@@ -298,8 +298,8 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.UpdateAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuarioViewModel);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuarioViewModel.Id);
+        var token = _tokenService.GenerateToken(usuario.Id, false);
+        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
 
         return new(usuarioViewModel, token, refreshToken);
     }

@@ -14,7 +14,8 @@ public class LoginFuncionarioService
     private readonly ILoginFuncionarioRepository _loginFuncionarioRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
 
-    public LoginFuncionarioService(ITokenService tokenService, ILoginFuncionarioRepository loginFuncionarioRepository, IParceiroAutenticado parceiroAutenticado)
+    public LoginFuncionarioService(ITokenService tokenService, ILoginFuncionarioRepository loginFuncionarioRepository,
+        IParceiroAutenticado parceiroAutenticado)
     {
         _tokenService = tokenService;
         _loginFuncionarioRepository = loginFuncionarioRepository;
@@ -23,14 +24,16 @@ public class LoginFuncionarioService
 
     public async Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin)
     {
-        var funcionario = await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(requestLogin.Email, _parceiroAutenticado.Id);
+        var funcionario =
+            await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(requestLogin.Email, _parceiroAutenticado.Id);
 
         if (funcionario == null || !PasswordAdapter.VerifyPassword(requestLogin.Senha, funcionario.Senha))
             throw new ExceptionApi("E-mail ou senha inválidos!");
 
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
-        var token = _tokenService.GenerateToken(funcionarioViewModel);
+        var token = _tokenService.GenerateToken(funcionario.Id, true);
+        var refreshToken = _tokenService.GenerateRefreshToken(funcionario.Id, true);
 
-        return new(token, "", funcionarioViewModel);
+        return new(token, refreshToken, funcionarioViewModel);
     }
 }
