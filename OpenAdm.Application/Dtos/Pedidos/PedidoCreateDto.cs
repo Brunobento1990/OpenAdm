@@ -7,6 +7,7 @@ public class PedidoCreateDto : ValidarBaseDTO
 {
     public EnderecoDto EnderecoEntrega { get; set; } = null!;
     public IList<ItemPedidoModel> Itens { get; set; } = [];
+    public IEnumerable<ItemPedidoModel> ItensQuantidadesValidas => Itens.Where(x => x.Quantidade > 0);
     public int? FreteId { get; set; }
     public decimal? ValorFrete { get; set; }
 
@@ -17,7 +18,7 @@ public class PedidoCreateDto : ValidarBaseDTO
             return "Informe o endereço de entrega";
         }
 
-        if (Itens.Count == 0)
+        if (!ItensQuantidadesValidas.Any())
         {
             return "Informe os itens do pedido";
         }
