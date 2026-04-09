@@ -73,7 +73,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
         var configuracaoDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
 
-        var total = pedidoCreateDto.Itens.Sum(x => x.Quantidade * x.ValorUnitario);
+        var total = pedidoCreateDto.ItensQuantidadesValidas.Sum(x => x.Quantidade * x.ValorUnitario);
 
         var pedidoMinimo = usuario.IsAtacado
             ? configuracaoDePedido.PedidoMinimoAtacado
@@ -88,13 +88,13 @@ public sealed class CreatePedidoService : ICreatePedidoService
         var date = DateTime.Now;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id, null);
 
-        var produtosIds = pedidoCreateDto.Itens.Select(x => x.ProdutoId).ToList();
+        var produtosIds = pedidoCreateDto.ItensQuantidadesValidas.Select(x => x.ProdutoId).Distinct().ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
 
         var estoques = await _estoqueRepository
             .GetPosicaoEstoqueDosProdutosAsync(produtosIds);
 
-        foreach (var item in pedidoCreateDto.Itens)
+        foreach (var item in pedidoCreateDto.ItensQuantidadesValidas)
         {
             var itemTabela = itensTabelaDePreco
                 .FirstOrDefault(itemTabelaDePreco =>
@@ -129,7 +129,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
             }
         }
 
-        pedido.ProcessarItensPedido(pedidoCreateDto.Itens);
+        pedido.ProcessarItensPedido(pedidoCreateDto.ItensQuantidadesValidas);
 
         pedido.EnderecoEntrega = new EnderecoEntregaPedido(
             cep: pedidoCreateDto.EnderecoEntrega.Cep,

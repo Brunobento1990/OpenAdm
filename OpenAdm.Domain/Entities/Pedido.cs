@@ -63,11 +63,8 @@ public sealed class Pedido : BaseEntity
         MotivoCancelamento = motivoCancelamento;
     }
 
-    public void ProcessarItensPedido(IList<ItemPedidoModel> itensPedidoModels)
+    public void ProcessarItensPedido(IEnumerable<ItemPedidoModel> itensPedidoModels)
     {
-        if (itensPedidoModels.Count == 0)
-            throw new ExceptionApi("Informe os itens do pedido");
-
         ItensPedido = itensPedidoModels
             .Select(x =>
                 new ItemPedido(
