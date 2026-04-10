@@ -12,6 +12,7 @@ public class UsuarioCached : IUsuarioRepository
     private readonly ICachedService<Usuario> _cachedService;
     private readonly UsuarioRepository _usuarioRepository;
     private const string _keyList = "usuarios";
+    private const string _keyMiddleware = "usuario_middleware";
 
     public UsuarioCached(ICachedService<Usuario> cachedService, UsuarioRepository usuarioRepository)
     {
@@ -41,6 +42,24 @@ public class UsuarioCached : IUsuarioRepository
         if (usuario == null)
         {
             usuario = await _usuarioRepository.GetUsuarioByIdAsync(id);
+            if (usuario != null)
+            {
+                await _cachedService.SetItemAsync(key, usuario);
+            }
+        }
+
+        return usuario;
+    }
+
+    public async Task<Usuario?> GetUsuarioMiddlewareAsync(Guid id)
+    {
+        var key = $"{id}_{_keyMiddleware}";
+        var usuario = await _cachedService.GetItemAsync(key);
+
+        if (usuario is null)
+        {
+            usuario = await _usuarioRepository.GetUsuarioMiddlewareAsync(id);
+
             if (usuario != null)
             {
                 await _cachedService.SetItemAsync(key, usuario);
@@ -97,6 +116,7 @@ public class UsuarioCached : IUsuarioRepository
 
     public Task<int> GetCountCpfAsync()
         => _usuarioRepository.GetCountCpfAsync();
+
     public Task<int> GetCountCnpjAsync()
         => _usuarioRepository.GetCountCnpjAsync();
 

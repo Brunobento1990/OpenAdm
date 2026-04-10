@@ -18,7 +18,7 @@ public sealed class Usuario : BaseEntity
         string? cpf,
         bool ativo,
         Guid? tokenEsqueceuSenha,
-        DateTime? dataExpiracaoTokenEsqueceuSenha)
+        DateTime? dataExpiracaoTokenEsqueceuSenha, DateTime? forcarLogin)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Email = email;
@@ -30,6 +30,7 @@ public sealed class Usuario : BaseEntity
         Ativo = ativo;
         TokenEsqueceuSenha = tokenEsqueceuSenha;
         DataExpiracaoTokenEsqueceuSenha = dataExpiracaoTokenEsqueceuSenha;
+        ForcarLogin = forcarLogin;
     }
 
     public string Email { get; private set; }
@@ -43,8 +44,10 @@ public sealed class Usuario : BaseEntity
         !string.IsNullOrWhiteSpace(Cpf) ? Cpf.FormatCpf() : null;
 
     public bool Ativo { get; private set; }
+    public bool AcessoLiberadoEcommerce => Ativo && !string.IsNullOrWhiteSpace(Telefone);
     public Guid? TokenEsqueceuSenha { get; private set; }
     public DateTime? DataExpiracaoTokenEsqueceuSenha { get; private set; }
+    public DateTime? ForcarLogin { get; private set; }
     public bool IsAtacado => !string.IsNullOrWhiteSpace(Cnpj);
     public EnderecoUsuario? EnderecoUsuario { get; set; }
     public IList<Pedido>? Pedidos { get; set; }

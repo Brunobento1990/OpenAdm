@@ -24,6 +24,7 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
             throw new ExceptionApi("Este e-mail, ou cpf ou cnpj já se encontra cadastrado!");
         }
     }
+
     public async Task<IList<Usuario>> GetAllUsuariosAsync()
     {
         return await ParceiroContext
@@ -37,9 +38,9 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
         try
         {
             return await ParceiroContext
-            .Usuarios
-            .Where(x => x.Ativo && !string.IsNullOrWhiteSpace(x.Cpf))
-            .CountAsync();
+                .Usuarios
+                .Where(x => x.Ativo && !string.IsNullOrWhiteSpace(x.Cpf))
+                .CountAsync();
         }
         catch (Exception)
         {
@@ -52,9 +53,9 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
         try
         {
             return await ParceiroContext
-            .Usuarios
-            .Where(x => x.Ativo && !string.IsNullOrWhiteSpace(x.Cnpj))
-            .CountAsync();
+                .Usuarios
+                .Where(x => x.Ativo && !string.IsNullOrWhiteSpace(x.Cnpj))
+                .CountAsync();
         }
         catch (Exception)
         {
@@ -65,25 +66,25 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
     public async Task<Usuario?> GetUsuarioByCnpjAsync(string cnpj)
     {
         return await ParceiroContext
-             .Usuarios
-             .AsNoTracking()
-             .FirstOrDefaultAsync(x => x.Cnpj == cnpj);
+            .Usuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Cnpj == cnpj);
     }
 
     public async Task<Usuario?> GetUsuarioByCpfAsync(string cpf)
     {
         return await ParceiroContext
-             .Usuarios
-             .AsNoTracking()
-             .FirstOrDefaultAsync(x => x.Cpf == cpf);
+            .Usuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Cpf == cpf);
     }
 
     public async Task<Usuario?> GetUsuarioByEmailAsync(string email)
     {
         return await ParceiroContext
-             .Usuarios
-             .AsNoTracking()
-             .FirstOrDefaultAsync(x => x.Email == email);
+            .Usuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Email == email);
     }
 
     public async Task<Usuario?> GetUsuarioByIdAsync(Guid id)
@@ -106,11 +107,20 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
                 x.Cpf,
                 x.Ativo,
                 x.TokenEsqueceuSenha,
-                x.DataExpiracaoTokenEsqueceuSenha)
+                x.DataExpiracaoTokenEsqueceuSenha,
+                x.ForcarLogin)
             {
                 EnderecoUsuario = x.EnderecoUsuario
             })
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<Usuario?> GetUsuarioMiddlewareAsync(Guid id)
+    {
+        return await ParceiroContext
+            .Usuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task AddEnderecoAsync(EnderecoUsuario endereco)
@@ -157,8 +167,8 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
         if (!string.IsNullOrWhiteSpace(search))
         {
             query = query.Where(x => EF.Functions.ILike(EF.Functions.Unaccent(x.Cpf!), $"%{search}%") ||
-                    EF.Functions.ILike(EF.Functions.Unaccent(x.Cnpj!), $"%{search}%") ||
-                    EF.Functions.ILike(EF.Functions.Unaccent(x.Nome), $"%{search}%"));
+                                     EF.Functions.ILike(EF.Functions.Unaccent(x.Cnpj!), $"%{search}%") ||
+                                     EF.Functions.ILike(EF.Functions.Unaccent(x.Nome), $"%{search}%"));
         }
 
         if (isJuridico)

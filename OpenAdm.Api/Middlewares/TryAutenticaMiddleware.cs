@@ -1,10 +1,6 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.IdentityModel.Tokens;
-using OpenAdm.Api.Attributes;
-using OpenAdm.Application.Models.Tokens;
-using OpenAdm.Domain.Exceptions;
+﻿using OpenAdm.Api.Attributes;
+using OpenAdm.Api.Extensions;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Api.Middlewares;
@@ -12,6 +8,7 @@ namespace OpenAdm.Api.Middlewares;
 public class TryAutenticaMiddleware
 {
     private readonly RequestDelegate _next;
+
     public TryAutenticaMiddleware(RequestDelegate next)
     {
         _next = next;
@@ -19,7 +16,8 @@ public class TryAutenticaMiddleware
 
     public async Task Invoke(
         HttpContext httpContext,
-        IUsuarioAutenticado usuarioAutenticado)
+        IUsuarioAutenticado usuarioAutenticado,
+        ITokenService tokenService)
     {
         if (usuarioAutenticado.Id != Guid.Empty)
         {
@@ -27,61 +25,15 @@ public class TryAutenticaMiddleware
             return;
         }
 
-        var autenticar = httpContext.Features.Get<IEndpointFeature>()?.Endpoint?.Metadata
-                .FirstOrDefault(m => m is TryAutenticaAttribute) is TryAutenticaAttribute atributoAutorizacao;
-
-        if (!autenticar)
+        if (!httpContext.TemAtributo<TryAutenticaAttribute>())
         {
             await _next(httpContext);
             return;
         }
 
-        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").Last().Replace("Bearer", "")?.Trim();
-
-        if (string.IsNullOrWhiteSpace(token))
+        if (!await httpContext.ValidarAcessoAsync(usuarioAutenticado, tokenService))
         {
-            await _next(httpContext);
             return;
-        }
-
-        var keyJwt = VariaveisDeAmbiente.GetVariavel("JWT_KEY");
-
-        try
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = false,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = ConfiguracaoDeToken.Issue,
-                ValidAudience = ConfiguracaoDeToken.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfiguracaoDeToken.Key))
-            }, out SecurityToken validatedToken);
-
-            var jwtToken = (JwtSecurityToken)validatedToken;
-
-            var id = jwtToken.Claims.FirstOrDefault(c => c.Type == "Id")?.Value
-                ?? throw new ExceptionUnauthorize("Token inválido");
-            var isFuncionario = jwtToken.Claims.FirstOrDefault(c => c.Type == "IsFuncionario")?.Value;
-
-            if (!Guid.TryParse(id, out Guid idParse))
-            {
-                throw new ExceptionUnauthorize("Por favor, efetue o login novamente");
-            }
-
-            usuarioAutenticado.Id = idParse;
-            usuarioAutenticado.IsFuncionario = !string.IsNullOrWhiteSpace(isFuncionario) && isFuncionario == "TRUE";
-
-        }
-        catch (SecurityTokenExpiredException)
-        {
-            throw new ExceptionUnauthorize("Sessão expirada, efetue o login novamente!");
-        }
-        catch (Exception)
-        {
-            throw new ExceptionUnauthorize("Efetue o login novamente!");
         }
 
         await _next(httpContext);

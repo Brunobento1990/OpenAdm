@@ -1,70 +1,33 @@
 ﻿using Google.Apis.Auth;
 using Microsoft.IdentityModel.Tokens;
 using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.Funcionarios;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Application.Services;
 
 public class TokenService : ITokenService
 {
-    public string GenerateRefreshToken(Guid id)
+    private static string KeyId = "Id";
+    private static string KeyDataLogin = "DataLogin";
+    private static string KeyIsFuncionario = "Id";
+
+    public string GenerateRefreshToken(Guid id, bool isFuncionario)
     {
-        return Genereate(new { Id = id }, DateTime.Now.AddDays(30));
+        return Genereate(id, isFuncionario, DateTime.Now.AddDays(30));
     }
-    public string GenerateToken(object obj)
+
+    public string GenerateToken(Guid id, bool isFuncionario)
     {
-        return Genereate(obj, DateTime.Now.AddHours(ConfiguracaoDeToken.Expiration));
+        return Genereate(id, isFuncionario, DateTime.Now.AddHours(ConfiguracaoDeToken.Expiration));
     }
-    //public UsuarioViewModel GetTokenUsuarioViewModel()
-    //{
-    //    if (_httpContextAccessor?.HttpContext?.User.Identity is not ClaimsIdentity claimsIdentity
-    //        || !claimsIdentity.Claims.Any())
-    //        throw new ExceptionApi(nameof(claimsIdentity));
 
-    //    var id = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Id")?.Value
-    //        ?? throw new ExceptionApi("token inválido");
-    //    var numero = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Numero")?.Value
-    //        ?? throw new ExceptionApi("token inválido");
-    //    var nome = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Nome")?.Value
-    //        ?? throw new ExceptionApi("token inválido");
-    //    var email = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Email")?.Value
-    //        ?? throw new ExceptionApi("token inválido");
-
-    //    var dataDeCriacao = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "DataDeCriacao")?.Value
-    //        ?? throw new ExceptionApi("token inválido");
-
-    //    var dataDeAtualizacao = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "DataDeAtualizacao")?.Value
-    //        ?? throw new ExceptionApi("token inválido");
-
-    //    var telefone = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Telefone")?.Value;
-    //    var cnpj = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Cnpj")?.Value;
-    //    var cpf = claimsIdentity.Claims.FirstOrDefault(c => c.Type == "Cpf")?.Value;
-
-    //    if (!DateTime.TryParse(dataDeCriacao, out DateTime newDataDeCriacao))
-    //        throw new ExceptionApi("token inválido");
-
-    //    if (!DateTime.TryParse(dataDeAtualizacao, out DateTime newDataDeAtualizacao))
-    //        throw new ExceptionApi("token inválido");
-
-    //    return new UsuarioViewModel()
-    //    {
-    //        Id = Guid.Parse(id),
-    //        Nome = nome,
-    //        Email = email,
-    //        Numero = long.Parse(numero),
-    //        DataDeCriacao = newDataDeCriacao,
-    //        DataDeAtualizacao = newDataDeAtualizacao,
-    //        Telefone = telefone,
-    //        Cnpj = cnpj,
-    //        Cpf = cpf
-    //    };
-    //}
-    private static string Genereate(object obj, DateTime expires)
+    private static string Genereate(Guid id, bool isFuncionario, DateTime expires)
     {
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(ConfiguracaoDeToken.Key));
@@ -72,44 +35,90 @@ public class TokenService : ITokenService
         var credenciais = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-          issuer: ConfiguracaoDeToken.Issue,
-          audience: ConfiguracaoDeToken.Audience,
-          claims: GenerateClaims(obj),
-          expires: expires,
-          signingCredentials: credenciais);
+            issuer: ConfiguracaoDeToken.Issue,
+            audience: ConfiguracaoDeToken.Audience,
+            claims: GenerateClaims(id, isFuncionario),
+            expires: expires,
+            signingCredentials: credenciais);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public static Claim[] GenerateClaims(object obj)
+
+    private static Claim[] GenerateClaims(Guid id, bool isFuncionario)
     {
-        var claims = new List<Claim>();
-
-        foreach (var property in obj.GetType().GetProperties())
+        var claims = new List<Claim>()
         {
-            var value = property.GetValue(obj);
-            if (value != null)
-                claims.Add(new Claim(property.Name, value.ToString() ?? "Sem Valor"));
-
-        }
-
-        var isFuncionario = obj.GetType() == typeof(FuncionarioViewModel);
-
-        if (isFuncionario)
-            claims.Add(new Claim("IsFuncionario", "TRUE"));
+            new(KeyId, id.ToString()),
+            new(KeyDataLogin, DateTime.Now.FormatarDataJson()),
+            new(KeyIsFuncionario, isFuncionario ? "TRUE" : "FALSE"),
+        };
 
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
         return [.. claims];
     }
 
+    public ResultPartner<ValidaTokenModel> ValidarToken(string token)
+    {
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero,
+                ValidIssuer = ConfiguracaoDeToken.Issue,
+                ValidAudience = ConfiguracaoDeToken.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfiguracaoDeToken.Key))
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+
+            var id = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyId)?.Value;
+            var ehFuncionario = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyIsFuncionario)?.Value;
+            var dataLogin = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyDataLogin)?.Value;
+
+            if (!Guid.TryParse(id, out Guid idParse) ||
+                string.IsNullOrWhiteSpace(ehFuncionario) ||
+                !DateTime.TryParse(dataLogin, out DateTime dataLoginParse))
+            {
+                return (ResultPartner<ValidaTokenModel>)"JWT inválido, efetue o login";
+            }
+
+            return (ResultPartner<ValidaTokenModel>)new ValidaTokenModel()
+            {
+                Expirado = false,
+                DataDoLogin = dataLoginParse,
+                EhFuncionario = ehFuncionario == "TRUE",
+                Id = idParse
+            };
+        }
+        catch (SecurityTokenExpiredException)
+        {
+            return (ResultPartner<ValidaTokenModel>)new ValidaTokenModel()
+            {
+                Expirado = true
+            };
+        }
+        catch (Exception)
+        {
+            return (ResultPartner<ValidaTokenModel>)"Token inválido, efetue o login";
+        }
+    }
+
+
     public async Task<TokenResponseGoogleModel> ValidarTokenGoogleAsync(string token)
     {
         try
         {
-            var payload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings
-            {
-                Audience = new[] { ConfiguracaoDeToken.ClientIdGoogle }
-            });
+            var payload = await GoogleJsonWebSignature.ValidateAsync(token,
+                new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { ConfiguracaoDeToken.ClientIdGoogle }
+                });
 
             return new TokenResponseGoogleModel()
             {

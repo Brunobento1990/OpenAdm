@@ -11,4 +11,9 @@ public static class DateTimeExtensions
     {
         return dateTime.ToString("dd/MM/yyyy");
     }
+
+    public static string FormatarDataJson(this DateTime dateTime)
+    {
+        return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+    }
 }

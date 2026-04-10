@@ -8,5 +8,6 @@ public interface IUsuarioAutenticado
     Guid ParceiroId { get; set; }
     bool IsFuncionario { get; set; }
     Task<Usuario> GetUsuarioAutenticadoAsync();
+    Task<Usuario> GetUsuarioMiddlewareAsync();
     Task<Usuario?> GetUsuarioAutenticadoOrNullAsync();
 }

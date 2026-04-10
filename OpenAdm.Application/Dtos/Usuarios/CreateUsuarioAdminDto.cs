@@ -70,9 +70,12 @@ public class CreateUsuarioAdminDto : BaseModel
             Cpf,
             true,
             null,
+            null,
             null);
 
-        usuario.EnderecoUsuario = EnderecoUsuario == null ? null : new EnderecoUsuario(
+        usuario.EnderecoUsuario = EnderecoUsuario == null
+            ? null
+            : new EnderecoUsuario(
                 cep: EnderecoUsuario.Cep,
                 logradouro: EnderecoUsuario.Logradouro,
                 bairro: EnderecoUsuario.Bairro,
