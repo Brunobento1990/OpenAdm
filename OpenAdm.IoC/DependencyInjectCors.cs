@@ -13,6 +13,7 @@ public static class DependencyInjectCors
                               {
                                   policy.AllowAnyOrigin()
                                       .AllowAnyMethod()
+                                      .WithExposedHeaders("Content-Disposition", "Novotoken")
                                       .AllowAnyHeader();
                               });
         });

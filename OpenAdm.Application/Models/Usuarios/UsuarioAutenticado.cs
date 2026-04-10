@@ -23,6 +23,13 @@ public sealed class UsuarioAutenticado : IUsuarioAutenticado
             ?? throw new UnauthorizedAccessException("Usuário não autenticado!");
     }
 
+    public async Task<Usuario> GetUsuarioMiddlewareAsync()
+    {
+        return await _usuarioRepository
+                   .GetUsuarioMiddlewareAsync(Id)
+               ?? throw new UnauthorizedAccessException("Usuário não autenticado!");
+    }
+
     public async Task<Usuario?> GetUsuarioAutenticadoOrNullAsync()
     {
         if (Id == Guid.Empty)

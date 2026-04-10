@@ -6,6 +6,7 @@ namespace OpenAdm.Domain.Interfaces;
 public interface IUsuarioRepository : IGenericRepository<Usuario>
 {
     Task<Usuario?> GetUsuarioByIdAsync(Guid id);
+    Task<Usuario?> GetUsuarioMiddlewareAsync(Guid id);
     Task<Usuario?> GetUsuarioByTokenEsqueceuSenhaAsync(Guid tokenEsqueceuSenha);
     Task<Usuario?> GetUsuarioByEmailAsync(string email);
     Task<Usuario?> GetUsuarioByCpfAsync(string cpf);

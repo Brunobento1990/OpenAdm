@@ -444,7 +444,8 @@ public class PedidoServiceTest
             cpf: atacado ? null : "12345678901",
             ativo: true,
             tokenEsqueceuSenha: null,
-            dataExpiracaoTokenEsqueceuSenha: null);
+            dataExpiracaoTokenEsqueceuSenha: null,
+            forcarLogin: null);
     }
 
     private void SetupFreteNaoCobra() =>
@@ -502,7 +503,7 @@ public class PedidoServiceTest
             "usuario@teste.com", "senha123", "Usuário Teste",
             telefone: null,
             cnpj: "12345678000100", cpf: null,
-            ativo: true, tokenEsqueceuSenha: null, dataExpiracaoTokenEsqueceuSenha: null);
+            ativo: true, tokenEsqueceuSenha: null, dataExpiracaoTokenEsqueceuSenha: null, forcarLogin: null);
         _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(usuario);
 
         var result = await _createPedidoService.CreatePedidoAsync(BuildDtoValido());

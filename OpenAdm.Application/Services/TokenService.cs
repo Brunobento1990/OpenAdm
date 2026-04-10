@@ -6,12 +6,15 @@ using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Application.Services;
 
 public class TokenService : ITokenService
 {
     private static string KeyId = "Id";
+    private static string KeyDataLogin = "DataLogin";
     private static string KeyIsFuncionario = "Id";
 
     public string GenerateRefreshToken(Guid id, bool isFuncionario)
@@ -45,18 +48,67 @@ public class TokenService : ITokenService
     {
         var claims = new List<Claim>()
         {
-            new Claim(KeyId, id.ToString())
+            new(KeyId, id.ToString()),
+            new(KeyDataLogin, DateTime.Now.FormatarDataJson()),
+            new(KeyIsFuncionario, isFuncionario ? "TRUE" : "FALSE"),
         };
-
-        if (isFuncionario)
-        {
-            claims.Add(new Claim(KeyIsFuncionario, "TRUE"));
-        }
 
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
 
         return [.. claims];
     }
+
+    public ResultPartner<ValidaTokenModel> ValidarToken(string token)
+    {
+        try
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero,
+                ValidIssuer = ConfiguracaoDeToken.Issue,
+                ValidAudience = ConfiguracaoDeToken.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfiguracaoDeToken.Key))
+            }, out SecurityToken validatedToken);
+
+            var jwtToken = (JwtSecurityToken)validatedToken;
+
+            var id = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyId)?.Value;
+            var ehFuncionario = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyIsFuncionario)?.Value;
+            var dataLogin = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyDataLogin)?.Value;
+
+            if (!Guid.TryParse(id, out Guid idParse) ||
+                string.IsNullOrWhiteSpace(ehFuncionario) ||
+                !DateTime.TryParse(dataLogin, out DateTime dataLoginParse))
+            {
+                return (ResultPartner<ValidaTokenModel>)"JWT inválido, efetue o login";
+            }
+
+            return (ResultPartner<ValidaTokenModel>)new ValidaTokenModel()
+            {
+                Expirado = false,
+                DataDoLogin = dataLoginParse,
+                EhFuncionario = ehFuncionario == "TRUE",
+                Id = idParse
+            };
+        }
+        catch (SecurityTokenExpiredException)
+        {
+            return (ResultPartner<ValidaTokenModel>)new ValidaTokenModel()
+            {
+                Expirado = true
+            };
+        }
+        catch (Exception)
+        {
+            return (ResultPartner<ValidaTokenModel>)"Token inválido, efetue o login";
+        }
+    }
+
 
     public async Task<TokenResponseGoogleModel> ValidarTokenGoogleAsync(string token)
     {
