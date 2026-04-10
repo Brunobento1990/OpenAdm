@@ -15,7 +15,7 @@ public class TokenService : ITokenService
 {
     private static string KeyId = "Id";
     private static string KeyDataLogin = "DataLogin";
-    private static string KeyIsFuncionario = "Id";
+    private static string KeyIsFuncionario = "EhFuncionario";
 
     public string GenerateRefreshToken(Guid id, bool isFuncionario)
     {
