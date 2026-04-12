@@ -31,7 +31,16 @@ public class TryAutenticaMiddleware
             return;
         }
 
-        if (!await httpContext.ValidarAcessoAsync(usuarioAutenticado, tokenService))
+        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").LastOrDefault();
+        var refreshToken = httpContext.Request.Headers["refreshToken"].FirstOrDefault();
+
+        if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(refreshToken))
+        {
+            await _next(httpContext);
+            return;
+        }
+
+        if (!await httpContext.ValidarAcessoAsync(usuarioAutenticado, tokenService, token, refreshToken))
         {
             return;
         }

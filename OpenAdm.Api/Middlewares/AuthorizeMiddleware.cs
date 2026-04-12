@@ -26,7 +26,16 @@ public class AuthorizeMiddleware
             return;
         }
 
-        if (!await httpContext.ValidarAcessoAsync(usuarioAutenticado, tokenService))
+        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").LastOrDefault();
+        var refreshToken = httpContext.Request.Headers["refreshToken"].FirstOrDefault();
+
+        if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(refreshToken))
+        {
+            await httpContext.RetornarErroAsync("Efetue o login", HttpStatusCode.Unauthorized);
+            return;
+        }
+
+        if (!await httpContext.ValidarAcessoAsync(usuarioAutenticado, tokenService, token, refreshToken))
         {
             return;
         }

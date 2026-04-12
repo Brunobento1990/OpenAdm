@@ -58,7 +58,7 @@ public class TokenService : ITokenService
         return [.. claims];
     }
 
-    public ResultPartner<ValidaTokenModel> ValidarToken(string token)
+    public ResultPartner<ValidaTokenModel> ValidarToken(string token, bool validaLifeTime = true)
     {
         try
         {
@@ -67,7 +67,7 @@ public class TokenService : ITokenService
             {
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                ValidateLifetime = true,
+                ValidateLifetime = validaLifeTime,
                 ValidateIssuerSigningKey = true,
                 ClockSkew = TimeSpan.Zero,
                 ValidIssuer = ConfiguracaoDeToken.Issue,
