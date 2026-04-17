@@ -5,6 +5,7 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Application.HttpClient.Request;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Enums;
 using Serilog;
 
@@ -31,15 +32,15 @@ public sealed class MercadoPagoHttpService : IHttpClientMercadoPago
         var response =
             await httpClient.PostAsync("/v1/payments", JsonSerializerOptionsApi.ToJson(mercadoPagoPagamentoRequest));
         var body = await response.Content.ReadAsStreamAsync();
-        
+
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
-            Log.Error(error);   
+            Log.Error(error);
             throw new ExceptionApi($"Não foi possível gerar o pagamento.");
         }
 
-        return JsonSerializer.Deserialize<MercadoPagoPagamentoResponse>(body, JsonSerializerOptionsApi.Options())
+        return JsonSerializer.Deserialize<MercadoPagoPagamentoResponse>(body, JsonSerializerOptionsApi.Options)
                ?? throw new Exception("Não foi possível desserealizar o objeto response do mercado pago!");
     }
 }

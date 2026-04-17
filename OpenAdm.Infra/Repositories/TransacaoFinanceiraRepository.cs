@@ -2,7 +2,7 @@
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Context;
+using OpenAdm.Data.Context;
 
 namespace OpenAdm.Infra.Repositories;
 

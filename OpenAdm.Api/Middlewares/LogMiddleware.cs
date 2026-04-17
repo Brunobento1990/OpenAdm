@@ -1,6 +1,5 @@
 ﻿using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Domain.Exceptions;
-using OpenAdm.Infra.HttpService.Interfaces;
 using System.Text.Json;
 using Serilog;
 
@@ -21,9 +20,7 @@ public class LogMiddleware
         _next = next;
     }
 
-    public async Task Invoke(
-        HttpContext httpContext,
-        IDiscordHttpService discordHttpService)
+    public async Task Invoke(HttpContext httpContext)
     {
         try
         {

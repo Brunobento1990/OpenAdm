@@ -1,100 +1,54 @@
-﻿using OpenAdm.Application.Dtos.WhatsApp;
-using OpenAdm.Application.HttpClient.Interfaces;
-using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Interfaces.Pedidos;
-using OpenAdm.Application.Models;
+﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.ConfiguracoesDePedidos;
-using OpenAdm.Application.Models.Emails;
-using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Entities.OpenAdm;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model.Eventos;
 
 namespace OpenAdm.Application.Services;
 
 public class ProcessarPedidoService : IProcessarPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository;
-    private readonly IPdfPedidoService _pdfPedidoService;
-    private readonly IEmailApiService _emailService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
-    private readonly IHttpClientWhatsApp _httpClientWhatsApp;
     private readonly IEstoqueService _estoqueService;
+    private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
 
     public ProcessarPedidoService(
         IPedidoRepository pedidoRepository,
-        IPdfPedidoService pdfPedidoService,
-        IEmailApiService emailService,
         IParceiroAutenticado parceiroAutenticado,
-        IHttpClientWhatsApp httpClientWhatsApp, IEstoqueService estoqueService)
+        IEstoqueService estoqueService, IEventoAplicacaoRepository eventoAplicacaoRepository)
     {
         _pedidoRepository = pedidoRepository;
-        _pdfPedidoService = pdfPedidoService;
-        _emailService = emailService;
         _parceiroAutenticado = parceiroAutenticado;
-        _httpClientWhatsApp = httpClientWhatsApp;
         _estoqueService = estoqueService;
+        _eventoAplicacaoRepository = eventoAplicacaoRepository;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId, ConfiguracoesDePedidoViewModel configuracoesDePedido)
     {
-        var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId);
 
         if (pedido == null)
         {
             return;
         }
-        
+
+        //TODO: adicionar evento de reservar estoque    
         await _estoqueService.ReservarEstoqueNovoPedidoAsync(pedido);
 
-        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
-
-        if (!string.IsNullOrWhiteSpace(configuracoesDePedido.WhatsApp))
+        var dados = new NovoPedidoEvento()
         {
-            var payload = new EnviarPDFWppDTO()
-            {
-                Number = $"55{configuracoesDePedido.WhatsApp.LimparMascaraTelefone()}",
-                MediaType = "document",
-                MimeType = "application/pdf",
-                Caption =
-                    $"{parceiro.NomeFantasia}\nÓtima noticia, o cliente {pedido.Usuario.Nome} fez um novo pedido \nNúmero do pedido: {pedido.Numero}",
-                Media = Convert.ToBase64String(pdf),
-                FileName = $"pedido-{pedido.Numero}.pdf",
-                Delay = 0,
-                LinkPreview = false,
-                MentionsEveryOne = false,
-                Mentioned = null!
-            };
+            PedidoId = pedidoId,
+        }.ToString();
+        
+        var evento = EventoAplicacao
+            .Criar(
+                dados: dados,
+                tipoEventoAplicacao: TipoEventoAplicacaoEnum.EnviarPedidoWhatsApp,
+                empresaOpenAdmId: _parceiroAutenticado.Id);
 
-            var resultado = await _httpClientWhatsApp.EnviarPdfAsync(payload);
-
-            if (resultado)
-            {
-                return;
-            }
-        }
-
-        var htmlEnvio = await File.ReadAllTextAsync(Path.Combine("Htmls", "NovoPedido.html"));
-        htmlEnvio = htmlEnvio.Replace("***pedido***", pedido.Numero.ToString());
-        htmlEnvio = htmlEnvio.Replace("***empresa***", parceiro.NomeFantasia);
-
-        var assunto = "Novo pedido";
-
-        var emailModel = new ToEnvioEmailApiModel()
-        {
-            Assunto = assunto,
-            Email = configuracoesDePedido.EmailDeEnvio,
-            Arquivo = pdf,
-            NomeDoArquivo = $"pedido-{pedido.Numero}",
-            TipoDoArquivo = "application/pdf",
-            Html = htmlEnvio
-        };
-
-        await _emailService.SendEmailAsync(emailModel, new FromEnvioEmailApiModel()
-        {
-            Email = EmailConfiguracaoModel.Email,
-            Porta = EmailConfiguracaoModel.Porta,
-            Senha = EmailConfiguracaoModel.Senha,
-            Servidor = EmailConfiguracaoModel.Servidor
-        });
+        await _eventoAplicacaoRepository.AddAsync(evento);
+        await _eventoAplicacaoRepository.SaveChangesAsync();
     }
 }

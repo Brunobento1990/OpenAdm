@@ -26,7 +26,6 @@ var key = VariaveisDeAmbiente.GetVariavel("CRYP_KEY");
 var iv = VariaveisDeAmbiente.GetVariavel("CRYP_IV");
 var pgString = VariaveisDeAmbiente.GetVariavel("STRING_CONNECTION");
 var redisString = VariaveisDeAmbiente.GetVariavel("REDIS_URL");
-var urlDiscord = VariaveisDeAmbiente.GetVariavel("URL_DISCORD");
 var urlApiCep = VariaveisDeAmbiente.GetVariavel("URL_API_CEP");
 var urlApiViaCep = VariaveisDeAmbiente.GetVariavel("URL_API_VIA_CEP");
 var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
@@ -51,9 +50,8 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
-builder.Services.InjectHttpClient(urlDiscord, urlApiCep, urlApiViaCep,
+builder.Services.InjectHttpClient(urlApiCep, urlApiViaCep,
     builder.Configuration);
-builder.Services.ConfigurarJobs(builder.Configuration, pgString);
 
 builder.ConfigureLog();
 

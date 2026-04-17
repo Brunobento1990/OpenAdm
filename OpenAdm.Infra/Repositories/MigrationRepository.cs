@@ -4,7 +4,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Helpers;
-using OpenAdm.Infra.Context;
+using OpenAdm.Data.Context;
 using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Infra.Repositories;

@@ -3,8 +3,8 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http.Features;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Model;
 using Serilog;
 
 namespace OpenAdm.Api.Extensions;
@@ -28,7 +28,7 @@ public static class HttpContextExtension
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)httpStatusCode;
-        var result = JsonSerializer.Serialize(errorResponse, JsonSerializerOptionsApi.Options());
+        var result = JsonSerializer.Serialize(errorResponse, JsonSerializerOptionsApi.Options);
         Log.Error(result, "Body response");
         await context.Response.WriteAsync(result);
     }

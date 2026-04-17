@@ -1,8 +1,8 @@
 using System.Net.Http.Headers;
-using Microsoft.Extensions.Configuration;
 using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.HttpClient.Request;
 using OpenAdm.Application.HttpClient.Response;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Enums;
 using OpenAdm.Infra.Model;
@@ -13,7 +13,7 @@ public class HttpClientFrete : IHttpClientFrete
 {
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public HttpClientFrete(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public HttpClientFrete(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
     }

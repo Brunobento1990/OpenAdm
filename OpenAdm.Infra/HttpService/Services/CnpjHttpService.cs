@@ -2,6 +2,7 @@
 using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Enums;
 using OpenAdm.Infra.Model;
 
@@ -11,6 +12,7 @@ public class CnpjHttpService : IHttpClientConsultaCnpj
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _nomeCliente = HttpServiceEnum.ConsultaCnpj.ToString();
+
     public CnpjHttpService(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
@@ -30,7 +32,7 @@ public class CnpjHttpService : IHttpClientConsultaCnpj
                 throw new ExceptionApi("Não foi possível obter a resposta da consulta do seu CNPJ");
             }
 
-            var erro = JsonSerializer.Deserialize<ConsultaCnpjErroResponse>(body, JsonSerializerOptionsApi.Options());
+            var erro = JsonSerializer.Deserialize<ConsultaCnpjErroResponse>(body, JsonSerializerOptionsApi.Options);
 
             if (!string.IsNullOrWhiteSpace(erro?.Message))
             {
@@ -40,7 +42,7 @@ public class CnpjHttpService : IHttpClientConsultaCnpj
             throw new ExceptionApi("Não foi possível efetuar a consulta do seu CNPJ");
         }
 
-        return JsonSerializer.Deserialize<ConsultaCnpjResponse>(body, JsonSerializerOptionsApi.Options())
-            ?? throw new ExceptionApi("Não foi possível efetuar a consulta do seu CNPJ!");
+        return JsonSerializer.Deserialize<ConsultaCnpjResponse>(body, JsonSerializerOptionsApi.Options)
+               ?? throw new ExceptionApi("Não foi possível efetuar a consulta do seu CNPJ!");
     }
 }

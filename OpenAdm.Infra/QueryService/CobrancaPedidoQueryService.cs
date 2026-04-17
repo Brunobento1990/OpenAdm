@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Queries;
-using OpenAdm.Infra.Context;
+using OpenAdm.Data.Context;
 
 namespace OpenAdm.Infra.QueryService;
 

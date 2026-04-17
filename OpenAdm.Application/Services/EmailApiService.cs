@@ -1,7 +1,7 @@
-﻿using OpenAdm.Application.Interfaces;
+﻿using OpenAdm.Application.Models.Emails;
+using OpenAdm.Application.Interfaces;
 using System.Net.Mail;
 using System.Net;
-using OpenAdm.Application.Models.Emails;
 using System.Net.Mime;
 
 namespace OpenAdm.Application.Services;

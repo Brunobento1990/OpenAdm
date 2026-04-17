@@ -2,8 +2,8 @@
 using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Infra.Enums;
-using OpenAdm.Infra.Model;
 using System.Text.Json;
+using OpenAdm.Domain.Helpers;
 
 namespace OpenAdm.Infra.HttpService.Services;
 
@@ -28,7 +28,7 @@ public sealed class CepHttpService : IHttpClientCep
 
         var body = await response.Content.ReadAsStreamAsync();
 
-        return JsonSerializer.Deserialize<ConsultaCepResponse>(body, JsonSerializerOptionsApi.Options())
+        return JsonSerializer.Deserialize<ConsultaCepResponse>(body, JsonSerializerOptionsApi.Options)
                ?? throw new ExceptionApi($"Erro ao consultar o CEP: {cepOrigem}");
     }
 }

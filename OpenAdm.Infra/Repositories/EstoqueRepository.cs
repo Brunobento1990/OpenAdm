@@ -1,7 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Context;
+using OpenAdm.Data.Context;
 using System.Linq.Expressions;
 
 namespace OpenAdm.Infra.Repositories;

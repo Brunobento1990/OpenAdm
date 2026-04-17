@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Context;
+using OpenAdm.Data.Context;
 using OpenAdm.Infra.Model;
 
 namespace OpenAdm.IoC;

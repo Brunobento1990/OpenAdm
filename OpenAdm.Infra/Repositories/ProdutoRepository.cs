@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using OpenAdm.Infra.Context;
+using OpenAdm.Data.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 using System.Linq.Expressions;
 using OpenAdm.Domain.PaginateDto;
