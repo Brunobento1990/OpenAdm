@@ -367,3 +367,4 @@ FodyWeavers.xsd
 /OpenAdm.Api/.env
 .vscode
 .idea
+/OpenAdm.Worker/appsettings.Development.json
