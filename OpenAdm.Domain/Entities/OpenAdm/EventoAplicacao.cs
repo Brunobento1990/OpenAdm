@@ -1,5 +1,6 @@
 using System.Text.Json;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Extensions;
 
 namespace OpenAdm.Domain.Entities.OpenAdm;
 
@@ -38,21 +39,28 @@ public class EventoAplicacao
     public Guid EmpresaOpenAdmId { get; private set; }
     public EmpresaOpenAdm EmpresaOpenAdm { get; set; } = null!;
 
+    public bool PodeExecutar => !Finalizado && QuantidadeDeTentativa < 3;
+
+    public T? DadosParse<T>()
+    {
+        return JsonSerializer.Deserialize<T>(Dados.RootElement.GetRawText());
+    }
+
     public void AdicionarMensagem(string mensagem)
     {
-        Mensagem = mensagem;
+        Mensagem = mensagem.Limitar(1000);
         DataDeAtualizacao = DateTime.Now;
     }
 
     public void AdicionarTentativa()
     {
-        QuantidadeDeTentativa = +1;
+        QuantidadeDeTentativa++;
         DataDeAtualizacao = DateTime.Now;
     }
-    
+
     public void Finalizada(string? mensagem)
     {
-        Mensagem = mensagem;
+        Mensagem = string.IsNullOrWhiteSpace(mensagem) ? mensagem : mensagem.Limitar(1000);
         Finalizado = true;
         DataDeAtualizacao = DateTime.Now;
     }

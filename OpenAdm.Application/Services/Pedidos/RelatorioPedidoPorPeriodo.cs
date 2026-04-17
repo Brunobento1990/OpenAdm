@@ -2,6 +2,8 @@
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Pedidos;
+using OpenAdm.Pdf.DTOs;
+using OpenAdm.Pdf.Interfaces;
 using System.Text;
 
 namespace OpenAdm.Application.Services.Pedidos;
@@ -30,7 +32,7 @@ public sealed class RelatorioPedidoPorPeriodo : IRelatorioPedidoPorPeriodo
 
         var logo = parceiro.Logo is null ? null : Encoding.UTF8.GetString(parceiro.Logo);
         var total = pedidos.Sum(x => x.ValorTotal);
-        var relatorioPedidoModel = new GerarRelatorioPedidoDto(
+        var relatorioPedidoModel = new GerarRelatorioPedidoDTO(
             relatorioPedidoDto.DataInicial,
             relatorioPedidoDto.DataFinal,
             logo,

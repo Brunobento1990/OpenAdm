@@ -13,6 +13,8 @@ internal class EventoAplicacaoConfiguration : IEntityTypeConfiguration<EventoApl
         builder.Property(x => x.Mensagem)
             .HasMaxLength(1000);
 
+        builder.Ignore(x => x.PodeExecutar);
+
         builder.HasIndex(x => new { x.QuantidadeDeTentativa, x.Finalizado });
     }
 }

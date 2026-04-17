@@ -1,8 +1,8 @@
-﻿namespace OpenAdm.Application.Dtos.Pedidos;
+﻿namespace OpenAdm.Pdf.DTOs;
 
-public class GerarRelatorioPedidoDto
+public class GerarRelatorioPedidoDTO
 {
-    public GerarRelatorioPedidoDto(
+    public GerarRelatorioPedidoDTO(
         DateTime dataInicial,
         DateTime dataFinal,
         string? logo,

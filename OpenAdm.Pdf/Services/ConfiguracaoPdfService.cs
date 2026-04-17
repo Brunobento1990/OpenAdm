@@ -2,7 +2,7 @@
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace OpenAdm.Application.Services;
+namespace OpenAdm.Pdf.Services;
 
 public static class ConfiguracaoPdfService
 {
@@ -27,4 +27,3 @@ public static class ConfiguracaoPdfService
                 });
     }
 }
-

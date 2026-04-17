@@ -7,6 +7,8 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Application.Dtos.MovimentosDeProdutos;
 using System.Text;
+using OpenAdm.Pdf.Interfaces;
+using OpenAdm.Pdf.DTOs;
 
 namespace OpenAdm.Application.Services;
 
@@ -70,10 +72,10 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         var tamanhos = await _tamanhoRepository.GetDescricaoTamanhosAsync(tamanhosIds);
         var pesos = await _pesoRepository.GetDescricaoPesosAsync(pesosIds);
 
-        var movimentacoesRelatorio = new List<MovimentacaoDeProdutoRelatorio>();
-        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalCategorias = [];
-        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalPesos = [];
-        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalTamanhos = [];
+        var movimentacoesRelatorio = new List<MovimentacaoDeProdutoRelatorioDTO>();
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDTO> totalCategorias = [];
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDTO> totalPesos = [];
+        IList<RelatorioMovimentoDeProdutoTotalizacaoDTO> totalTamanhos = [];
 
         foreach (var item in movimentacoes)
         {
@@ -83,7 +85,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
                 if (totalCategoria == null)
                 {
-                    totalCategorias.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
+                    totalCategorias.Add(new RelatorioMovimentoDeProdutoTotalizacaoDTO()
                     {
                         Descricao = produto.Categoria.Descricao,
                         Total = item.QuantidadeMovimentada
@@ -139,7 +141,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         {
             if (pesos.TryGetValue(peso.Peso, out var pes))
             {
-                totalPesos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
+                totalPesos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDTO()
                 {
                     Descricao = pes,
                     Total = movimentacoes.Where(x => x.PesoId == peso.Peso).Sum(x => x.QuantidadeMovimentada)
@@ -151,7 +153,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         {
             if (tamanhos.TryGetValue(tamanho.Tamanho, out var tama))
             {
-                totalTamanhos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDto()
+                totalTamanhos.Add(new RelatorioMovimentoDeProdutoTotalizacaoDTO()
                 {
                     Descricao = tama,
                     Total = movimentacoes.Where(x => x.TamanhoId == tamanho.Tamanho).Sum(x => x.QuantidadeMovimentada)

@@ -10,6 +10,8 @@ using OpenAdm.Domain.Model;
 using System.Reactive.Linq;
 using System.Text;
 using OpenAdm.Application.Queries;
+using OpenAdm.Pdf.Interfaces;
+using OpenAdm.Pdf.DTOs;
 
 namespace OpenAdm.Application.Services;
 
@@ -195,7 +197,19 @@ public class PedidoService : IPedidoService
         }
 
         return _pdfPedidoService.ProducaoPedido(
-            itensProducao.OrderBy(x => x.Produto).ToList(),
+            itensProducao.OrderBy(x => x.Produto).Select(x => new ItemPedidoProducaoDTO()
+            {
+                Categoria = x.Categoria,
+                Id = x.Id,
+                Peso = x.Peso,
+                PesoId = x.PesoId,
+                Produto = x.Produto,
+                ProdutoId = x.ProdutoId,
+                Quantidade = x.Quantidade,
+                Referencia = x.Referencia,
+                Tamanho = x.Tamanho,
+                TamanhoId = x.TamanhoId
+            }).ToList(),
             parceiro.NomeFantasia,
             logo,
             pedidos);

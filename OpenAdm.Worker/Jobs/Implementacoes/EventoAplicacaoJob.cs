@@ -1,5 +1,7 @@
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Worker.Application.Interfaces;
+using OpenAdm.Worker.Application.Service;
 using OpenAdm.Worker.Jobs.Interfaces;
 
 namespace OpenAdm.Worker.Jobs.Implementacoes;
@@ -23,40 +25,64 @@ public class EventoAplicacaoJob : BaseJob, IJobInfo
         }
 
         using var scope = _serviceProvider.CreateScope();
-
         var eventoRepository = scope.ServiceProvider.GetRequiredService<IEventoAplicacaoRepository>();
-        var eventos = await eventoRepository.ProximosEventosAsync();
 
-        foreach (var evento in eventos)
+        var evento = await eventoRepository.ProximoEventoAsync();
+
+        if (evento == null)
         {
-            var eventoServico =
-                scope.ServiceProvider.GetKeyedService<IEventoAplicacaoService>(evento.TipoEventoAplicacao);
+            return;
+        }
+
+        var parceiroAutenticado = scope.ServiceProvider.GetRequiredService<IParceiroAutenticado>();
+
+
+        parceiroAutenticado.ConnectionString = Criptografia.Decrypt(evento.EmpresaOpenAdm.ConnectionString);
+        parceiroAutenticado.Id = evento.EmpresaOpenAdmId;
+
+        if (!evento.PodeExecutar)
+        {
+            return;
+        }
+
+        try
+        {
+            var eventoServico = scope.ServiceProvider.GetKeyedService<IEventoAplicacaoService>(evento.TipoEventoAplicacao);
 
             if (eventoServico == null)
             {
                 evento.AdicionarMensagem($"Servico null para o evento: {evento.TipoEventoAplicacao}");
                 evento.AdicionarTentativa();
                 await eventoRepository.SaveChangesAsync();
-                continue;
+                LogService.Info($"Evento sem implementação: {evento.TipoEventoAplicacao}");
+                return;
             }
 
             var resultado = await eventoServico.ExecutarAsync(evento);
 
             if (!string.IsNullOrWhiteSpace(resultado.Error))
             {
-                evento.AdicionarMensagem($"Servico null para o evento: {evento.TipoEventoAplicacao}");
+                LogService.Error($"Erro no evento: {evento.TipoEventoAplicacao}");
+                evento.AdicionarMensagem(resultado.Error);
                 evento.AdicionarTentativa();
                 await eventoRepository.SaveChangesAsync();
-                continue;
+                return;
             }
 
             evento.Finalizada(resultado.Result?.Mensagem);
             await eventoRepository.SaveChangesAsync();
         }
+        catch (Exception ex)
+        {
+            LogService.Error($"Erro no evento: {ex.InnerException?.Message ?? ex.Message}");
+            evento.AdicionarMensagem(ex.InnerException?.Message ?? ex.Message);
+            evento.AdicionarTentativa();
+            await eventoRepository.SaveChangesAsync();
+        }
     }
 
     public static string Key => "EventoAplicacaoJobKey";
-    public static string IdentityTrigger => "ConexaoWhatsAppJobIdentityTrigger";
+    public static string IdentityTrigger => "EventoAplicacaoJobIdentityTrigger";
 
     public static string ObterConfiguracaoTempoDeExecucao(IConfiguration configuracao)
     {

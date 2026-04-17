@@ -1,14 +1,13 @@
-﻿using OpenAdm.Application.Dtos.MovimentosDeProdutos;
-using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.MovimentacaoDeProdutos;
-using OpenAdm.Domain.Extensions;
+﻿using OpenAdm.Domain.Extensions;
+using OpenAdm.Pdf.DTOs;
+using OpenAdm.Pdf.Interfaces;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
-namespace OpenAdm.Application.Services;
+namespace OpenAdm.Pdf.Services;
 
-public sealed class MovimentacaoDeProdutoRelatorioService : IMovimentacaoDeProdutoRelatorioService
+internal class MovimentacaoDeProdutoRelatorioService : IMovimentacaoDeProdutoRelatorioService
 {
     private readonly IList<string> _colunsName = new List<string>()
     {
@@ -24,15 +23,16 @@ public sealed class MovimentacaoDeProdutoRelatorioService : IMovimentacaoDeProdu
     {
         80,50,140,80,60,70,60
     };
+
     public byte[] ObterPdfAsync(
-        IList<MovimentacaoDeProdutoRelatorio> movimentacaoDeProdutoRelatorios,
-        string nomeFantasia,
-        DateTime dataInicial,
-        DateTime dataFinal,
-        string? logo,
-        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalCategoria,
-        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalPesos,
-        IList<RelatorioMovimentoDeProdutoTotalizacaoDto> totalTamanhos)
+            IList<MovimentacaoDeProdutoRelatorioDTO> movimentacaoDeProdutoRelatorios,
+            string nomeFantasia,
+            DateTime dataInicial,
+            DateTime dataFinal,
+            string? logo,
+            IList<RelatorioMovimentoDeProdutoTotalizacaoDTO> totalCategoria,
+            IList<RelatorioMovimentoDeProdutoTotalizacaoDTO> totalPesos,
+            IList<RelatorioMovimentoDeProdutoTotalizacaoDTO> totalTamanhos)
     {
         void HeaderCustom(IContainer container)
         {

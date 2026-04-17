@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Pdf.Interfaces;
 
 namespace OpenAdm.Application.Services.Pedidos;
 

@@ -28,7 +28,7 @@ public class EventoAplicacaoRepository : IEventoAplicacaoRepository
         await _appDbContext.SaveChangesAsync();
     }
 
-    public Task<ICollection<EventoAplicacao>> ProximosEventosAsync()
+    public Task<EventoAplicacao?> ProximoEventoAsync()
     {
         throw new NotImplementedException();
     }

@@ -7,5 +7,5 @@ public interface IEventoAplicacaoRepository
     Task AddAsync(EventoAplicacao eventoAplicacao);
     Task AddRangeAsync(IEnumerable<EventoAplicacao> eventoAplicacao);
     Task SaveChangesAsync();
-    Task<ICollection<EventoAplicacao>> ProximosEventosAsync();
+    Task<EventoAplicacao?> ProximoEventoAsync();
 }

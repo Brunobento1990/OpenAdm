@@ -1,6 +1,6 @@
-﻿namespace OpenAdm.Application.Models.MovimentacaoDeProdutos;
+﻿namespace OpenAdm.Pdf.DTOs;
 
-public class MovimentacaoDeProdutoRelatorio
+public class MovimentacaoDeProdutoRelatorioDTO
 {
     public string? Referencia { get; set; }
     public string Descricao { get; set; } = string.Empty;

@@ -16,6 +16,21 @@ public static class StringExtensions
                              value.Substring(7, 4));
     }
 
+    public static string Limitar(this string value, int length)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        if (value.Length <= length)
+        {
+            return value;
+        }
+
+        return value[..length];
+    }
+
     public static string RemoverAcentos(this string text)
     {
         string withDiacritics = "ÄÅÁÂÀÃäáâàãÉÊËÈéêëèÍÎÏÌíîïìÖÓÔÒÕöóôòõÜÚÛüúûùÇç";

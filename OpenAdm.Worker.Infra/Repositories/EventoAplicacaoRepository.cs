@@ -29,11 +29,12 @@ public class EventoAplicacaoRepository : IEventoAplicacaoRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<ICollection<EventoAplicacao>> ProximosEventosAsync()
+    public async Task<EventoAplicacao?> ProximoEventoAsync()
     {
         return await _context
             .EventosAplicacao
-            .Where(x => !x.Finalizado && x.QuantidadeDeTentativa < 3)
-            .ToListAsync();
+            .Include(x => x.EmpresaOpenAdm)
+            .OrderBy(x => x.DataDeCriacao)
+            .FirstOrDefaultAsync(x => !x.Finalizado && x.QuantidadeDeTentativa < 3);
     }
 }

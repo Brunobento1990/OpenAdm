@@ -81,6 +81,9 @@ public static class ConfigurcaoIoC
     public static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IEventoAplicacaoRepository, EventoAplicacaoRepository>();
+        services.AddScoped<IPedidoRepository, PedidoRepository>();
+        services.AddScoped<IParceiroRepository, ParceiroRepository>();
+        services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoRepository>();
 
         return services;
     }

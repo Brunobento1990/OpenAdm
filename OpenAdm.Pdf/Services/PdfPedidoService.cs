@@ -1,15 +1,14 @@
-﻿using OpenAdm.Application.Dtos.Pedidos;
-using OpenAdm.Application.Interfaces.Pedidos;
+﻿using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Extensions;
+using OpenAdm.Pdf.DTOs;
+using OpenAdm.Pdf.Interfaces;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using OpenAdm.Domain.Extensions;
-using OpenAdm.Domain.Entities;
-using OpenAdm.Application.Models.Pedidos;
 
-namespace OpenAdm.Application.Services.Pedidos;
+namespace OpenAdm.Pdf.Services;
 
-public sealed class PdfPedidoService : IPdfPedidoService
+internal class PdfPedidoService : IPdfPedidoService
 {
     private readonly IList<string> _colunsName = new List<string>()
     {
@@ -494,7 +493,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
     }
 
     public byte[] GeneratePdfPedidoRelatorio(
-        GerarRelatorioPedidoDto relatorioPedidoDto,
+        GerarRelatorioPedidoDTO relatorioPedidoDto,
         string nomeFantasia, IList<Pedido> pedidos)
     {
         var itensPedido = pedidos.SelectMany(x => x.ItensPedido);
@@ -735,7 +734,7 @@ public sealed class PdfPedidoService : IPdfPedidoService
     }
 
     public byte[] ProducaoPedido(
-        IList<ItemPedidoProducaoViewModel> itemPedidoProducaoViewModels,
+        IList<ItemPedidoProducaoDTO> itemPedidoProducaoViewModels,
         string nomeFantasia,
         string? logo,
         IList<string> pedidos)

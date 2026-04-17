@@ -9,7 +9,7 @@ using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
-using QuestPDF.Infrastructure;
+using OpenAdm.Pdf;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,12 +50,12 @@ builder.Services.InjectCors();
 builder.Services.InjectJwt(keyJwt, issue, audience);
 builder.Services.InjectContext(pgString);
 builder.Services.InjectRepositories(redisString, instanceName);
-builder.Services.InjectHttpClient(urlApiCep, urlApiViaCep,
+builder.Services
+    .ConfigurarPdf()
+    .InjectHttpClient(urlApiCep, urlApiViaCep,
     builder.Configuration);
 
 builder.ConfigureLog();
-
-QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 

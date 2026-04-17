@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.8.34525.116
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11605.240 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAdm.Domain", "OpenAdm.Domain\OpenAdm.Domain.csproj", "{7B53B3AE-9A1C-4F2E-8EC3-3D5C40B4A7FC}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAdm.Worker.Application", "OpenAdm.Worker.Application\OpenAdm.Worker.Application.csproj", "{47A31D9A-4300-4BE2-B7D5-D4AE6157C91D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAdm.Data", "OpenAdm.Data\OpenAdm.Data.csproj", "{753848B9-433F-4355-949F-32D9506E6662}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAdm.Pdf", "OpenAdm.Pdf\OpenAdm.Pdf.csproj", "{E2F9B050-AE6B-4FB9-9DE3-FFE7A86BE34B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,16 +73,20 @@ Global
 		{753848B9-433F-4355-949F-32D9506E6662}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{753848B9-433F-4355-949F-32D9506E6662}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{753848B9-433F-4355-949F-32D9506E6662}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2F9B050-AE6B-4FB9-9DE3-FFE7A86BE34B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2F9B050-AE6B-4FB9-9DE3-FFE7A86BE34B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2F9B050-AE6B-4FB9-9DE3-FFE7A86BE34B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2F9B050-AE6B-4FB9-9DE3-FFE7A86BE34B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5F25489C-9150-42A3-A27E-ACF8629B5A83}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2CD0FF82-48D4-40F7-9E28-707F6CE70592} = {799B5C61-51E9-4700-8D5C-BC7533CC9D1C}
 		{DBC719E3-B4A1-450D-A594-A8EC33D429E8} = {799B5C61-51E9-4700-8D5C-BC7533CC9D1C}
 		{47A31D9A-4300-4BE2-B7D5-D4AE6157C91D} = {799B5C61-51E9-4700-8D5C-BC7533CC9D1C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F25489C-9150-42A3-A27E-ACF8629B5A83}
 	EndGlobalSection
 EndGlobal

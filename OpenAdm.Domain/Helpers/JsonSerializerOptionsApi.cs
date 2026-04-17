@@ -21,7 +21,7 @@ public static class JsonSerializerOptionsApi
         {
             return JsonSerializer.Deserialize<T>(json, _options);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return default;
         }

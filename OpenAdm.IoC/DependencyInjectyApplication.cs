@@ -24,10 +24,8 @@ public static class DependencyInjectyApplication
         services.AddScoped<IEnderecoEntregaPedidoService, EnderecoEntregaPedidoService>();
         services.AddScoped<IConfiguracaoDePagamentoService, ConfiguracaoDePagamentoService>();
         services.AddScoped<IFaturaService, FaturaService>();
-        services.AddScoped<IMovimentacaoDeProdutoRelatorioService, MovimentacaoDeProdutoRelatorioService>();
         services.AddScoped<ITopUsuarioService, TopUsuarioService>();
         services.AddScoped<IEmailApiService, EmailApiService>();
-        services.AddScoped<IPdfPedidoService, PdfPedidoService>();
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ILoginFuncionarioService, LoginFuncionarioService>();
