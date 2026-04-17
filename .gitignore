@@ -198,6 +198,9 @@ PublishScripts/
 *.snupkg
 # The packages folder can be ignored because of Package Restore
 **/[Pp]ackages/*
+
+# Ignore worker development settings
+OpenAdm.Worker/appsettings.Development.json
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
 # Uncomment if necessary however generally it will be regenerated when needed
@@ -367,4 +370,4 @@ FodyWeavers.xsd
 /OpenAdm.Api/.env
 .vscode
 .idea
-/OpenAdm.Worker/appsettings.Development.json
+/OpenAdm.Worker/appSettings.Development.json
