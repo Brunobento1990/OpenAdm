@@ -2,15 +2,11 @@ name: Docker Image CI
 
 on:
   push:
-    tags:
-      - "*.*.*"
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      TAG: ${GITHUB_REF#refs/tags/}
 
     steps:
       - uses: actions/checkout@v4
@@ -41,24 +37,20 @@ jobs:
       - name: Build API Image
         run: |
           docker build -f OpenAdm.Api/Dockerfile . \
-          -t brunobentocaina/open-adm-api:$TAG \
           -t brunobentocaina/open-adm-api:latest
 
       # 🐳 Build Worker
       - name: Build Worker Image
         run: |
           docker build -f OpenAdm.Worker/Dockerfile . \
-          -t brunobentocaina/open-adm-worker:$TAG \
           -t brunobentocaina/open-adm-worker:latest
 
       # 🚀 Push API
       - name: Push API
         run: |
-          docker push brunobentocaina/open-adm-api:$TAG
           docker push brunobentocaina/open-adm-api:latest
 
       # 🚀 Push Worker
       - name: Push Worker
         run: |
-          docker push brunobentocaina/open-adm-worker:$TAG
           docker push brunobentocaina/open-adm-worker:latest

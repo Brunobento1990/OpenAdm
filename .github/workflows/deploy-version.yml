@@ -1,0 +1,60 @@
+name: Docker Image CI
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      TAG: ${GITHUB_REF#refs/tags/}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: |
+          dotnet restore ./OpenAdm.Api
+          dotnet restore ./OpenAdm.Worker
+
+      - name: Build
+        run: |
+          dotnet build ./OpenAdm.Api --configuration Release --no-restore
+          dotnet build ./OpenAdm.Worker --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ./OpenAdm.Test --configuration Release
+
+      # 🔐 Login seguro
+      - name: Login Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_KEY }}" | docker login -u brunobentocaina --password-stdin
+
+      # 🐳 Build API
+      - name: Build API Image
+        run: |
+          docker build -f OpenAdm.Api/Dockerfile . \
+          -t brunobentocaina/open-adm-api:$TAG \
+
+      # 🐳 Build Worker
+      - name: Build Worker Image
+        run: |
+          docker build -f OpenAdm.Worker/Dockerfile . \
+          -t brunobentocaina/open-adm-worker:$TAG \
+
+      # 🚀 Push API
+      - name: Push API
+        run: |
+          docker push brunobentocaina/open-adm-api:$TAG
+
+      # 🚀 Push Worker
+      - name: Push Worker
+        run: |
+          docker push brunobentocaina/open-adm-worker:$TAG
