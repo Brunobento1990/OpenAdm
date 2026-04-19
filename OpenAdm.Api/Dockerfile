@@ -14,6 +14,8 @@ COPY ["OpenAdm.Application/OpenAdm.Application.csproj", "OpenAdm.Application/"]
 COPY ["OpenAdm.Domain/OpenAdm.Domain.csproj", "OpenAdm.Domain/"]
 COPY ["OpenAdm.IoC/OpenAdm.IoC.csproj", "OpenAdm.IoC/"]
 COPY ["OpenAdm.Infra/OpenAdm.Infra.csproj", "OpenAdm.Infra/"]
+COPY ["OpenAdm.Pdf/OpenAdm.Pdf.csproj", "OpenAdm.Pdf/"]
+COPY ["OpenAdm.Data/OpenAdm.Data.csproj", "OpenAdm.Data/"]
 RUN dotnet restore "./OpenAdm.Api/OpenAdm.Api.csproj"
 COPY . .
 WORKDIR "/src/OpenAdm.Api"

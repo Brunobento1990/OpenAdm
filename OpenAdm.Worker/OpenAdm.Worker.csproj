@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-OpenAdm.Worker-f06bcb5c-ace0-4b1e-9265-cac0fd5bfbb8</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,5 +24,11 @@
 
     <ItemGroup>
       <ProjectReference Include="..\OpenAdm.Worker.Infra\OpenAdm.Worker.Infra.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 </Project>

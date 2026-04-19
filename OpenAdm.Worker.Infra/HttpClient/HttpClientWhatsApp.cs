@@ -19,7 +19,7 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
         var instance = configuration["WhatsApp:Instance"];
         if (!string.IsNullOrWhiteSpace(instance))
         {
-            _instance = instance.ToLower();
+            _instance = instance;
         }
     }
 
@@ -45,7 +45,7 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
     {
         using var client = _httpClientFactory.CreateClient(nameof(HttpClientEnum.WhatsApp));
 
-        var response = await client.GetAsync($"/instance/connectionState/{_instance}");
+        var response = await client.GetAsync($"instance/connectionState/{_instance}");
 
         if (!response.IsSuccessStatusCode)
         {

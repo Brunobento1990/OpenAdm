@@ -1,7 +1,10 @@
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Worker;
 using OpenAdm.Pdf;
 
 var builder = Host.CreateApplicationBuilder(args);
+
+Criptografia.Configure(builder.Configuration["Criptografia:Key"]!, builder.Configuration["Criptografia:Iv"]!);
 
 builder.Services
     .AddServicesApplication()

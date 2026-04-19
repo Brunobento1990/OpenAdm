@@ -23,4 +23,5 @@ RUN dotnet publish "./OpenAdm.Worker.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV TZ=America/Sao_Paulo
 ENTRYPOINT ["dotnet", "OpenAdm.Worker.dll"]
