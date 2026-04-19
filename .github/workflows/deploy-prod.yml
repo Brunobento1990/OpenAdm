@@ -31,7 +31,7 @@ jobs:
           dotnet build ./OpenAdm.Worker --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test ./OpenAdm.Test --no-build
+        run: dotnet test ./OpenAdm.Test --configuration Release
 
       # 🔐 Login seguro
       - name: Login Docker Hub
