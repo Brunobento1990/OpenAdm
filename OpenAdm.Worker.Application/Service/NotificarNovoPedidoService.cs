@@ -75,7 +75,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
                 Mediatype = "document",
                 Mimetype = "application/pdf",
                 Caption =
-                    $"{parceiro.NomeFantasia}\nÓtima noticia, o cliente {pedido.Usuario.Nome} fez um novo pedido \nNúmero do pedido: {pedido.Numero}",
+                    $@"🛒 *Novo pedido confirmado!*\n{parceiro.NomeFantasia}\n👤 Cliente: {pedido.Usuario.Nome}\n🧾 Pedido: #{pedido.Numero}\n💰 Total: {pedido.ValorTotal.FormatMoney()}.",
                 Media = Convert.ToBase64String(pdf),
                 FileName = $"pedido-{pedido.Numero}.pdf",
                 Delay = 0,
