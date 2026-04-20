@@ -94,6 +94,8 @@ public static class ConfigurcaoIoC
 
         services.AddKeyedScoped<IEventoAplicacaoService, NotificarNovoPedidoService>(TipoEventoAplicacaoEnum
             .EnviarPedidoWhatsApp);
+        services.AddKeyedScoped<IEventoAplicacaoService, NotificarParceiroWhatsAppService>(TipoEventoAplicacaoEnum
+            .NotificarParceiroWhatsApp);
 
         return services;
     }

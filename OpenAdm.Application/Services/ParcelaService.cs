@@ -4,11 +4,13 @@ using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.FaturasModel;
 using OpenAdm.Application.Models.ParcelasModel;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.Model.Eventos;
 using Serilog;
 
 namespace OpenAdm.Application.Services;
@@ -20,7 +22,8 @@ public sealed class ParcelaService : IParcelaService
     private readonly IUpdateStatusPedidoService _updateStatusPedidoService;
     private readonly IPedidoService _pedidoService;
     private readonly ITransacaoFinanceiraRepository _transacaoFinanceiraRepository;
-    private readonly INotificarParceiroService _notificarParceiroService;
+    private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
 
     public ParcelaService(
         IParcelaRepository parcelaRepository,
@@ -28,14 +31,15 @@ public sealed class ParcelaService : IParcelaService
         IUpdateStatusPedidoService updateStatusPedidoService,
         IPedidoService pedidoService,
         ITransacaoFinanceiraRepository transacaoFinanceiraRepository,
-        INotificarParceiroService notificarParceiroService)
+        IEventoAplicacaoRepository eventoAplicacaoRepository, IParceiroAutenticado parceiroAutenticado)
     {
         _parcelaRepository = parcelaRepository;
         _contasAReceberService = contasAReceberService;
         _updateStatusPedidoService = updateStatusPedidoService;
         _pedidoService = pedidoService;
         _transacaoFinanceiraRepository = transacaoFinanceiraRepository;
-        _notificarParceiroService = notificarParceiroService;
+        _eventoAplicacaoRepository = eventoAplicacaoRepository;
+        _parceiroAutenticado = parceiroAutenticado;
     }
 
     public async Task<ParcelaViewModel> AddAsync(ParcelaCriarDto parcelaCriarDto)
@@ -102,12 +106,22 @@ public sealed class ParcelaService : IParcelaService
                 PedidoId = parcela.Fatura.PedidoId.Value,
                 StatusPedido = StatusPedido.Faturado
             });
+
+            var msg =
+                $"🔔 *Novo pagamento recebido no e-commerce*\n💰 *Valor:* {parcela.Valor.FormatMoney()}\n🧾 *Pedido:* {parcela.Fatura.Pedido?.Numero}\n👤 *Cliente:* {parcela.Fatura.Usuario.Nome}\n💳 *Pagamento:* Pix\n📅 *Data:* {DateTime.Now.DateTimeToString()}\n✅ O pedido foi marcado como *pago* e já pode seguir para separação/envio.\nAcesse o painel ADM para mais detalhes.";
+
+            var pagamentoPedidoEvento = new NotificarParceiroWhatsAppEvento()
+            {
+                Mensagem = msg,
+            }.ToString();
+
+            await _eventoAplicacaoRepository.AddAsync(EventoAplicacao.Criar(
+                dados: pagamentoPedidoEvento,
+                tipoEventoAplicacao: TipoEventoAplicacaoEnum.NotificarParceiroWhatsApp,
+                empresaOpenAdmId: _parceiroAutenticado.Id));
+
+            await _eventoAplicacaoRepository.SaveChangesAsync();
         }
-
-        var msg =
-            $"🔔 *Novo pagamento recebido no e-commerce*\n💰 *Valor:* {parcela.Valor.FormatMoney()}\n🧾 *Pedido:* {parcela.Fatura.Pedido?.Numero}\n👤 *Cliente:* {parcela.Fatura.Usuario.Nome}\n💳 *Pagamento:* Pix\n📅 *Data:* {DateTime.Now.DateTimeToString()}\n✅ O pedido foi marcado como *pago* e já pode seguir para separação/envio.\nAcesse o painel ADM para mais detalhes.";
-
-        await _notificarParceiroService.NotificarViaWhatsAppAsync(msg);
     }
 
     public async Task<ParcelaViewModel> EditarAsync(ParcelaEditDto parcelaEditDto)
