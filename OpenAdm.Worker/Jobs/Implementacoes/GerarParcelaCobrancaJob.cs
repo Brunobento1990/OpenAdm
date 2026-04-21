@@ -70,8 +70,10 @@ public class GerarParcelaCobrancaJob : BaseJob, IJobInfo
                         int.Parse(_configuration["ParcelaCobranca:DiasVencimento"]!))
                 );
 
+                var linkParaPagamento = $"{_configuration["LinkParaPagamento"]}/{parcelaCobranca.Id}";
+
                 var mensagemCobranca =
-                    $"Olá, {parceiro.NomeFantasia} 👋\nSua mensalidade já está disponível.\n📅 Competência: {DateTime.UtcNow.Month}/{DateTime.UtcNow.Year}\n💰 Valor: R$ {valor.FormatMoney()}\n📆 Vencimento: {parcelaCobranca.DataDeVencimento.DateTimeSomenteDataToString()}\nPara realizar o pagamento, escolha uma das opções abaixo:\n🔹 PIX (copia e cola):\nPIX_COPIA_E_COLA\n🔹 Link de pagamento:\nLINK_PAGAMENTO\nSe tiver qualquer dúvida, é só responder essa mensagem 🙂";
+                    $"Olá, {parceiro.NomeFantasia} 👋\nSua mensalidade já está disponível.\n📅 Competência: {DateTime.UtcNow.Month}/{DateTime.UtcNow.Year}\n💰 Valor: R$ {valor.FormatMoney()}\n📆 Vencimento: {parcelaCobranca.DataDeVencimento.DateTimeSomenteDataToString()}\n🔹 Link de pagamento:\n{linkParaPagamento}\nSe tiver qualquer dúvida, é só responder essa mensagem 🙂";
 
                 var dados = new NotificarParceiroWhatsAppEvento()
                 {
