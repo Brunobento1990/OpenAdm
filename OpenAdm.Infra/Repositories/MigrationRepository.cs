@@ -5,6 +5,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Data.Context;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Infra.Model;
 
 namespace OpenAdm.Infra.Repositories;
@@ -40,7 +41,8 @@ public class MigrationRepository : IMigrationService
                     urlEcommerce: "http://localhost:3000",
                     urlAdmin: "http://localhost:7154",
                     connectionString: Criptografia.Encrypt(
-                        "User ID=postgres; Password=1234; Host=localhost; Port=4045; Database=open-adm-cliente-develop; Pooling=true;"));
+                        "User ID=postgres; Password=1234; Host=localhost; Port=4045; Database=open-adm-cliente-develop; Pooling=true;"),
+                    TipoParcelaCobrancaEnum.Gratis);
 
                 empresa = new Parceiro(
                     id: Guid.NewGuid(),

@@ -14,9 +14,9 @@ public class EventoAplicacaoRepository : IEventoAplicacaoRepository
         _context = context;
     }
 
-    public Task AddAsync(EventoAplicacao eventoAplicacao)
+    public async Task AddAsync(EventoAplicacao eventoAplicacao)
     {
-        throw new NotImplementedException();
+        await _context.EventosAplicacao.AddAsync(eventoAplicacao);
     }
 
     public Task AddRangeAsync(IEnumerable<EventoAplicacao> eventoAplicacao)

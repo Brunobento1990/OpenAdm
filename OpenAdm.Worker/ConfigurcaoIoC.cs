@@ -84,6 +84,7 @@ public static class ConfigurcaoIoC
         services.AddScoped<IPedidoRepository, PedidoRepository>();
         services.AddScoped<IParceiroRepository, ParceiroRepository>();
         services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoRepository>();
+        services.AddScoped<IParcelaCobrancaRepository, ParcelaCobrancaRepository>();
 
         return services;
     }

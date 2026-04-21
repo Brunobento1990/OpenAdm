@@ -60,6 +60,11 @@ public class ParceiroRepository : IParceiroRepository
         _appDbContext.EnderecoParceiro.Remove(enderecoParceiro);
     }
 
+    public Task<ICollection<Parceiro>> ObterParaCobrancaAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     public void RemoverRedeSocial(RedeSocial redeSocial)
     {
         _appDbContext.RedesSociais.Remove(redeSocial);

@@ -26,6 +26,7 @@ public class AppDbContext : DbContext
     public DbSet<TopUsuario> TopUsuarios { get; set; }
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<EventoAplicacao> EventosAplicacao { get; set; }
+    public DbSet<ParcelaCobranca> ParcelasCobrancas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +44,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new TopUsuariosConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new EventoAplicacaoConfiguration());
+        modelBuilder.ApplyConfiguration(new ParcelaCobrancaConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

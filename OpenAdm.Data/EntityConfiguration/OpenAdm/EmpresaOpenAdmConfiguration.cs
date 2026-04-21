@@ -16,6 +16,7 @@ internal class EmpresaOpenAdmConfiguration : BaseEntityConfiguration<EmpresaOpen
             .HasMaxLength(350)
             .IsRequired();
 
+        builder.HasIndex(x => x.TipoParcelaCobranca);
         builder.HasIndex(x => x.UrlEcommerce);
         builder.HasIndex(x => x.UrlAdmin);
         builder.HasIndex(x => x.Ativo);

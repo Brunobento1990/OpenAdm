@@ -18,4 +18,5 @@ public interface IParceiroRepository
     void UpdateRedesSociais(IList<RedeSocial> redesSociais);
     Task AddEndereco(EnderecoParceiro enderecoParceiro);
     void RemoverEndereco(EnderecoParceiro enderecoParceiro);
+    Task<ICollection<Parceiro>> ObterParaCobrancaAsync();
 }

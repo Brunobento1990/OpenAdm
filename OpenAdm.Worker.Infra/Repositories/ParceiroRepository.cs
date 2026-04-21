@@ -2,6 +2,7 @@
 using OpenAdm.Data.Context;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Entities.OpenAdm;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Worker.Infra.Repositories;
@@ -53,6 +54,15 @@ public class ParceiroRepository : IParceiroRepository
     public void RemoverEndereco(EnderecoParceiro enderecoParceiro)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<ICollection<Parceiro>> ObterParaCobrancaAsync()
+    {
+        return await _appDbContext
+            .Parceiros
+            .Include(x => x.EmpresaOpenAdm)
+            .Where(x => x.EmpresaOpenAdm.TipoParcelaCobranca == TipoParcelaCobrancaEnum.Mensal)
+            .ToListAsync();
     }
 
     public void RemoverRedeSocial(RedeSocial redeSocial)
