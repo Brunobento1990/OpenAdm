@@ -20,11 +20,11 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
     private readonly IHttpClientWhatsApp _httpClientWhatsApp;
     private readonly IEmailService _emailService;
 
-    public NotificarNovoPedidoService(IPdfPedidoService pdfPedidoService, 
-        IPedidoRepository pedidoRepository, 
-        IParceiroRepository parceiroRepository, 
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository, 
-        IHttpClientWhatsApp httpClientWhatsApp, 
+    public NotificarNovoPedidoService(IPdfPedidoService pdfPedidoService,
+        IPedidoRepository pedidoRepository,
+        IParceiroRepository parceiroRepository,
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        IHttpClientWhatsApp httpClientWhatsApp,
         IEmailService emailService)
     {
         _pdfPedidoService = pdfPedidoService;
@@ -48,23 +48,27 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
 
         if (pedido == null)
         {
-            return (ResultPartner<ResultadoEventoAplicacaoDTO>)"Não foi possível localizar o pedido para envio da notificação";
+            return (ResultPartner<ResultadoEventoAplicacaoDTO>)
+                "Não foi possível localizar o pedido para envio da notificação";
         }
 
         var parceiro = await _parceiroRepository.ObterPorEmpresaOpenAdmIdAsync(eventoAplicacao.EmpresaOpenAdmId);
 
         if (parceiro == null)
         {
-            return (ResultPartner<ResultadoEventoAplicacaoDTO>)"Não foi possível localizar o parceiro para envio da notificação";
+            return (ResultPartner<ResultadoEventoAplicacaoDTO>)
+                "Não foi possível localizar o parceiro para envio da notificação";
         }
 
         var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
 
-        var configuracoesDePedido = await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(eventoAplicacao.EmpresaOpenAdmId);
+        var configuracoesDePedido =
+            await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(eventoAplicacao.EmpresaOpenAdmId);
 
         if (configuracoesDePedido == null)
         {
-            return (ResultPartner<ResultadoEventoAplicacaoDTO>)"Não foi possível localizar a configuração de pedido para envio da notificação";
+            return (ResultPartner<ResultadoEventoAplicacaoDTO>)
+                "Não foi possível localizar a configuração de pedido para envio da notificação";
         }
 
         if (!string.IsNullOrWhiteSpace(configuracoesDePedido.WhatsApp))
@@ -75,7 +79,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
                 Mediatype = "document",
                 Mimetype = "application/pdf",
                 Caption =
-                    $"🛒 *Novo pedido confirmado!*\n{parceiro.NomeFantasia}\n👤 Cliente: {pedido.Usuario.Nome}\n🧾 Pedido: #{pedido.Numero}\n💰 Total: {pedido.ValorTotal.FormatMoney()}.",
+                    $"🛒 Novo pedido confirmado!\nParceiro: {parceiro.NomeFantasia}\nCliente: {pedido.Usuario.Nome}\nPedido: #{pedido.Numero}\nTotal: {pedido.ValorTotal.FormatMoney()}",
                 Media = Convert.ToBase64String(pdf),
                 FileName = $"pedido-{pedido.Numero}.pdf",
                 Delay = 0,
