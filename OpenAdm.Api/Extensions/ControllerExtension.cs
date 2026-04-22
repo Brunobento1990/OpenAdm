@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Domain.Model;
@@ -17,5 +18,18 @@ public static class ControllerExtension
         }
 
         return new OkObjectResult(result.Result);
+    }
+
+    public static IResult ToActionResults<T>(this ResultPartner<T> result)
+    {
+        if (!string.IsNullOrWhiteSpace(result.Error))
+        {
+            return Results.BadRequest(new ErrorResponse()
+            {
+                Mensagem = result.Error,
+            });
+        }
+
+        return Results.Ok(result.Result);
     }
 }

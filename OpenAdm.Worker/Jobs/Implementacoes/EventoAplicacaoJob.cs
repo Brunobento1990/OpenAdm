@@ -41,21 +41,15 @@ public class EventoAplicacaoJob : BackgroundService
 
             var evento = await eventoRepository.ProximoEventoAsync();
 
-            if (evento == null)
+            if (evento == null || !evento.PodeExecutar)
             {
                 continue;
             }
 
             var parceiroAutenticado = scope.ServiceProvider.GetRequiredService<IParceiroAutenticado>();
 
-
             parceiroAutenticado.ConnectionString = Criptografia.Decrypt(evento.EmpresaOpenAdm.ConnectionString);
             parceiroAutenticado.Id = evento.EmpresaOpenAdmId;
-
-            if (!evento.PodeExecutar)
-            {
-                continue;
-            }
 
             try
             {

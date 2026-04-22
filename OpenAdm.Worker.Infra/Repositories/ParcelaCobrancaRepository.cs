@@ -68,4 +68,14 @@ public class ParcelaCobrancaRepository : IParcelaCobrancaRepository
     {
         throw new NotImplementedException();
     }
+
+    public Task UpdateIdExternoAsync(Guid id, string idExterno)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ParcelaCobranca?> ObterPorIdExternoAsync(string idExterno)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -11,12 +11,12 @@ internal class ParcelaCobrancaConfiguration : IEntityTypeConfiguration<ParcelaCo
         builder.HasKey(x => x.Id);
 
         builder.HasIndex(x => new
-            {
-                x.EmpresaOpenAdmId,
-                x.AnoCobranca,
-                x.MesCobranca,
-                x.Numero
-            })
+        {
+            x.EmpresaOpenAdmId,
+            x.AnoCobranca,
+            x.MesCobranca,
+            x.Numero
+        })
             .IsUnique();
 
         builder.HasIndex(x => new
@@ -25,7 +25,7 @@ internal class ParcelaCobrancaConfiguration : IEntityTypeConfiguration<ParcelaCo
             x.AnoCobranca,
             x.MesCobranca
         });
-        
+
         builder.Property(x => x.Valor)
             .HasPrecision(12, 2)
             .IsRequired();
@@ -33,6 +33,9 @@ internal class ParcelaCobrancaConfiguration : IEntityTypeConfiguration<ParcelaCo
         builder.Property(x => x.ValorPago)
             .HasPrecision(12, 2)
             .IsRequired();
+
+        builder.Property(x => x.IdExterno)
+            .HasMaxLength(255);
 
         builder.Property(x => x.DataDeCadastro)
             .IsRequired();

@@ -124,7 +124,7 @@ internal class PdfPedidoService : IPdfPedidoService
                 if (parceiro.Logo != null)
                 {
                     row.ConstantItem(50).Height(50).Width(50)
-                        .Image(Convert.FromBase64String(parceiro.Logo.FromBytes()));
+                        .Image(Convert.FromBase64String(parceiro.Logo.FromBytes()));//TODO: verificar se imprimi sem dar Convert.FromBase64String
                 }
             });
         }
@@ -175,49 +175,45 @@ internal class PdfPedidoService : IPdfPedidoService
                             }
                         });
 
-                        pedido.ItensPedido = [.. pedido.ItensPedido.OrderBy(x => x.Numero)];
-                        var itemsPedidosGroup = pedido.ItensPedido.GroupBy(x => x.ProdutoId);
+                        var itensPedidos = pedido.ItensPedido.OrderBy(x => x.PedidoId);
 
-                        foreach (var itensGroup in itemsPedidosGroup)
+                        foreach (var item in itensPedidos)
                         {
-                            foreach (var item in itensGroup)
-                            {
-                                table
-                                    .Cell()
-                                    .Element(CellTableStyle)
-                                    .Text(item.Produto.Referencia)
-                                    .FontSize(8);
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.Produto.Referencia)
+                                .FontSize(8);
 
-                                table
-                                    .Cell()
-                                    .Element(CellTableStyle)
-                                    .Text(item.Produto.Descricao)
-                                    .FontSize(8);
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.Produto.Descricao)
+                                .FontSize(8);
 
-                                table
-                                    .Cell()
-                                    .Element(CellTableStyle)
-                                    .Text(item.Tamanho?.Descricao ?? item.Peso?.Descricao)
-                                    .FontSize(8);
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.Tamanho?.Descricao ?? item.Peso?.Descricao)
+                                .FontSize(8);
 
-                                table
-                                    .Cell()
-                                    .Element(CellTableStyle)
-                                    .Text(item.Quantidade.FormatMoney())
-                                    .FontSize(8);
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.Quantidade.FormatMoney())
+                                .FontSize(8);
 
-                                table
-                                    .Cell()
-                                    .Element(CellTableStyle)
-                                    .Text(item.ValorUnitario.FormatMoney())
-                                    .FontSize(8);
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.ValorUnitario.FormatMoney())
+                                .FontSize(8);
 
-                                table
-                                    .Cell()
-                                    .Element(CellTableStyle)
-                                    .Text(item.ValorTotal.FormatMoney())
-                                    .FontSize(8);
-                            }
+                            table
+                                .Cell()
+                                .Element(CellTableStyle)
+                                .Text(item.ValorTotal.FormatMoney())
+                                .FontSize(8);
                         }
 
                         table.Cell();
@@ -233,24 +229,28 @@ internal class PdfPedidoService : IPdfPedidoService
                             .FontSize(8);
 
 
-                        var tamamhosItens = pedido
-                            .ItensPedido
-                            .OrderBy(x => x.Tamanho?.Numero)
-                            .Where(x => x.Tamanho != null)
-                            .Select(x => x.Tamanho)
-                            .ToList()
-                            .GroupBy(x => x?.Id);
+                        var tamanhos = pedido.ItensPedido
+                            .Where(x => x.TamanhoId != null)
+                            .GroupBy(x => x.TamanhoId)
+                            .Select(g => new
+                            {
+                                Id = g.Key,
+                                g.First().Tamanho!.Descricao,
+                                Total = g.Sum(x => x.Quantidade)
+                            });
 
-                        var pesosItens = pedido
-                            .ItensPedido
-                            .OrderBy(x => x.Peso?.Numero)
-                            .Where(x => x.Peso != null)
-                            .Select(x => x.Peso)
-                            .ToList()
-                            .GroupBy(x => x?.Id);
+                        var pesos = pedido.ItensPedido
+                            .Where(x => x.PesoId != null)
+                            .GroupBy(x => x.PesoId)
+                            .Select(g => new
+                            {
+                                Id = g.Key,
+                                g.First().Tamanho!.Descricao,
+                                Total = g.Sum(x => x.Quantidade)
+                            });
 
 
-                        if (tamamhosItens.Count() > 0)
+                        if (tamanhos.Any())
                         {
                             table
                                 .Cell()
@@ -261,7 +261,7 @@ internal class PdfPedidoService : IPdfPedidoService
 
                         var count = 0;
 
-                        foreach (var tamanhoGroup in tamamhosItens)
+                        foreach (var tamanho in tamanhos)
                         {
                             if (count > 0)
                             {
@@ -273,20 +273,11 @@ internal class PdfPedidoService : IPdfPedidoService
                             table.Cell();
                             table.Cell();
                             table.Cell();
-                            var itemPedido = pedido
-                                .ItensPedido
-                                .FirstOrDefault(x => x.TamanhoId == tamanhoGroup.Key);
-
-                            var totalQuantidade = pedido
-                                .ItensPedido
-                                .Where(x => x.TamanhoId == tamanhoGroup.Key)
-                                .ToList()
-                                .Sum(x => x.Quantidade);
 
                             table
                                 .Cell()
                                 .Element(CellTableStyle)
-                                .Text($"{itemPedido?.Tamanho?.Descricao} : {totalQuantidade.FormatMoney()}")
+                                .Text($"{tamanho.Descricao} : {tamanho.Total.FormatMoney()}")
                                 .FontSize(8);
                             table.Cell();
                             table.Cell();
@@ -297,7 +288,7 @@ internal class PdfPedidoService : IPdfPedidoService
                             count++;
                         }
 
-                        if (pesosItens.Count() > 0)
+                        if (pesos.Any())
                         {
                             table
                                 .Cell()
@@ -308,7 +299,7 @@ internal class PdfPedidoService : IPdfPedidoService
 
                         count = 0;
 
-                        foreach (var pedoGroup in pesosItens)
+                        foreach (var peso in pesos)
                         {
                             if (count > 0)
                             {
@@ -320,20 +311,11 @@ internal class PdfPedidoService : IPdfPedidoService
                             table.Cell();
                             table.Cell();
                             table.Cell();
-                            var itemPedido = pedido
-                                .ItensPedido
-                                .FirstOrDefault(x => x.PesoId == pedoGroup.Key);
-
-                            var totalQuantidade = pedido
-                                .ItensPedido
-                                .Where(x => x.PesoId == pedoGroup.Key)
-                                .ToList()
-                                .Sum(x => x.Quantidade);
 
                             table
                                 .Cell()
                                 .Element(CellTableStyle)
-                                .Text($"{itemPedido?.Peso?.Descricao} : {totalQuantidade.FormatMoney()}")
+                                .Text($"{peso.Descricao} : {peso.Total.FormatMoney()}")
                                 .FontSize(8);
 
                             table.Cell();
@@ -496,7 +478,7 @@ internal class PdfPedidoService : IPdfPedidoService
         GerarRelatorioPedidoDTO relatorioPedidoDto,
         string nomeFantasia, IList<Pedido> pedidos)
     {
-        var itensPedido = pedidos.SelectMany(x => x.ItensPedido);
+       var itensPedido = pedidos.SelectMany(x => x.ItensPedido);
 
         void HeaderCustom(IContainer container)
         {

@@ -60,8 +60,6 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
                 "Não foi possível localizar o parceiro para envio da notificação";
         }
 
-        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
-
         var configuracoesDePedido =
             await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(eventoAplicacao.EmpresaOpenAdmId);
 
@@ -80,7 +78,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
                 Mimetype = "application/pdf",
                 Caption =
                     $"🛒 Novo pedido confirmado!\nParceiro: {parceiro.NomeFantasia}\nCliente: {pedido.Usuario.Nome}\nPedido: #{pedido.Numero}\nTotal: {pedido.ValorTotal.FormatMoney()}",
-                Media = Convert.ToBase64String(pdf),
+                Media = Convert.ToBase64String(_pdfPedidoService.GeneratePdfPedido(pedido, parceiro)),
                 FileName = $"pedido-{pedido.Numero}.pdf",
                 Delay = 0,
                 LinkPreview = false,
@@ -110,7 +108,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
         {
             Assunto = "Novo pedido",
             Email = configuracoesDePedido.EmailDeEnvio,
-            Arquivo = pdf,
+            Arquivo = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro),
             NomeDoArquivo = $"pedido-{pedido.Numero}",
             TipoDoArquivo = "application/pdf",
             Html = htmlEnvio

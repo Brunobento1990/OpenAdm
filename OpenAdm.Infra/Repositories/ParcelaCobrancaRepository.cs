@@ -33,7 +33,7 @@ public class ParcelaCobrancaRepository : IParcelaCobrancaRepository
 
     public void Update(ParcelaCobranca parcelaCobranca)
     {
-        throw new NotImplementedException();
+        _appDbContext.ParcelasCobrancas.Update(parcelaCobranca);
     }
 
     public Task SaveChangesAsync()
@@ -71,5 +71,20 @@ public class ParcelaCobrancaRepository : IParcelaCobrancaRepository
             Values = Values,
             TotalDeRegistros = totalDeRegistros
         };
+    }
+
+    public async Task UpdateIdExternoAsync(Guid id, string idExterno)
+    {
+        await _appDbContext
+            .ParcelasCobrancas
+            .Where(x => x.Id == id)
+            .ExecuteUpdateAsync(x => x.SetProperty(y => y.IdExterno, idExterno));
+    }
+
+    public async Task<ParcelaCobranca?> ObterPorIdExternoAsync(string idExterno)
+    {
+        return await _appDbContext
+            .ParcelasCobrancas
+            .FirstOrDefaultAsync(x => x.IdExterno == idExterno);
     }
 }

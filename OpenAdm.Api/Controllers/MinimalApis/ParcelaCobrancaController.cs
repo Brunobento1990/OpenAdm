@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Api.Extensions;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
@@ -15,11 +15,25 @@ public static class ParcelaCobrancaController
     {
         var group = app.MapGroup("parcela-cobranca");
 
-        group.MapPost("paginacao",
+        group
+            .MapPost("paginacao",
                 async (IParcelaCobrancaService service, [FromBody] PaginacaoParcelaCobrancaDTO dto) =>
                 {
                     var response = await service.PaginacaoAsync(dto);
                     return Results.Ok(response);
+                })
+            .WithMetadata(new AcessoParceiroAttribute())
+            .WithMetadata(new AutenticaAttribute())
+            .WithMetadata(new IsFuncionarioAttribute())
+            .Produces<PaginacaoViewModel<ParcelaCobrancaViewModel>>(StatusCodes.Status200OK)
+            .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
+
+        group
+            .MapGet("/",
+            async (IParcelaCobrancaService service, [FromQuery] Guid id) =>
+                {
+                    var response = await service.ObterPorIdAsync(id);
+                    return response.ToActionResults();
                 })
             .WithMetadata(new AcessoParceiroAttribute())
             .WithMetadata(new AutenticaAttribute())

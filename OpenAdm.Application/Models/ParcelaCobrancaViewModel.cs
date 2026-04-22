@@ -13,6 +13,7 @@ public class ParcelaCobrancaViewModel : BaseViewModel
     public decimal ValorPago { get; set; }
     public bool Pago { get; set; }
     public bool Vencido { get; set; }
+    public PixViewModel? Pix { get; set; }
 
     public static explicit operator ParcelaCobrancaViewModel(ParcelaCobranca parcelaCobranca)
     {
@@ -31,4 +32,10 @@ public class ParcelaCobrancaViewModel : BaseViewModel
             DataDeVencimento = parcelaCobranca.DataDeVencimento
         };
     }
+}
+
+public class PixViewModel
+{
+    public string QrCode { get; set; } = string.Empty;
+    public string CopiaECola { get; set; } = string.Empty;
 }

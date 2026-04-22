@@ -6,7 +6,7 @@ public class ParcelaCobranca
 {
     public ParcelaCobranca(Guid id, DateTime dataDeCadastro, DateTime dataDeVencimento, DateTime? dataDePagamento,
         int numero, int mesCobranca, int anoCobranca, decimal valor, decimal valorPago,
-        TipoParcelaCobrancaEnum tipoParcelaCobranca, Guid empresaOpenAdmId)
+        TipoParcelaCobrancaEnum tipoParcelaCobranca, Guid empresaOpenAdmId, string? idExterno)
     {
         Id = id;
         DataDeCadastro = dataDeCadastro;
@@ -19,6 +19,7 @@ public class ParcelaCobranca
         ValorPago = valorPago;
         TipoParcelaCobranca = tipoParcelaCobranca;
         EmpresaOpenAdmId = empresaOpenAdmId;
+        IdExterno = idExterno;
     }
 
     public Guid Id { get; private set; }
@@ -32,6 +33,7 @@ public class ParcelaCobranca
 
     public decimal Valor { get; private set; }
     public decimal ValorPago { get; private set; }
+    public string? IdExterno { get; private set; }
     public TipoParcelaCobrancaEnum TipoParcelaCobranca { get; private set; }
     public Guid EmpresaOpenAdmId { get; private set; }
     public EmpresaOpenAdm EmpresaOpenAdm { get; set; } = null!;
@@ -58,6 +60,13 @@ public class ParcelaCobranca
             valor: valor,
             valorPago: 0,
             tipoParcelaCobranca: tipoParcelaCobranca,
-            empresaOpenAdmId: empresaOpenAdmId);
+            empresaOpenAdmId: empresaOpenAdmId,
+            idExterno: null);
+    }
+
+    public void Pagar(decimal valor)
+    {
+        ValorPago += valor;
+        DataDePagamento = DateTime.Now;
     }
 }
