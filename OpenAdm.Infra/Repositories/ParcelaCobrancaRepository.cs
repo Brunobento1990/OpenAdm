@@ -36,9 +36,9 @@ public class ParcelaCobrancaRepository : IParcelaCobrancaRepository
         _appDbContext.ParcelasCobrancas.Update(parcelaCobranca);
     }
 
-    public Task SaveChangesAsync()
+    public async Task SaveChangesAsync()
     {
-        throw new NotImplementedException();
+        await _appDbContext.SaveChangesAsync();
     }
 
     public Task<int> ProximoNumeroParcela(Guid empresaOpenAdmId)
