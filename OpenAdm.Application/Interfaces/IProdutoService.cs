@@ -9,7 +9,7 @@ namespace OpenAdm.Application.Interfaces;
 public interface IProdutoService
 {
     Task<PaginacaoViewModel<ProdutoViewModel>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto);
-    Task<IList<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
+    Task<ICollection<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
     Task<IList<ProdutoViewModel>> GetAllProdutosAsync();
     Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(FilterModel<Produto> paginacaoProdutoDto);
     Task<IEnumerable<ProdutoViewModel>> GetDropDownPaginacaoAsync(PaginacaoDropDown<Produto> paginacaoDropDown);

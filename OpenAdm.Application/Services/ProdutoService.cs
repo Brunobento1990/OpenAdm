@@ -125,7 +125,7 @@ public class ProdutoService : IProdutoService
         PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
-        var produtosViewModel = await MapearProdutosAsync(paginacao.Values);
+        var produtosViewModel = await MapearProdutosAsync(paginacao.Values.ToList());
 
         var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
 
@@ -163,7 +163,7 @@ public class ProdutoService : IProdutoService
         };
     }
 
-    public async Task<IList<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId)
+    public async Task<ICollection<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId)
     {
         var produtos = await _produtoRepository.GetProdutosByCategoriaIdAsync(categoriaId);
         var produtosViewModel = await MapearProdutosAsync(produtos);
@@ -192,7 +192,7 @@ public class ProdutoService : IProdutoService
         return produtosViewModel;
     }
 
-    public static void MapearEstoque(IList<ProdutoViewModel> produtosViewModel, IList<Estoque> estoques)
+    public static void MapearEstoque(ICollection<ProdutoViewModel> produtosViewModel, IList<Estoque> estoques)
     {
         foreach (var produto in produtosViewModel)
         {
@@ -300,7 +300,7 @@ public class ProdutoService : IProdutoService
         return new ProdutoViewModel().ToModel(produto);
     }
 
-    private async Task<IList<ProdutoViewModel>> MapearProdutosAsync(IList<Produto> produtos)
+    private async Task<ICollection<ProdutoViewModel>> MapearProdutosAsync(ICollection<Produto> produtos)
     {
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository
             .GetItensTabelaDePrecoByIdProdutosAsync(produtos.Select(x => x.Id).ToList());

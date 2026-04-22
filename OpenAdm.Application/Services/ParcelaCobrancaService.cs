@@ -3,6 +3,7 @@ using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.HttpClient.Request;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
@@ -18,18 +19,20 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
     private readonly IHttpClientMercadoPago _httpClientMercadoPago;
     private readonly IConfiguration _configuration;
     private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
+    private readonly IParceiroRepository _parceiroRepository;
 
     public ParcelaCobrancaService(IParcelaCobrancaRepository parcelaCobrancaRepository,
         IParceiroAutenticado parceiroAutenticado,
         IHttpClientMercadoPago httpClientMercadoPago,
         IConfiguration configuration,
-        IEventoAplicacaoRepository eventoAplicacaoRepository)
+        IEventoAplicacaoRepository eventoAplicacaoRepository, IParceiroRepository parceiroRepository)
     {
         _parcelaCobrancaRepository = parcelaCobrancaRepository;
         _parceiroAutenticado = parceiroAutenticado;
         _httpClientMercadoPago = httpClientMercadoPago;
         _configuration = configuration;
         _eventoAplicacaoRepository = eventoAplicacaoRepository;
+        _parceiroRepository = parceiroRepository;
     }
 
     public async Task<ResultPartner<ParcelaCobrancaViewModel>> ObterPorIdAsync(Guid id)
@@ -41,9 +44,24 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
             return (ResultPartner<ParcelaCobrancaViewModel>)"Não foi possível localizar a mensalidade";
         }
 
+        var parcelaViewmodel = (ParcelaCobrancaViewModel)parcelaCobranca;
+
+        if (parcelaCobranca.Pago)
+        {
+            return (ResultPartner<ParcelaCobrancaViewModel>)parcelaViewmodel;
+        }
+
+        var parceiro = await _parceiroRepository.ObterPorEmpresaOpenAdmIdAsync(_parceiroAutenticado.Id);
+
+        if (parceiro == null)
+        {
+            return (ResultPartner<ParcelaCobrancaViewModel>)"Não foi possível localizar seu cadastro";
+        }
+
         var resultPix = await _httpClientMercadoPago
             .GerarPagamentoAsync(
-                GerarBodyMercadoPado(parcelaCobranca, $"{_configuration["UrlWebHookCobranca"]}?parceiroId={_parceiroAutenticado.Id}"),
+                GerarBodyMercadoPado(parcelaCobranca,
+                    $"{_configuration["UrlWebHookCobranca"]}?parceiroId={_parceiroAutenticado.Id}", parceiro),
                 _configuration["TokenMercadoPago"]!,
                 parcelaCobranca.Id.ToString());
 
@@ -53,8 +71,6 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
         {
             await _parcelaCobrancaRepository.UpdateIdExternoAsync(parcelaCobranca.Id, idExterno);
         }
-
-        var parcelaViewmodel = (ParcelaCobrancaViewModel)parcelaCobranca;
 
         parcelaViewmodel.Pix = new()
         {
@@ -79,18 +95,32 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
         };
     }
 
-    private static MercadoPagoPagamentoRequest GerarBodyMercadoPado(ParcelaCobranca parcelaCobranca, string urlWebHook)
+    private static MercadoPagoPagamentoRequest GerarBodyMercadoPado(
+        ParcelaCobranca parcelaCobranca,
+        string urlWebHook,
+        Parceiro parceiro)
     {
         return new MercadoPagoPagamentoRequest()
         {
             Description = $"Mensalidade {parcelaCobranca.Numero}",
-            Transaction_amount = parcelaCobranca.ValorPago,
+            Transaction_amount = parcelaCobranca.Valor,
             External_reference = parcelaCobranca.Id.ToString(),
-            Notification_url = urlWebHook
+            Notification_url = urlWebHook,
+            Payer = new()
+            {
+                Email = parceiro.Email ?? "",
+                First_name = parceiro.NomeFantasia.Split(" ").FirstOrDefault() ?? "",
+                Last_name = parceiro.NomeFantasia.Split(" ").LastOrDefault() ?? "",
+                Identification = new()
+                {
+                    Type = parceiro.Cnpj.Length == 14 ? "CNPJ" : "CPF",
+                    Number = parceiro.Cnpj
+                }
+            }
         };
     }
 
-    public async Task BaixarWebHookAsync(string idExterno, decimal valor)
+    public async Task BaixarWebHookAsync(string idExterno)
     {
         var parcelaCobranca = await _parcelaCobrancaRepository.ObterPorIdExternoAsync(idExterno);
 
@@ -99,14 +129,15 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
             return;
         }
 
-        parcelaCobranca.Pagar(valor);
+        parcelaCobranca.Pagar(parcelaCobranca.Valor);
 
         _parcelaCobrancaRepository.Update(parcelaCobranca);
 
         await _eventoAplicacaoRepository.AddAsync(EventoAplicacao.Criar(
             dados: new NotificarParceiroWhatsAppEvento()
             {
-                Mensagem = $"💰 Pagamento recebido!\r\n\r\nSua mensalidade foi confirmada com sucesso.\r\n\r\n📅 Data: {DateTime.Now.DateTimeToString()}\r\n💵 Valor: R$ {valor.FormatMoney()}\r\n\r\nSe precisar de algo, é só responder essa mensagem 🙂"
+                Mensagem =
+                    $"💰 Pagamento recebido!\r\n\r\nSua mensalidade foi confirmada com sucesso.\r\n\r\n📅 Data: {DateTime.Now.DateTimeToString()}\r\n💵 Valor: R$ {parcelaCobranca.Valor.FormatMoney()}\r\n\r\nSe precisar de algo, é só responder essa mensagem 🙂"
             }.ToString(),
             tipoEventoAplicacao: Domain.Enuns.TipoEventoAplicacaoEnum.NotificarParceiroWhatsApp,
             empresaOpenAdmId: parcelaCobranca.EmpresaOpenAdmId));

@@ -25,6 +25,8 @@ public class ParceiroConfiguration : IEntityTypeConfiguration<Parceiro>
         builder.Property(x => x.RazaoSocial)
             .IsRequired()
             .HasMaxLength(255);
+        builder.Property(x => x.Email)
+            .HasMaxLength(255);
         builder.Property(x => x.NomeFantasia)
             .IsRequired()
         .HasMaxLength(255);

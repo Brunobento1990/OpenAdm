@@ -1,5 +1,4 @@
-﻿using OpenAdm.Infra.Model;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Application.HttpClient.Interfaces;

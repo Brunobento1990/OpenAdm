@@ -8,5 +8,5 @@ public interface IParcelaCobrancaService
 {
     Task<PaginacaoViewModel<ParcelaCobrancaViewModel>> PaginacaoAsync(FilterModel<ParcelaCobranca> filter);
     Task<ResultPartner<ParcelaCobrancaViewModel>> ObterPorIdAsync(Guid id);
-    Task BaixarWebHookAsync(string idExterno, decimal valor);
+    Task BaixarWebHookAsync(string idExterno);
 }

@@ -32,6 +32,7 @@ public sealed class Parceiro : BaseEntity
     public string RazaoSocial { get; private set; }
     public byte[]? Logo { get; private set; }
     public string NomeFantasia { get; private set; }
+    public string? Email { get; set; }
     public string Cnpj { get; private set; }
     public IList<RedeSocial> RedesSociais { get; set; } = [];
     public IList<TelefoneParceiro> Telefones { get; set; } = [];

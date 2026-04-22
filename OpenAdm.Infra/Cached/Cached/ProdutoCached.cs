@@ -13,6 +13,7 @@ public class ProdutoCached : IProdutoRepository
     private readonly ICachedService<Produto> _cachedService;
     private const string _keyListMaisVendidos = "produtos-mais-vendidos";
     private const string _keyList = "produtos";
+
     public ProdutoCached(ICachedService<Produto> cachedService, ProdutoRepository produtoRepository)
     {
         _cachedService = cachedService;
@@ -35,7 +36,8 @@ public class ProdutoCached : IProdutoRepository
         return produtosMaisVendidos;
     }
 
-    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
+    public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(
+        PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         if (paginacaoProdutoEcommerceDto.CategoriaId != null && paginacaoProdutoEcommerceDto.CategoriaId != Guid.Empty)
         {
@@ -60,13 +62,12 @@ public class ProdutoCached : IProdutoRepository
         if (produtos == null)
         {
             var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
-            if (paginacao.Values?.Count > 0)
+            if (paginacao.Values.Any())
             {
-                produtos = paginacao.Values;
+                produtos = paginacao.Values.ToList();
                 count = paginacao.TotalPaginas;
-                await _cachedService.SetListItemAsync(key, paginacao.Values);
+                await _cachedService.SetListItemAsync(key, produtos);
             }
-
         }
         else
         {
@@ -182,7 +183,7 @@ public class ProdutoCached : IProdutoRepository
         => _produtoRepository.SaveChangesAsync();
 
     public Task<Produto?> GetProdutoByIdParaEditarAsync(Guid id)
-     => _produtoRepository.GetProdutoByIdParaEditarAsync(id);
+        => _produtoRepository.GetProdutoByIdParaEditarAsync(id);
 
     public Task<Produto> AdicionarAsync(Produto entity)
         => _produtoRepository.AdicionarAsync(entity);

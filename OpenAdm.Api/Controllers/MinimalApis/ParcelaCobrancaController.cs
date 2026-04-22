@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
 using OpenAdm.Api.Extensions;
+using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
@@ -29,8 +30,25 @@ public static class ParcelaCobrancaController
             .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
 
         group
+            .MapPost("notificar",
+                async (IParcelaCobrancaService service, [FromBody] NotificationFaturaWebHook body,
+                    [FromQuery] Guid parceiroId) =>
+                {
+                    if (body?.Data != null && (body?.Action == "payment.update" || body?.Action == "payment.updated") &&
+                        !string.IsNullOrWhiteSpace(body.Data.Id))
+                    {
+                        await service.BaixarWebHookAsync(body.Data.Id);
+                    }
+
+                    return Results.Ok();
+                })
+            .WithMetadata(new AutenticaMercadoPagoAttribute())
+            .Produces(StatusCodes.Status200OK)
+            .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
+
+        group
             .MapGet("/",
-            async (IParcelaCobrancaService service, [FromQuery] Guid id) =>
+                async (IParcelaCobrancaService service, [FromQuery] Guid id) =>
                 {
                     var response = await service.ObterPorIdAsync(id);
                     return response.ToActionResults();
