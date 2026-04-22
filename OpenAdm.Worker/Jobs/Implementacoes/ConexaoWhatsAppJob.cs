@@ -1,3 +1,4 @@
+using OpenAdm.Domain.Extensions;
 using OpenAdm.Worker.Application.DTOs;
 using OpenAdm.Worker.Application.HttpService.Interface;
 using OpenAdm.Worker.Application.Interfaces;
@@ -23,6 +24,12 @@ public class ConexaoWhatsAppJob : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(TimeSpan.FromMinutes(_delayEmMinutos), stoppingToken);
+
+            if (DateTime.Now.EhMadrugada())
+            {
+                LogService.Info("ConexaoWhatsApp: Madrugada");
+                continue;
+            }
 
             try
             {

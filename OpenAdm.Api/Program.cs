@@ -1,6 +1,7 @@
 using dotenv.net;
 using OpenAdm.Api;
 using OpenAdm.Api.Configure;
+using OpenAdm.Api.Controllers.MinimalApis;
 using OpenAdm.Api.Middlewares;
 using OpenAdm.Application.DependencyInject;
 using OpenAdm.Application.Interfaces;
@@ -87,5 +88,7 @@ if (rodarMigration?.ToLower() == "true")
         await migrationServico.UpdateMigrationAsync(VariaveisDeAmbiente.GetVariavel("AMBIENTE"));
     }
 }
+
+app.MaperControllerParcelaCobranca();
 
 app.Run();

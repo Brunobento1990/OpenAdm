@@ -1,3 +1,4 @@
+using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Worker.Application.Interfaces;
@@ -23,6 +24,12 @@ public class EventoAplicacaoJob : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(TimeSpan.FromMinutes(_delayEmMinutos), stoppingToken);
+
+            if (DateTime.Now.EhMadrugada())
+            {
+                LogService.Info("EventoAplicação: Madrugada");
+                continue;
+            }
 
             if (_configuration["Jobs:EventoAplicacaoInativo"]?.ToLower() == "true")
             {

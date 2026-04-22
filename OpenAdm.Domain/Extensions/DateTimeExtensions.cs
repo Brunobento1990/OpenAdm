@@ -16,4 +16,15 @@ public static class DateTimeExtensions
     {
         return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
     }
+
+    public static bool EhMadrugada(this DateTime dateTime)
+    {
+        return dateTime.Hour >= 0 && dateTime.Hour < 6;
+    }
+
+    public static bool EhFimDeSemana(this DateTime dateTime)
+    {
+        return dateTime.DayOfWeek == DayOfWeek.Saturday ||
+               dateTime.DayOfWeek == DayOfWeek.Sunday;
+    }
 }

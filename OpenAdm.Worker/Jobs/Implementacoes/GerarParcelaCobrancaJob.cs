@@ -31,6 +31,12 @@ public class GerarParcelaCobrancaJob : BackgroundService
 
             await Task.Delay(delay, stoppingToken);
 
+            if (DateTime.Now.EhFimDeSemana())
+            {
+                LogService.Info("GerarParcelaCobranca: Fim de semana");
+                continue;
+            }
+
             try
             {
                 using var scope = _serviceProvider.CreateScope();
@@ -72,7 +78,7 @@ public class GerarParcelaCobrancaJob : BackgroundService
                     );
 
                     var linkParaPagamento =
-                        $"{parceiro.EmpresaOpenAdm.UrlAdmin}/cobranca/visualizar/{parcelaCobranca.Id}";
+                        $"{parceiro.EmpresaOpenAdm.UrlAdmin}/financeiro/cobranca/visualizar/{parcelaCobranca.Id}";
 
                     var mensagemCobranca =
                         $"Olá, {parceiro.NomeFantasia} 👋\nSua mensalidade já está disponível.\n📅 Competência: {DateTime.UtcNow.Month}/{DateTime.UtcNow.Year}\n💰 Valor: R$ {valor.FormatMoney()}\n📆 Vencimento: {parcelaCobranca.DataDeVencimento.DateTimeSomenteDataToString()}\n🔹 Link de pagamento:\n{linkParaPagamento}\nSe tiver qualquer dúvida, é só responder essa mensagem 🙂";

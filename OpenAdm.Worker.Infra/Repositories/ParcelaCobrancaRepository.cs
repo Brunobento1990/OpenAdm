@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Worker.Infra.Repositories;
 
@@ -12,6 +13,16 @@ public class ParcelaCobrancaRepository : IParcelaCobrancaRepository
     public ParcelaCobrancaRepository(AppDbContext appDbContext)
     {
         _appDbContext = appDbContext;
+    }
+
+    public Task<ParcelaCobranca?> ObterPorIdAsync(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ParcelaCobranca?> ObterPorIdAsNoTrackingAsync(Guid id)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task AddAsync(ParcelaCobranca parcelaCobranca)
@@ -51,5 +62,10 @@ public class ParcelaCobrancaRepository : IParcelaCobrancaRepository
             .ParcelasCobrancas
             .AsNoTracking()
             .AnyAsync(x => x.EmpresaOpenAdmId == empresaOpenAdmId && x.MesCobranca == mes && x.AnoCobranca == ano);
+    }
+
+    public Task<PaginacaoViewModel<ParcelaCobranca>> PaginacaoAsync(FilterModel<ParcelaCobranca> filterModel)
+    {
+        throw new NotImplementedException();
     }
 }
