@@ -60,6 +60,7 @@ public class ParceiroRepository : IParceiroRepository
     {
         return await _appDbContext
             .Parceiros
+            .AsNoTracking()
             .Include(x => x.EmpresaOpenAdm)
             .Where(x => x.EmpresaOpenAdm.TipoParcelaCobranca == TipoParcelaCobrancaEnum.Mensal)
             .ToListAsync();

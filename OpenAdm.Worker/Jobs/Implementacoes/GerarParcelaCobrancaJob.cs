@@ -5,11 +5,10 @@ using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Eventos;
 using OpenAdm.Worker.Application.Service;
-using OpenAdm.Worker.Jobs.Interfaces;
 
 namespace OpenAdm.Worker.Jobs.Implementacoes;
 
-public class GerarParcelaCobrancaJob : BaseJob, IJobInfo
+public class GerarParcelaCobrancaJob : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IConfiguration _configuration;
@@ -20,78 +19,82 @@ public class GerarParcelaCobrancaJob : BaseJob, IJobInfo
         _configuration = configuration;
     }
 
-    public static string Key => "GerarParcelaCobrancaJobKey";
-    public static string IdentityTrigger => "GerarParcelaCobrancaJobTrigger";
-
-    public static string ObterConfiguracaoTempoDeExecucao(IConfiguration configuracao)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var cron = configuracao["Jobs:GerarParcelaCobranca"];
-        return string.IsNullOrWhiteSpace(cron) ? "0 */1 * * * ?" : cron;
-    }
-
-    public override async Task ExecuteTask()
-    {
-        try
+        while (!stoppingToken.IsCancellationRequested)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var parceiroRepository = scope.ServiceProvider.GetRequiredService<IParceiroRepository>();
+            var agora = DateTime.Now;
+            var proximaExecucao = agora.Date.AddDays(agora.Hour >= 7 ? 1 : 0)
+                .AddHours(7);
 
-            var parceirosParaCobranca = await parceiroRepository.ObterParaCobrancaAsync();
+            var delay = proximaExecucao - agora;
 
-            if (parceirosParaCobranca.Count == 0)
+            await Task.Delay(delay, stoppingToken);
+
+            try
             {
-                LogService.Info("Não há parceiro para cobrança");
-                return;
-            }
+                using var scope = _serviceProvider.CreateScope();
+                var parceiroRepository = scope.ServiceProvider.GetRequiredService<IParceiroRepository>();
 
-            var parcelaCobrancaRepository = scope.ServiceProvider.GetRequiredService<IParcelaCobrancaRepository>();
-            var eventoAplicacaoRepository = scope.ServiceProvider.GetRequiredService<IEventoAplicacaoRepository>();
+                var parceirosParaCobranca = await parceiroRepository.ObterParaCobrancaAsync();
 
-            foreach (var parceiro in parceirosParaCobranca)
-            {
-                if (await parcelaCobrancaRepository.TemCobrancaAsync(parceiro.EmpresaOpenAdmId, DateTime.UtcNow.Month,
-                        DateTime.UtcNow.Year))
+                if (parceirosParaCobranca.Count == 0)
                 {
-                    LogService.Info($"Já tem mensalidado para o parceiro: {parceiro.NomeFantasia}");
+                    LogService.Info("Não há parceiro para cobrança");
                     continue;
                 }
 
-                var proximoNumero = await parcelaCobrancaRepository.ProximoNumeroParcela(parceiro.EmpresaOpenAdmId);
-                var valor = decimal.Parse(_configuration["ParcelaCobranca:Valor"]!, CultureInfo.InvariantCulture);
+                var parcelaCobrancaRepository = scope.ServiceProvider.GetRequiredService<IParcelaCobrancaRepository>();
+                var eventoAplicacaoRepository = scope.ServiceProvider.GetRequiredService<IEventoAplicacaoRepository>();
 
-                var parcelaCobranca = ParcelaCobranca.NovaCobranca(
-                    empresaOpenAdmId: parceiro.EmpresaOpenAdmId,
-                    numero: proximoNumero,
-                    mesCobranca: DateTime.UtcNow.Month,
-                    anoCobranca: DateTime.UtcNow.Year,
-                    tipoParcelaCobranca: parceiro.EmpresaOpenAdm.TipoParcelaCobranca,
-                    valor: valor,
-                    dataDeVencimento: DateTime.UtcNow.AddDays(
-                        int.Parse(_configuration["ParcelaCobranca:DiasVencimento"]!))
-                );
-
-                var linkParaPagamento = $"{_configuration["LinkParaPagamento"]}/{parcelaCobranca.Id}";
-
-                var mensagemCobranca =
-                    $"Olá, {parceiro.NomeFantasia} 👋\nSua mensalidade já está disponível.\n📅 Competência: {DateTime.UtcNow.Month}/{DateTime.UtcNow.Year}\n💰 Valor: R$ {valor.FormatMoney()}\n📆 Vencimento: {parcelaCobranca.DataDeVencimento.DateTimeSomenteDataToString()}\n🔹 Link de pagamento:\n{linkParaPagamento}\nSe tiver qualquer dúvida, é só responder essa mensagem 🙂";
-
-                var dados = new NotificarParceiroWhatsAppEvento()
+                foreach (var parceiro in parceirosParaCobranca)
                 {
-                    Mensagem = mensagemCobranca,
-                }.ToString();
+                    if (await parcelaCobrancaRepository.TemCobrancaAsync(parceiro.EmpresaOpenAdmId,
+                            DateTime.UtcNow.Month,
+                            DateTime.UtcNow.Year))
+                    {
+                        LogService.Info($"Já tem mensalidado para o parceiro: {parceiro.NomeFantasia}");
+                        continue;
+                    }
 
-                await eventoAplicacaoRepository.AddAsync(EventoAplicacao.Criar(
-                    dados: dados,
-                    tipoEventoAplicacao: TipoEventoAplicacaoEnum.NotificarParceiroWhatsApp,
-                    empresaOpenAdmId: parceiro.EmpresaOpenAdmId));
-                await parcelaCobrancaRepository.AddAsync(parcelaCobranca);
+                    var proximoNumero = await parcelaCobrancaRepository.ProximoNumeroParcela(parceiro.EmpresaOpenAdmId);
+                    var valor = decimal.Parse(_configuration["ParcelaCobranca:Valor"]!, CultureInfo.InvariantCulture);
 
-                await parcelaCobrancaRepository.SaveChangesAsync();
+                    var parcelaCobranca = ParcelaCobranca.NovaCobranca(
+                        empresaOpenAdmId: parceiro.EmpresaOpenAdmId,
+                        numero: proximoNumero,
+                        mesCobranca: DateTime.UtcNow.Month,
+                        anoCobranca: DateTime.UtcNow.Year,
+                        tipoParcelaCobranca: parceiro.EmpresaOpenAdm.TipoParcelaCobranca,
+                        valor: valor,
+                        dataDeVencimento: DateTime.UtcNow.AddDays(
+                            int.Parse(_configuration["ParcelaCobranca:DiasVencimento"]!))
+                    );
+
+                    var linkParaPagamento =
+                        $"{parceiro.EmpresaOpenAdm.UrlAdmin}/cobranca/visualizar/{parcelaCobranca.Id}";
+
+                    var mensagemCobranca =
+                        $"Olá, {parceiro.NomeFantasia} 👋\nSua mensalidade já está disponível.\n📅 Competência: {DateTime.UtcNow.Month}/{DateTime.UtcNow.Year}\n💰 Valor: R$ {valor.FormatMoney()}\n📆 Vencimento: {parcelaCobranca.DataDeVencimento.DateTimeSomenteDataToString()}\n🔹 Link de pagamento:\n{linkParaPagamento}\nSe tiver qualquer dúvida, é só responder essa mensagem 🙂";
+
+                    var dados = new NotificarParceiroWhatsAppEvento()
+                    {
+                        Mensagem = mensagemCobranca,
+                    }.ToString();
+
+                    await eventoAplicacaoRepository.AddAsync(EventoAplicacao.Criar(
+                        dados: dados,
+                        tipoEventoAplicacao: TipoEventoAplicacaoEnum.NotificarParceiroWhatsApp,
+                        empresaOpenAdmId: parceiro.EmpresaOpenAdmId));
+                    await parcelaCobrancaRepository.AddAsync(parcelaCobranca);
+
+                    await parcelaCobrancaRepository.SaveChangesAsync();
+                }
             }
-        }
-        catch (Exception e)
-        {
-            LogService.Error(e.InnerException?.Message ?? e.Message);
+            catch (Exception e)
+            {
+                LogService.Error(e.InnerException?.Message ?? e.Message);
+            }
         }
     }
 }

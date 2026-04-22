@@ -10,8 +10,6 @@ using OpenAdm.Worker.Infra.Enum;
 using OpenAdm.Worker.Infra.HttpClient;
 using OpenAdm.Worker.Infra.Repositories;
 using OpenAdm.Worker.Jobs.Implementacoes;
-using OpenAdm.Worker.Jobs.Interfaces;
-using Quartz;
 
 namespace OpenAdm.Worker;
 
@@ -19,49 +17,9 @@ public static class ConfigurcaoIoC
 {
     public static IServiceCollection ConfigurarJobs(this IServiceCollection services, IConfiguration configuration)
     {
-        var jobs = typeof(BaseJob)
-            .Assembly
-            .GetTypes()
-            .Where(type => !type.IsAbstract &&
-                           typeof(BaseJob).IsAssignableFrom(type) &&
-                           typeof(IJobInfo).IsAssignableFrom(type))
-            .ToList();
-
-        services.AddQuartz(q =>
-        {
-            q.UsePersistentStore(store =>
-            {
-                store.UsePostgres(configuration["ConnectionStrings:DefaultConnection"]!);
-                store.UseSystemTextJsonSerializer();
-                store.PerformSchemaValidation = false;
-                store.UseProperties = true;
-            });
-
-            foreach (var job in jobs)
-            {
-                var key = (string)job.GetProperty("Key", BindingFlags.Public | BindingFlags.Static)!.GetValue(null)!;
-                var identityTrigger =
-                    (string)job.GetProperty("IdentityTrigger", BindingFlags.Public | BindingFlags.Static)!
-                        .GetValue(null)!;
-                var cronMethod = job.GetMethod("ObterConfiguracaoTempoDeExecucao",
-                    BindingFlags.Public | BindingFlags.Static)!;
-                var cronSchedule = (string)cronMethod.Invoke(null, [configuration])!;
-
-                var jobKey = new JobKey(key);
-
-                q.AddJob(
-                    job,
-                    jobKey,
-                    opts => opts.StoreDurably());
-
-                q.AddTrigger(opts => opts
-                    .ForJob(jobKey)
-                    .WithIdentity(identityTrigger)
-                    .WithCronSchedule(cronSchedule));
-            }
-        });
-
-        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+        services.AddHostedService<ConexaoWhatsAppJob>();
+        services.AddHostedService<EventoAplicacaoJob>();
+        services.AddHostedService<GerarParcelaCobrancaJob>();
 
         return services;
     }

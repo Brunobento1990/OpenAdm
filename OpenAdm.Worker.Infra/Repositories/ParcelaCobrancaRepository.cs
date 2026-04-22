@@ -35,6 +35,7 @@ public class ParcelaCobrancaRepository : IParcelaCobrancaRepository
         {
             return await _appDbContext
                 .ParcelasCobrancas
+                .AsNoTracking()
                 .Where(p => p.EmpresaOpenAdmId == empresaOpenAdmId)
                 .MaxAsync(x => x.Numero) + 1;
         }
