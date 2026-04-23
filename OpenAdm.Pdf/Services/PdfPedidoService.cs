@@ -175,7 +175,7 @@ internal class PdfPedidoService : IPdfPedidoService
                             }
                         });
 
-                        var itensPedidos = pedido.ItensPedido.OrderBy(x => x.PedidoId);
+                        var itensPedidos = pedido.ItensPedido.OrderBy(x => x.ProdutoId);
 
                         foreach (var item in itensPedidos)
                         {
@@ -245,7 +245,7 @@ internal class PdfPedidoService : IPdfPedidoService
                             .Select(g => new
                             {
                                 Id = g.Key,
-                                g.First().Tamanho!.Descricao,
+                                g.First().Peso!.Descricao,
                                 Total = g.Sum(x => x.Quantidade)
                             });
 
