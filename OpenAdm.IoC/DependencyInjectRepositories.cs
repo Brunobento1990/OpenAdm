@@ -71,5 +71,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<IConfiguracaoDeFreteRepository, ConfiguracaoDeFreteRepository>();
         services.AddScoped<IEventoAplicacaoRepository, EventoAplicacaoRepository>();
         services.AddScoped<IParcelaCobrancaRepository, ParcelaCobrancaRepository>();
+        services.AddScoped<IHomeRepository, HomeRepository>();
     }
 }

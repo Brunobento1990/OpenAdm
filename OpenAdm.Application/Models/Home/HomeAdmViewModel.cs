@@ -4,6 +4,7 @@ using OpenAdm.Application.Models.ParcelasModel;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Application.Models.TopUsuarios;
 using OpenAdm.Application.Models.Usuarios;
+using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Application.Models.Home;
@@ -23,4 +24,13 @@ public class HomeAdmViewModel
     public long QuantidadeDeAcessoEcommerce { get; set; }
     public long QuantidadeDeUsuarioCnpj { get; set; }
     public long QuantidadeDeUsuarioCpf { get; set; }
+    public int TotalDePedidos { get; set; }
+    public IEnumerable<PedidoPorDiaModel> PedidosPorDia { get; set; } = [];
+}
+
+public class PedidoPorDiaModel
+{
+    public DateTime Data { get; set; }
+    public int Total { get; set; }
+    public string DiaSemana => Data.DescricaoDiaSemana();
 }

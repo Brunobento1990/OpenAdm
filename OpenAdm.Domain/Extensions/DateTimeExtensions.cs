@@ -27,4 +27,19 @@ public static class DateTimeExtensions
         return dateTime.DayOfWeek == DayOfWeek.Saturday ||
                dateTime.DayOfWeek == DayOfWeek.Sunday;
     }
+
+    public static string DescricaoDiaSemana(this DateTime dateTime)
+    {
+        return dateTime.DayOfWeek switch
+        {
+            DayOfWeek.Sunday => "dom",
+            DayOfWeek.Monday => "seg",
+            DayOfWeek.Tuesday => "ter",
+            DayOfWeek.Wednesday => "qua",
+            DayOfWeek.Thursday => "qui",
+            DayOfWeek.Friday => "sex",
+            DayOfWeek.Saturday => "sáb",
+            _ => string.Empty,
+        };
+    }
 }

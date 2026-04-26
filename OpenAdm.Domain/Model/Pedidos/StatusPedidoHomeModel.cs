@@ -6,4 +6,5 @@ public class StatusPedidoHomeModel
 {
     public StatusPedido Status { get; set; }
     public int Quantidade { get; set; }
+    public decimal Porcentagem { get; set; }
 }
