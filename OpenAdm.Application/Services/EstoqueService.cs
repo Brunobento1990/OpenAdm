@@ -303,7 +303,7 @@ public class EstoqueService : IEstoqueService
             date,
             date,
             0,
-            quantidadeMovimentada: estoque.Quantidade - updateEstoqueDto.Quantidade,
+            quantidadeMovimentada: estoque.Quantidade - (updateEstoqueDto.Quantidade ?? 0),
             tipoMovimentacaoDeProduto: updateEstoqueDto.Quantidade > estoque.Quantidade
                 ? TipoMovimentacaoDeProduto.Entrada
                 : TipoMovimentacaoDeProduto.Saida,
@@ -312,7 +312,7 @@ public class EstoqueService : IEstoqueService
             estoque.PesoId,
             $"Estoque atualizado: {date:dd/MM/yyyy HH:mm}");
 
-        estoque.UpdateEstoqueAtual(updateEstoqueDto.Quantidade);
+        estoque.UpdateEstoqueAtual(updateEstoqueDto.Quantidade ?? 0);
 
         await _estoqueRepository.UpdateAsync(estoque);
         await _movimentacaoDeProdutoRepository.AddAsync(movimento);

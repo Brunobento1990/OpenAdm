@@ -12,7 +12,7 @@ namespace OpenAdm.Api.Controllers;
 
 [ApiController]
 [Route("banners")]
-[AcessoParceiro]
+//[AcessoParceiro]
 public class BannerController(IBannerService bannerService) : ControllerBase
 {
     private readonly IBannerService _bannerService = bannerService;
@@ -22,6 +22,12 @@ public class BannerController(IBannerService bannerService) : ControllerBase
     {
         var bannersViewModel = await _bannerService.GetBannersAsync();
         return Ok(bannersViewModel);
+    }
+    
+    [HttpGet("teste")]
+    public async Task<IActionResult> Teste([FromQuery] string teste)
+    {
+        return Ok(Criptografia.Encrypt(teste));
     }
 
     [Autentica]

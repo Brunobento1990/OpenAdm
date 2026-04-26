@@ -1,6 +1,15 @@
-﻿using OpenAdm.Application.HttpClient.Request;
+﻿using System.Text.Json.Serialization;
+using OpenAdm.Application.HttpClient.Request;
 
 namespace OpenAdm.Application.HttpClient.Response;
+
+public class ObterPagamentoMercadoPagoResponse
+{
+    public long Id { get; set; }
+    public string Status { get; set; } = string.Empty;
+    [JsonIgnore]
+    public bool Pago => Status.ToLower() == "approved";
+}
 
 public class MercadoPagoPagamentoResponse
 {

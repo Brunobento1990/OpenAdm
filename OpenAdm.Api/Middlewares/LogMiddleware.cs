@@ -42,18 +42,18 @@ public class LogMiddleware
 
             if (_development)
             {
-                await HandleError(httpContext, ex.Message);
+                await HandleError(httpContext, ex.Message, ex);
             }
             else
             {
                 await HandleError(
                     httpContext,
-                    _erroGenerico);
+                    _erroGenerico, ex);
             }
         }
     }
 
-    public async Task HandleError(HttpContext httpContext, string mensagem)
+    public async Task HandleError(HttpContext httpContext, string mensagem, Exception? ex = null)
     {
         httpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
         httpContext.Response.ContentType = "application/json";
@@ -62,7 +62,14 @@ public class LogMiddleware
         {
             Mensagem = mensagem
         };
-        Log.Error(mensagem);
+
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+        if (ex != null)
+        {
+            Log.Error(ex, mensagem);
+            return;
+        }
+
+        Log.Error(mensagem);
     }
 }

@@ -124,7 +124,16 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
     {
         var parcelaCobranca = await _parcelaCobrancaRepository.ObterPorIdExternoAsync(idExterno);
 
+
         if (parcelaCobranca == null || parcelaCobranca.Pago)
+        {
+            return;
+        }
+
+        var pagamentoDoMercadoPago = await _httpClientMercadoPago.ObterPagamentoPagamentoAsync(idExterno,
+            _configuration["TokenMercadoPago"]!);
+
+        if (!pagamentoDoMercadoPago.Pago)
         {
             return;
         }

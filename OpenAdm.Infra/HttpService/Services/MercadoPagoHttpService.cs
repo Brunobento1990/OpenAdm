@@ -42,4 +42,25 @@ public sealed class MercadoPagoHttpService : IHttpClientMercadoPago
         return JsonSerializer.Deserialize<MercadoPagoPagamentoResponse>(body, JsonSerializerOptionsApi.Options)
                ?? throw new Exception("Não foi possível desserealizar o objeto response do mercado pago!");
     }
+
+    public async Task<ObterPagamentoMercadoPagoResponse> ObterPagamentoPagamentoAsync(string pagamentoId, string accessToken)
+    {
+        using var httpClient = _httpClientFactory.CreateClient(_nomeCliente);
+
+        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        var response =
+            await httpClient.GetAsync($"/v1/payments/{pagamentoId}");
+        var body = await response.Content.ReadAsStreamAsync();
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            Log.Error(error);
+            throw new ExceptionApi($"Não foi possível gerar o pagamento.");
+        }
+
+        return JsonSerializer.Deserialize<ObterPagamentoMercadoPagoResponse>(body, JsonSerializerOptionsApi.Options)
+               ?? throw new Exception("Não foi possível desserealizar o objeto response do mercado pago!");
+    }
 }

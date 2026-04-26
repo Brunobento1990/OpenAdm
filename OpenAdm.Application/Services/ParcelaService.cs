@@ -1,4 +1,5 @@
 ﻿using OpenAdm.Application.Dtos.FaturasDtos;
+using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.FaturasModel;
@@ -8,6 +9,7 @@ using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Eventos;
@@ -24,6 +26,8 @@ public sealed class ParcelaService : IParcelaService
     private readonly ITransacaoFinanceiraRepository _transacaoFinanceiraRepository;
     private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
+    private readonly IConfiguracaoDePagamentoRepository _configuracaoDePagamentoRepository;
+    private readonly IHttpClientMercadoPago _httpClientMercadoPago;
 
     public ParcelaService(
         IParcelaRepository parcelaRepository,
@@ -31,7 +35,9 @@ public sealed class ParcelaService : IParcelaService
         IUpdateStatusPedidoService updateStatusPedidoService,
         IPedidoService pedidoService,
         ITransacaoFinanceiraRepository transacaoFinanceiraRepository,
-        IEventoAplicacaoRepository eventoAplicacaoRepository, IParceiroAutenticado parceiroAutenticado)
+        IEventoAplicacaoRepository eventoAplicacaoRepository, IParceiroAutenticado parceiroAutenticado,
+        IConfiguracaoDePagamentoRepository configuracaoDePagamentoRepository,
+        IHttpClientMercadoPago httpClientMercadoPago)
     {
         _parcelaRepository = parcelaRepository;
         _contasAReceberService = contasAReceberService;
@@ -40,6 +46,8 @@ public sealed class ParcelaService : IParcelaService
         _transacaoFinanceiraRepository = transacaoFinanceiraRepository;
         _eventoAplicacaoRepository = eventoAplicacaoRepository;
         _parceiroAutenticado = parceiroAutenticado;
+        _configuracaoDePagamentoRepository = configuracaoDePagamentoRepository;
+        _httpClientMercadoPago = httpClientMercadoPago;
     }
 
     public async Task<ParcelaViewModel> AddAsync(ParcelaCriarDto parcelaCriarDto)
@@ -81,6 +89,22 @@ public sealed class ParcelaService : IParcelaService
         if (parcela.Quitada)
         {
             Log.Warning("Parcela quitada");
+            return;
+        }
+
+        var configuracaoPagamento = await _configuracaoDePagamentoRepository.GetAsync(_parceiroAutenticado.Id);
+
+        if (configuracaoPagamento == null || string.IsNullOrWhiteSpace(configuracaoPagamento.AccessToken))
+        {
+            return;
+        }
+
+        var pagamentoDoMercadoPago = await _httpClientMercadoPago.ObterPagamentoPagamentoAsync(
+            notificationFaturaWebHook.Data.Id,
+            Criptografia.Decrypt(configuracaoPagamento.AccessToken));
+
+        if (!pagamentoDoMercadoPago.Pago)
+        {
             return;
         }
 
