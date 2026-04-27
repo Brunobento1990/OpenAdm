@@ -107,10 +107,11 @@ public class EstoqueService : IEstoqueService
 
                 if (estoque == null)
                 {
-                    addEstoques.Add(Estoque.NovoEstoque(quantidade: 0, produtoId: item.ProdutoId,
+                    estoque = Estoque.NovoEstoque(quantidade: 0, produtoId: item.ProdutoId,
                         tamanhoId: item.TamanhoId,
-                        pesoId: item.PesoId));
-                    continue;
+                        pesoId: item.PesoId);
+
+                    addEstoques.Add(estoque);
                 }
 
                 estoque.ReservaEstoque(item.Quantidade);
