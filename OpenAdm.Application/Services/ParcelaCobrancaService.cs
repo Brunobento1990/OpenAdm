@@ -63,7 +63,7 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
                 GerarBodyMercadoPado(parcelaCobranca,
                     $"{_configuration["UrlWebHookCobranca"]}?parceiroId={_parceiroAutenticado.Id}", parceiro),
                 _configuration["TokenMercadoPago"]!,
-                parcelaCobranca.Id.ToString());
+                Guid.NewGuid().ToString());
 
         var idExterno = resultPix.Id.ToString();
 
