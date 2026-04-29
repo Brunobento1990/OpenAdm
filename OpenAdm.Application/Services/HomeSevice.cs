@@ -15,7 +15,6 @@ public class HomeSevice : IHomeSevice
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IAcessoEcommerceService _acessoEcommerceService;
     private readonly IUsuarioRepository _usuarioRepository;
-    private readonly IEstoqueService _estoqueService;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IHomeRepository _homeRepository;
 
@@ -26,7 +25,6 @@ public class HomeSevice : IHomeSevice
         IPedidoRepository pedidoRepository,
         IAcessoEcommerceService acessoEcommerceService,
         IUsuarioRepository usuarioRepository,
-        IEstoqueService estoqueService,
         IUsuarioAutenticado usuarioAutenticado, IHomeRepository homeRepository)
     {
         _topUsuariosRepository = topUsuariosRepository;
@@ -35,7 +33,6 @@ public class HomeSevice : IHomeSevice
         _pedidoRepository = pedidoRepository;
         _acessoEcommerceService = acessoEcommerceService;
         _usuarioRepository = usuarioRepository;
-        _estoqueService = estoqueService;
         _usuarioAutenticado = usuarioAutenticado;
         _homeRepository = homeRepository;
     }
@@ -54,10 +51,9 @@ public class HomeSevice : IHomeSevice
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
         var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
         var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
-        var estoques = await _estoqueService.GetPosicaoDeEstoqueAsync();
         var variacaoPedido = await _pedidoRepository.ObterHomeAsync();
         var usuariosSemPedido = await _usuarioRepository.UsuariosSemPedidoAsync();
-        
+        var totalizadorProdutoEstoque = await _homeRepository.ObterTotalizadoProtudoEstoqueAsync();
         var dataInicio = DateTime.Today.AddDays(-6);
         var pedidosPorDia = await _homeRepository.ContatorPedido7DiasAsync(dataInicio);
 
@@ -70,6 +66,8 @@ public class HomeSevice : IHomeSevice
             //Faturas = faturas,
             TotalDePedidos = totalPedidos,
             TotalAReceber = totalAReceber,
+            TotalProdutoEstoque = totalizadorProdutoEstoque?.Quantidade ?? 0,
+            TotalProdutoEstoqueReservado = totalizadorProdutoEstoque?.QuantidadeReservada ?? 0,
             StatusPedido = pedidosStatus.Select(x => new StatusPedidoHomeModel()
             {
                 Status = x.Status,
@@ -79,7 +77,6 @@ public class HomeSevice : IHomeSevice
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
             QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,
             QuantidadeDeUsuarioCpf = quantidadeDeUsuarioCpf,
-            PosicaoDeEstoques = estoques,
             VariacaoMensalPedido = new()
             {
                 Mes = variacaoPedido.Mes.ConverterMesIntEmNome(),

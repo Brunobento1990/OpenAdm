@@ -12,7 +12,6 @@ namespace OpenAdm.Application.Models.Home;
 public class HomeAdmViewModel
 {
     public VariacaoMensalPedidoModel VariacaoMensalPedido { get; set; } = null!;
-    public IEnumerable<EstoqueViewModel> PosicaoDeEstoques { get; set; } = [];
     public IEnumerable<UsuarioViewModel> UsuarioSemPedidoCpf { get; set; } = [];
     public IEnumerable<UsuarioViewModel> UsuarioSemPedidoCnpj { get; set; } = [];
     public IEnumerable<TopUsuariosViewModel> TopUsuariosTotalCompra { get; set; } = [];
@@ -24,6 +23,9 @@ public class HomeAdmViewModel
     public long QuantidadeDeAcessoEcommerce { get; set; }
     public long QuantidadeDeUsuarioCnpj { get; set; }
     public long QuantidadeDeUsuarioCpf { get; set; }
+    public decimal TotalProdutoEstoque { get; set; }
+    public decimal TotalProdutoEstoqueReservado { get; set; }
+    public decimal QuantidadeProdutoDisponivel => TotalProdutoEstoque - TotalProdutoEstoqueReservado;
     public int TotalDePedidos { get; set; }
     public IEnumerable<PedidoPorDiaModel> PedidosPorDia { get; set; } = [];
 }

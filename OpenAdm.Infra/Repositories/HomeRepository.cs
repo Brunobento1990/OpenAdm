@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Infra.Repositories;
@@ -35,6 +36,25 @@ public class HomeRepository : IHomeRepository
             .Pedidos
             .AsNoTracking()
             .CountAsync();
+    }
+
+    public async Task<TotalizadorProtudoEstoqueHome?> ObterTotalizadoProtudoEstoqueAsync()
+    {
+        return await _parceiroContext
+            .Estoques
+            .AsNoTracking()
+            .Select(x => new
+            {
+                x.Quantidade,
+                x.QuantidadeReservada
+            })
+            .GroupBy(_ => 1)
+            .Select(g => new TotalizadorProtudoEstoqueHome
+            {
+                Quantidade = g.Sum(x => x.Quantidade),
+                QuantidadeReservada = g.Sum(x => x.QuantidadeReservada)
+            })
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IList<ContadorPedidoModel>> ContatorPedido7DiasAsync(DateTime dataInicio)
