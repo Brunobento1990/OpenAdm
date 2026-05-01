@@ -12,11 +12,15 @@ public class GerarParcelaCobrancaJob : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IConfiguration _configuration;
+    private readonly int _horaExecucao;
 
     public GerarParcelaCobrancaJob(IServiceProvider serviceProvider, IConfiguration configuration)
     {
         _serviceProvider = serviceProvider;
         _configuration = configuration;
+        _horaExecucao = int.TryParse(configuration["ParcelaCobranca:HoraExecucao"], out var horaExecucao)
+            ? horaExecucao
+            : 10;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -24,8 +28,8 @@ public class GerarParcelaCobrancaJob : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             var agora = DateTime.Now;
-            var proximaExecucao = agora.Date.AddDays(agora.Hour >= 7 ? 1 : 0)
-                .AddHours(7);
+            var proximaExecucao = agora.Date.AddDays(agora.Hour >= _horaExecucao ? 1 : 0)
+                .AddHours(_horaExecucao);
 
             var delay = proximaExecucao - agora;
 
