@@ -1,5 +1,5 @@
 ﻿using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Cached.Interfaces;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.Repositories;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;

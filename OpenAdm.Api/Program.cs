@@ -90,6 +90,7 @@ if (rodarMigration?.ToLower() == "true")
 }
 
 app.MaperControllerRelatorioVendaDeProduto()
+    .MaperControllerHome()
     .MaperControllerParcelaCobranca();
 
 app.Run();

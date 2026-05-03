@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Infra.Cached.Interfaces;
+using OpenAdm.Application.Interfaces;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 

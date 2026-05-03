@@ -64,15 +64,8 @@ public class HomeRepository : IHomeRepository
                     Peso = g.Key.PesoDescricao,
                     Tamanho = g.Key.TamanhoDescricao
                 });
-        
-        if (asc)
-        {
-            query = query.OrderBy(x => x.Quantidade);
-        }
-        else
-        {
-            query = query.OrderByDescending(x => x.Quantidade);
-        }
+
+        query = asc ? query.OrderBy(x => x.Quantidade) : query.OrderByDescending(x => x.Quantidade);
 
         return await query
             .Take(3)

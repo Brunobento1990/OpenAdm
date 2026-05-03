@@ -1,4 +1,4 @@
-﻿namespace OpenAdm.Infra.Cached.Interfaces;
+namespace OpenAdm.Application.Interfaces;
 
 public interface ICachedService<T> where T : class
 {

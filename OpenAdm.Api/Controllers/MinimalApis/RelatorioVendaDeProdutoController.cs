@@ -22,7 +22,7 @@ public static class RelatorioVendaDeProdutoController
             .WithMetadata(new AcessoParceiroAttribute())
             .WithMetadata(new AutenticaAttribute())
             .WithMetadata(new IsFuncionarioAttribute())
-            .Produces<PaginacaoViewModel<RelatorioVendaDeProdutoViewModel>>(StatusCodes.Status200OK)
+            .Produces<PaginacaoViewModel<RelatorioVendaDeProdutoViewModel>>()
             .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
 
         return app;

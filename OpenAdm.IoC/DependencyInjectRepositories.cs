@@ -4,7 +4,6 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.Azure.Storage;
 using OpenAdm.Infra.Cached.Cached;
-using OpenAdm.Infra.Cached.Interfaces;
 using OpenAdm.Infra.Cached.Services;
 using OpenAdm.Infra.Repositories;
 

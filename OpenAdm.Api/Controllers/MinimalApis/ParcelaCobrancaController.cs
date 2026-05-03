@@ -26,7 +26,7 @@ public static class ParcelaCobrancaController
             .WithMetadata(new AcessoParceiroAttribute())
             .WithMetadata(new AutenticaAttribute())
             .WithMetadata(new IsFuncionarioAttribute())
-            .Produces<PaginacaoViewModel<ParcelaCobrancaViewModel>>(StatusCodes.Status200OK)
+            .Produces<PaginacaoViewModel<ParcelaCobrancaViewModel>>()
             .Produces<ErrorResponse>(StatusCodes.Status400BadRequest);
 
         group

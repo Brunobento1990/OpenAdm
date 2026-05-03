@@ -14,6 +14,8 @@ public class HomeSevice : IHomeSevice
     private readonly IAcessoEcommerceService _acessoEcommerceService;
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IHomeRepository _homeRepository;
+    private readonly IUsuarioAutenticado _usuarioAutenticado;
+    private readonly ICachedService<HomeAdmViewModel> _cache;
 
     public HomeSevice(
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
@@ -21,7 +23,7 @@ public class HomeSevice : IHomeSevice
         IPedidoRepository pedidoRepository,
         IAcessoEcommerceService acessoEcommerceService,
         IUsuarioRepository usuarioRepository,
-        IHomeRepository homeRepository)
+        IHomeRepository homeRepository, IUsuarioAutenticado usuarioAutenticado, ICachedService<HomeAdmViewModel> cache)
     {
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
         _faturaContasAReceberService = faturaContasAReceberService;
@@ -29,10 +31,21 @@ public class HomeSevice : IHomeSevice
         _acessoEcommerceService = acessoEcommerceService;
         _usuarioRepository = usuarioRepository;
         _homeRepository = homeRepository;
+        _usuarioAutenticado = usuarioAutenticado;
+        _cache = cache;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
     {
+        var key = $"home_{_usuarioAutenticado.ParceiroId}";
+
+        var cache = await _cache.GetItemAsync(key);
+
+        if (cache != null)
+        {
+            return cache;
+        }
+
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
         var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
         var pedidosStatus = await _homeRepository.ObterStatusPedidosAsync();
@@ -48,7 +61,7 @@ public class HomeSevice : IHomeSevice
         var produtosMaisVendidos = await _homeRepository.ProdutosMaisVendidosAsync(false);
         var produtosMenosVendidos = await _homeRepository.ProdutosMaisVendidosAsync(true);
 
-        return new HomeAdmViewModel()
+        cache = new HomeAdmViewModel()
         {
             PedidosPorDia = MontarCountDiario(pedidosPorDia, dataInicio),
             Movimentos = movimentos,
@@ -97,6 +110,10 @@ public class HomeSevice : IHomeSevice
                     Numero = x.Numero
                 })
         };
+
+        await _cache.SetItemAsync(key, cache);
+
+        return cache;
     }
 
     private static IList<PedidoPorDiaModel> MontarCountDiario(IList<ContadorPedidoModel> registros, DateTime dataInicio)
