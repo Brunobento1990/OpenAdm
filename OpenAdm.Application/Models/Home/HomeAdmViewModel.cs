@@ -20,6 +20,7 @@ public class HomeAdmViewModel
     public long QuantidadeDeUsuarioCpf { get; set; }
     public decimal TotalProdutoEstoque { get; set; }
     public decimal TotalProdutoEstoqueReservado { get; set; }
+    public decimal QuantidadeProdutoDisponivel => TotalProdutoEstoque - TotalProdutoEstoqueReservado;
     public int TotalDePedidos { get; set; }
     public IEnumerable<PedidoPorDiaModel> PedidosPorDia { get; set; } = [];
     public IEnumerable<ProdutoMaisVendidoModel> ProdutosMaisVendidos { get; set; } = [];
