@@ -57,7 +57,7 @@ public class HomeRepository : IHomeRepository
                 Id = g.Key.ProdutoId,
                 Descricao = g.Key.Descricao,
                 Foto = g.Key.UrlFoto,
-                Quantidade = g.Count(),
+                Quantidade = g.Sum(x => x.Quantidade),
                 Peso = g.Key.PesoDescricao,
                 Tamanho = g.Key.TamanhoDescricao
             })
@@ -85,7 +85,7 @@ public class HomeRepository : IHomeRepository
                 Id = g.Key.ProdutoId,
                 Descricao = g.Key.Descricao,
                 Foto = g.Key.UrlFoto,
-                Quantidade = g.Count(),
+                Quantidade = g.Sum(x => x.Quantidade),
                 Peso = g.Key.PesoDescricao,
                 Tamanho = g.Key.TamanhoDescricao
             })
