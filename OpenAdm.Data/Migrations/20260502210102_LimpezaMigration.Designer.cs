@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenAdm.Data.Context;
@@ -11,9 +12,11 @@ using OpenAdm.Data.Context;
 namespace OpenAdm.Data.Migrations
 {
     [DbContext(typeof(ParceiroContext))]
-    partial class ParceiroContextModelSnapshot : ModelSnapshot
+    [Migration("20260502210102_LimpezaMigration")]
+    partial class LimpezaMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -329,9 +332,9 @@ namespace OpenAdm.Data.Migrations
 
                     b.HasIndex("PesoId");
 
-                    b.HasIndex("TamanhoId");
+                    b.HasIndex("ProdutoId");
 
-                    b.HasIndex("ProdutoId", "TamanhoId", "PesoId");
+                    b.HasIndex("TamanhoId");
 
                     b.ToTable("ItensPedidos");
                 });

@@ -38,6 +38,62 @@ public class HomeRepository : IHomeRepository
             .CountAsync();
     }
 
+    public async Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMaisVendidosAsync()
+    {
+        return await _parceiroContext.ItensPedidos
+            .AsNoTracking()
+            .GroupBy(x => new 
+            { 
+                x.ProdutoId, 
+                x.PesoId, 
+                x.TamanhoId,
+                x.Produto.Descricao,
+                x.Produto.UrlFoto,
+                PesoDescricao = x.Peso!.Descricao,
+                TamanhoDescricao = x.Tamanho!.Descricao
+            })
+            .Select(g => new ProdutoMaisVendidoModel
+            {
+                Id = g.Key.ProdutoId,
+                Descricao = g.Key.Descricao,
+                Foto = g.Key.UrlFoto,
+                Quantidade = g.Count(),
+                Peso = g.Key.PesoDescricao,
+                Tamanho = g.Key.TamanhoDescricao
+            })
+            .OrderByDescending(x => x.Quantidade)
+            .Take(3)
+            .ToListAsync();
+    }
+    
+    public async Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMenosVendidosAsync()
+    {
+        return await _parceiroContext.ItensPedidos
+            .AsNoTracking()
+            .GroupBy(x => new 
+            { 
+                x.ProdutoId, 
+                x.PesoId, 
+                x.TamanhoId,
+                x.Produto.Descricao,
+                x.Produto.UrlFoto,
+                PesoDescricao = x.Peso!.Descricao,
+                TamanhoDescricao = x.Tamanho!.Descricao
+            })
+            .Select(g => new ProdutoMaisVendidoModel
+            {
+                Id = g.Key.ProdutoId,
+                Descricao = g.Key.Descricao,
+                Foto = g.Key.UrlFoto,
+                Quantidade = g.Count(),
+                Peso = g.Key.PesoDescricao,
+                Tamanho = g.Key.TamanhoDescricao
+            })
+            .OrderBy(x => x.Quantidade)
+            .Take(3)
+            .ToListAsync();
+    }
+    
     public async Task<TotalizadorProtudoEstoqueHome?> ObterTotalizadoProtudoEstoqueAsync()
     {
         return await _parceiroContext

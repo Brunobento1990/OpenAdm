@@ -23,7 +23,6 @@ public class AppDbContext : DbContext
     public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
     public DbSet<Banner> Banners { get; set; }
     public DbSet<LojaParceira> LojasParceiras { get; set; }
-    public DbSet<TopUsuario> TopUsuarios { get; set; }
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<EventoAplicacao> EventosAplicacao { get; set; }
     public DbSet<ParcelaCobranca> ParcelasCobrancas { get; set; }
@@ -41,7 +40,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new AcessoEcommerceConfiguration());
         modelBuilder.ApplyConfiguration(new BannerConfiguration());
         modelBuilder.ApplyConfiguration(new LojasParceirasConfiguration());
-        modelBuilder.ApplyConfiguration(new TopUsuariosConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new EventoAplicacaoConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaCobrancaConfiguration());

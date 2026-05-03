@@ -11,21 +11,15 @@ namespace OpenAdm.Application.Services.Pedidos;
 public class UpdateStatusPedidoService : IUpdateStatusPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository;
-    private readonly IProdutosMaisVendidosService _produtosMaisVendidosService;
-    private readonly ITopUsuarioService _topUsuarioService;
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
     private readonly IEstoqueService _estoqueService;
 
     public UpdateStatusPedidoService(
         IPedidoRepository pedidoRepository,
-        IProdutosMaisVendidosService produtosMaisVendidosService,
-        ITopUsuarioService topUsuarioService,
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
         IEstoqueService estoqueService)
     {
         _pedidoRepository = pedidoRepository;
-        _produtosMaisVendidosService = produtosMaisVendidosService;
-        _topUsuarioService = topUsuarioService;
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
         _estoqueService = estoqueService;
     }
@@ -40,8 +34,6 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
 
         if (pedido.StatusPedido == StatusPedido.Entregue)
         {
-            await _produtosMaisVendidosService.ProcessarAsync(pedido);
-            await _topUsuarioService.AddOrUpdateTopUsuarioAsync(pedido);
             await _movimentacaoDeProdutosService.MovimentarItensPedidoAsync(pedido.ItensPedido);
             await _estoqueService.MovimentacaoDePedidoEntregueAsync(pedido.ItensPedido);
         }

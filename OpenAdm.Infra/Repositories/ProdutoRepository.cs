@@ -94,35 +94,6 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         };
     }
 
-    public async Task<IList<Produto>> GetProdutosMaisVendidosAsync()
-    {
-        var produtosMaisVendidos = await ParceiroContext
-            .ProdutosMaisVendidos
-            .AsNoTracking()
-            .Select(x =>
-                new ProdutoMaisVendido(
-                    x.Id,
-                    x.DataDeCriacao,
-                    x.DataDeAtualizacao,
-                    x.Numero,
-                    x.QuantidadeProdutos / x.QuantidadePedidos,
-                    x.QuantidadePedidos,
-                    x.ProdutoId))
-            .ToListAsync();
-
-        var produtosIds = produtosMaisVendidos
-            .OrderByDescending(x => x.QuantidadeProdutos)
-            .Select(x => x.ProdutoId)
-            .Take(3)
-            .ToList();
-
-        return await ParceiroContext
-            .Produtos
-            .AsNoTracking()
-            .Where(x => produtosIds.Contains(x.Id))
-            .ToListAsync();
-    }
-
     public async Task<int> GetTotalPageProdutosAsync()
     {
         return await ParceiroContext

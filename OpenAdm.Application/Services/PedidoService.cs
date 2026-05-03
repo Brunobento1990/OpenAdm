@@ -7,7 +7,6 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
-using System.Reactive.Linq;
 using System.Text;
 using OpenAdm.Application.Queries;
 using OpenAdm.Pdf.Interfaces;
@@ -105,7 +104,11 @@ public class PedidoService : IPedidoService
         {
             TotalPaginas = paginacao.TotalPaginas,
             TotalDeRegistros = paginacao.TotalDeRegistros,
-            Values = pedidosViewModel
+            Values = pedidosViewModel.Select((x =>
+            {
+                x.ItensPedido = [];
+                return x;
+            }))
         };
     }
 

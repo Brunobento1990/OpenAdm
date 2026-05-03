@@ -1,6 +1,5 @@
 ﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Home;
-using OpenAdm.Application.Models.TopUsuarios;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Pedidos;
@@ -9,42 +8,32 @@ namespace OpenAdm.Application.Services;
 
 public class HomeSevice : IHomeSevice
 {
-    private readonly ITopUsuariosRepository _topUsuariosRepository;
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
     private readonly IParcelaService _faturaContasAReceberService;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IAcessoEcommerceService _acessoEcommerceService;
     private readonly IUsuarioRepository _usuarioRepository;
-    private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IHomeRepository _homeRepository;
 
     public HomeSevice(
-        ITopUsuariosRepository topUsuariosRepository,
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
         IParcelaService faturaContasAReceberService,
         IPedidoRepository pedidoRepository,
         IAcessoEcommerceService acessoEcommerceService,
         IUsuarioRepository usuarioRepository,
-        IUsuarioAutenticado usuarioAutenticado, IHomeRepository homeRepository)
+        IHomeRepository homeRepository)
     {
-        _topUsuariosRepository = topUsuariosRepository;
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
         _faturaContasAReceberService = faturaContasAReceberService;
         _pedidoRepository = pedidoRepository;
         _acessoEcommerceService = acessoEcommerceService;
         _usuarioRepository = usuarioRepository;
-        _usuarioAutenticado = usuarioAutenticado;
         _homeRepository = homeRepository;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
     {
-        var topUsuariosTotalCompra =
-            await _topUsuariosRepository.GetTopTresUsuariosToTalCompraAsync(_usuarioAutenticado.ParceiroId);
-        var topUsuariosTotalPedido =
-            await _topUsuariosRepository.GetTopTresUsuariosToTalPedidosAsync(_usuarioAutenticado.ParceiroId);
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
-        //var faturas = await _faturaContasAReceberService.FaturasDashBoardAsync();
         var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
         var pedidosStatus = await _homeRepository.ObterStatusPedidosAsync();
         var totalPedidos = await _homeRepository.CountDePedidosAsync();
@@ -56,16 +45,17 @@ public class HomeSevice : IHomeSevice
         var totalizadorProdutoEstoque = await _homeRepository.ObterTotalizadoProtudoEstoqueAsync();
         var dataInicio = DateTime.Today.AddDays(-6);
         var pedidosPorDia = await _homeRepository.ContatorPedido7DiasAsync(dataInicio);
+        var produtosMaisVendidos = await _homeRepository.ProdutosMaisVendidosAsync();
+        var produtosMenosVendidos = await _homeRepository.ProdutosMenosVendidosAsync();
 
         return new HomeAdmViewModel()
         {
             PedidosPorDia = MontarCountDiario(pedidosPorDia, dataInicio),
-            TopUsuariosTotalCompra = topUsuariosTotalCompra.Select(x => (TopUsuariosViewModel)x),
-            TopUsuariosTotalPedido = topUsuariosTotalPedido.Select(x => (TopUsuariosViewModel)x),
             Movimentos = movimentos,
-            //Faturas = faturas,
             TotalDePedidos = totalPedidos,
             TotalAReceber = totalAReceber,
+            ProdutosMaisVendidos = produtosMaisVendidos,
+            ProdutosMenosVendidos = produtosMenosVendidos,
             TotalProdutoEstoque = totalizadorProdutoEstoque?.Quantidade ?? 0,
             TotalProdutoEstoqueReservado = totalizadorProdutoEstoque?.QuantidadeReservada ?? 0,
             StatusPedido = pedidosStatus.Select(x => new StatusPedidoHomeModel()

@@ -38,5 +38,7 @@ public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItemPedido>
             .WithMany(x => x.ItensPedido)
             .HasForeignKey(x => x.ProdutoId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        builder.HasIndex(x => new { x.ProdutoId, x.TamanhoId, x.PesoId });
     }
 }
