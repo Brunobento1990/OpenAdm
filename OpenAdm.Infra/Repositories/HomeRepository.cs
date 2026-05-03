@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Pedidos;
@@ -38,42 +39,55 @@ public class HomeRepository : IHomeRepository
             .CountAsync();
     }
 
-    public async Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMaisVendidosAsync()
+    public async Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMaisVendidosAsync(bool asc)
     {
-        return await _parceiroContext.ItensPedidos
-            .AsNoTracking()
-            .GroupBy(x => new 
-            { 
-                x.ProdutoId, 
-                x.PesoId, 
-                x.TamanhoId,
-                x.Produto.Descricao,
-                x.Produto.UrlFoto,
-                PesoDescricao = x.Peso!.Descricao,
-                TamanhoDescricao = x.Tamanho!.Descricao
-            })
-            .Select(g => new ProdutoMaisVendidoModel
-            {
-                Id = g.Key.ProdutoId,
-                Descricao = g.Key.Descricao,
-                Foto = g.Key.UrlFoto,
-                Quantidade = g.Sum(x => x.Quantidade),
-                Peso = g.Key.PesoDescricao,
-                Tamanho = g.Key.TamanhoDescricao
-            })
-            .OrderByDescending(x => x.Quantidade)
+        var query =
+            _parceiroContext.ItensPedidos
+                .AsNoTracking()
+                .GroupBy(x => new
+                {
+                    x.ProdutoId,
+                    x.PesoId,
+                    x.TamanhoId,
+                    x.Produto.Descricao,
+                    x.Produto.UrlFoto,
+                    x.Pedido.StatusPedido,
+                    PesoDescricao = x.Peso!.Descricao,
+                    TamanhoDescricao = x.Tamanho!.Descricao
+                })
+                .Where(x => x.Key.StatusPedido == StatusPedido.Entregue)
+                .Select(g => new ProdutoMaisVendidoModel
+                {
+                    Id = g.Key.ProdutoId,
+                    Descricao = g.Key.Descricao,
+                    Foto = g.Key.UrlFoto,
+                    Quantidade = g.Sum(x => x.Quantidade),
+                    Peso = g.Key.PesoDescricao,
+                    Tamanho = g.Key.TamanhoDescricao
+                });
+        
+        if (asc)
+        {
+            query = query.OrderBy(x => x.Quantidade);
+        }
+        else
+        {
+            query = query.OrderByDescending(x => x.Quantidade);
+        }
+
+        return await query
             .Take(3)
             .ToListAsync();
     }
-    
+
     public async Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMenosVendidosAsync()
     {
         return await _parceiroContext.ItensPedidos
             .AsNoTracking()
-            .GroupBy(x => new 
-            { 
-                x.ProdutoId, 
-                x.PesoId, 
+            .GroupBy(x => new
+            {
+                x.ProdutoId,
+                x.PesoId,
                 x.TamanhoId,
                 x.Produto.Descricao,
                 x.Produto.UrlFoto,
@@ -93,7 +107,7 @@ public class HomeRepository : IHomeRepository
             .Take(3)
             .ToListAsync();
     }
-    
+
     public async Task<TotalizadorProtudoEstoqueHome?> ObterTotalizadoProtudoEstoqueAsync()
     {
         return await _parceiroContext

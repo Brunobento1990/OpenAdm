@@ -45,8 +45,8 @@ public class HomeSevice : IHomeSevice
         var totalizadorProdutoEstoque = await _homeRepository.ObterTotalizadoProtudoEstoqueAsync();
         var dataInicio = DateTime.Today.AddDays(-6);
         var pedidosPorDia = await _homeRepository.ContatorPedido7DiasAsync(dataInicio);
-        var produtosMaisVendidos = await _homeRepository.ProdutosMaisVendidosAsync();
-        var produtosMenosVendidos = await _homeRepository.ProdutosMenosVendidosAsync();
+        var produtosMaisVendidos = await _homeRepository.ProdutosMaisVendidosAsync(false);
+        var produtosMenosVendidos = await _homeRepository.ProdutosMaisVendidosAsync(true);
 
         return new HomeAdmViewModel()
         {

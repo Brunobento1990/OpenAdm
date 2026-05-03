@@ -9,6 +9,5 @@ public interface IHomeRepository
     Task<int> CountDePedidosAsync();
     Task<IList<ContadorPedidoModel>> ContatorPedido7DiasAsync(DateTime dataInicio);
     Task<TotalizadorProtudoEstoqueHome?>  ObterTotalizadoProtudoEstoqueAsync();
-    Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMaisVendidosAsync();
-    Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMenosVendidosAsync();
+    Task<ICollection<ProdutoMaisVendidoModel>> ProdutosMaisVendidosAsync(bool asc);
 }
