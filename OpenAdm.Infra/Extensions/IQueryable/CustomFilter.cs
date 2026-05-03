@@ -22,7 +22,7 @@ public static class CustomFilter
         return (total, values);
     }
 
-    private static async Task<int> CountCustomAsync<TEntity>(this IQueryable<TEntity> querable, int take)
+    public static async Task<int> CountCustomAsync<TEntity>(this IQueryable<TEntity> querable, int take)
     {
         var count = await querable
             .CountAsync();

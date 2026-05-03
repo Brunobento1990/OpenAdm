@@ -60,6 +60,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IFreteService, FreteService>();
         services.AddScoped<ICobrancaPedidoService, CobrancaPedidoService>();
         services.AddScoped<IParcelaCobrancaService, ParcelaCobrancaService>();
+        services.AddScoped<IRelatorioVendaDeProdutoService, RelatorioVendaDeProdutoService>();
 
         services.AddKeyedScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>(MeioDePagamentoEnum.Pix);
     }

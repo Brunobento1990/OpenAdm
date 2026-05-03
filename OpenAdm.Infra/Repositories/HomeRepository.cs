@@ -44,6 +44,7 @@ public class HomeRepository : IHomeRepository
         var query =
             _parceiroContext.ItensPedidos
                 .AsNoTracking()
+                .Where(x => x.Pedido.StatusPedido == StatusPedido.Entregue)
                 .GroupBy(x => new
                 {
                     x.ProdutoId,
@@ -51,11 +52,9 @@ public class HomeRepository : IHomeRepository
                     x.TamanhoId,
                     x.Produto.Descricao,
                     x.Produto.UrlFoto,
-                    x.Pedido.StatusPedido,
                     PesoDescricao = x.Peso!.Descricao,
                     TamanhoDescricao = x.Tamanho!.Descricao
                 })
-                .Where(x => x.Key.StatusPedido == StatusPedido.Entregue)
                 .Select(g => new ProdutoMaisVendidoModel
                 {
                     Id = g.Key.ProdutoId,

@@ -89,6 +89,7 @@ if (rodarMigration?.ToLower() == "true")
     }
 }
 
-app.MaperControllerParcelaCobranca();
+app.MaperControllerRelatorioVendaDeProduto()
+    .MaperControllerParcelaCobranca();
 
 app.Run();
