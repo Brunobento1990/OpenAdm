@@ -12,20 +12,21 @@ namespace OpenAdm.Infra.Repositories;
 public class PedidoRepository(ParceiroContext parceiroContext)
     : GenericRepository<Pedido>(parceiroContext), IPedidoRepository
 {
-
     public override async Task<PaginacaoViewModel<Pedido>> PaginacaoAsync(FilterModel<Pedido> filterModel)
     {
         var query = ParceiroContext
             .Pedidos
             .AsNoTracking()
+            //.AsSplitQuery()
             .WhereIsNotNull(filterModel.GetWhereBySearch())
-            .Include(x => x.ItensPedido)
+            //.Include(x => x.ItensPedido)
             .Include(x => x.Usuario);
 
         var (TotalPaginas, Values) = await query
             .CustomFilterAsync(filterModel);
 
-        var totalDeRegistros = await ParceiroContext.Pedidos.WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
+        var totalDeRegistros =
+            await ParceiroContext.Pedidos.WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
 
         return new()
         {
@@ -34,6 +35,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             TotalDeRegistros = totalDeRegistros
         };
     }
+
     public async Task<IList<StatusPedidoHomeModel>> GetCountStatusPedidosAsync()
     {
         return await ParceiroContext
@@ -45,6 +47,15 @@ public class PedidoRepository(ParceiroContext parceiroContext)
                 Quantidade = x.Count(),
                 Status = x.FirstOrDefault()!.StatusPedido
             }).ToListAsync();
+    }
+
+    public async Task<IList<ItemPedido>> ObterItensDosPedidosAsync(IEnumerable<Guid> ids)
+    {
+        return await ParceiroContext
+            .ItensPedidos
+            .AsNoTracking()
+            .Where(x => ids.Contains(x.PedidoId))
+            .ToListAsync();
     }
 
     public async Task<Pedido?> GetPedidoByIdAsync(Guid id)
@@ -64,12 +75,12 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Produto)
-                    .ThenInclude(x => x.Categoria)
+            .ThenInclude(x => x.Produto)
+            .ThenInclude(x => x.Categoria)
             .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Tamanho)
+            .ThenInclude(x => x.Tamanho)
             .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Peso)
+            .ThenInclude(x => x.Peso)
             .Include(x => x.Usuario)
             .Include(x => x.EnderecoEntrega)
             .FirstOrDefaultAsync(x => x.Id == id);
@@ -125,15 +136,15 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .IgnoreQueryFilters()
             .OrderByDescending(x => x.DataDeCriacao)
             .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Produto)
+            .ThenInclude(x => x.Produto)
             .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Tamanho)
+            .ThenInclude(x => x.Tamanho)
             .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Peso)
+            .ThenInclude(x => x.Peso)
             .Include(x => x.Usuario)
             .Where(x => x.DataDeCriacao.Date <= relatorioPedidoDto.DataFinal.Date &&
-                x.DataDeCriacao.Date >= relatorioPedidoDto.DataInicial.Date &&
-                x.StatusPedido == StatusPedido.Entregue)
+                        x.DataDeCriacao.Date >= relatorioPedidoDto.DataInicial.Date &&
+                        x.StatusPedido == StatusPedido.Entregue)
             .WhereIsNotNull(relatorioPedidoDto.WhereUsuarioId())
             .ToListAsync();
     }
@@ -202,15 +213,15 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await
             ParceiroContext
-            .Pedidos
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(x => x.Usuario)
-            .Include(x => x.ItensPedido)
-            .Include(x => x.EnderecoEntrega)
-            .Include(x => x.Fatura!.Parcelas)
+                .Pedidos
+                .AsNoTracking()
+                .AsSplitQuery()
+                .Include(x => x.Usuario)
+                .Include(x => x.ItensPedido)
+                .Include(x => x.EnderecoEntrega)
+                .Include(x => x.Fatura!.Parcelas)
                 .ThenInclude(x => x.Transacoes)
-            .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<VariacaoMensalHome> ObterHomeAsync()

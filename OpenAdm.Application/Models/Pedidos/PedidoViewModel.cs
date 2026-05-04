@@ -13,25 +13,35 @@ public class PedidoViewModel : BaseViewModel
     public decimal TotalAReceber { get; set; }
     public EnderecoEntregaPedidoViewModel? EnderecoEntrega { get; set; }
 
-    public decimal PorcentagemEstoqueAtendido
-    {
-        get
-        {
-            if (ItensPedido == null || !ItensPedido.Any())
-                return 0;
-
-            var totalPedido = ItensPedido.Sum(x => x.Quantidade);
-            var totalAtendido = ItensPedido.Sum(x => x.EstoqueDisponivel);
-
-            if (totalPedido == 0) return 0;
-
-            var percentualAtendido = (totalAtendido / (decimal)totalPedido) * 100m;
-            return Math.Round(percentualAtendido, 0);
-        }
-    }
+    public decimal PorcentagemEstoqueAtendido { get; set; }
 
     public string Usuario { get; set; } = string.Empty;
-    public bool TemEstoqueDisponivel => ItensPedido.Where(x => x.TemEstoqueDisponivel).Count() == ItensPedido.Count;
+    public bool TemEstoqueDisponivel { get; set; }
+
+    public void SetarPorcentagemEstoqueAtendido(ICollection<ItensPedidoViewModel> itens)
+    {
+        if (itens == null || !itens.Any())
+        {
+            return;
+        }
+
+        var totalPedido = itens.Sum(x => x.Quantidade);
+        var totalAtendido = itens.Sum(x => x.EstoqueDisponivel);
+
+        if (totalPedido == 0)
+        {
+            return;
+        }
+
+        var percentualAtendido = (totalAtendido / (decimal)totalPedido) * 100m;
+        PorcentagemEstoqueAtendido = Math.Round(percentualAtendido, 0);
+    }
+
+    public void SetarTemEstoqueDisponivel(ICollection<ItensPedidoViewModel> itens)
+    {
+        TemEstoqueDisponivel = itens.Where(x => x.TemEstoqueDisponivel).Count() == itens.Count;
+    }
+
     public IList<ItensPedidoViewModel> ItensPedido { get; set; } = [];
 
     public PedidoViewModel ForModelPedidoEmAberto(Pedido entity)

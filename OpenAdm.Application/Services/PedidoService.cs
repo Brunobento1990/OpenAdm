@@ -71,25 +71,31 @@ public class PedidoService : IPedidoService
     public async Task<PaginacaoViewModel<PedidoViewModel>> GetPaginacaoAsync(FilterModel<Pedido> paginacaoPedidoDto)
     {
         var paginacao = await _pedidoRepository.PaginacaoAsync(paginacaoPedidoDto);
+
         var pedidosViewModel = paginacao.Values
             .Select(x => new PedidoViewModel().ForModel(x))
             .ToList();
 
-        var pedidosParaVerificarEstoque = pedidosViewModel.Where(x =>
-            x.StatusPedido != StatusPedido.Cancelado && x.StatusPedido != StatusPedido.Entregue);
+        var ids = pedidosViewModel
+            .Where(x => x.StatusPedido != StatusPedido.Cancelado && x.StatusPedido != StatusPedido.Entregue)
+            .Select(x => x.Id);
 
-        var itens = pedidosParaVerificarEstoque.SelectMany(x => x.ItensPedido).ToList();
-        var produtosIds = pedidosParaVerificarEstoque.SelectMany(x => x.ItensPedido.Select(y => y.ProdutoId).Distinct())
+        var itens = (await _pedidoRepository.ObterItensDosPedidosAsync(ids))
+            .Select(x => new ItensPedidoViewModel().ToModel(x))
             .ToList();
 
-        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+        var estoqueList = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(
+            itens.Select(x => x.ProdutoId).Distinct().ToList()
+        );
+
+        var estoqueDict = estoqueList.ToDictionary(
+            x => (x.ProdutoId, x.PesoId, x.TamanhoId),
+            x => x);
 
         foreach (var item in itens)
         {
-            var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId
-                                                       && x.PesoId == item.PesoId && x.TamanhoId == item.TamanhoId);
-
-            if (estoque == null || estoque.Quantidade <= 0)
+            if (!estoqueDict.TryGetValue((item.ProdutoId, item.PesoId, item.TamanhoId), out var estoque)
+                || estoque.Quantidade <= 0)
             {
                 item.TemEstoqueDisponivel = false;
                 item.EstoqueDisponivel = 0;
@@ -97,18 +103,29 @@ public class PedidoService : IPedidoService
             }
 
             item.TemEstoqueDisponivel = estoque.Quantidade >= item.Quantidade;
-            item.EstoqueDisponivel = estoque.Quantidade > item.Quantidade ? item.Quantidade : estoque.Quantidade;
+            item.EstoqueDisponivel = Math.Min(estoque.Quantidade, item.Quantidade);
         }
 
+        var itensPorPedido = itens
+            .GroupBy(x => x.PedidoId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var values = pedidosViewModel.Select(x =>
+        {
+            var itensDoPedido = itensPorPedido.GetValueOrDefault(x.Id) ?? [];
+
+            x.SetarPorcentagemEstoqueAtendido(itensDoPedido);
+            x.SetarTemEstoqueDisponivel(itensDoPedido);
+            x.ItensPedido = [];
+
+            return x;
+        });
+        
         return new PaginacaoViewModel<PedidoViewModel>()
         {
             TotalPaginas = paginacao.TotalPaginas,
             TotalDeRegistros = paginacao.TotalDeRegistros,
-            Values = pedidosViewModel.Select((x =>
-            {
-                x.ItensPedido = [];
-                return x;
-            }))
+            Values = values
         };
     }
 

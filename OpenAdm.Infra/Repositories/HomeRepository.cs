@@ -116,6 +116,7 @@ public class HomeRepository : IHomeRepository
                 Quantidade = g.Sum(x => x.Quantidade),
                 QuantidadeReservada = g.Sum(x => x.QuantidadeReservada)
             })
+            .OrderByDescending(x => x.Quantidade)
             .FirstOrDefaultAsync();
     }
 
