@@ -43,6 +43,11 @@ public class PedidoRepository : IPedidoRepository
         throw new NotImplementedException();
     }
 
+    public Task<IList<ItemPedido>> ObterItensDosPedidosAsync(IEnumerable<Guid> ids)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Pedido?> GetPedidoByUsuarioIdAsync(Guid usuarioId)
     {
         throw new NotImplementedException();
