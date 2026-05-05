@@ -98,7 +98,7 @@ public class MigrationRepository : IMigrationService
         foreach (var stringConexao in stringDeConexoes)
         {
             var options = new DbContextOptionsBuilder<ParceiroContext>().Options;
-            using var appDbContext = new ParceiroContext(options, new ParceiroAutenticadoV2()
+            await using var appDbContext = new ParceiroContext(options, new ParceiroAutenticadoV2()
             {
                 ConnectionString = Criptografia.Decrypt(stringConexao)
             });

@@ -20,7 +20,7 @@ public class CnpjHttpService : IHttpClientConsultaCnpj
 
     public async Task<ConsultaCnpjResponse> ConsultarCnpjAsync(string cnpj)
     {
-        var client = _httpClientFactory.CreateClient(_nomeCliente);
+        using var client = _httpClientFactory.CreateClient(_nomeCliente);
 
         var response = await client.GetAsync(cnpj);
         var body = await response.Content.ReadAsStreamAsync();

@@ -36,7 +36,7 @@ public class EventoAplicacaoJob : BackgroundService
                 continue;
             }
 
-            using var scope = _serviceProvider.CreateScope();
+            await using var scope = _serviceProvider.CreateAsyncScope();
             var eventoRepository = scope.ServiceProvider.GetRequiredService<IEventoAplicacaoRepository>();
 
             var evento = await eventoRepository.ProximoEventoAsync();

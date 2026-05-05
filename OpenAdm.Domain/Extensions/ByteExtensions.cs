@@ -4,23 +4,19 @@ namespace OpenAdm.Domain.Extensions;
 
 public static class ByteExtensions
 {
-    public static string? ParaString(this byte[]? value)
+    public static string? ParaString(this byte[]? bytes)
     {
-        if (value == null)
-        {
+        if (bytes == null || bytes.Length == 0)
             return null;
-        }
 
-        return Encoding.UTF8.GetString(value);
+        return Convert.ToBase64String(bytes);
     }
 
-    public static byte[]? ParaBytes(this string? value)
+    public static byte[]? ParaBytes(this string? base64)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
+        if (string.IsNullOrWhiteSpace(base64))
             return null;
-        }
 
-        return Encoding.UTF8.GetBytes(value);
+        return Convert.FromBase64String(base64);
     }
 }

@@ -33,7 +33,7 @@ public class ConexaoWhatsAppJob : BackgroundService
 
             try
             {
-                using var scoped = _serviceProvider.CreateScope();
+                await using var scoped = _serviceProvider.CreateAsyncScope();
                 var servicoConexaoWhatsApp = scoped.ServiceProvider.GetService<IHttpClientWhatsApp>();
 
                 if (servicoConexaoWhatsApp == null)

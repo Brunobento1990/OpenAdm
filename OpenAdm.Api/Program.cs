@@ -81,7 +81,7 @@ app.MapControllers();
 
 if (rodarMigration?.ToLower() == "true")
 {
-    using var scope = app.Services.CreateScope();
+    await using var scope = app.Services.CreateAsyncScope();
     var migrationServico = scope.ServiceProvider.GetService<IMigrationService>();
     if (migrationServico != null)
     {

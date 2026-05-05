@@ -69,6 +69,8 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
                 "Não foi possível localizar a configuração de pedido para envio da notificação";
         }
 
+        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
+
         if (!string.IsNullOrWhiteSpace(configuracoesDePedido.WhatsApp))
         {
             var payload = new EnviarPDFWppRequest()
@@ -78,7 +80,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
                 Mimetype = "application/pdf",
                 Caption =
                     $"🛒 Novo pedido confirmado!\nParceiro: {parceiro.NomeFantasia}\nCliente: {pedido.Usuario.Nome}\nPedido: #{pedido.Numero}\nTotal: {pedido.ValorTotal.FormatMoney()}",
-                Media = Convert.ToBase64String(_pdfPedidoService.GeneratePdfPedido(pedido, parceiro)),
+                Media = Convert.ToBase64String(pdf),
                 FileName = $"pedido-{pedido.Numero}.pdf",
                 Delay = 0,
                 LinkPreview = false,
@@ -108,7 +110,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
         {
             Assunto = "Novo pedido",
             Email = configuracoesDePedido.EmailDeEnvio,
-            Arquivo = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro),
+            Arquivo = pdf,
             NomeDoArquivo = $"pedido-{pedido.Numero}",
             TipoDoArquivo = "application/pdf",
             Html = htmlEnvio

@@ -43,7 +43,7 @@ public class GerarParcelaCobrancaJob : BackgroundService
 
             try
             {
-                using var scope = _serviceProvider.CreateScope();
+                await using var scope = _serviceProvider.CreateAsyncScope();
                 var parceiroRepository = scope.ServiceProvider.GetRequiredService<IParceiroRepository>();
 
                 var parceirosParaCobranca = await parceiroRepository.ObterParaCobrancaAsync();

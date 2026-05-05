@@ -20,7 +20,7 @@ public class HttpClientFrete : IHttpClientFrete
 
     public async Task<ResultPartner<DadosCotacaoFreteResponse>> CotarFreteAsync(CotacaoFreteRequest request, string jwt)
     {
-        var httpClient = _httpClientFactory.CreateClient($"{HttpServiceEnum.Frete}");
+        using var httpClient = _httpClientFactory.CreateClient($"{HttpServiceEnum.Frete}");
 
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt);
 
