@@ -16,13 +16,6 @@ public class BannerController(IBannerService bannerService) : ControllerBase
 {
     private readonly IBannerService _bannerService = bannerService;
 
-    [HttpGet("list")]
-    public async Task<IActionResult> ListarBanners()
-    {
-        var bannersViewModel = await _bannerService.GetBannersAsync();
-        return Ok(bannersViewModel);
-    }
-
     [Autentica]
     [IsFuncionario]
     [HttpPost("paginacao")]

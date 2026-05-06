@@ -2,6 +2,7 @@ using dotenv.net;
 using OpenAdm.Api;
 using OpenAdm.Api.Configure;
 using OpenAdm.Api.Controllers.MinimalApis;
+using OpenAdm.Api.Controllers.MinimalApis.Ecommerce;
 using OpenAdm.Api.Middlewares;
 using OpenAdm.Application.DependencyInject;
 using OpenAdm.Application.Interfaces;
@@ -54,7 +55,7 @@ builder.Services.InjectRepositories(redisString, instanceName);
 builder.Services
     .ConfigurarPdf()
     .InjectHttpClient(urlApiCep, urlApiViaCep,
-    builder.Configuration);
+        builder.Configuration);
 
 builder.ConfigureLog();
 
@@ -91,6 +92,8 @@ if (rodarMigration?.ToLower() == "true")
 
 app.MaperControllerRelatorioVendaDeProduto()
     .MaperControllerHome()
+    .MaperControllerCategoriaEcommerce()
+    .MaperControllerBannerEcommerce()
     .MaperControllerParcelaCobranca();
 
 app.Run();

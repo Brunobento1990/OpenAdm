@@ -17,26 +17,6 @@ public class CategoriaController(ICategoriaService categoriaService)
 {
     private readonly ICategoriaService _categoriaService = categoriaService;
 
-    [HttpGet("list")]
-    [ProducesResponseType<IList<CategoriaViewModel>>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> GetCategorias()
-    {
-        var categoriasViewModel = await _categoriaService.GetCategoriasAsync();
-        return Ok(categoriasViewModel);
-    }
-
-    [HttpGet("list-drop-down")]
-    [IsFuncionario]
-    [Autentica]
-    [ProducesResponseType<IList<CategoriaViewModel>>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> GetCategoriasDropDown()
-    {
-        var categoriasViewModel = await _categoriaService.GetCategoriasDropDownAsync();
-        return Ok(categoriasViewModel);
-    }
-
     [HttpPost("create")]
     [Autentica]
     [IsFuncionario]
