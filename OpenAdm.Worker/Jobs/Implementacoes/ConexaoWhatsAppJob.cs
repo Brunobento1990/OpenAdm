@@ -38,7 +38,6 @@ public class ConexaoWhatsAppJob : BackgroundService
 
                 if (servicoConexaoWhatsApp == null)
                 {
-                    LogService.Error("JOB serviço de verificação de conexão com whats app null");
                     continue;
                 }
 
@@ -46,7 +45,6 @@ public class ConexaoWhatsAppJob : BackgroundService
 
                 if (response.Result?.Instance?.Conectado == true)
                 {
-                    LogService.Success("Status conexão whats app OK");
                     continue;
                 }
 

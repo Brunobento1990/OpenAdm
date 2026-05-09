@@ -27,12 +27,12 @@ public class EventoAplicacaoJob : BackgroundService
 
             if (DateTime.Now.EhMadrugada())
             {
-                LogService.Info("EventoAplicação: Madrugada");
                 continue;
             }
 
-            if (_configuration["Jobs:EventoAplicacaoInativo"]?.ToLower() == "true")
+            if (_configuration.GetValue<bool>("Jobs:EventoAplicacaoInativo"))
             {
+                LogService.Info("Evento Aplicacao Inativo");
                 continue;
             }
 

@@ -5,7 +5,6 @@ using OpenAdm.Api.Controllers.MinimalApis;
 using OpenAdm.Api.Controllers.MinimalApis.Ecommerce;
 using OpenAdm.Api.Middlewares;
 using OpenAdm.Application.DependencyInject;
-using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Helpers;
@@ -35,7 +34,6 @@ var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
 var instanceName = VariaveisDeAmbiente.GetVariavel("REDIS_INSTANCENAME");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
-var rodarMigration = VariaveisDeAmbiente.GetVariavel("RODAR_MIGRATION");
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate, googleClientId);
 ConfigAzure.Configure(azureKey, azureContainer);
@@ -45,7 +43,6 @@ EmailConfiguracaoModel.Configure(email: email, servidor: servidor, senha: senha,
 builder.Services.InjectCqs()
     .AddServicesApplication();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.ConfigureSwagger();
 builder.Services.ConfigureController();
 builder.Services.InjectServices();
 builder.Services.InjectCors();
@@ -66,12 +63,6 @@ app.UsePathBase(new PathString(basePath));
 
 app.UseRouting();
 
-if (VariaveisDeAmbiente.GetVariavel("AMBIENTE").Equals("develop"))
-{
-    app.UseSwagger(c => { c.RouteTemplate = "swagger/{documentName}/swagger.json"; });
-    app.UseSwaggerUI();
-}
-
 app.UseCors("base");
 
 app.AddMiddlewaresApi();
@@ -79,16 +70,6 @@ app.AddMiddlewaresApi();
 app.UseAuthorization();
 
 app.MapControllers();
-
-if (rodarMigration?.ToLower() == "true")
-{
-    await using var scope = app.Services.CreateAsyncScope();
-    var migrationServico = scope.ServiceProvider.GetService<IMigrationService>();
-    if (migrationServico != null)
-    {
-        await migrationServico.UpdateMigrationAsync(VariaveisDeAmbiente.GetVariavel("AMBIENTE"));
-    }
-}
 
 app.MaperControllerRelatorioVendaDeProduto()
     .MaperControllerHome()
