@@ -5,12 +5,14 @@ using OpenAdm.Api.Controllers.MinimalApis;
 using OpenAdm.Api.Controllers.MinimalApis.Ecommerce;
 using OpenAdm.Api.Middlewares;
 using OpenAdm.Application.DependencyInject;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Tokens;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
 using OpenAdm.Pdf;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +35,7 @@ var email = VariaveisDeAmbiente.GetVariavel("EMAIL");
 var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
 var instanceName = VariaveisDeAmbiente.GetVariavel("REDIS_INSTANCENAME");
+var ambiente = VariaveisDeAmbiente.GetVariavel("AMBIENTE");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate, googleClientId);
@@ -76,5 +79,22 @@ app.MaperControllerRelatorioVendaDeProduto()
     .MaperControllerCategoriaEcommerce()
     .MaperControllerBannerEcommerce()
     .MaperControllerParcelaCobranca();
+
+_ = Task.Run(async () =>
+{
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var servico = scope.ServiceProvider.GetService<IMigrationService>();
+        if (servico != null)
+        {
+            await servico.UpdateMigrationAsync(ambiente);
+        }
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "Falha ao executar rotinas iniciais de banco");
+    }
+});
 
 app.Run();
