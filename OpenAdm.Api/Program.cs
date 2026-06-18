@@ -36,6 +36,7 @@ var servidor = VariaveisDeAmbiente.GetVariavel("SERVER");
 var senha = VariaveisDeAmbiente.GetVariavel("SENHA");
 var instanceName = VariaveisDeAmbiente.GetVariavel("REDIS_INSTANCENAME");
 var ambiente = VariaveisDeAmbiente.GetVariavel("AMBIENTE");
+var rodarMigration = VariaveisDeAmbiente.GetVariavel("RODAR_MIGRATION");
 var porta = int.Parse(VariaveisDeAmbiente.GetVariavel("PORT"));
 
 ConfiguracaoDeToken.Configure(keyJwt, issue, audience, expirate, googleClientId);
@@ -84,6 +85,11 @@ _ = Task.Run(async () =>
 {
     try
     {
+        if (rodarMigration?.ToUpper() != "TRUE")
+        {
+            return;
+        }
+
         using var scope = app.Services.CreateScope();
         var servico = scope.ServiceProvider.GetService<IMigrationService>();
         if (servico != null)
