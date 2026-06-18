@@ -1,8 +1,8 @@
-﻿using OpenAdm.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OpenAdm.Domain.Entities;
 
-namespace OpenAdm.Infra.EntityConfiguration;
+namespace OpenAdm.Data.EntityConfiguration;
 
 public class EstoqueConfiguration : IEntityTypeConfiguration<Estoque>
 {
@@ -22,12 +22,10 @@ public class EstoqueConfiguration : IEntityTypeConfiguration<Estoque>
         builder.Property(x => x.Quantidade)
             .IsRequired()
             .HasPrecision(12, 2);
-        builder.Property(x => x.QuantidadeReservada)
-            .IsRequired()
-            .HasDefaultValue(0)
-            .HasPrecision(12, 2);
         builder.Property(x => x.ProdutoId)
             .IsRequired();
+
         builder.HasIndex(x => x.ProdutoId);
+        builder.HasIndex(x => new { x.ProdutoId, x.PesoId, x.TamanhoId }).IsUnique();
     }
 }

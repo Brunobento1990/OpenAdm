@@ -96,7 +96,7 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
     {
         return await ParceiroContext
             .Estoques
-            .AsNoTracking()
+            .Include(x => x.Produto)
             .Where(x => produtosIds.Contains(x.ProdutoId))
             .OrderByDescending(x => x.DataDeAtualizacao)
             .ToListAsync();

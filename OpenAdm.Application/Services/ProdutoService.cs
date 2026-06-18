@@ -4,6 +4,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Produtos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
@@ -20,6 +21,7 @@ public class ProdutoService : IProdutoService
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     private readonly IEstoqueRepository _estoqueRepository;
+    private readonly IItensPedidoRepository _itensPedidoRepository;
 
     public ProdutoService(
         IProdutoRepository produtoRepository,
@@ -29,7 +31,7 @@ public class ProdutoService : IProdutoService
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         IUsuarioAutenticado usuarioAutenticado,
         IConfiguracoesDePedidoService configuracoesDePedidoService,
-        IEstoqueRepository estoqueRepository)
+        IEstoqueRepository estoqueRepository, IItensPedidoRepository itensPedidoRepository)
     {
         _produtoRepository = produtoRepository;
         _pesosProdutosRepository = pesosProdutosRepository;
@@ -39,6 +41,7 @@ public class ProdutoService : IProdutoService
         _usuarioAutenticado = usuarioAutenticado;
         _configuracoesDePedidoService = configuracoesDePedidoService;
         _estoqueRepository = estoqueRepository;
+        _itensPedidoRepository = itensPedidoRepository;
     }
 
     public async Task<ProdutoViewModel> CreateProdutoAsync(CreateProdutoDto createProdutoDto)
@@ -125,35 +128,15 @@ public class ProdutoService : IProdutoService
         PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
         var paginacao = await _produtoRepository.GetProdutosAsync(paginacaoProdutoEcommerceDto);
-        var produtosViewModel = await MapearProdutosAsync(paginacao.Values.ToList());
+        
+        var produtosIds = paginacao.Values.Select(x => x.Id).Distinct().ToList();
+        
+        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
 
-        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
-
-        if (config.VendaDeProdutoComEstoque)
-        {
-            var estoques =
-                await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosViewModel.Select(x => x.Id)
-                    .ToList());
-            MapearEstoque(produtosViewModel, estoques);
-        }
-        else
-        {
-            var produtosComControleDeEstoque =
-                produtosViewModel.Where(x => x.VendaSomenteComEstoqueDisponivel).ToList();
-
-            if (produtosComControleDeEstoque.Count > 0)
-            {
-                var estoques =
-                    await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosComControleDeEstoque
-                        .Select(x => x.Id)
-                        .ToList());
-
-                foreach (var produto in produtosComControleDeEstoque)
-                {
-                    MapearProdutoEstoque(produto, estoques);
-                }
-            }
-        }
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+        var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);
+        
+        var produtosViewModel = await MapearProdutosAsync(paginacao.Values.ToList(), config, estoques, estoquesReservados);
 
         return new PaginacaoViewModel<ProdutoViewModel>()
         {
@@ -166,61 +149,16 @@ public class ProdutoService : IProdutoService
     public async Task<ICollection<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId)
     {
         var produtos = await _produtoRepository.GetProdutosByCategoriaIdAsync(categoriaId);
-        var produtosViewModel = await MapearProdutosAsync(produtos);
+        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
 
-        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var produtosIds = produtos.Select(x => x.Id).Distinct().ToList();
 
-        if (config.VendaDeProdutoComEstoque)
-        {
-            var estoques =
-                await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtos.Select(x => x.Id).ToList());
-            MapearEstoque(produtosViewModel, estoques);
-        }
-        else
-        {
-            var produtosComControleDeEstoque =
-                produtosViewModel.Where(x => x.VendaSomenteComEstoqueDisponivel).ToList();
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+        var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);
 
-            if (produtosComControleDeEstoque.Count > 0)
-            {
-                var estoques =
-                    await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtos.Select(x => x.Id).ToList());
-                MapearEstoque(produtosComControleDeEstoque, estoques);
-            }
-        }
+        var produtosViewModel = await MapearProdutosAsync(produtos, config, estoques, estoquesReservados);
 
         return produtosViewModel;
-    }
-
-    public static void MapearEstoque(ICollection<ProdutoViewModel> produtosViewModel, IList<Estoque> estoques)
-    {
-        foreach (var produto in produtosViewModel)
-        {
-            MapearProdutoEstoque(produto, estoques);
-        }
-    }
-
-    private static void MapearProdutoEstoque(ProdutoViewModel produto, IList<Estoque> estoques)
-    {
-        if (produto.Tamanhos != null)
-        {
-            foreach (var tamanho in produto.Tamanhos)
-            {
-                var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.TamanhoId == tamanho.Id);
-                tamanho.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
-                tamanho.Quantidade = estoqueItem?.QuantidadeDisponivel;
-            }
-        }
-
-        if (produto.Pesos != null)
-        {
-            foreach (var peso in produto.Pesos)
-            {
-                var estoqueItem = estoques.FirstOrDefault(x => x.ProdutoId == produto.Id && x.PesoId == peso.Id);
-                peso.TemEstoqueDisponivel = estoqueItem?.QuantidadeDisponivel > 0;
-                peso.Quantidade = estoqueItem?.QuantidadeDisponivel;
-            }
-        }
     }
 
     public async Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id)
@@ -300,7 +238,10 @@ public class ProdutoService : IProdutoService
         return new ProdutoViewModel().ToModel(produto);
     }
 
-    private async Task<ICollection<ProdutoViewModel>> MapearProdutosAsync(ICollection<Produto> produtos)
+    private async Task<ICollection<ProdutoViewModel>> MapearProdutosAsync(ICollection<Produto> produtos,
+        ConfiguracoesDePedido config,
+        IList<Estoque> estoques,
+        IList<EstoqueReservadoModel> estoquesReservados)
     {
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository
             .GetItensTabelaDePrecoByIdProdutosAsync(produtos.Select(x => x.Id).ToList());
@@ -358,9 +299,69 @@ public class ProdutoService : IProdutoService
                 }
             }
 
+            MapearProdutoEstoque(produto, produtoViewModel, config: config, estoques, estoquesReservados);
+
             produtosViewModel.Add(produtoViewModel);
         }
 
         return produtosViewModel;
+    }
+
+    public static void MapearProdutoEstoque(
+        Produto produto,
+        ProdutoViewModel produtoViewModel,
+        ConfiguracoesDePedido config,
+        IList<Estoque> estoques,
+        IList<EstoqueReservadoModel> estoquesReservados)
+    {
+        if (produtoViewModel.Tamanhos != null)
+        {
+            foreach (var tamanho in produtoViewModel.Tamanhos)
+            {
+                var estoque = estoques.FirstOrDefault(x =>
+                    x.ProdutoId == produto.Id &&
+                    x.TamanhoId == tamanho.Id);
+
+                var reservado = estoquesReservados.FirstOrDefault(x =>
+                    x.ProdutoId == produto.Id &&
+                    x.TamanhoId == tamanho.Id);
+
+                ProdutoEcommerceHelper.AplicarEstoque(
+                    produto,
+                    config,
+                    estoque,
+                    reservado,
+                    out var quantidadeDisponivel,
+                    out var temEstoqueDisponivel);
+
+                tamanho.Quantidade = quantidadeDisponivel;
+                tamanho.TemEstoqueDisponivel = temEstoqueDisponivel;
+            }
+        }
+
+        if (produtoViewModel.Pesos != null)
+        {
+            foreach (var peso in produtoViewModel.Pesos)
+            {
+                var estoque = estoques.FirstOrDefault(x =>
+                    x.ProdutoId == produto.Id &&
+                    x.PesoId == peso.Id);
+
+                var reservado = estoquesReservados.FirstOrDefault(x =>
+                    x.ProdutoId == produto.Id &&
+                    x.PesoId == peso.Id);
+
+                ProdutoEcommerceHelper.AplicarEstoque(
+                    produto,
+                    config,
+                    estoque,
+                    reservado,
+                    out var quantidadeDisponivel,
+                    out var temEstoqueDisponivel);
+
+                peso.Quantidade = quantidadeDisponivel;
+                peso.TemEstoqueDisponivel = temEstoqueDisponivel;
+            }
+        }
     }
 }

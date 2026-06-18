@@ -102,22 +102,22 @@ public class HomeRepository : IHomeRepository
 
     public async Task<TotalizadorProtudoEstoqueHome?> ObterTotalizadoProtudoEstoqueAsync()
     {
-        return await _parceiroContext
+        var quantidade = await _parceiroContext
             .Estoques
             .AsNoTracking()
-            .Select(x => new
-            {
-                x.Quantidade,
-                x.QuantidadeReservada
-            })
-            .GroupBy(_ => 1)
-            .Select(g => new TotalizadorProtudoEstoqueHome
-            {
-                Quantidade = g.Sum(x => x.Quantidade),
-                QuantidadeReservada = g.Sum(x => x.QuantidadeReservada)
-            })
-            .OrderByDescending(x => x.Quantidade)
-            .FirstOrDefaultAsync();
+            .SumAsync(x => (decimal?)x.Quantidade) ?? 0;
+
+        var quantidadeReservada = await _parceiroContext
+            .ItensPedidos
+            .AsNoTracking()
+            .Where(x => x.Pedido.StatusPedido == StatusPedido.Aberto)
+            .SumAsync(x => (decimal?)x.Quantidade) ?? 0;
+
+        return new TotalizadorProtudoEstoqueHome
+        {
+            Quantidade = quantidade,
+            QuantidadeReservada = quantidadeReservada
+        };
     }
 
     public async Task<IList<ContadorPedidoModel>> ContatorPedido7DiasAsync(DateTime dataInicio)

@@ -38,11 +38,6 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
             await _estoqueService.MovimentacaoDePedidoEntregueAsync(pedido.ItensPedido);
         }
 
-        if (pedido.StatusPedido == StatusPedido.Cancelado)
-        {
-            await _estoqueService.MovimentacaoDePedidoCanceladoOuExcluidoAsync(pedido.ItensPedido);
-        }
-
         await _pedidoRepository.SaveChangesAsync();
 
         return new PedidoViewModel().ForModel(pedido);

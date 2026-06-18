@@ -23,6 +23,29 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         _configuracaoDeFreteService = configuracaoDeFreteService;
     }
 
+    public async Task<ConfiguracoesDePedido> ConfiguracaoDePedidoAsync()
+    {
+        var configuracaoDePedido =
+            await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
+        if (configuracaoDePedido == null)
+        {
+            return new ConfiguracoesDePedido(
+                id: Guid.NewGuid(),
+                dataDeCriacao: DateTime.Now,
+                dataDeAtualizacao: DateTime.Now,
+                numero: 0,
+                emailDeEnvio: "",
+                ativo: true,
+                pedidoMinimoAtacado: 0,
+                pedidoMinimoVarejo: 0,
+                parceiroId: _usuarioAutenticado.ParceiroId,
+                whatsApp: "",
+                vendaDeProdutoComEstoque: false);
+        }
+
+        return configuracaoDePedido;
+    }
+
     public async Task<ConfiguracoesDePedidoViewModel> CreateConfiguracoesDePedidoAsync(
         UpdateConfiguracoesDePedidoDto updateConfiguracoesDePedidoDto)
     {

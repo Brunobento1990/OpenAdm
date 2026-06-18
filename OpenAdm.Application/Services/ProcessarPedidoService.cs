@@ -11,17 +11,15 @@ public class ProcessarPedidoService : IProcessarPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
-    private readonly IEstoqueService _estoqueService;
     private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
 
     public ProcessarPedidoService(
         IPedidoRepository pedidoRepository,
         IParceiroAutenticado parceiroAutenticado,
-        IEstoqueService estoqueService, IEventoAplicacaoRepository eventoAplicacaoRepository)
+        IEventoAplicacaoRepository eventoAplicacaoRepository)
     {
         _pedidoRepository = pedidoRepository;
         _parceiroAutenticado = parceiroAutenticado;
-        _estoqueService = estoqueService;
         _eventoAplicacaoRepository = eventoAplicacaoRepository;
     }
 
@@ -34,14 +32,11 @@ public class ProcessarPedidoService : IProcessarPedidoService
             return;
         }
 
-        //TODO: adicionar evento de reservar estoque    
-        await _estoqueService.ReservarEstoqueNovoPedidoAsync(pedido);
-
         var dados = new NovoPedidoEvento()
         {
             PedidoId = pedidoId,
         }.ToString();
-        
+
         var evento = EventoAplicacao
             .Criar(
                 dados: dados,

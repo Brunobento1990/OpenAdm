@@ -2,7 +2,7 @@
 using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Application.Models.Carrinhos;
 using OpenAdm.Application.Models.Categorias;
-using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services.Carrinhos;
@@ -15,6 +15,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     private readonly IEstoqueRepository _estoqueRepository;
+    private readonly IItensPedidoRepository _itensPedidoRepository;
 
     public GetCarrinhoService(
         ICarrinhoRepository carrinhoRepository,
@@ -22,7 +23,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         IUsuarioAutenticado usuarioAutenticado,
         IConfiguracoesDePedidoService configuracoesDePedidoService,
-        IEstoqueRepository estoqueRepository)
+        IEstoqueRepository estoqueRepository, IItensPedidoRepository itensPedidoRepository)
     {
         _carrinhoRepository = carrinhoRepository;
         _produtoRepository = produtoRepository;
@@ -30,6 +31,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         _usuarioAutenticado = usuarioAutenticado;
         _configuracoesDePedidoService = configuracoesDePedidoService;
         _estoqueRepository = estoqueRepository;
+        _itensPedidoRepository = itensPedidoRepository;
     }
 
     public async Task<CarrinhoViewModel> GetCarrinhoAsync()
@@ -42,9 +44,26 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
         var produtos = await _produtoRepository.GetProdutosByListIdAsync(produtosIds);
 
-        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
 
         var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+        var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);
+
+        var estoquesTamanhos = estoques
+            .Where(x => x.TamanhoId != null && x.PesoId == null)
+            .ToDictionary(x => (x.ProdutoId, x.TamanhoId!.Value));
+
+        var reservadosTamanhos = estoquesReservados
+            .Where(x => x.TamanhoId != null && x.PesoId == null)
+            .ToDictionary(x => (x.ProdutoId, x.TamanhoId!.Value));
+
+        var estoquesPesos = estoques
+            .Where(x => x.PesoId != null && x.TamanhoId == null)
+            .ToDictionary(x => (x.ProdutoId, x.PesoId!.Value));
+
+        var reservadosPesos = estoquesReservados
+            .Where(x => x.PesoId != null && x.TamanhoId == null)
+            .ToDictionary(x => (x.ProdutoId, x.PesoId!.Value));
 
         foreach (var produto in produtos)
         {
@@ -65,31 +84,39 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                 .OrderBy(x => x.Numero)
                 .Select(x =>
                 {
-                    var estoqueItem = config.VendaDeProdutoComEstoque || produto.VendaSomenteComEstoqueDisponivel
-                        ? estoques.FirstOrDefault(f => f.ProdutoId == produto.Id && f.TamanhoId == x.Id)
-                        : null;
+                    estoquesTamanhos.TryGetValue(
+                        (produto.Id, x.Id),
+                        out var estoque);
+
+                    reservadosTamanhos.TryGetValue((produto.Id, x.Id), out var estoqueReservado);
+
+                    var itemTabelaDePreco = itensTabelaDePreco
+                        .FirstOrDefault(item => item.ProdutoId == produto.Id && item.TamanhoId == x.Id);
+
+                    var quantidade = carrinho?
+                        .Produtos?
+                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.TamanhoId == x.Id)?
+                        .Quantidade ?? 0;
+
+                    ProdutoEcommerceHelper
+                        .AplicarEstoque(produto, config, estoque, estoqueReservado, out var estoqueDisponivel,
+                            out var possuiEstoqueDisponivel);
 
                     return new TamanhoCarrinhoViewModel()
                     {
                         Id = x.Id,
                         Descricao = x.Descricao,
                         Numero = x.Numero,
-                        TemEstoqueDisponivel = estoqueItem == null || estoqueItem.QuantidadeDisponivel > 0,
-                        Quantidade = estoqueItem?.QuantidadeDisponivel,
+                        Quantidade = estoqueDisponivel,
+                        TemEstoqueDisponivel = possuiEstoqueDisponivel,
                         PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
                         {
-                            Quantidade = (decimal)(carrinho?
-                                .Produtos?
-                                .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.TamanhoId == x.Id)?
-                                .Quantidade ?? 0),
-                            ValorUnitario = GetValorUnitarioProduto(
+                            Quantidade = quantidade,
+                            ValorUnitario = ProdutoEcommerceHelper.ValorUnitarioProduto(
                                 usuario.Cnpj,
-                                itensTabelaDePreco
-                                    .FirstOrDefault(item => item.ProdutoId == produto.Id && item.TamanhoId == x.Id)
-                                    ?.ValorUnitarioAtacado,
-                                itensTabelaDePreco
-                                    .FirstOrDefault(item => item.TamanhoId == x.Id && item.ProdutoId == produto.Id)
-                                    ?.ValorUnitarioVarejo)
+                                itemTabelaDePreco?.ValorUnitarioAtacado,
+                                itemTabelaDePreco?.ValorUnitarioVarejo
+                            )
                         }
                     };
                 }).ToList();
@@ -99,31 +126,38 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                 .OrderBy(x => x.Numero)
                 .Select(x =>
                 {
-                    var estoqueItem = config.VendaDeProdutoComEstoque || produto.VendaSomenteComEstoqueDisponivel
-                        ? estoques.FirstOrDefault(f => f.ProdutoId == produto.Id && f.PesoId == x.Id)
-                        : null;
+                    estoquesPesos.TryGetValue(
+                        (produto.Id, x.Id),
+                        out var estoque);
+
+                    reservadosPesos.TryGetValue((produto.Id, x.Id), out var estoqueReservado);
+
+                    var itemTabelaDePreco = itensTabelaDePreco
+                        .FirstOrDefault(item => item.ProdutoId == produto.Id && item.PesoId == x.Id);
+
+                    var quantidade = carrinho?
+                        .Produtos?
+                        .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.PesoId == x.Id)?
+                        .Quantidade ?? 0;
+
+                    ProdutoEcommerceHelper
+                        .AplicarEstoque(produto, config, estoque, estoqueReservado, out var estoqueDisponivel,
+                            out var possuiEstoqueDisponivel);
 
                     return new PesoCarrinhoViewModel()
                     {
                         Id = x.Id,
                         Descricao = x.Descricao,
                         Numero = x.Numero,
-                        Quantidade = estoqueItem?.Quantidade,
-                        TemEstoqueDisponivel = estoqueItem == null || estoqueItem.QuantidadeDisponivel > 0,
+                        Quantidade = estoqueDisponivel,
+                        TemEstoqueDisponivel = possuiEstoqueDisponivel,
                         PrecoProduto = new QuantidadeProdutoCarrinhoViewModel()
                         {
-                            Quantidade = (decimal)(carrinho?
-                                .Produtos?
-                                .FirstOrDefault(pr => pr.ProdutoId == produto.Id && pr.PesoId == x.Id)?
-                                .Quantidade ?? 0),
-                            ValorUnitario = GetValorUnitarioProduto(
+                            Quantidade = quantidade,
+                            ValorUnitario = ProdutoEcommerceHelper.ValorUnitarioProduto(
                                 usuario.Cnpj,
-                                itensTabelaDePreco
-                                    .FirstOrDefault(item => item.ProdutoId == produto.Id && item.PesoId == x.Id)
-                                    ?.ValorUnitarioAtacado,
-                                itensTabelaDePreco
-                                    .FirstOrDefault(item => item.PesoId == x.Id && item.ProdutoId == produto.Id)
-                                    ?.ValorUnitarioVarejo
+                                itemTabelaDePreco?.ValorUnitarioAtacado,
+                                itemTabelaDePreco?.ValorUnitarioVarejo
                             )
                         }
                     };
@@ -148,20 +182,5 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
                     Uf = usuario.EnderecoUsuario.Uf
                 }
         };
-    }
-
-    private static decimal GetValorUnitarioProduto(
-        string? cnpj,
-        decimal? valorUnitarioAtacado,
-        decimal? valorUnitarioVarejo)
-    {
-        var isAtacado = !string.IsNullOrWhiteSpace(cnpj);
-
-        if (isAtacado)
-        {
-            return valorUnitarioAtacado ?? 0;
-        }
-
-        return valorUnitarioVarejo ?? 0;
     }
 }

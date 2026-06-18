@@ -14,16 +14,14 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IFaturaService _faturaService;
     private readonly IUsuarioService _usuarioService;
-    private readonly IEstoqueService _estoqueService;
     public CreatePedidoAdmService(
         IPedidoRepository pedidoRepository,
         IFaturaService faturaService,
-        IUsuarioService usuarioService, IEstoqueService estoqueService)
+        IUsuarioService usuarioService)
     {
         _pedidoRepository = pedidoRepository;
         _faturaService = faturaService;
         _usuarioService = usuarioService;
-        _estoqueService = estoqueService;
     }
 
     public async Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto)
@@ -68,8 +66,6 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
             UsuarioId = pedido.UsuarioId,
             Tipo = TipoFaturaEnum.A_Receber
         });
-
-        await _estoqueService.ReservarEstoqueNovoPedidoAsync(pedido);
         
         return true;
     }

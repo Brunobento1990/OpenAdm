@@ -1,4 +1,5 @@
-﻿using OpenAdm.Domain.Entities.Bases;
+﻿using System.ComponentModel.DataAnnotations;
+using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Domain.Entities;
@@ -15,40 +16,37 @@ public sealed class Estoque : BaseEntity
         PesoId = pesoId;
     }
 
-    public void UpdateEstoqueAtual(decimal quantidade)
+    public void AplicarMovimentacao(decimal quantidade, TipoMovimentacaoDeProduto tipo, bool permitirEstoqueNegativo)
     {
-        Quantidade = quantidade;
-    }
+        var novaQuantidade = Quantidade;
 
-    public void UpdateEstoque(decimal quantidade, TipoMovimentacaoDeProduto tipoMovimentacaoDeProduto)
-    {
-        DataDeAtualizacao = DateTime.Now;
-        if (tipoMovimentacaoDeProduto == TipoMovimentacaoDeProduto.Entrada)
+        if (tipo == TipoMovimentacaoDeProduto.Entrada)
         {
-            Quantidade += quantidade;
-            return;
+            novaQuantidade += quantidade;
+        }
+        else
+        {
+            novaQuantidade -= quantidade;
         }
 
-        Quantidade -= quantidade;
-    }
+        if (!permitirEstoqueNegativo && novaQuantidade < 0)
+        {
+            throw new ValidationException("Estoque negativo não permitido");
+        }
 
-    public void PedidoEntregue(decimal quantidade)
-    {
-        QuantidadeReservada -= quantidade;
-        Quantidade -= quantidade;
-        DataDeAtualizacao = DateTime.Now;
-    }
-    
-    public void PedidoCanceladoExcluido(decimal quantidade)
-    {
-        QuantidadeReservada -= quantidade;
+        Quantidade = novaQuantidade;
         DataDeAtualizacao = DateTime.Now;
     }
 
-    public void ReservaEstoque(decimal quantidade)
+    public void AjustarQuantidade(decimal quantidade, bool permitirEstoqueNegativo)
     {
+        if (!permitirEstoqueNegativo && quantidade < 0)
+        {
+            throw new ValidationException("Estoque negativo não permitido");
+        }
+
+        Quantidade = quantidade;
         DataDeAtualizacao = DateTime.Now;
-        QuantidadeReservada += quantidade;
     }
 
     public Guid ProdutoId { get; private set; }
@@ -58,8 +56,6 @@ public sealed class Estoque : BaseEntity
     public Guid? PesoId { get; private set; }
     public Peso? Peso { get; set; }
     public decimal Quantidade { get; private set; }
-    public decimal QuantidadeReservada { get; private set; }
-    public decimal QuantidadeDisponivel => Quantidade - QuantidadeReservada;
 
     public static Estoque NovoEstoque(
         decimal quantidade,

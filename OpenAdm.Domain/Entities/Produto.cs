@@ -47,6 +47,11 @@ public sealed class Produto : BaseEntity
     {
         InativoEcommerce = !InativoEcommerce;
     }
+    
+    public bool ExigeEstoqueDisponivel(bool global)
+    {
+        return global || VendaSomenteComEstoqueDisponivel;
+    }
 
     public void Update(
         string descricao,

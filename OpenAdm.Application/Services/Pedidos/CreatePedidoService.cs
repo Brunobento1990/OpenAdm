@@ -21,6 +21,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IEstoqueRepository _estoqueRepository;
     private readonly IConfiguracaoDeFreteService _configuracaoDeFreteService;
+    private readonly IItensPedidoRepository _itensPedidoRepository;
 
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
@@ -31,7 +32,8 @@ public sealed class CreatePedidoService : ICreatePedidoService
         IConfiguracaoDePagamentoService configuracaoDePagamentoService,
         IConfiguracoesDePedidoService configuracoesDePedidoService,
         IUsuarioAutenticado usuarioAutenticado,
-        IEstoqueRepository estoqueRepository, IConfiguracaoDeFreteService configuracaoDeFreteService)
+        IEstoqueRepository estoqueRepository, IConfiguracaoDeFreteService configuracaoDeFreteService,
+        IItensPedidoRepository itensPedidoRepository)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
@@ -43,6 +45,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _usuarioAutenticado = usuarioAutenticado;
         _estoqueRepository = estoqueRepository;
         _configuracaoDeFreteService = configuracaoDeFreteService;
+        _itensPedidoRepository = itensPedidoRepository;
     }
 
     public async Task<ResultPartner<CriarPedidoViewModel>> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
@@ -91,18 +94,22 @@ public sealed class CreatePedidoService : ICreatePedidoService
         var produtosIds = pedidoCreateDto.ItensQuantidadesValidas.Select(x => x.ProdutoId).Distinct().ToList();
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
 
-        var estoques = await _estoqueRepository
-            .GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+        var itensTabelaDePrecoDictionary = itensTabelaDePreco
+            .ToDictionary(x => (x.ProdutoId, x.PesoId, x.TamanhoId));
+
+        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
+        var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);
+
+        var reservadosDictionary = estoquesReservados
+            .ToDictionary(x => (x.ProdutoId, x.PesoId, x.TamanhoId));
+
+        var estoquesDictionary = estoques
+            .ToDictionary(x => (x.ProdutoId, x.PesoId, x.TamanhoId));
 
         foreach (var item in pedidoCreateDto.ItensQuantidadesValidas)
         {
-            var itemTabela = itensTabelaDePreco
-                .FirstOrDefault(itemTabelaDePreco =>
-                    itemTabelaDePreco.ProdutoId == item.ProdutoId &&
-                    itemTabelaDePreco.PesoId == item.PesoId &&
-                    itemTabelaDePreco.TamanhoId == item.TamanhoId);
-
-            if (itemTabela == null)
+            if (!itensTabelaDePrecoDictionary.TryGetValue((item.ProdutoId, item.PesoId, item.TamanhoId),
+                    out var itemTabela))
             {
                 return (ResultPartner<CriarPedidoViewModel>)
                     $"Não foi possível localizar o preço do produto: {item.ProdutoId}";
@@ -112,19 +119,21 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
             if (configuracaoDePedido.VendaDeProdutoComEstoque || itemTabela.Produto.VendaSomenteComEstoqueDisponivel)
             {
-                var estoque = estoques.FirstOrDefault(x => x.ProdutoId == item.ProdutoId &&
-                                                           x.PesoId == item.PesoId &&
-                                                           x.TamanhoId == item.TamanhoId);
-                if (estoque == null)
+                if (!estoquesDictionary.TryGetValue((item.ProdutoId, item.PesoId, item.TamanhoId), out var estoque))
                 {
                     return (ResultPartner<CriarPedidoViewModel>)
-                        $"Não foi possível localizar o estoque do produto: {item.ProdutoId}";
+                        $"Não foi possível localizar o estoque do produto: {itemTabela.Produto.Descricao}";
                 }
 
-                if (estoque.QuantidadeDisponivel < item.Quantidade)
+                reservadosDictionary.TryGetValue((item.ProdutoId, item.PesoId, item.TamanhoId), out var reservado);
+
+                var posicaoEstoque = new PosicaoEstoqueModel(estoque.Quantidade, reservado?.QuantidadeReservada ?? 0,
+                    estoque.Produto.ExigeEstoqueDisponivel(configuracaoDePedido.VendaDeProdutoComEstoque));
+
+                if (!posicaoEstoque.PossuiDisponivel(item.Quantidade))
                 {
                     return (ResultPartner<CriarPedidoViewModel>)
-                        $"Não há estoque disponível do produto: {itemTabela.Produto.Descricao}, a quantidade disponível é : {estoque.Quantidade}";
+                        $"Não há estoque disponível do produto: {itemTabela.Produto.Descricao}, a quantidade disponível é : {posicaoEstoque.Disponivel}";
                 }
             }
         }

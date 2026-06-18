@@ -2,6 +2,8 @@
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Data.Context;
+using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -46,15 +48,39 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
         return itens;
     }
 
-    public async Task<IList<ItemPedido>> GetItensPedidoByProducaoAsync(IList<Guid> pedidosIds, IList<Guid> produtosIds, IList<Guid> pesosIds, IList<Guid> tamanhosIds)
+    public async Task<IList<EstoqueReservadoModel>> ObterEstoquesReservadosAsync(
+        IEnumerable<Guid> produtosIds)
+    {
+        return await ParceiroContext
+            .ItensPedidos
+            .AsNoTracking()
+            .Where(x =>
+                x.Pedido.StatusPedido == StatusPedido.Aberto &&
+                produtosIds.Contains(x.ProdutoId))
+            .GroupBy(x => new
+            {
+                x.ProdutoId,
+                x.PesoId,
+                x.TamanhoId
+            })
+            .Select(g => new EstoqueReservadoModel(
+                g.Key.ProdutoId,
+                g.Key.PesoId,
+                g.Key.TamanhoId,
+                g.Sum(x => x.Quantidade)))
+            .ToListAsync();
+    }
+
+    public async Task<IList<ItemPedido>> GetItensPedidoByProducaoAsync(IList<Guid> pedidosIds, IList<Guid> produtosIds,
+        IList<Guid> pesosIds, IList<Guid> tamanhosIds)
     {
         var itens = ParceiroContext
             .ItensPedidos
             .AsNoTracking()
             .Include(x => x.Pedido)
-                .ThenInclude(x => x.Usuario)
+            .ThenInclude(x => x.Usuario)
             .Include(x => x.Produto)
-                .ThenInclude(x => x.Categoria)
+            .ThenInclude(x => x.Categoria)
             .Include(x => x.Peso)
             .Include(x => x.Tamanho)
             .Where(x => x.Pedido.StatusPedido == Domain.Enuns.StatusPedido.Aberto);

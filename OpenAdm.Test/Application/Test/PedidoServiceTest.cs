@@ -7,6 +7,7 @@ using OpenAdm.Application.Dtos.Parceiros;
 using OpenAdm.Application.Models.ConfiguracoesDePagamentos;
 using OpenAdm.Application.Models.ConfiguracoesDePedidos;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -22,6 +23,8 @@ public class PedidoServiceTest
     private readonly Mock<IUsuarioAutenticado> _usuarioAutenticadoMock;
     private readonly Mock<IEstoqueRepository> _estoqueRepositoryMock;
     private readonly Mock<IConfiguracaoDeFreteService> _configuracaoDeFreteServiceMock;
+    private readonly Mock<IItensPedidoRepository> _itensPedidoRepository;
+
 
     private readonly CreatePedidoService _createPedidoService;
 
@@ -37,6 +40,7 @@ public class PedidoServiceTest
         _usuarioAutenticadoMock = new Mock<IUsuarioAutenticado>();
         _estoqueRepositoryMock = new Mock<IEstoqueRepository>();
         _configuracaoDeFreteServiceMock = new Mock<IConfiguracaoDeFreteService>();
+        _itensPedidoRepository = new();
 
         _createPedidoService = new CreatePedidoService(
             _pedidoRepositoryMock.Object,
@@ -48,7 +52,8 @@ public class PedidoServiceTest
             _configuracoesDePedidoServiceMock.Object,
             _usuarioAutenticadoMock.Object,
             _estoqueRepositoryMock.Object,
-            _configuracaoDeFreteServiceMock.Object);
+            _configuracaoDeFreteServiceMock.Object,
+            _itensPedidoRepository.Object);
     }
 
     private static ItemPedidoModel BuildItemValido() => new()
@@ -618,6 +623,9 @@ public class PedidoServiceTest
         _estoqueRepositoryMock
             .Setup(x => x.GetPosicaoEstoqueDosProdutosAsync(It.IsAny<IList<Guid>>()))
             .ReturnsAsync([]);
+        _itensPedidoRepository
+            .Setup(x => x.ObterEstoquesReservadosAsync(It.IsAny<IList<Guid>>()))
+            .ReturnsAsync([]);
 
         var produtoId = Guid.NewGuid();
         var dto = BuildDtoValido([new ItemPedidoModel { ProdutoId = produtoId, Quantidade = 1, ValorUnitario = 10 }]);
@@ -643,13 +651,16 @@ public class PedidoServiceTest
             .Setup(x => x.GetPosicaoEstoqueDosProdutosAsync(It.IsAny<IList<Guid>>()))
             .ReturnsAsync([]);
 
+        _itensPedidoRepository
+            .Setup(x => x.ObterEstoquesReservadosAsync(It.IsAny<IList<Guid>>()))
+            .ReturnsAsync([]);
+
         var dto = BuildDtoValido([new ItemPedidoModel { ProdutoId = produtoId, Quantidade = 1, ValorUnitario = 10 }]);
 
         var result = await _createPedidoService.CreatePedidoAsync(dto);
 
         Assert.NotNull(result.Error);
         Assert.Contains("Não foi possível localizar o estoque do produto", result.Error);
-        Assert.Contains(produtoId.ToString(), result.Error);
     }
 
     [Fact]
@@ -665,6 +676,9 @@ public class PedidoServiceTest
         _estoqueRepositoryMock
             .Setup(x => x.GetPosicaoEstoqueDosProdutosAsync(It.IsAny<IList<Guid>>()))
             .ReturnsAsync([]);
+        _itensPedidoRepository
+            .Setup(x => x.ObterEstoquesReservadosAsync(It.IsAny<IList<Guid>>()))
+            .ReturnsAsync([]);
 
         var dto = BuildDtoValido([new ItemPedidoModel { ProdutoId = produtoId, Quantidade = 1, ValorUnitario = 10 }]);
 
@@ -672,7 +686,6 @@ public class PedidoServiceTest
 
         Assert.NotNull(result.Error);
         Assert.Contains("Não foi possível localizar o estoque do produto", result.Error);
-        Assert.Contains(produtoId.ToString(), result.Error);
     }
 
     [Fact]
@@ -687,9 +700,15 @@ public class PedidoServiceTest
             .ReturnsAsync([BuildItemTabelaDePreco(produtoId)]);
         // estoque disponível = 2, pedido pede 10
         var estoque = Estoque.NovoEstoque(quantidade: 2, produtoId: produtoId, tamanhoId: null, pesoId: null);
+
+        estoque.Produto = ProdutoBuilder.Init().Build();
+
         _estoqueRepositoryMock
             .Setup(x => x.GetPosicaoEstoqueDosProdutosAsync(It.IsAny<IList<Guid>>()))
             .ReturnsAsync([estoque]);
+        _itensPedidoRepository
+            .Setup(x => x.ObterEstoquesReservadosAsync(It.IsAny<IList<Guid>>()))
+            .ReturnsAsync([]);
 
         var dto = BuildDtoValido([new ItemPedidoModel { ProdutoId = produtoId, Quantidade = 10, ValorUnitario = 10 }]);
 
