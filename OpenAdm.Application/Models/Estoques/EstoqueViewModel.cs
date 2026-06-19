@@ -5,9 +5,7 @@ namespace OpenAdm.Application.Models.Estoques;
 public class EstoqueViewModel : BaseModel
 {
     public decimal Quantidade { get; set; }
-
-    //TODO verificar quantidade disponivel/reservada com mudança de não persistencia de Quantidade Reservada
-    public decimal QuantidadeDisponivel { get; set; }
+    public decimal QuantidadeDisponivel => Quantidade - QuantidadeReservada;
     public decimal QuantidadeReservada { get; set; }
     public Guid ProdutoId { get; set; }
     public Guid? PesoId { get; set; }

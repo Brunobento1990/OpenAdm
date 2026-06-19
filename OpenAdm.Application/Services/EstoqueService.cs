@@ -15,15 +15,18 @@ public class EstoqueService : IEstoqueService
     private readonly IEstoqueRepository _estoqueRepository;
     private readonly IMovimentacaoDeProdutoRepository _movimentacaoDeProdutoRepository;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IItensPedidoRepository _itensPedidoRepository;
 
     public EstoqueService(
         IEstoqueRepository estoqueRepository,
         IMovimentacaoDeProdutoRepository movimentacaoDeProdutoRepository,
-        IConfiguracoesDePedidoService configuracoesDePedidoService)
+        IConfiguracoesDePedidoService configuracoesDePedidoService,
+        IItensPedidoRepository itensPedidoRepository)
     {
         _estoqueRepository = estoqueRepository;
         _movimentacaoDeProdutoRepository = movimentacaoDeProdutoRepository;
         _configuracoesDePedidoService = configuracoesDePedidoService;
+        _itensPedidoRepository = itensPedidoRepository;
     }
 
     public async Task<EstoqueViewModel> GetEstoqueViewModelAsync(Guid id)
@@ -38,11 +41,29 @@ public class EstoqueService : IEstoqueService
     {
         var paginacao = await _estoqueRepository.PaginacaoAsync(paginacaoEstoqueDto);
 
+        var estoques = paginacao.Values.Select(x => (EstoqueViewModel)x).ToList();
+
+        var estoquesReservados = await _itensPedidoRepository
+            .ObterEstoquesReservadosAsync(estoques.Select(x => x.ProdutoId).Distinct().ToList());
+
+        foreach (var estoque in estoques)
+        {
+            var estoqueReservado = estoquesReservados.FirstOrDefault(x => x.ProdutoId == estoque.ProdutoId &&
+                                                                          x.PesoId == estoque.PesoId &&
+                                                                          x.TamanhoId == estoque.TamanhoId);
+            if (estoqueReservado == null)
+            {
+                continue;
+            }
+
+            estoque.QuantidadeReservada = estoqueReservado.QuantidadeReservada;
+        }
+
         return new PaginacaoViewModel<EstoqueViewModel>()
         {
             TotalDeRegistros = paginacao.TotalDeRegistros,
             TotalPaginas = paginacao.TotalPaginas,
-            Values = paginacao.Values.Select(x => (EstoqueViewModel)x).ToList()
+            Values = estoques
         };
     }
 
