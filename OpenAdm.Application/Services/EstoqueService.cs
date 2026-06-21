@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using OpenAdm.Application.Dtos.Estoques;
+﻿using OpenAdm.Application.Dtos.Estoques;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Estoques;
 using OpenAdm.Domain.Entities;
@@ -120,17 +119,24 @@ public class EstoqueService : IEstoqueService
 
             if (estoque == null)
             {
-                throw new ValidationException(
-                    $"Não foi localizado estoque para o produto {item.ProdutoId}.");
+                estoque = Estoque.NovoEstoque(item.Quantidade, item.ProdutoId, tamanhoId: item.TamanhoId,
+                    pesoId: item.PesoId);
+
+                await _estoqueRepository.AddAsync(estoque);
             }
+            else
+            {
+                var permitirEstoqueNegativo =
+                    !estoque.Produto.ExigeEstoqueDisponivel(
+                        config.VendaDeProdutoComEstoque);
 
-            var permitirEstoqueNegativo =
-                !estoque.Produto.ExigeEstoqueDisponivel(config.VendaDeProdutoComEstoque);
+                estoque.AplicarMovimentacao(
+                    item.Quantidade,
+                    TipoMovimentacaoDeProduto.Saida,
+                    permitirEstoqueNegativo);
 
-            estoque.AplicarMovimentacao(
-                item.Quantidade,
-                TipoMovimentacaoDeProduto.Saida,
-                permitirEstoqueNegativo);
+                await _estoqueRepository.UpdateAsync(estoque);
+            }
         }
 
         if (estoques.Count > 0)
@@ -178,20 +184,24 @@ public class EstoqueService : IEstoqueService
 
         if (estoque == null)
         {
-            throw new ValidationException(
-                "Não foi localizado estoque para este produto.");
+            estoque = Estoque.NovoEstoque(dto.Quantidade, dto.ProdutoId, tamanhoId: dto.TamanhoId,
+                pesoId: dto.PesoId);
+
+            await _estoqueRepository.AddAsync(estoque);
         }
+        else
+        {
+            var permitirEstoqueNegativo =
+                !estoque.Produto.ExigeEstoqueDisponivel(
+                    config.VendaDeProdutoComEstoque);
 
-        var permitirEstoqueNegativo =
-            !estoque.Produto.ExigeEstoqueDisponivel(
-                config.VendaDeProdutoComEstoque);
+            estoque.AplicarMovimentacao(
+                dto.Quantidade,
+                dto.TipoMovimentacaoDeProduto,
+                permitirEstoqueNegativo);
 
-        estoque.AplicarMovimentacao(
-            dto.Quantidade,
-            dto.TipoMovimentacaoDeProduto,
-            permitirEstoqueNegativo);
-
-        await _estoqueRepository.UpdateAsync(estoque);
+            await _estoqueRepository.UpdateAsync(estoque);
+        }
 
         var movimento = new MovimentacaoDeProduto(
             Guid.NewGuid(),
