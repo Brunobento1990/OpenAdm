@@ -23,7 +23,8 @@ public class CategoriaEcommerceService : ICategoriaEcommerceService
             .Select(x => new CategoriaEcommerceQuery()
             {
                 Descricao = x.Descricao,
-                Id = x.Id
+                Id = x.Id,
+                QuantidadeDeProdutos = x.Produtos.Count(y => !y.InativoEcommerce)
             }).ToListAsync();
     }
 

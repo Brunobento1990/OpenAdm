@@ -3,6 +3,7 @@ using OpenAdm.Api;
 using OpenAdm.Api.Configure;
 using OpenAdm.Api.Controllers.MinimalApis;
 using OpenAdm.Api.Controllers.MinimalApis.Ecommerce;
+using OpenAdm.Api.Extensions;
 using OpenAdm.Api.Middlewares;
 using OpenAdm.Application.DependencyInject;
 using OpenAdm.Application.Interfaces;
@@ -80,6 +81,8 @@ app.MaperControllerRelatorioVendaDeProduto()
     .MaperControllerCategoriaEcommerce()
     .MaperControllerBannerEcommerce()
     .MaperControllerParcelaCobranca();
+
+app.MapEndpoints();
 
 _ = Task.Run(async () =>
 {

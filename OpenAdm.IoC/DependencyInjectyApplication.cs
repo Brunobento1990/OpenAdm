@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Carrinhos;
+using OpenAdm.Application.Interfaces.Ecommerce;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Services;
 using OpenAdm.Application.Services.Carrinhos;
@@ -61,6 +62,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<ICobrancaPedidoService, CobrancaPedidoService>();
         services.AddScoped<IParcelaCobrancaService, ParcelaCobrancaService>();
         services.AddScoped<IRelatorioVendaDeProdutoService, RelatorioVendaDeProdutoService>();
+        services.AddScoped<IProdutoEcommerceService, ProdutoEcommerceService>();
 
         services.AddKeyedScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>(MeioDePagamentoEnum.Pix);
     }
