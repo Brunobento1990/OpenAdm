@@ -15,7 +15,8 @@ public class LojasParceirasService : ILojasParceirasService
     private readonly IUploadImageBlobClient _uploadImageBlobClient;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
 
-    public LojasParceirasService(ILojasParceirasRepository lojasParceirasRepository, IUploadImageBlobClient uploadImageBlobClient, IUsuarioAutenticado usuarioAutenticado)
+    public LojasParceirasService(ILojasParceirasRepository lojasParceirasRepository,
+        IUploadImageBlobClient uploadImageBlobClient, IUsuarioAutenticado usuarioAutenticado)
     {
         _lojasParceirasRepository = lojasParceirasRepository;
         _uploadImageBlobClient = uploadImageBlobClient;
@@ -28,7 +29,8 @@ public class LojasParceirasService : ILojasParceirasService
         if (!string.IsNullOrWhiteSpace(createLojaParceiraDto.NovaFoto))
         {
             nomeFoto = $"{Guid.NewGuid()}.jpeg";
-            createLojaParceiraDto.NovaFoto = await _uploadImageBlobClient.UploadImageAsync(createLojaParceiraDto.NovaFoto, nomeFoto);
+            createLojaParceiraDto.NovaFoto =
+                await _uploadImageBlobClient.UploadImageAsync(createLojaParceiraDto.NovaFoto, nomeFoto);
         }
 
         var proximoNumero = await _lojasParceirasRepository.ProximoNumeroAsync(_usuarioAutenticado.ParceiroId);
@@ -60,7 +62,8 @@ public class LojasParceirasService : ILojasParceirasService
         return new LojasParceirasViewModel().ToModel(lojaParceira);
     }
 
-    public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(FilterModel<LojaParceira> paginacaoLojasParceirasDto)
+    public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(
+        FilterModel<LojaParceira> paginacaoLojasParceirasDto)
     {
         paginacaoLojasParceirasDto.ParceiroId = _usuarioAutenticado.ParceiroId;
         var paginacao = await _lojasParceirasRepository.PaginacaoAsync(paginacaoLojasParceirasDto);
@@ -82,11 +85,11 @@ public class LojasParceirasService : ILojasParceirasService
         return await _lojasParceirasRepository.GetFotosLojasParceirasAsync(_usuarioAutenticado.ParceiroId);
     }
 
-    public async Task<IList<LojasParceirasViewModel>> TodasLojasAsync()
+    public async Task<IEnumerable<LojasParceirasViewModel>> TodasLojasAsync()
     {
         var lojasParceiras = await _lojasParceirasRepository.GetLojasParceirasAsync(_usuarioAutenticado.ParceiroId);
 
-        return lojasParceiras.Select(x => new LojasParceirasViewModel().ToModel(x)).ToList();
+        return lojasParceiras.Select(x => new LojasParceirasViewModel().ToModel(x));
     }
 
     public async Task<LojasParceirasViewModel> UpdateLojaParceiraAsync(UpdateLojaParceiraDto updateLojaParceiraDto)
@@ -102,7 +105,8 @@ public class LojasParceirasService : ILojasParceirasService
             {
                 var resultDeleteFoto = await _uploadImageBlobClient.DeleteImageAsync(nomeFoto);
                 if (!resultDeleteFoto)
-                    throw new ExceptionApi("Não foi possível excluir a foto da loja, tente novamente mais tarde, ou entre em contato com o suporte!");
+                    throw new ExceptionApi(
+                        "Não foi possível excluir a foto da loja, tente novamente mais tarde, ou entre em contato com o suporte!");
 
                 nomeFoto = $"{Guid.NewGuid()}.jpeg";
 
@@ -128,6 +132,6 @@ public class LojasParceirasService : ILojasParceirasService
     private async Task<LojaParceira> GetLojaAsync(Guid id)
     {
         return await _lojasParceirasRepository.GetLojaParceiraByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a loja!");
+               ?? throw new ExceptionApi("Não foi possível localizar a loja!");
     }
 }

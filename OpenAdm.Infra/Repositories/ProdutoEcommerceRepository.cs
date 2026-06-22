@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -16,7 +17,7 @@ public class ProdutoEcommerceRepository : IProdutoEcommerceRepository
         _context = context;
     }
 
-    public async Task<ResultadoProdutoEcommerceModel> ListarAsync(
+    public async Task<PaginacaoViewModel<Produto>> ListarAsync(
         string? search,
         int page,
         ICollection<Guid>? categoriasIds)
@@ -43,32 +44,15 @@ public class ProdutoEcommerceRepository : IProdutoEcommerceRepository
 
         var count = await query.CountAsync();
         var dados = await query
-            .Select(x => new ProdutoEcommerceModel()
-            {
-                Categoria = x.Categoria.Descricao,
-                Descricao = x.Descricao,
-                Numero = x.Numero,
-                Id = x.Id,
-                Foto = x.UrlFoto!,
-                Pesos = x.Pesos.Select(y => new PesoTamanhoEcommerceModel()
-                {
-                    Descricao = y.Descricao,
-                    Id = y.Id
-                }).ToList(),
-                Tamanhos = x.Tamanhos.Select(y => new PesoTamanhoEcommerceModel()
-                {
-                    Descricao = y.Descricao,
-                    Id = y.Id
-                }).ToList(),
-            })
+            .OrderBy(x => x.Referencia)
             .Skip((page - 1) * Take)
             .Take(Take)
             .ToListAsync();
 
-        return new ResultadoProdutoEcommerceModel()
+        return new PaginacaoViewModel<Produto>()
         {
-            Produtos = dados,
-            QuantidadeDePagina = (int)Math.Ceiling((decimal)count / Take)
+            Values = dados,
+            TotalPaginas = (int)Math.Ceiling((decimal)count / Take)
         };
     }
 }
