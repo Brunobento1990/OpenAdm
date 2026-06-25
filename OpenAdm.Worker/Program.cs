@@ -12,7 +12,7 @@ builder.Services
     .ConfigurarPdf()
     .AddHttpClientInfra(builder.Configuration)
     .InjectContext(builder.Configuration["ConnectionStrings:DefaultConnection"]!)
-    .ConfigurarJobs(builder.Configuration);
+    .ConfigurarJobs();
 
 var host = builder.Build();
 host.Run();

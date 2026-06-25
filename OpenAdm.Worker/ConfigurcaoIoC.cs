@@ -15,9 +15,9 @@ namespace OpenAdm.Worker;
 
 public static class ConfigurcaoIoC
 {
-    public static IServiceCollection ConfigurarJobs(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigurarJobs(this IServiceCollection services)
     {
-        services.AddHostedService<ConexaoWhatsAppJob>();
+        //services.AddHostedService<ConexaoWhatsAppJob>();
         services.AddHostedService<EventoAplicacaoJob>();
         services.AddHostedService<GerarParcelaCobrancaJob>();
 
