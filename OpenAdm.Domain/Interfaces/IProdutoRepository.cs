@@ -9,6 +9,7 @@ public interface IProdutoRepository : IGenericRepository<Produto>
     Task<IList<Produto>> GetAllProdutosAsync();
     Task<IList<Produto>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
     Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids);
+    Task<IList<Produto>> GetProdutosByListIdV2Async(List<Guid> ids);
     Task<PaginacaoViewModel<Produto>> GetProdutosAsync(PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto);
     Task<Produto?> GetProdutoByIdAsync(Guid id);
     Task<Produto?> GetProdutoByIdExcluirAsync(Guid id);

@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Application.Models.Categorias;
 using OpenAdm.Application.Models.Fretes;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Application.Models.Carrinhos;
 
@@ -20,5 +21,11 @@ public class ItemCarrinhoViewModel
 public class CarrinhoViewModel
 {
     public IList<ItemCarrinhoViewModel> Itens { get; set; } = [];
+    public EnderecoViewModel? EnderecoUsuario { get; set; }
+}
+
+public class CarrinhoViewModelV2
+{
+    public IList<ProdutoEcommerceModel> Itens { get; set; } = [];
     public EnderecoViewModel? EnderecoUsuario { get; set; }
 }

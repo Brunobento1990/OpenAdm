@@ -88,6 +88,7 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
                 {
                     Descricao = tamanho.Descricao,
                     Id = tamanho.Id,
+                    Numero = tamanho.Numero
                 };
 
                 if (precoPorTamanho.TryGetValue((produto.Id, tamanho.Id), out var preco))
@@ -123,6 +124,7 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
                 {
                     Descricao = peso.Descricao,
                     Id = peso.Id,
+                    Numero = peso.Numero
                 };
 
                 if (precoPorPeso.TryGetValue((produto.Id, peso.Id), out var preco))
@@ -154,6 +156,9 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
 
             if (produtoViewModel.Pesos.Count > 0 || produtoViewModel.Tamanhos.Count > 0)
             {
+                produtoViewModel.Pesos = produtoViewModel.Pesos.OrderBy(x => x.Numero).ToList();
+                produtoViewModel.Tamanhos = produtoViewModel.Tamanhos.OrderBy(x => x.Numero).ToList();
+                
                 resultadoViewModel.Values.Add(produtoViewModel);
             }
         }

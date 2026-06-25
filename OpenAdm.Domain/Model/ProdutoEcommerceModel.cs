@@ -8,7 +8,6 @@ public class ProdutoEcommerceModel
     public string Descricao { get; set; } = string.Empty;
     public string Foto { get; set; } = string.Empty;
     public string? Referencia { get; set; }
-    public string Categoria { get; set; } = string.Empty;
     public long Numero { get; set; }
     public ICollection<PesoTamanhoEcommerceModel> Tamanhos { get; set; } = [];
     public ICollection<PesoTamanhoEcommerceModel> Pesos { get; set; } = [];
@@ -22,7 +21,6 @@ public class ProdutoEcommerceModel
             Referencia = produto.Referencia,
             Pesos = [],
             Tamanhos = [],
-            Categoria = produto.Categoria.Descricao,
             Foto = produto.UrlFoto ?? "",
             Numero = produto.Numero
         };
@@ -32,8 +30,10 @@ public class ProdutoEcommerceModel
 public class PesoTamanhoEcommerceModel
 {
     public Guid Id { get; set; }
+    public long Numero { get; set; }
     public decimal? ValorUnitario { get; set; }
     public decimal? QuantidadeEstoqueDisponivel { get; set; }
+    public decimal? Quantidade { get; set; }
     public bool TemEstoqueDisponivel { get; set; }
     public string Descricao { get; set; } = string.Empty;
 }

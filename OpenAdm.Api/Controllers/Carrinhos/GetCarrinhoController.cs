@@ -23,4 +23,11 @@ public class GetCarrinhoController : ControllerBase
         var result = await _getCarrinhoService.GetCarrinhoAsync();
         return Ok(result);
     }
+    
+    [HttpGet("get-carrinho-v2")]
+    public async Task<IActionResult> GetCarrinhoV2()
+    {
+        var result = await _getCarrinhoService.GetCarrinhoV2Async();
+        return Ok(result);
+    }
 }

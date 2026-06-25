@@ -179,6 +179,17 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         return produtos;
     }
 
+    public async Task<IList<Produto>> GetProdutosByListIdV2Async(List<Guid> ids)
+    {
+        return await ParceiroContext
+            .Produtos
+            .AsNoTracking()
+            .Include(x => x.Pesos)
+            .Include(x => x.Tamanhos)
+            .Where(x => ids.Contains(x.Id))
+            .ToListAsync();
+    }
+
     public async Task<Produto?> GetProdutoByIdAsync(Guid id)
     {
         var produto = await ParceiroContext
