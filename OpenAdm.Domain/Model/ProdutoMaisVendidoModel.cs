@@ -8,4 +8,6 @@ public class ProdutoMaisVendidoModel
     public string? Peso { get; set; }
     public string? Tamanho { get; set; }
     public decimal Quantidade { get; set; }
+    public decimal ValorUnitario { get; set; }
+    public decimal ValorTotal => ValorUnitario * Quantidade;
 }

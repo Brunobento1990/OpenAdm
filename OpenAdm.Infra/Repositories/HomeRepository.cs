@@ -61,6 +61,7 @@ public class HomeRepository : IHomeRepository
                     Descricao = g.Key.Descricao,
                     Foto = g.Key.UrlFoto,
                     Quantidade = g.Sum(x => x.Quantidade),
+                    ValorUnitario = g.Max(x => x.ValorUnitario),
                     Peso = g.Key.PesoDescricao,
                     Tamanho = g.Key.TamanhoDescricao
                 });

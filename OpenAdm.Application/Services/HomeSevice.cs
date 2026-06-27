@@ -41,10 +41,10 @@ public class HomeSevice : IHomeSevice
 
         var cache = await _cache.GetItemAsync(key);
 
-        if (cache != null)
-        {
-            return cache;
-        }
+        // if (cache != null)
+        // {
+        //     return cache;
+        // }
 
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
         var pedidosStatus = await _homeRepository.ObterStatusPedidosAsync();
