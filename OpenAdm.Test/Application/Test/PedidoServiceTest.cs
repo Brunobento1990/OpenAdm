@@ -17,25 +17,22 @@ public class PedidoServiceTest
     private readonly Mock<IProcessarPedidoService> _processarPedidoServiceMock;
     private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepositoryMock;
     private readonly Mock<ICarrinhoRepository> _carrinhoRepositoryMock;
-    private readonly Mock<IFaturaService> _contasAReceberServiceMock;
-    private readonly Mock<IConfiguracaoDePagamentoService> _configuracaoDePagamentoServiceMock;
     private readonly Mock<IConfiguracoesDePedidoService> _configuracoesDePedidoServiceMock;
     private readonly Mock<IUsuarioAutenticado> _usuarioAutenticadoMock;
     private readonly Mock<IEstoqueRepository> _estoqueRepositoryMock;
     private readonly Mock<IConfiguracaoDeFreteService> _configuracaoDeFreteServiceMock;
     private readonly Mock<IItensPedidoRepository> _itensPedidoRepository;
-
+    private readonly Mock<ICobrancaPedidoEcommerceRepository> _cobrancaPedidoEcommerceRepository;
 
     private readonly CreatePedidoService _createPedidoService;
 
     public PedidoServiceTest()
     {
+        _cobrancaPedidoEcommerceRepository = new();
         _pedidoRepositoryMock = new Mock<IPedidoRepository>();
         _processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
         _itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
         _carrinhoRepositoryMock = new Mock<ICarrinhoRepository>();
-        _contasAReceberServiceMock = new Mock<IFaturaService>();
-        _configuracaoDePagamentoServiceMock = new Mock<IConfiguracaoDePagamentoService>();
         _configuracoesDePedidoServiceMock = new Mock<IConfiguracoesDePedidoService>();
         _usuarioAutenticadoMock = new Mock<IUsuarioAutenticado>();
         _estoqueRepositoryMock = new Mock<IEstoqueRepository>();
@@ -47,13 +44,12 @@ public class PedidoServiceTest
             _processarPedidoServiceMock.Object,
             _itemTabelaDePrecoRepositoryMock.Object,
             _carrinhoRepositoryMock.Object,
-            _contasAReceberServiceMock.Object,
-            _configuracaoDePagamentoServiceMock.Object,
             _configuracoesDePedidoServiceMock.Object,
             _usuarioAutenticadoMock.Object,
             _estoqueRepositoryMock.Object,
             _configuracaoDeFreteServiceMock.Object,
-            _itensPedidoRepository.Object);
+            _itensPedidoRepository.Object,
+            _cobrancaPedidoEcommerceRepository.Object);
     }
 
     private static ItemPedidoModel BuildItemValido() => new()

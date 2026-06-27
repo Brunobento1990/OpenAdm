@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OpenAdm.Data.EntityConfiguration.OpenAdm;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Infra.EntityConfiguration;
@@ -26,6 +27,7 @@ public class AppDbContext : DbContext
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<EventoAplicacao> EventosAplicacao { get; set; }
     public DbSet<ParcelaCobranca> ParcelasCobrancas { get; set; }
+    public DbSet<CobrancaPedidoEcommerce> CobrancasPedidosEcommerce { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -43,6 +45,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new EventoAplicacaoConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaCobrancaConfiguration());
+        modelBuilder.ApplyConfiguration(new CobrancaPedidoEcommerceConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

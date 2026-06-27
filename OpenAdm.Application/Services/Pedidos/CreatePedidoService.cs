@@ -3,6 +3,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -15,37 +16,35 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IProcessarPedidoService _processarPedidoService;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly ICarrinhoRepository _carrinhoRepository;
-    private readonly IFaturaService _contasAReceberService;
-    private readonly IConfiguracaoDePagamentoService _configuracaoDePagamentoService;
     private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IEstoqueRepository _estoqueRepository;
     private readonly IConfiguracaoDeFreteService _configuracaoDeFreteService;
     private readonly IItensPedidoRepository _itensPedidoRepository;
+    private readonly ICobrancaPedidoEcommerceRepository _cobrancaPedidoEcommerceRepository;
 
     public CreatePedidoService(
         IPedidoRepository pedidoRepository,
         IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         ICarrinhoRepository carrinhoRepository,
-        IFaturaService contasAReceberService,
-        IConfiguracaoDePagamentoService configuracaoDePagamentoService,
         IConfiguracoesDePedidoService configuracoesDePedidoService,
         IUsuarioAutenticado usuarioAutenticado,
-        IEstoqueRepository estoqueRepository, IConfiguracaoDeFreteService configuracaoDeFreteService,
-        IItensPedidoRepository itensPedidoRepository)
+        IEstoqueRepository estoqueRepository,
+        IConfiguracaoDeFreteService configuracaoDeFreteService,
+        IItensPedidoRepository itensPedidoRepository,
+        ICobrancaPedidoEcommerceRepository cobrancaPedidoEcommerceRepository)
     {
         _pedidoRepository = pedidoRepository;
         _processarPedidoService = processarPedidoService;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _carrinhoRepository = carrinhoRepository;
-        _contasAReceberService = contasAReceberService;
-        _configuracaoDePagamentoService = configuracaoDePagamentoService;
         _configuracoesDePedidoService = configuracoesDePedidoService;
         _usuarioAutenticado = usuarioAutenticado;
         _estoqueRepository = estoqueRepository;
         _configuracaoDeFreteService = configuracaoDeFreteService;
         _itensPedidoRepository = itensPedidoRepository;
+        _cobrancaPedidoEcommerceRepository = cobrancaPedidoEcommerceRepository;
     }
 
     public async Task<ResultPartner<CriarPedidoViewModel>> CreatePedidoAsync(PedidoCreateDto pedidoCreateDto)
@@ -155,10 +154,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
 
         await _pedidoRepository.AddAsync(pedido);
         await _carrinhoRepository.DeleteCarrinhoAsync(pedido.UsuarioId.ToString());
-
         await _processarPedidoService.ProcessarCreateAsync(pedido.Id, configuracaoDePedido);
-
-        var configPagamento = await _configuracaoDePagamentoService.CobrarAsync();
 
         var resultado = new CriarPedidoViewModel()
         {
@@ -166,23 +162,17 @@ public sealed class CreatePedidoService : ICreatePedidoService
             Message = "Pedido cadastrado com sucesso!",
         };
 
-        if (!configPagamento.Cobrar)
-        {
-            await _contasAReceberService.CriarContasAReceberAsync(new()
-            {
-                DataDoPrimeiroVencimento = DateTime.Now.AddMonths(1),
-                Desconto = null,
-                MeioDePagamento = null,
-                Observacao = $"Pedido: {pedido.Numero}",
-                PedidoId = pedido.Id,
-                QuantidadeDeParcelas = 1,
-                Total = pedido.ValorTotal,
-                UsuarioId = pedido.UsuarioId,
-                Tipo = TipoFaturaEnum.A_Receber
-            });
+        var proximoNumeroCobranca =
+            await _cobrancaPedidoEcommerceRepository.ProximoNumeroAsync(_usuarioAutenticado.ParceiroId);
 
-            return (ResultPartner<CriarPedidoViewModel>)resultado;
-        }
+        var cobranca = CobrancaPedidoEcommerce.Novo(
+            pedido.Id,
+            pedido.ValorTotal,
+            numero: proximoNumeroCobranca,
+            _usuarioAutenticado.ParceiroId);
+
+        await _cobrancaPedidoEcommerceRepository.AddAsync(cobranca);
+        await _cobrancaPedidoEcommerceRepository.SaveChangesAsync();
 
         resultado.Redirect = $"/pedido/cobranca/{pedido.Id}";
 

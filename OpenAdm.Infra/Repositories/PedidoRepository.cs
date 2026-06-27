@@ -58,6 +58,20 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
+    public async Task<ICollection<ItemCobrancaHomeAdmModel>> ListarAsync(IEnumerable<Guid> ids)
+    {
+        return await ParceiroContext
+            .Pedidos
+            .AsNoTracking()
+            .Where(x => ids.Contains(x.Id))
+            .Select(x => new ItemCobrancaHomeAdmModel()
+            {
+                Cliente = x.Usuario.Nome,
+                NumeroPedido = x.Numero,
+                PedidoId = x.Id
+            }).ToListAsync();
+    }
+
     public async Task<Pedido?> GetPedidoByIdAsync(Guid id)
     {
         return await ParceiroContext

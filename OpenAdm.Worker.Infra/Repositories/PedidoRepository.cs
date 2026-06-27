@@ -38,6 +38,11 @@ public class PedidoRepository : IPedidoRepository
         throw new NotImplementedException();
     }
 
+    public Task<ICollection<ItemCobrancaHomeAdmModel>> ListarAsync(IEnumerable<Guid> ids)
+    {
+        throw new NotImplementedException();
+    }
+
     public Task<Pedido?> GetPedidoByIdAsync(Guid id)
     {
         throw new NotImplementedException();

@@ -9,30 +9,30 @@ namespace OpenAdm.Application.Services;
 public class HomeSevice : IHomeSevice
 {
     private readonly IMovimentacaoDeProdutosService _movimentacaoDeProdutosService;
-    private readonly IParcelaService _faturaContasAReceberService;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IAcessoEcommerceService _acessoEcommerceService;
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IHomeRepository _homeRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly ICachedService<HomeAdmViewModel> _cache;
+    private readonly ICobrancaPedidoEcommerceRepository _cobrancaPedidoEcommerceRepository;
 
     public HomeSevice(
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
-        IParcelaService faturaContasAReceberService,
         IPedidoRepository pedidoRepository,
         IAcessoEcommerceService acessoEcommerceService,
         IUsuarioRepository usuarioRepository,
-        IHomeRepository homeRepository, IUsuarioAutenticado usuarioAutenticado, ICachedService<HomeAdmViewModel> cache)
+        IHomeRepository homeRepository, IUsuarioAutenticado usuarioAutenticado, ICachedService<HomeAdmViewModel> cache,
+        ICobrancaPedidoEcommerceRepository cobrancaPedidoEcommerceRepository)
     {
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
-        _faturaContasAReceberService = faturaContasAReceberService;
         _pedidoRepository = pedidoRepository;
         _acessoEcommerceService = acessoEcommerceService;
         _usuarioRepository = usuarioRepository;
         _homeRepository = homeRepository;
         _usuarioAutenticado = usuarioAutenticado;
         _cache = cache;
+        _cobrancaPedidoEcommerceRepository = cobrancaPedidoEcommerceRepository;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
@@ -47,26 +47,72 @@ public class HomeSevice : IHomeSevice
         }
 
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
-        var totalAReceber = await _faturaContasAReceberService.GetSumAReceberAsync();
         var pedidosStatus = await _homeRepository.ObterStatusPedidosAsync();
         var totalPedidos = await _homeRepository.CountDePedidosAsync();
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
         var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
         var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
         var variacaoPedido = await _pedidoRepository.ObterHomeAsync();
-        var usuariosSemPedido = await _usuarioRepository.UsuariosSemPedidoAsync();
+        //var usuariosSemPedido = await _usuarioRepository.UsuariosSemPedidoAsync();
         var totalizadorProdutoEstoque = await _homeRepository.ObterTotalizadoProtudoEstoqueAsync();
         var dataInicio = DateTime.Today.AddDays(-6);
         var pedidosPorDia = await _homeRepository.ContatorPedido7DiasAsync(dataInicio);
         var produtosMaisVendidos = await _homeRepository.ProdutosMaisVendidosAsync(false);
         var produtosMenosVendidos = await _homeRepository.ProdutosMaisVendidosAsync(true);
 
+        var totalCobrancaHoje =
+            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.Now,
+                _usuarioAutenticado.ParceiroId);
+
+        var totalCobrancaSemana =
+            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.Now.AddDays(-7),
+                _usuarioAutenticado.ParceiroId);
+
+        var totalCobranca = await _cobrancaPedidoEcommerceRepository.TotalACobrarAsync(_usuarioAutenticado.ParceiroId);
+        var quantidadeTotalCobranca =
+            await _cobrancaPedidoEcommerceRepository.QuantidadeACobrarAsync(_usuarioAutenticado.ParceiroId);
+        var cobrancasMaisAntigas = await _cobrancaPedidoEcommerceRepository
+            .CobrancasMaisAntigasAsync(_usuarioAutenticado.ParceiroId);
+
+        var pedidosCobrancasMaisAntigas =
+            await _pedidoRepository
+                .ListarAsync(cobrancasMaisAntigas.Select(x => x.PedidoId));
+
+        ICollection<ItemCobrancaHomeAdmViewModel> cobrancasMaisAntigasModel = [];
+
+        foreach (var cobranca in cobrancasMaisAntigas)
+        {
+            var pedido = pedidosCobrancasMaisAntigas
+                .FirstOrDefault(x => x.PedidoId == cobranca.PedidoId);
+
+            if (pedido == null)
+            {
+                continue;
+            }
+
+            cobrancasMaisAntigasModel.Add(new()
+            {
+                PedidoId = pedido.PedidoId,
+                Cliente = pedido.Cliente,
+                NumeroPedido = pedido.NumeroPedido,
+                Valor = cobranca.Total,
+                Data = cobranca.DataDeCriacao
+            });
+        }
+
         cache = new HomeAdmViewModel()
         {
+            Cobranca = new()
+            {
+                TotalHoje = totalCobrancaHoje,
+                TotalSemana = totalCobrancaSemana,
+                QuantidadeACobrar = quantidadeTotalCobranca,
+                TotalCobranca = totalCobranca,
+                CobrancasMaisAntigas = cobrancasMaisAntigasModel
+            },
             PedidosPorDia = MontarCountDiario(pedidosPorDia, dataInicio),
             Movimentos = movimentos,
             TotalDePedidos = totalPedidos,
-            TotalAReceber = totalAReceber,
             ProdutosMaisVendidos = produtosMaisVendidos,
             ProdutosMenosVendidos = produtosMenosVendidos,
             TotalProdutoEstoque = totalizadorProdutoEstoque?.Quantidade ?? 0,
@@ -89,26 +135,26 @@ public class HomeSevice : IHomeSevice
                 AnoAtual = variacaoPedido.AnoAtual,
                 AnoAnterior = variacaoPedido.AnoAnterior
             },
-            UsuarioSemPedidoCpf = usuariosSemPedido.Where(x => !x.IsAtacado).Select(x =>
-                new Models.Usuarios.UsuarioViewModel()
-                {
-                    Cnpj = x.Cnpj,
-                    Cpf = x.Cpf,
-                    Id = x.Id,
-                    Nome = x.Nome,
-                    Telefone = x.Telefone,
-                    Numero = x.Numero
-                }),
-            UsuarioSemPedidoCnpj = usuariosSemPedido.Where(x => x.IsAtacado).Select(x =>
-                new Models.Usuarios.UsuarioViewModel()
-                {
-                    Cnpj = x.Cnpj,
-                    Cpf = x.Cpf,
-                    Id = x.Id,
-                    Nome = x.Nome,
-                    Telefone = x.Telefone,
-                    Numero = x.Numero
-                })
+            // UsuarioSemPedidoCpf = usuariosSemPedido.Where(x => !x.IsAtacado).Select(x =>
+            //     new Models.Usuarios.UsuarioViewModel()
+            //     {
+            //         Cnpj = x.Cnpj,
+            //         Cpf = x.Cpf,
+            //         Id = x.Id,
+            //         Nome = x.Nome,
+            //         Telefone = x.Telefone,
+            //         Numero = x.Numero
+            //     }),
+            // UsuarioSemPedidoCnpj = usuariosSemPedido.Where(x => x.IsAtacado).Select(x =>
+            //     new Models.Usuarios.UsuarioViewModel()
+            //     {
+            //         Cnpj = x.Cnpj,
+            //         Cpf = x.Cpf,
+            //         Id = x.Id,
+            //         Nome = x.Nome,
+            //         Telefone = x.Telefone,
+            //         Numero = x.Numero
+            //     })
         };
 
         await _cache.SetItemAsync(key, cache);
