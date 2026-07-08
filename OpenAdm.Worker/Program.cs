@@ -11,6 +11,7 @@ builder.Services
     .AddRepositories()
     .ConfigurarPdf()
     .AddHttpClientInfra(builder.Configuration)
+    .AddFilas(builder.Configuration)
     .InjectContext(builder.Configuration["ConnectionStrings:DefaultConnection"]!)
     .ConfigurarJobs();
 

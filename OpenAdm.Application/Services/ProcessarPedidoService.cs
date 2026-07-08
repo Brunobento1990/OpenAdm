@@ -9,29 +9,20 @@ namespace OpenAdm.Application.Services;
 
 public class ProcessarPedidoService : IProcessarPedidoService
 {
-    private readonly IPedidoRepository _pedidoRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
-    private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
+    private readonly IFilaService _filaService;
+
 
     public ProcessarPedidoService(
-        IPedidoRepository pedidoRepository,
         IParceiroAutenticado parceiroAutenticado,
-        IEventoAplicacaoRepository eventoAplicacaoRepository)
+        IFilaService filaService)
     {
-        _pedidoRepository = pedidoRepository;
         _parceiroAutenticado = parceiroAutenticado;
-        _eventoAplicacaoRepository = eventoAplicacaoRepository;
+        _filaService = filaService;
     }
 
     public async Task ProcessarCreateAsync(Guid pedidoId, ConfiguracoesDePedidoViewModel configuracoesDePedido)
     {
-        var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId);
-
-        if (pedido == null)
-        {
-            return;
-        }
-
         var dados = new NovoPedidoEvento()
         {
             PedidoId = pedidoId,
@@ -43,7 +34,6 @@ public class ProcessarPedidoService : IProcessarPedidoService
                 tipoEventoAplicacao: TipoEventoAplicacaoEnum.EnviarPedidoWhatsApp,
                 empresaOpenAdmId: _parceiroAutenticado.Id);
 
-        await _eventoAplicacaoRepository.AddAsync(evento);
-        await _eventoAplicacaoRepository.SaveChangesAsync();
+        await _filaService.PublicarAsync(evento);
     }
 }

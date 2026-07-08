@@ -6,6 +6,7 @@ using OpenAdm.Infra.Azure.Storage;
 using OpenAdm.Infra.Cached.Cached;
 using OpenAdm.Infra.Cached.Services;
 using OpenAdm.Infra.Repositories;
+using StackExchange.Redis;
 
 namespace OpenAdm.IoC;
 
@@ -19,6 +20,8 @@ public static class DependencyInjectRepositories
             options.Configuration = connectionString;
             options.InstanceName = instanceName;
         });
+
+        services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(connectionString));
 
         services.AddScoped(typeof(IGenericBaseRepository<>), typeof(GenericBaseRepository<>));
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));
@@ -72,5 +75,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<IRelatorioVendaDeProdutoRepository, RelatorioVendaDeProdutoRepository>();
         services.AddScoped<IProdutoEcommerceRepository, ProdutoEcommerceRepository>();
         services.AddScoped<ICobrancaPedidoEcommerceRepository, CobrancaPedidoEcommerceRepository>();
+        services.AddScoped<IFilaService, FilaRepository>();
     }
 }

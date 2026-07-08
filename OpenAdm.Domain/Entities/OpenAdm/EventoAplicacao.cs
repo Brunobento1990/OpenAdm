@@ -77,4 +77,14 @@ public class EventoAplicacao
             dados: JsonDocument.Parse(dados),
             tipoEventoAplicacao, false, null, 0, empresaOpenAdmId);
     }
+
+    public override string ToString()
+    {
+        return JsonSerializer.Serialize(this, GetType());
+    }
+
+    public static EventoAplicacao? Desserealizar(string dadosJson)
+    {
+        return JsonSerializer.Deserialize<EventoAplicacao>(dadosJson);
+    }
 }

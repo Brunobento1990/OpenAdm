@@ -9,7 +9,9 @@ using OpenAdm.Worker.Application.Service;
 using OpenAdm.Worker.Infra.Enum;
 using OpenAdm.Worker.Infra.HttpClient;
 using OpenAdm.Worker.Infra.Repositories;
+using OpenAdm.Worker.Infra.Services;
 using OpenAdm.Worker.Jobs.Implementacoes;
+using StackExchange.Redis;
 
 namespace OpenAdm.Worker;
 
@@ -43,6 +45,7 @@ public static class ConfigurcaoIoC
         services.AddScoped<IParceiroRepository, ParceiroRepository>();
         services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoRepository>();
         services.AddScoped<IParcelaCobrancaRepository, ParcelaCobrancaRepository>();
+        services.AddScoped<IEmpresaOpenAdmRepository, EmpresaOpenAdmRepository>();
 
         return services;
     }
@@ -71,6 +74,16 @@ public static class ConfigurcaoIoC
         });
 
         services.AddScoped<IHttpClientWhatsApp, HttpClientWhatsApp>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddFilas(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IConnectionMultiplexer>(_ =>
+            ConnectionMultiplexer.Connect(configuration["Redis"]!));
+
+        services.AddSingleton<IFilaService, FilaService>();
 
         return services;
     }

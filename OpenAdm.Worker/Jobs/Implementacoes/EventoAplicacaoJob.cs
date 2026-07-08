@@ -1,6 +1,7 @@
-using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model.Eventos;
 using OpenAdm.Worker.Application.Interfaces;
 using OpenAdm.Worker.Application.Service;
 
@@ -8,27 +9,27 @@ namespace OpenAdm.Worker.Jobs.Implementacoes;
 
 public class EventoAplicacaoJob : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IFilaService _fila;
     private readonly IConfiguration _configuration;
-    private readonly int _delayEmMinutos;
+    private readonly IServiceProvider _serviceProvider;
 
-    public EventoAplicacaoJob(IServiceProvider serviceProvider, IConfiguration configuration)
+    public EventoAplicacaoJob(IFilaService fila, IConfiguration configuration, IServiceProvider serviceProvider)
     {
-        _serviceProvider = serviceProvider;
+        _fila = fila;
         _configuration = configuration;
-        _delayEmMinutos = int.TryParse(configuration["Jobs:EventoAplicacao"], out var delay) ? delay : 5;
+        _serviceProvider = serviceProvider;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var consumer = await _fila.InscreverAsync(EventoBase.FilaEventoAplicacao);
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            await Task.Delay(TimeSpan.FromMinutes(_delayEmMinutos), stoppingToken);
+            var mensagem = await consumer.LerAsync(stoppingToken);
 
-            if (DateTime.Now.EhMadrugada())
-            {
+            if (mensagem is null)
                 continue;
-            }
 
             if (_configuration.GetValue<bool>("Jobs:EventoAplicacaoInativo"))
             {
@@ -37,18 +38,26 @@ public class EventoAplicacaoJob : BackgroundService
             }
 
             await using var scope = _serviceProvider.CreateAsyncScope();
-            var eventoRepository = scope.ServiceProvider.GetRequiredService<IEventoAplicacaoRepository>();
 
-            var evento = await eventoRepository.ProximoEventoAsync();
+            var evento = EventoAplicacao.Desserealizar(mensagem.Conteudo);
 
             if (evento == null || !evento.PodeExecutar)
             {
                 continue;
             }
 
+            var parceiroRepository = scope.ServiceProvider.GetRequiredService<IEmpresaOpenAdmRepository>();
             var parceiroAutenticado = scope.ServiceProvider.GetRequiredService<IParceiroAutenticado>();
 
-            parceiroAutenticado.ConnectionString = Criptografia.Decrypt(evento.EmpresaOpenAdm.ConnectionString);
+            var parceiro = await parceiroRepository.ObterPorIdAsync(evento.EmpresaOpenAdmId);
+
+            if (parceiro == null)
+            {
+                await consumer.ConfirmarAsync(mensagem.Id);
+                continue;
+            }
+            
+            parceiroAutenticado.ConnectionString = Criptografia.Decrypt(parceiro.ConnectionString);
             parceiroAutenticado.Id = evento.EmpresaOpenAdmId;
 
             try
@@ -58,33 +67,19 @@ public class EventoAplicacaoJob : BackgroundService
 
                 if (eventoServico == null)
                 {
-                    evento.AdicionarMensagem($"Servico null para o evento: {evento.TipoEventoAplicacao}");
-                    evento.AdicionarTentativa();
-                    await eventoRepository.SaveChangesAsync();
                     LogService.Info($"Evento sem implementação: {evento.TipoEventoAplicacao}");
                     continue;
                 }
 
-                var resultado = await eventoServico.ExecutarAsync(evento);
-
-                if (!string.IsNullOrWhiteSpace(resultado.Error))
-                {
-                    LogService.Error($"Erro no evento: {evento.TipoEventoAplicacao}");
-                    evento.AdicionarMensagem(resultado.Error);
-                    evento.AdicionarTentativa();
-                    await eventoRepository.SaveChangesAsync();
-                    continue;
-                }
-
-                evento.Finalizada(resultado.Result?.Mensagem);
-                await eventoRepository.SaveChangesAsync();
+                await eventoServico.ExecutarAsync(evento);
             }
             catch (Exception ex)
             {
                 LogService.Error($"Erro no evento: {ex.InnerException?.Message ?? ex.Message}");
-                evento.AdicionarMensagem(ex.InnerException?.Message ?? ex.Message);
-                evento.AdicionarTentativa();
-                await eventoRepository.SaveChangesAsync();
+            }
+            finally
+            {
+                await consumer.ConfirmarAsync(mensagem.Id);
             }
         }
     }
