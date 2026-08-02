@@ -1,4 +1,7 @@
-﻿using OpenAdm.Domain.Entities;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Pdf.DTOs;
 using OpenAdm.Pdf.Interfaces;
@@ -59,423 +62,421 @@ internal class PdfPedidoService : IPdfPedidoService
         Pedido pedido,
         Parceiro parceiro)
     {
-        var titleStyle = TextStyle.Default.FontSize(18).SemiBold();
-        var titleStyle2 = TextStyle.Default.FontSize(10).SemiBold();
-        var titleStyleName = TextStyle.Default.FontSize(10);
-        var titleStyleName2 = TextStyle.Default.FontSize(18);
-
-        void HeaderCustom(IContainer container)
-        {
-            container.Row(row =>
-            {
-                row.RelativeItem().Column(column =>
-                {
-                    column.Item().Text($"#{parceiro.NomeFantasia}").Style(titleStyle);
-
-                    column.Item().Text(text =>
-                    {
-                        text.Span("Data de emissão: ").SemiBold().FontSize(14);
-                        text.Span(pedido.DataDeCriacao.DateTimeToString());
-                    });
-
-                    column.Item().Text(text =>
-                    {
-                        text.Span("Pedido número: ").Style(titleStyle2);
-                        text.Span(pedido.Numero.ToString()).Style(titleStyleName);
-                    });
-
-                    column.Item().PaddingTop(10).Text(text =>
-                    {
-                        text.Span("Cliente: ").Style(titleStyle2);
-                        text.Span(pedido.Usuario.Nome).Style(titleStyleName);
-                    });
-
-                    column.Item().Text(text =>
-                    {
-                        text.Span("Email: ").Style(titleStyle2);
-                        text.Span(pedido.Usuario.Email).Style(titleStyleName);
-                    });
-
-                    column.Item().Text(text =>
-                    {
-                        text.Span("Telefone: ").Style(titleStyle2);
-                        text.Span(string.Format("{0:(00)00000-0000}", pedido.Usuario.Telefone)).Style(titleStyleName);
-                    });
-
-                    if (!string.IsNullOrWhiteSpace(pedido.Usuario.Cnpj))
-                    {
-                        column.Item().Text(text =>
-                        {
-                            text.Span("CNPJ: ").Style(titleStyle2);
-                            text.Span(pedido.Usuario.Cnpj.FormatCnpj()).Style(titleStyleName);
-                        });
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(pedido.Usuario.Cpf))
-                    {
-                        column.Item().Text(text =>
-                        {
-                            text.Span("CPF: ").Style(titleStyle2);
-                            text.Span(pedido.Usuario.Cpf.FormatCpf()).Style(titleStyleName);
-                        });
-                    }
-                });
-
-                if (parceiro.Logo != null)
-                {
-                    row.ConstantItem(50)
-                        .Height(50)
-                        .Width(50)
-                        .Image(parceiro.Logo);
-                }
-            });
-        }
-
-        static IContainer CellStyleHeaderTable(IContainer container)
-        {
-            return container
-                .DefaultTextStyle(x => x.SemiBold())
-                .PaddingVertical(5)
-                .BorderBottom(1)
-                .BorderColor(Colors.Black);
-        }
-
-        static IContainer CellTableStyle(IContainer container)
-        {
-            return container
-                .BorderBottom(1)
-                .BorderColor(Colors.Grey.Lighten2)
-                .PaddingVertical(5);
-        }
-
         var pdf = Document
             .Create(container =>
             {
                 container.Page(page =>
                 {
                     page.Configurar();
-                    page.Header().Element(HeaderCustom);
-                    page.Content().Table(table =>
+                    page.Margin(12, Unit.Millimetre);
+                    page.Header().Element(header => ComposePedidoHeader(header, pedido, parceiro));
+                    page.Content().PaddingTop(10).Column(column =>
                     {
-                        table.ColumnsDefinition(columns =>
-                        {
-                            foreach (var columnsWidth in _colunsWidt)
-                            {
-                                columns.ConstantColumn(columnsWidth);
-                            }
-                        });
-
-                        table.Header(header =>
-                        {
-                            foreach (var columnsName in _colunsName)
-                            {
-                                header
-                                    .Cell()
-                                    .Element(CellStyleHeaderTable)
-                                    .Text(columnsName)
-                                    .FontSize(10);
-                            }
-                        });
-
-                        var itensPedidos = pedido.ItensPedido.OrderBy(x => x.ProdutoId);
-
-                        foreach (var item in itensPedidos)
-                        {
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Produto.Referencia)
-                                .FontSize(8);
-
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Produto.Descricao)
-                                .FontSize(8);
-
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Tamanho?.Descricao ?? item.Peso?.Descricao)
-                                .FontSize(8);
-
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.Quantidade.FormatMoney())
-                                .FontSize(8);
-
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.ValorUnitario.FormatMoney())
-                                .FontSize(8);
-
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text(item.ValorTotal.FormatMoney())
-                                .FontSize(8);
-                        }
-
-                        table.Cell();
-                        table.Cell();
-                        table.Cell();
-                        table.Cell();
-                        table.Cell();
-
-                        table
-                            .Cell()
-                            .Element(CellTableStyle)
-                            .Text($"Total : {pedido.ValorTotal.FormatMoney()}")
-                            .FontSize(8);
-
-
-                        var tamanhos = pedido.ItensPedido
-                            .Where(x => x.TamanhoId != null)
-                            .GroupBy(x => x.TamanhoId)
-                            .Select(g => new
-                            {
-                                Id = g.Key,
-                                g.First().Tamanho!.Descricao,
-                                Total = g.Sum(x => x.Quantidade)
-                            })
-                            .ToList();
-
-                        var pesos = pedido.ItensPedido
-                            .Where(x => x.PesoId != null)
-                            .GroupBy(x => x.PesoId)
-                            .Select(g => new
-                            {
-                                Id = g.Key,
-                                g.First().Peso!.Descricao,
-                                Total = g.Sum(x => x.Quantidade)
-                            })
-                            .ToList();
-
-
-                        if (tamanhos.Any())
-                        {
-                            table
-                                .Cell()
-                                .Element(CellStyleHeaderTable)
-                                .Text($"Tamanhos")
-                                .FontSize(10);
-                        }
-
-                        var count = 0;
-
-                        foreach (var tamanho in tamanhos)
-                        {
-                            if (count > 0)
-                            {
-                                table.Cell();
-                            }
-
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text($"{tamanho.Descricao} : {tamanho.Total.FormatMoney()}")
-                                .FontSize(8);
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-
-                            count++;
-                        }
-
-                        if (pesos.Any())
-                        {
-                            table
-                                .Cell()
-                                .Element(CellStyleHeaderTable)
-                                .Text($"Pesos")
-                                .FontSize(10);
-                        }
-
-                        count = 0;
-
-                        foreach (var peso in pesos)
-                        {
-                            if (count > 0)
-                            {
-                                table.Cell();
-                            }
-
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-
-                            table
-                                .Cell()
-                                .Element(CellTableStyle)
-                                .Text($"{peso.Descricao} : {peso.Total.FormatMoney()}")
-                                .FontSize(8);
-
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-                            table.Cell();
-
-                            count++;
-                        }
+                        column.Spacing(10);
+                        column.Item().Element(container => ComposeClienteSection(container, pedido.Usuario));
+                        column.Item().Element(container => ComposeComplementoPedidoSection(container, pedido));
+                        column.Item().Element(container => ComposeItensTable(container, pedido));
+                        column.Item().Element(container => ComposeResumoQuantidade(container, pedido));
+                        column.Item().Element(container => ComposeResumoFinanceiro(container, pedido));
                     });
-                    page.FooterCustom();
+                    page.Footer().Element(container => ComposePedidoFooter(container, pedido));
                 });
 
                 if (pedido.EnderecoEntrega != null)
                 {
                     container.Page(page =>
                     {
-                        page.Margin(30);
-                        page.Content().Column(col =>
-                        {
-                            if (parceiro.EnderecoParceiro != null)
-                            {
-                                col.Item().PaddingTop(25).Element(container =>
-                                {
-                                    container.Border(1)
-                                        .BorderColor(Colors.Black)
-                                        .Padding(10)
-                                        .Column(column =>
-                                        {
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("Remetente: ").Style(titleStyle);
-                                                text.Span(parceiro.NomeFantasia).Style(titleStyleName2);
-                                            });
-
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("Rua: ").Style(titleStyle);
-                                                text.Span(parceiro.EnderecoParceiro.Logradouro).Style(titleStyleName2);
-                                            });
-
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("Número: ").Style(titleStyle);
-                                                text.Span(parceiro.EnderecoParceiro.Numero).Style(titleStyleName2);
-                                            });
-
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("Cidade: ").Style(titleStyle);
-                                                text.Span(
-                                                        $"{parceiro.EnderecoParceiro.Localidade} - {parceiro.EnderecoParceiro.Uf}")
-                                                    .Style(titleStyleName2);
-                                            });
-
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("Bairro: ").Style(titleStyle);
-                                                text.Span($"{parceiro.EnderecoParceiro.Bairro}").Style(titleStyleName2);
-                                            });
-
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("CEP: ").Style(titleStyle);
-                                                text.Span($"{parceiro.EnderecoParceiro.Cep}").Style(titleStyleName2);
-                                            });
-
-                                            column.Item().Text(text =>
-                                            {
-                                                text.Span("Complemento: ").Style(titleStyle);
-                                                text.Span(parceiro.EnderecoParceiro.Complemento ?? "")
-                                                    .Style(titleStyleName2);
-                                            });
-                                        });
-                                });
-                            }
-
-                            col.Item().PaddingTop(25).Element(container =>
-                            {
-                                container.Border(1)
-                                    .BorderColor(Colors.Black)
-                                    .Padding(10)
-                                    .Column(column =>
-                                    {
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Pedido: ").Style(titleStyle);
-                                            text.Span($"{pedido.Numero}").Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Destinatário: ").Style(titleStyle);
-                                            text.Span(pedido.Usuario.Nome).Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("CPF/CNPJ: ").Style(titleStyle);
-                                            text.Span(pedido.Usuario.CpfOuCnpjFormatado).Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Telefone: ").Style(titleStyle);
-                                            text.Span(!string.IsNullOrWhiteSpace(pedido.Usuario.Telefone)
-                                                ? pedido.Usuario.Telefone?.FormatPhone()
-                                                : "").Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Rua: ").Style(titleStyle);
-                                            text.Span(pedido.EnderecoEntrega.Logradouro).Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Número: ").Style(titleStyle);
-                                            text.Span(pedido.EnderecoEntrega.Numero).Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Cidade: ").Style(titleStyle);
-                                            text.Span(
-                                                    $"{pedido.EnderecoEntrega.Localidade} - {pedido.EnderecoEntrega.Uf}")
-                                                .Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Bairro: ").Style(titleStyle);
-                                            text.Span($"{pedido.EnderecoEntrega.Bairro}").Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("CEP: ").Style(titleStyle);
-                                            text.Span($"{pedido.EnderecoEntrega.Cep}").Style(titleStyleName2);
-                                        });
-
-                                        column.Item().Text(text =>
-                                        {
-                                            text.Span("Complemento: ").Style(titleStyle);
-                                            text.Span(pedido.EnderecoEntrega.Complemento ?? "").Style(titleStyleName2);
-                                        });
-                                    });
-                            });
-                        });
+                        page.Size(PageSizes.A4);
+                        page.Margin(12, Unit.Millimetre);
+                        page.PageColor(Colors.White);
+                        page.DefaultTextStyle(x => x.FontSize(10));
+                        page.Content().Element(container => ComposeEtiqueta(container, pedido, parceiro));
+                        page.Footer().Element(container => ComposePedidoFooter(container, pedido));
                     });
                 }
             }).GeneratePdf();
 
         return pdf;
+    }
+
+    private static void ComposePedidoHeader(IContainer container, Pedido pedido, Parceiro parceiro)
+    {
+        container.BorderBottom(1)
+            .BorderColor(Colors.Grey.Lighten2)
+            .PaddingBottom(8)
+            .Row(row =>
+            {
+                row.RelativeItem(2).Column(column =>
+                {
+                    if (parceiro.Logo is { Length: > 0 })
+                    {
+                        column.Item().Width(120).Height(55).Image(parceiro.Logo).FitArea();
+                    }
+                    else
+                    {
+                        column.Item().Text(parceiro.NomeFantasia)
+                            .FontSize(18)
+                            .SemiBold()
+                            .FontColor(Colors.Grey.Darken4);
+                    }
+                });
+
+                row.RelativeItem(3).AlignCenter().Column(column =>
+                {
+                    column.Item().AlignCenter().Text("PEDIDO DE VENDA")
+                        .FontSize(18)
+                        .Bold()
+                        .FontColor(Colors.Grey.Darken4);
+                    column.Item().PaddingTop(4).AlignCenter().Text($"Pedido nº {pedido.Numero}")
+                        .FontSize(14)
+                        .SemiBold()
+                        .FontColor(Colors.Blue.Darken3);
+                });
+
+                row.RelativeItem(2).AlignRight().Column(column =>
+                {
+                    column.Item().Text("Emissão").FontSize(8).SemiBold().FontColor(Colors.Grey.Darken1);
+                    column.Item().Text(pedido.DataDeCriacao.DateTimeToString()).FontSize(9);
+                });
+            });
+    }
+
+    private static void ComposeClienteSection(IContainer container, Usuario usuario)
+    {
+        container.Element(SectionBox).Column(column =>
+        {
+            column.Item().Text("DADOS DO CLIENTE").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+            column.Item().PaddingTop(6).Row(row =>
+            {
+                row.RelativeItem().Element(item => Field(item, "Nome/Razão social", usuario.Nome));
+                row.RelativeItem().Element(item => Field(item, "CPF/CNPJ", string.IsNullOrWhiteSpace(usuario.Cnpj) ? usuario.Cpf?.FormatCpf() : usuario.Cnpj.FormatCnpj()));
+            });
+            column.Item().Row(row =>
+            {
+                row.RelativeItem().Element(item => Field(item, "Telefone", usuario.Telefone?.FormatPhone()));
+                row.RelativeItem().Element(item => Field(item, "E-mail", usuario.Email));
+            });
+        });
+    }
+
+    private static void ComposeComplementoPedidoSection(IContainer container, Pedido pedido)
+    {
+        var endereco = pedido.EnderecoEntrega;
+        var primeiraParcela = pedido.Fatura?.Parcelas.OrderBy(x => x.NumeroDaParcela).FirstOrDefault();
+
+        if (endereco == null && primeiraParcela?.MeioDePagamento == null && string.IsNullOrWhiteSpace(primeiraParcela?.Observacao))
+        {
+            container.Height(0);
+            return;
+        }
+
+        container.Element(SectionBox).Column(column =>
+        {
+            column.Item().Text("INFORMAÇÕES COMPLEMENTARES").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+
+            if (endereco != null)
+            {
+                column.Item().PaddingTop(6).Element(item => Field(item, "Endereço de entrega", FormatEndereco(endereco)));
+
+                if (!string.IsNullOrWhiteSpace(endereco.TipoFrete))
+                {
+                    column.Item().Element(item => Field(item, "Prazo/Entrega", endereco.TipoFrete));
+                }
+            }
+
+            if (primeiraParcela?.MeioDePagamento != null)
+            {
+                column.Item().Element(item => Field(item, "Forma de pagamento", primeiraParcela.MeioDePagamento.ToString()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(primeiraParcela?.Observacao))
+            {
+                column.Item().Element(item => Field(item, "Observações", primeiraParcela.Observacao));
+            }
+        });
+    }
+
+    private static void ComposeItensTable(IContainer container, Pedido pedido)
+    {
+        container.Table(table =>
+        {
+            table.ColumnsDefinition(columns =>
+            {
+                columns.ConstantColumn(46);
+                columns.RelativeColumn(2.6f);
+                columns.ConstantColumn(72);
+                columns.ConstantColumn(58);
+                columns.ConstantColumn(72);
+                columns.ConstantColumn(72);
+            });
+
+            table.Header(header =>
+            {
+                HeaderCell(header, "Ref.", CellAlignment.Left);
+                HeaderCell(header, "Produto", CellAlignment.Left);
+                HeaderCell(header, "Tamanho/Peso", CellAlignment.Center);
+                HeaderCell(header, "Quantidade", CellAlignment.Right);
+                HeaderCell(header, "Valor unitário", CellAlignment.Right);
+                HeaderCell(header, "Subtotal", CellAlignment.Right);
+            });
+
+            foreach (var item in pedido.ItensPedido.OrderBy(x => x.ProdutoId))
+            {
+                BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left);
+                BodyCell(table, item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", ""), CellAlignment.Left);
+                BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center);
+                BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right);
+                BodyCell(table, item.ValorUnitario.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right);
+                BodyCell(table, item.ValorTotal.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right);
+            }
+        });
+    }
+
+    private static void ComposeResumoFinanceiro(IContainer container, Pedido pedido)
+    {
+        var frete = pedido.EnderecoEntrega?.ValorFrete ?? 0;
+
+        container.ShowEntire().AlignRight().Width(220).Border(1).BorderColor(Colors.Grey.Lighten2).Padding(10).Column(column =>
+        {
+            column.Spacing(4);
+            column.Item().Text("RESUMO FINANCEIRO").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+            FinancialLine(column, "Subtotal dos produtos", pedido.ValorTotal);
+
+            if (frete > 0)
+            {
+                FinancialLine(column, "Frete", frete);
+            }
+
+            column.Item().PaddingTop(6).BorderTop(1).BorderColor(Colors.Grey.Lighten2).PaddingTop(6).Row(row =>
+            {
+                row.RelativeItem().Text("TOTAL DO PEDIDO").FontSize(10).Bold();
+                row.ConstantItem(95).AlignRight().Text(pedido.ValorTotalCobrar.FormatMoney(temSimboloDeDinheiro: true)).FontSize(15).Bold();
+            });
+        });
+    }
+
+    private static void ComposeResumoQuantidade(IContainer container, Pedido pedido)
+    {
+        var tamanhos = pedido.ItensPedido
+            .Where(x => x.TamanhoId != null)
+            .GroupBy(x => x.TamanhoId)
+            .Select(g => new { Descricao = g.First().Tamanho!.Descricao, Total = g.Sum(x => x.Quantidade) })
+            .ToList();
+
+        var pesos = pedido.ItensPedido
+            .Where(x => x.PesoId != null)
+            .GroupBy(x => x.PesoId)
+            .Select(g => new { Descricao = g.First().Peso!.Descricao, Total = g.Sum(x => x.Quantidade) })
+            .ToList();
+
+        if (!tamanhos.Any() && !pesos.Any())
+        {
+            container.Height(0);
+            return;
+        }
+
+        container.Element(SectionBox).Column(column =>
+        {
+            if (tamanhos.Any())
+            {
+                column.Item().Text("RESUMO POR TAMANHO").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+                foreach (var tamanho in tamanhos)
+                {
+                    column.Item().Text($"{tamanho.Descricao.ToLower()} - {tamanho.Total} {UnidadeLabel(tamanho.Total)}").FontSize(9);
+                }
+            }
+
+            if (pesos.Any())
+            {
+                column.Item().PaddingTop(tamanhos.Any() ? 6 : 0).Text("RESUMO POR PESO").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+                foreach (var peso in pesos)
+                {
+                    column.Item().Text($"{peso.Descricao.ToLower()} - {peso.Total} {UnidadeLabel(peso.Total)}").FontSize(9);
+                }
+            }
+        });
+    }
+
+    private static void ComposePedidoFooter(IContainer container, Pedido pedido)
+    {
+        container.BorderTop(1)
+            .BorderColor(Colors.Grey.Lighten2)
+            .PaddingTop(4)
+            .DefaultTextStyle(x => x.FontSize(8).FontColor(Colors.Grey.Darken1))
+            .Row(row =>
+            {
+                row.RelativeItem().Text($"Pedido nº {pedido.Numero} - Emitido em {pedido.DataDeCriacao.DateTimeToString()}");
+                row.ConstantItem(80).AlignRight().Text(text =>
+                {
+                    text.Span("Página ");
+                    text.CurrentPageNumber();
+                    text.Span(" de ");
+                    text.TotalPages();
+                });
+            });
+    }
+
+    private static void ComposeEtiqueta(IContainer container, Pedido pedido, Parceiro parceiro)
+    {
+        container.Column(column =>
+        {
+            column.Spacing(12);
+
+            if (parceiro.EnderecoParceiro != null)
+            {
+                column.Item().Element(item => EtiquetaEnderecoBlock(
+                    item,
+                    "REMETENTE",
+                    parceiro.NomeFantasia,
+                    null,
+                    parceiro.EnderecoParceiro,
+                    parceiro.Telefones.FirstOrDefault()?.Telefone?.FormatPhone(),
+                    destaque: false));
+            }
+
+            column.Item()
+                .AlignCenter()
+                .Border(1)
+                .BorderColor(Colors.Grey.Darken2)
+                .PaddingVertical(8)
+                .Text($"PEDIDO Nº {pedido.Numero}")
+                .FontSize(18)
+                .Bold();
+
+            column.Item().Element(item => EtiquetaEnderecoBlock(
+                item,
+                "DESTINATÁRIO",
+                pedido.Usuario.Nome,
+                string.IsNullOrWhiteSpace(pedido.Usuario.Cnpj) ? pedido.Usuario.Cpf?.FormatCpf() : pedido.Usuario.Cnpj.FormatCnpj(),
+                pedido.EnderecoEntrega!,
+                pedido.Usuario.Telefone?.FormatPhone(),
+                destaque: true));
+        });
+    }
+
+    private static IContainer SectionBox(IContainer container)
+    {
+        return container.Border(1)
+            .BorderColor(Colors.Grey.Lighten2)
+            .Background(Colors.Grey.Lighten5)
+            .Padding(8);
+    }
+
+    private static void Field(IContainer container, string label, string? value)
+    {
+        container.PaddingBottom(4).Column(column =>
+        {
+            column.Item().Text(label).FontSize(7).SemiBold().FontColor(Colors.Grey.Darken1);
+            column.Item().Text(string.IsNullOrWhiteSpace(value) ? "-" : value).FontSize(9);
+        });
+    }
+
+    private enum CellAlignment
+    {
+        Left,
+        Center,
+        Right
+    }
+
+    private static void HeaderCell(TableCellDescriptor table, string text, CellAlignment alignment)
+    {
+        ApplyAlignment(table.Cell()
+            .Background(Colors.Grey.Darken3)
+            .PaddingVertical(6)
+            .PaddingHorizontal(4), alignment)
+            .Text(text)
+            .FontSize(8)
+            .Bold()
+            .FontColor(Colors.White);
+    }
+
+    private static void BodyCell(TableDescriptor table, string text, CellAlignment alignment)
+    {
+        ApplyAlignment(table.Cell()
+            .BorderBottom(0.5f)
+            .BorderColor(Colors.Grey.Lighten3)
+            .PaddingVertical(5)
+            .PaddingHorizontal(4), alignment)
+            .Text(text)
+            .FontSize(8);
+    }
+
+    private static IContainer ApplyAlignment(IContainer container, CellAlignment alignment)
+    {
+        return alignment switch
+        {
+            CellAlignment.Center => container.AlignCenter(),
+            CellAlignment.Right => container.AlignRight(),
+            _ => container.AlignLeft()
+        };
+    }
+
+    private static void FinancialLine(ColumnDescriptor column, string label, decimal value)
+    {
+        column.Item().Row(row =>
+        {
+            row.RelativeItem().Text(label).FontSize(9);
+            row.ConstantItem(85).AlignRight().Text(value.FormatMoney(temSimboloDeDinheiro: true)).FontSize(9);
+        });
+    }
+
+    private static void EtiquetaEnderecoBlock(
+        IContainer container,
+        string titulo,
+        string nome,
+        string? documento,
+        BaseEndereco endereco,
+        string? telefone,
+        bool destaque)
+    {
+        var fontSize = destaque ? 14 : 10;
+        var labelSize = destaque ? 12 : 9;
+
+        container.Border(1)
+            .BorderColor(destaque ? Colors.Grey.Darken3 : Colors.Grey.Lighten1)
+            .Padding(destaque ? 14 : 10)
+            .Column(column =>
+            {
+                column.Item().Text(titulo).FontSize(labelSize).Bold().FontColor(Colors.Grey.Darken2);
+                column.Item().PaddingTop(8).Text(nome).FontSize(fontSize + 2).Bold();
+
+                if (!string.IsNullOrWhiteSpace(documento))
+                {
+                    column.Item().Text(documento).FontSize(fontSize);
+                }
+
+                column.Item().PaddingTop(6).Text($"{endereco.Logradouro}, {endereco.Numero}").FontSize(fontSize);
+                column.Item().Text($"{endereco.Bairro} - {endereco.Localidade}/{endereco.Uf}").FontSize(fontSize);
+                column.Item().Text($"CEP {endereco.Cep}").FontSize(fontSize);
+
+                if (!string.IsNullOrWhiteSpace(endereco.Complemento))
+                {
+                    column.Item().Text(endereco.Complemento).FontSize(fontSize);
+                }
+
+                if (!string.IsNullOrWhiteSpace(telefone))
+                {
+                    column.Item().PaddingTop(6).Text($"Telefone {telefone}").FontSize(fontSize);
+                }
+            });
+    }
+
+    private static string UnidadeLabel(decimal value)
+    {
+        return value == 1 ? "unidade" : "unidades";
+    }
+
+    private static string FormatEndereco(BaseEndereco endereco)
+    {
+        var complemento = string.IsNullOrWhiteSpace(endereco.Complemento) ? "" : $" - {endereco.Complemento}";
+        return $"{endereco.Logradouro}, {endereco.Numero} - {endereco.Bairro} - {endereco.Localidade}/{endereco.Uf} - CEP {endereco.Cep}{complemento}";
+    }
+
+    private static string OnlyDigits(string? value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? ""
+            : Regex.Replace(value, "\\D", "");
     }
 
     public byte[] GeneratePdfPedidoRelatorio(

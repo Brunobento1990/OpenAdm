@@ -1,0 +1,32 @@
+version: "3.4"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    container_name: postgres-open-adm
+    ports:
+      - "4045:5432"
+    environment:
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=postgres
+    volumes:
+      - postgres_data_open_adm:/var/lib/postgresql
+    networks:
+      - open-adm
+  redis:
+    image: bitnami/redis:latest
+    restart: always
+    container_name: redis-open-adm
+    ports:
+      - "4046:6379"
+    environment:
+      - REDIS_PASSWORD=1234
+    networks:
+      - open-adm
+volumes:
+  postgres_data_open_adm:
+
+networks:
+  open-adm:
+    driver: bridge
