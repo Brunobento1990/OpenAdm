@@ -13,16 +13,6 @@ namespace OpenAdm.Pdf.Services;
 
 internal class PdfPedidoService : IPdfPedidoService
 {
-    private static readonly IList<string> _colunsName = new List<string>()
-    {
-        "REF",
-        "Descrição",
-        "Tamanho/Peso",
-        "Quantidade",
-        "Valor unitário",
-        "Total"
-    };
-
     private static readonly IList<string> _colunsNameProducao = new List<string>()
     {
         "REF",
@@ -30,7 +20,7 @@ internal class PdfPedidoService : IPdfPedidoService
         "Categoria",
         "Tamanho",
         "Peso",
-        "Quantidade"
+        "Qtd"
     };
 
     private static readonly IList<string> _colunsNamePedidoRelatorio = new List<string>()
@@ -40,11 +30,6 @@ internal class PdfPedidoService : IPdfPedidoService
         "Cliente",
         "Quantidade itens",
         "Total"
-    };
-
-    private static readonly IList<int> _colunsWidt = new List<int>()
-    {
-        60, 150, 80, 70, 90, 50
     };
 
     private static readonly IList<int> _colunsWidtProducao = new List<int>()
@@ -70,9 +55,9 @@ internal class PdfPedidoService : IPdfPedidoService
                     page.Configurar();
                     page.Margin(12, Unit.Millimetre);
                     page.Header().Element(header => ComposePedidoHeader(header, pedido, parceiro));
-                    page.Content().PaddingTop(10).Column(column =>
+                    page.Content().PaddingTop(14).Column(column =>
                     {
-                        column.Spacing(10);
+                        column.Spacing(14);
                         column.Item().Element(container => ComposeClienteSection(container, pedido.Usuario));
                         column.Item().Element(container => ComposeComplementoPedidoSection(container, pedido));
                         column.Item().Element(container => ComposeItensTable(container, pedido));
@@ -102,41 +87,41 @@ internal class PdfPedidoService : IPdfPedidoService
     private static void ComposePedidoHeader(IContainer container, Pedido pedido, Parceiro parceiro)
     {
         container.BorderBottom(1)
-            .BorderColor(Colors.Grey.Lighten2)
-            .PaddingBottom(8)
+            .BorderColor(Colors.Grey.Lighten1)
+            .PaddingBottom(10)
             .Row(row =>
             {
-                row.RelativeItem(2).Column(column =>
+                row.RelativeItem(2).AlignMiddle().Column(column =>
                 {
                     if (parceiro.Logo is { Length: > 0 })
                     {
-                        column.Item().Width(120).Height(55).Image(parceiro.Logo).FitArea();
+                        column.Item().Width(118).Height(48).Image(parceiro.Logo).FitArea();
                     }
                     else
                     {
                         column.Item().Text(parceiro.NomeFantasia)
-                            .FontSize(18)
-                            .SemiBold()
+                            .FontSize(20)
+                            .Bold()
                             .FontColor(Colors.Grey.Darken4);
                     }
                 });
 
-                row.RelativeItem(3).AlignCenter().Column(column =>
+                row.RelativeItem(3).AlignMiddle().AlignCenter().Column(column =>
                 {
                     column.Item().AlignCenter().Text("PEDIDO DE VENDA")
-                        .FontSize(18)
+                        .FontSize(21)
                         .Bold()
                         .FontColor(Colors.Grey.Darken4);
-                    column.Item().PaddingTop(4).AlignCenter().Text($"Pedido nº {pedido.Numero}")
-                        .FontSize(14)
-                        .SemiBold()
+                    column.Item().PaddingTop(5).AlignCenter().Text($"Pedido nº {pedido.Numero}")
+                        .FontSize(16)
+                        .Bold()
                         .FontColor(Colors.Blue.Darken3);
                 });
 
-                row.RelativeItem(2).AlignRight().Column(column =>
+                row.RelativeItem(2).AlignMiddle().AlignRight().Column(column =>
                 {
-                    column.Item().Text("Emissão").FontSize(8).SemiBold().FontColor(Colors.Grey.Darken1);
-                    column.Item().Text(pedido.DataDeCriacao.DateTimeToString()).FontSize(9);
+                    column.Item().Text("Emissão").FontSize(9).SemiBold().FontColor(Colors.Grey.Darken2);
+                    column.Item().PaddingTop(3).Text(pedido.DataDeCriacao.DateTimeToString()).FontSize(10).FontColor(Colors.Grey.Darken4);
                 });
             });
     }
@@ -145,8 +130,8 @@ internal class PdfPedidoService : IPdfPedidoService
     {
         container.Element(SectionBox).Column(column =>
         {
-            column.Item().Text("DADOS DO CLIENTE").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
-            column.Item().PaddingTop(6).Row(row =>
+            column.Item().Element(container => SectionTitle(container, "DADOS DO CLIENTE"));
+            column.Item().PaddingTop(10).Row(row =>
             {
                 row.RelativeItem().Element(item => Field(item, "Nome/Razão social", usuario.Nome));
                 row.RelativeItem().Element(item => Field(item, "CPF/CNPJ", string.IsNullOrWhiteSpace(usuario.Cnpj) ? usuario.Cpf?.FormatCpf() : usuario.Cnpj.FormatCnpj()));
@@ -172,11 +157,25 @@ internal class PdfPedidoService : IPdfPedidoService
 
         container.Element(SectionBox).Column(column =>
         {
-            column.Item().Text("INFORMAÇÕES COMPLEMENTARES").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+            column.Item().Element(container => SectionTitle(container, "INFORMAÇÕES COMPLEMENTARES"));
 
             if (endereco != null)
             {
-                column.Item().PaddingTop(6).Element(item => Field(item, "Endereço de entrega", FormatEndereco(endereco)));
+                column.Item().PaddingTop(10).Text("ENDEREÇO DE ENTREGA").FontSize(9).Bold().FontColor(Colors.Grey.Darken2);
+                column.Item().PaddingTop(4).Column(enderecoColumn =>
+                {
+                    enderecoColumn.Spacing(2);
+                    enderecoColumn.Item().Element(item => Field(item, "Logradouro", endereco.Logradouro));
+                    enderecoColumn.Item().Element(item => Field(item, "Número", endereco.Numero));
+                    enderecoColumn.Item().Element(item => Field(item, "Bairro", endereco.Bairro));
+                    enderecoColumn.Item().Element(item => Field(item, "Cidade/UF", $"{endereco.Localidade}/{endereco.Uf}"));
+                    enderecoColumn.Item().Element(item => Field(item, "CEP", endereco.Cep));
+
+                    if (!string.IsNullOrWhiteSpace(endereco.Complemento))
+                    {
+                        enderecoColumn.Item().Element(item => Field(item, "Complemento", endereco.Complemento));
+                    }
+                });
 
                 if (!string.IsNullOrWhiteSpace(endereco.TipoFrete))
                 {
@@ -202,12 +201,12 @@ internal class PdfPedidoService : IPdfPedidoService
         {
             table.ColumnsDefinition(columns =>
             {
-                columns.ConstantColumn(46);
-                columns.RelativeColumn(2.6f);
-                columns.ConstantColumn(72);
-                columns.ConstantColumn(58);
-                columns.ConstantColumn(72);
-                columns.ConstantColumn(72);
+                columns.ConstantColumn(42);
+                columns.RelativeColumn(3.2f);
+                columns.ConstantColumn(68);
+                columns.ConstantColumn(52);
+                columns.ConstantColumn(66);
+                columns.ConstantColumn(66);
             });
 
             table.Header(header =>
@@ -215,19 +214,23 @@ internal class PdfPedidoService : IPdfPedidoService
                 HeaderCell(header, "Ref.", CellAlignment.Left);
                 HeaderCell(header, "Produto", CellAlignment.Left);
                 HeaderCell(header, "Tamanho/Peso", CellAlignment.Center);
-                HeaderCell(header, "Quantidade", CellAlignment.Right);
+                HeaderCell(header, "Qtd", CellAlignment.Right);
                 HeaderCell(header, "Valor unitário", CellAlignment.Right);
                 HeaderCell(header, "Subtotal", CellAlignment.Right);
             });
 
-            foreach (var item in pedido.ItensPedido.OrderBy(x => x.ProdutoId))
+            var index = 0;
+
+            foreach (var item in pedido.ItensPedido.OrderBy(x => x.Produto.Numero).ThenBy(x => x.Tamanho?.Descricao).ThenBy(x => x.Peso?.Descricao))
             {
-                BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left);
-                BodyCell(table, item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", ""), CellAlignment.Left);
-                BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center);
-                BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right);
-                BodyCell(table, item.ValorUnitario.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right);
-                BodyCell(table, item.ValorTotal.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right);
+                var alternate = index % 2 == 1;
+                BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left, alternate);
+                BodyCell(table, item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", "").Replace("-", "").Trim(), CellAlignment.Left, alternate);
+                BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center, alternate);
+                BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right, alternate);
+                BodyCell(table, item.ValorUnitario.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
+                BodyCell(table, item.ValorTotal.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
+                index++;
             }
         });
     }
@@ -236,10 +239,15 @@ internal class PdfPedidoService : IPdfPedidoService
     {
         var frete = pedido.EnderecoEntrega?.ValorFrete ?? 0;
 
-        container.ShowEntire().AlignRight().Width(220).Border(1).BorderColor(Colors.Grey.Lighten2).Padding(10).Column(column =>
+        container.ShowEntire().AlignRight().Width(250)
+            .Border(1)
+            .BorderColor(Colors.Grey.Lighten1)
+            .Background(Colors.Grey.Lighten5)
+            .Padding(12)
+            .Column(column =>
         {
-            column.Spacing(4);
-            column.Item().Text("RESUMO FINANCEIRO").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+            column.Spacing(6);
+            column.Item().Text("RESUMO FINANCEIRO").FontSize(12).Bold().FontColor(Colors.Grey.Darken4);
             FinancialLine(column, "Subtotal dos produtos", pedido.ValorTotal);
 
             if (frete > 0)
@@ -247,10 +255,13 @@ internal class PdfPedidoService : IPdfPedidoService
                 FinancialLine(column, "Frete", frete);
             }
 
-            column.Item().PaddingTop(6).BorderTop(1).BorderColor(Colors.Grey.Lighten2).PaddingTop(6).Row(row =>
+            column.Item().PaddingTop(8).BorderTop(1).BorderColor(Colors.Grey.Lighten1).PaddingTop(8).Column(totalColumn =>
             {
-                row.RelativeItem().Text("TOTAL DO PEDIDO").FontSize(10).Bold();
-                row.ConstantItem(95).AlignRight().Text(pedido.ValorTotalCobrar.FormatMoney(temSimboloDeDinheiro: true)).FontSize(15).Bold();
+                totalColumn.Item().AlignRight().Text("TOTAL DO PEDIDO").FontSize(11).Bold().FontColor(Colors.Grey.Darken4);
+                totalColumn.Item().AlignRight().Text(pedido.ValorTotalCobrar.FormatMoney(temSimboloDeDinheiro: true))
+                    .FontSize(19)
+                    .Bold()
+                    .FontColor(Colors.Blue.Darken3);
             });
         });
     }
@@ -279,19 +290,19 @@ internal class PdfPedidoService : IPdfPedidoService
         {
             if (tamanhos.Any())
             {
-                column.Item().Text("RESUMO POR TAMANHO").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+                column.Item().Element(container => SectionTitle(container, "RESUMO POR TAMANHO"));
                 foreach (var tamanho in tamanhos)
                 {
-                    column.Item().Text($"{tamanho.Descricao.ToLower()} - {tamanho.Total} {UnidadeLabel(tamanho.Total)}").FontSize(9);
+                    column.Item().PaddingTop(4).Text($"{tamanho.Descricao.ToLower()} - {tamanho.Total} {UnidadeLabel(tamanho.Total)}").FontSize(10).FontColor(Colors.Grey.Darken3);
                 }
             }
 
             if (pesos.Any())
             {
-                column.Item().PaddingTop(tamanhos.Any() ? 6 : 0).Text("RESUMO POR PESO").FontSize(10).Bold().FontColor(Colors.Grey.Darken3);
+                column.Item().PaddingTop(tamanhos.Any() ? 8 : 0).Element(container => SectionTitle(container, "RESUMO POR PESO"));
                 foreach (var peso in pesos)
                 {
-                    column.Item().Text($"{peso.Descricao.ToLower()} - {peso.Total} {UnidadeLabel(peso.Total)}").FontSize(9);
+                    column.Item().PaddingTop(4).Text($"{peso.Descricao.ToLower()} - {peso.Total} {UnidadeLabel(peso.Total)}").FontSize(10).FontColor(Colors.Grey.Darken3);
                 }
             }
         });
@@ -301,8 +312,8 @@ internal class PdfPedidoService : IPdfPedidoService
     {
         container.BorderTop(1)
             .BorderColor(Colors.Grey.Lighten2)
-            .PaddingTop(4)
-            .DefaultTextStyle(x => x.FontSize(8).FontColor(Colors.Grey.Darken1))
+            .PaddingTop(5)
+            .DefaultTextStyle(x => x.FontSize(7).FontColor(Colors.Grey.Darken1))
             .Row(row =>
             {
                 row.RelativeItem().Text($"Pedido nº {pedido.Numero} - Emitido em {pedido.DataDeCriacao.DateTimeToString()}");
@@ -336,8 +347,8 @@ internal class PdfPedidoService : IPdfPedidoService
 
             column.Item()
                 .AlignCenter()
-                .Border(1)
-                .BorderColor(Colors.Grey.Darken2)
+                //.Border(1)
+                //.BorderColor(Colors.Grey.Darken2)
                 .PaddingVertical(8)
                 .Text($"PEDIDO Nº {pedido.Numero}")
                 .FontSize(18)
@@ -359,15 +370,20 @@ internal class PdfPedidoService : IPdfPedidoService
         return container.Border(1)
             .BorderColor(Colors.Grey.Lighten2)
             .Background(Colors.Grey.Lighten5)
-            .Padding(8);
+            .Padding(12);
+    }
+
+    private static void SectionTitle(IContainer container, string title)
+    {
+        container.Text(title).FontSize(12).Bold().FontColor(Colors.Grey.Darken4);
     }
 
     private static void Field(IContainer container, string label, string? value)
     {
-        container.PaddingBottom(4).Column(column =>
+        container.PaddingBottom(6).Column(column =>
         {
-            column.Item().Text(label).FontSize(7).SemiBold().FontColor(Colors.Grey.Darken1);
-            column.Item().Text(string.IsNullOrWhiteSpace(value) ? "-" : value).FontSize(9);
+            column.Item().Text(label).FontSize(8).Bold().FontColor(Colors.Grey.Darken2);
+            column.Item().PaddingTop(2).Text(string.IsNullOrWhiteSpace(value) ? "-" : value).FontSize(10).FontColor(Colors.Grey.Darken4);
         });
     }
 
@@ -381,24 +397,26 @@ internal class PdfPedidoService : IPdfPedidoService
     private static void HeaderCell(TableCellDescriptor table, string text, CellAlignment alignment)
     {
         ApplyAlignment(table.Cell()
-            .Background(Colors.Grey.Darken3)
-            .PaddingVertical(6)
+            .Background(Colors.Grey.Darken1)
+            .PaddingVertical(7)
             .PaddingHorizontal(4), alignment)
             .Text(text)
-            .FontSize(8)
+            .FontSize(8.5f)
             .Bold()
             .FontColor(Colors.White);
     }
 
-    private static void BodyCell(TableDescriptor table, string text, CellAlignment alignment)
+    private static void BodyCell(TableDescriptor table, string text, CellAlignment alignment, bool alternate)
     {
         ApplyAlignment(table.Cell()
+            .Background(alternate ? Colors.Grey.Lighten5 : Colors.White)
             .BorderBottom(0.5f)
             .BorderColor(Colors.Grey.Lighten3)
-            .PaddingVertical(5)
+            .PaddingVertical(6)
             .PaddingHorizontal(4), alignment)
             .Text(text)
-            .FontSize(8);
+            .FontSize(8.5f)
+            .FontColor(Colors.Grey.Darken4);
     }
 
     private static IContainer ApplyAlignment(IContainer container, CellAlignment alignment)
@@ -415,8 +433,8 @@ internal class PdfPedidoService : IPdfPedidoService
     {
         column.Item().Row(row =>
         {
-            row.RelativeItem().Text(label).FontSize(9);
-            row.ConstantItem(85).AlignRight().Text(value.FormatMoney(temSimboloDeDinheiro: true)).FontSize(9);
+            row.RelativeItem().Text(label).FontSize(10).FontColor(Colors.Grey.Darken3);
+            row.ConstantItem(95).AlignRight().Text(value.FormatMoney(temSimboloDeDinheiro: true)).FontSize(10).FontColor(Colors.Grey.Darken4);
         });
     }
 
