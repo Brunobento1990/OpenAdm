@@ -61,8 +61,7 @@ internal class PdfPedidoService : IPdfPedidoService
                         column.Item().Element(container => ComposeClienteSection(container, pedido.Usuario));
                         column.Item().Element(container => ComposeComplementoPedidoSection(container, pedido));
                         column.Item().Element(container => ComposeItensTable(container, pedido));
-                        column.Item().Element(container => ComposeResumoQuantidade(container, pedido));
-                        column.Item().Element(container => ComposeResumoFinanceiro(container, pedido));
+                        column.Item().Element(container => ComposeResumoPedidoSection(container, pedido));
                     });
                     page.Footer().Element(container => ComposePedidoFooter(container, pedido));
                 });
@@ -161,36 +160,42 @@ internal class PdfPedidoService : IPdfPedidoService
 
             if (endereco != null)
             {
-                column.Item().PaddingTop(10).Text("ENDEREÇO DE ENTREGA").FontSize(9).Bold().FontColor(Colors.Grey.Darken2);
                 column.Item().PaddingTop(4).Column(enderecoColumn =>
                 {
-                    enderecoColumn.Spacing(2);
-                    enderecoColumn.Item().Element(item => Field(item, "Logradouro", endereco.Logradouro));
-                    enderecoColumn.Item().Element(item => Field(item, "Número", endereco.Numero));
-                    enderecoColumn.Item().Element(item => Field(item, "Bairro", endereco.Bairro));
-                    enderecoColumn.Item().Element(item => Field(item, "Cidade/UF", $"{endereco.Localidade}/{endereco.Uf}"));
-                    enderecoColumn.Item().Element(item => Field(item, "CEP", endereco.Cep));
-
-                    if (!string.IsNullOrWhiteSpace(endereco.Complemento))
+                    enderecoColumn.Item().Row(row =>
                     {
-                        enderecoColumn.Item().Element(item => Field(item, "Complemento", endereco.Complemento));
+                        row.Spacing(8);
+                        row.RelativeItem(3).Element(item => Field(item, "Logradouro", $"{endereco.Logradouro} nº {endereco.Numero}"));
+                    });
+
+                    enderecoColumn.Item().Row(row =>
+                    {
+                        row.Spacing(8);
+                        row.RelativeItem().Element(item => Field(item, "Bairro", endereco.Bairro));
+                        row.RelativeItem().Element(item => Field(item, "Cidade/UF", $"{endereco.Localidade}/{endereco.Uf}"));
+                        row.RelativeItem().Element(item => Field(item, "CEP", endereco.Cep));
+                    });
+
+                    if (!string.IsNullOrWhiteSpace(endereco.Complemento) || !string.IsNullOrWhiteSpace(endereco.TipoFrete))
+                    {
+                        enderecoColumn.Item().Row(row =>
+                        {
+                            row.Spacing(8);
+                            row.RelativeItem().Element(item => Field(item, "Complemento", endereco.Complemento));
+                            row.RelativeItem().Element(item => Field(item, "Prazo/Entrega", endereco.TipoFrete));
+                        });
                     }
                 });
+            }
 
-                if (!string.IsNullOrWhiteSpace(endereco.TipoFrete))
+            if (primeiraParcela?.MeioDePagamento != null || !string.IsNullOrWhiteSpace(primeiraParcela?.Observacao))
+            {
+                column.Item().PaddingTop(endereco != null ? 2 : 10).Row(row =>
                 {
-                    column.Item().Element(item => Field(item, "Prazo/Entrega", endereco.TipoFrete));
-                }
-            }
-
-            if (primeiraParcela?.MeioDePagamento != null)
-            {
-                column.Item().Element(item => Field(item, "Forma de pagamento", primeiraParcela.MeioDePagamento.ToString()));
-            }
-
-            if (!string.IsNullOrWhiteSpace(primeiraParcela?.Observacao))
-            {
-                column.Item().Element(item => Field(item, "Observações", primeiraParcela.Observacao));
+                    row.Spacing(8);
+                    row.RelativeItem().Element(item => Field(item, "Forma de pagamento", primeiraParcela?.MeioDePagamento?.ToString()));
+                    row.RelativeItem(2).Element(item => Field(item, "Observações", primeiraParcela?.Observacao));
+                });
             }
         });
     }
@@ -225,8 +230,8 @@ internal class PdfPedidoService : IPdfPedidoService
             {
                 var alternate = index % 2 == 1;
                 BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left, alternate);
-                BodyCell(table, string.IsNullOrWhiteSpace(item.Produto.Referencia) ? 
-                    item.Produto.Descricao : 
+                BodyCell(table, string.IsNullOrWhiteSpace(item.Produto.Referencia) ?
+                    item.Produto.Descricao :
                     item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", "").Replace("-", "").Trim(), CellAlignment.Left, alternate);
                 BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center, alternate);
                 BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right, alternate);
@@ -234,6 +239,27 @@ internal class PdfPedidoService : IPdfPedidoService
                 BodyCell(table, item.ValorTotal.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
                 index++;
             }
+        });
+    }
+
+    private static void ComposeResumoPedidoSection(IContainer container, Pedido pedido)
+    {
+        var exibirResumoQuantidade = HasResumoQuantidade(pedido);
+
+        container.ShowEntire().Row(row =>
+        {
+            row.Spacing(14);
+
+            if (exibirResumoQuantidade)
+            {
+                row.RelativeItem().Element(item => ComposeResumoQuantidade(item, pedido));
+            }
+            else
+            {
+                row.RelativeItem();
+            }
+
+            row.ConstantItem(250).Element(item => ComposeResumoFinanceiro(item, pedido));
         });
     }
 
@@ -273,13 +299,23 @@ internal class PdfPedidoService : IPdfPedidoService
         var tamanhos = pedido.ItensPedido
             .Where(x => x.TamanhoId != null)
             .GroupBy(x => x.TamanhoId)
-            .Select(g => new { Descricao = g.First().Tamanho!.Descricao, Total = g.Sum(x => x.Quantidade) })
+            .Select(g => new
+            {
+                Descricao = g.First().Tamanho!.Descricao,
+                Quantidade = g.Sum(x => x.Quantidade),
+                Valor = g.Sum(x => x.ValorTotal)
+            })
             .ToList();
 
         var pesos = pedido.ItensPedido
             .Where(x => x.PesoId != null)
             .GroupBy(x => x.PesoId)
-            .Select(g => new { Descricao = g.First().Peso!.Descricao, Total = g.Sum(x => x.Quantidade) })
+            .Select(g => new
+            {
+                Descricao = g.First().Peso!.Descricao,
+                Quantidade = g.Sum(x => x.Quantidade),
+                Valor = g.Sum(x => x.ValorTotal)
+            })
             .ToList();
 
         if (!tamanhos.Any() && !pesos.Any())
@@ -295,7 +331,7 @@ internal class PdfPedidoService : IPdfPedidoService
                 column.Item().Element(container => SectionTitle(container, "RESUMO POR TAMANHO"));
                 foreach (var tamanho in tamanhos)
                 {
-                    column.Item().PaddingTop(4).Text($"{tamanho.Descricao.ToLower()} - {tamanho.Total} {UnidadeLabel(tamanho.Total)}").FontSize(10).FontColor(Colors.Grey.Darken3);
+                    column.Item().PaddingTop(4).Text($"{tamanho.Descricao.ToLower()} - {tamanho.Quantidade} un - {tamanho.Valor.FormatMoney(temSimboloDeDinheiro: true)}").FontSize(10).FontColor(Colors.Grey.Darken3);
                 }
             }
 
@@ -304,10 +340,15 @@ internal class PdfPedidoService : IPdfPedidoService
                 column.Item().PaddingTop(tamanhos.Any() ? 8 : 0).Element(container => SectionTitle(container, "RESUMO POR PESO"));
                 foreach (var peso in pesos)
                 {
-                    column.Item().PaddingTop(4).Text($"{peso.Descricao.ToLower()} - {peso.Total} {UnidadeLabel(peso.Total)}").FontSize(10).FontColor(Colors.Grey.Darken3);
+                    column.Item().PaddingTop(4).Text($"{peso.Descricao.ToLower()} - {peso.Quantidade} un - {peso.Valor.FormatMoney(temSimboloDeDinheiro: true)}").FontSize(10).FontColor(Colors.Grey.Darken3);
                 }
             }
         });
+    }
+
+    private static bool HasResumoQuantidade(Pedido pedido)
+    {
+        return pedido.ItensPedido.Any(x => x.TamanhoId != null || x.PesoId != null);
     }
 
     private static void ComposePedidoFooter(IContainer container, Pedido pedido)
@@ -318,7 +359,7 @@ internal class PdfPedidoService : IPdfPedidoService
             .DefaultTextStyle(x => x.FontSize(7).FontColor(Colors.Grey.Darken1))
             .Row(row =>
             {
-                row.RelativeItem().Text($"Pedido nº {pedido.Numero} - Emitido em {pedido.DataDeCriacao.DateTimeToString()}");
+                row.RelativeItem().Text($"Pedido nº {pedido.Numero} - Impressão em {DateTime.Now.DateTimeToString()}");
                 row.ConstantItem(80).AlignRight().Text(text =>
                 {
                     text.Span("Página ");
@@ -479,11 +520,6 @@ internal class PdfPedidoService : IPdfPedidoService
                     column.Item().PaddingTop(6).Text($"Telefone {telefone}").FontSize(fontSize);
                 }
             });
-    }
-
-    private static string UnidadeLabel(decimal value)
-    {
-        return value == 1 ? "unidade" : "unidades";
     }
 
     private static string FormatEndereco(BaseEndereco endereco)
