@@ -225,7 +225,9 @@ internal class PdfPedidoService : IPdfPedidoService
             {
                 var alternate = index % 2 == 1;
                 BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left, alternate);
-                BodyCell(table, item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", "").Replace("-", "").Trim(), CellAlignment.Left, alternate);
+                BodyCell(table, string.IsNullOrWhiteSpace(item.Produto.Referencia) ? 
+                    item.Produto.Descricao : 
+                    item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", "").Replace("-", "").Trim(), CellAlignment.Left, alternate);
                 BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center, alternate);
                 BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right, alternate);
                 BodyCell(table, item.ValorUnitario.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
