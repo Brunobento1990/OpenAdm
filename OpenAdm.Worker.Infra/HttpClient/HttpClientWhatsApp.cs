@@ -53,10 +53,6 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
         var response = await client.PostAsync($"chat/send/document",
             JsonSerializerOptionsApi.ToJson(body));
         
-        var responseBody = await response.Content.ReadAsStringAsync();
-        
-        Console.WriteLine(responseBody);
-        
         return response.IsSuccessStatusCode;
     }
 
