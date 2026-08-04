@@ -70,7 +70,7 @@ public static class ConfigurcaoIoC
         services.AddHttpClient(nameof(HttpClientEnum.WhatsApp), x =>
         {
             x.BaseAddress = new Uri(urlWhatsApp);
-            x.DefaultRequestHeaders.Add("apiKey", apiKeyWhatsApp);
+            x.DefaultRequestHeaders.Add("token", apiKeyWhatsApp);
         });
 
         services.AddScoped<IHttpClientWhatsApp, HttpClientWhatsApp>();

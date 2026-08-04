@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Configuration;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Model;
@@ -22,13 +23,36 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
             _instance = instance;
         }
     }
+    
+    private string NormalizarTelefoneWuzApi(string telefone)
+    {
+        telefone = Regex.Replace(telefone, @"\D", "");
+        
+        if (telefone.Length == 13 &&
+            telefone.StartsWith("55") &&
+            telefone[4] == '9')
+        {
+            telefone = telefone.Remove(4, 1);
+        }
+
+        return telefone;
+    }
 
     public async Task<bool> EnviarPdfAsync(EnviarPDFWppRequest request)
     {
         using var client = _httpClientFactory.CreateClient(nameof(HttpClientEnum.WhatsApp));
 
-        var response = await client.PostAsync($"message/sendMedia/{_instance}",
-            JsonSerializerOptionsApi.ToJson(request));
+        var body = new EnviarPDFWuzApiWppRequest()
+        {
+            Phone = NormalizarTelefoneWuzApi(request.Number),
+            FileName = request.FileName,
+            Document = $"data:application/pdf;base64,{request.Media}",
+            Caption =  request.Caption
+        };
+        
+        var response = await client.PostAsync($"chat/send/document",
+            JsonSerializerOptionsApi.ToJson(body));
+        
         return response.IsSuccessStatusCode;
     }
 
@@ -36,8 +60,12 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
     {
         using var client = _httpClientFactory.CreateClient(nameof(HttpClientEnum.WhatsApp));
 
-        var response = await client.PostAsync($"message/sendText/{_instance}",
-            JsonSerializerOptionsApi.ToJson(request));
+        var response = await client.PostAsync("chat/send/text",
+            JsonSerializerOptionsApi.ToJson(new EnviarMsgWuzApiWppRequest()
+            {
+                Phone = NormalizarTelefoneWuzApi(request.Number),
+                Body = request.Text
+            }));
         return response.IsSuccessStatusCode;
     }
 

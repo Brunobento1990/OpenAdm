@@ -25,6 +25,14 @@ public class EnviarPDFWppRequest
     public QuotedMessage? Quoted { get; set; }
 }
 
+public class EnviarPDFWuzApiWppRequest
+{
+    public string Phone { get; set; } = "";
+    public string? Caption { get; set; }
+    public string FileName { get; set; } = "";
+    public string Document { get; set; } = "";
+}
+
 public class QuotedMessage
 {
     public KeyInfo? Key { get; set; }
