@@ -18,20 +18,20 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
     private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly IHttpClientMercadoPago _httpClientMercadoPago;
     private readonly IConfiguration _configuration;
-    private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
+    private readonly IFilaService _filaService;
     private readonly IParceiroRepository _parceiroRepository;
 
     public ParcelaCobrancaService(IParcelaCobrancaRepository parcelaCobrancaRepository,
         IParceiroAutenticado parceiroAutenticado,
         IHttpClientMercadoPago httpClientMercadoPago,
         IConfiguration configuration,
-        IEventoAplicacaoRepository eventoAplicacaoRepository, IParceiroRepository parceiroRepository)
+        IFilaService filaService, IParceiroRepository parceiroRepository)
     {
         _parcelaCobrancaRepository = parcelaCobrancaRepository;
         _parceiroAutenticado = parceiroAutenticado;
         _httpClientMercadoPago = httpClientMercadoPago;
         _configuration = configuration;
-        _eventoAplicacaoRepository = eventoAplicacaoRepository;
+        _filaService = filaService;
         _parceiroRepository = parceiroRepository;
     }
 
@@ -142,15 +142,17 @@ public class ParcelaCobrancaService : IParcelaCobrancaService
 
         _parcelaCobrancaRepository.Update(parcelaCobranca);
 
-        await _eventoAplicacaoRepository.AddAsync(EventoAplicacao.Criar(
+        var evento = EventoAplicacao.Criar(
             dados: new NotificarParceiroWhatsAppEvento()
             {
                 Mensagem =
                     $"💰 Pagamento recebido!\r\n\r\nSua mensalidade foi confirmada com sucesso.\r\n\r\n📅 Data: {DateTime.Now.DateTimeToString()}\r\n💵 Valor: R$ {parcelaCobranca.Valor.FormatMoney()}\r\n\r\nSe precisar de algo, é só responder essa mensagem 🙂"
             }.ToString(),
             tipoEventoAplicacao: Domain.Enuns.TipoEventoAplicacaoEnum.NotificarParceiroWhatsApp,
-            empresaOpenAdmId: parcelaCobranca.EmpresaOpenAdmId));
+            empresaOpenAdmId: parcelaCobranca.EmpresaOpenAdmId);
 
         await _parcelaCobrancaRepository.SaveChangesAsync();
+
+        await _filaService.PublicarAsync(evento);
     }
 }

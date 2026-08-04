@@ -4,6 +4,7 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Eventos;
+using OpenAdm.Worker.Application.Interfaces;
 using OpenAdm.Worker.Application.Service;
 
 namespace OpenAdm.Worker.Jobs.Implementacoes;
@@ -55,7 +56,7 @@ public class GerarParcelaCobrancaJob : BackgroundService
                 }
 
                 var parcelaCobrancaRepository = scope.ServiceProvider.GetRequiredService<IParcelaCobrancaRepository>();
-                var eventoAplicacaoRepository = scope.ServiceProvider.GetRequiredService<IEventoAplicacaoRepository>();
+                var filaService = scope.ServiceProvider.GetRequiredService<IFilaService>();
 
                 foreach (var parceiro in parceirosParaCobranca)
                 {
@@ -92,13 +93,15 @@ public class GerarParcelaCobrancaJob : BackgroundService
                         Mensagem = mensagemCobranca,
                     }.ToString();
 
-                    await eventoAplicacaoRepository.AddAsync(EventoAplicacao.Criar(
+                    var evento = EventoAplicacao.Criar(
                         dados: dados,
                         tipoEventoAplicacao: TipoEventoAplicacaoEnum.NotificarParceiroWhatsApp,
-                        empresaOpenAdmId: parceiro.EmpresaOpenAdmId));
-                    await parcelaCobrancaRepository.AddAsync(parcelaCobranca);
+                        empresaOpenAdmId: parceiro.EmpresaOpenAdmId);
 
+                    await parcelaCobrancaRepository.AddAsync(parcelaCobranca);
                     await parcelaCobrancaRepository.SaveChangesAsync();
+
+                    await filaService.PublicarAsync(evento);
                 }
             }
             catch (Exception e)
