@@ -226,18 +226,23 @@ internal class PdfPedidoService : IPdfPedidoService
 
             var index = 0;
 
-            foreach (var item in pedido.ItensPedido.OrderBy(x => x.Produto.Referencia).ThenBy(x => x.Produto.Numero))
+            var produtoGroup = pedido.ItensPedido.OrderBy(x => x.Produto.Numero).GroupBy(x => x.Produto.CategoriaId);
+
+            foreach (var group in produtoGroup)
             {
-                var alternate = index % 2 == 1;
-                BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left, alternate);
-                BodyCell(table, string.IsNullOrWhiteSpace(item.Produto.Referencia) ?
-                    item.Produto.Descricao :
-                    item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", "").Replace("-", "").Trim(), CellAlignment.Left, alternate);
-                BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center, alternate);
-                BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right, alternate);
-                BodyCell(table, item.ValorUnitario.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
-                BodyCell(table, item.ValorTotal.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
-                index++;
+                foreach (var item in group)
+                {
+                    var alternate = index % 2 == 1;
+                    BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left, alternate);
+                    BodyCell(table, string.IsNullOrWhiteSpace(item.Produto.Referencia) ?
+                        item.Produto.Descricao :
+                        item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", "").Replace("-", "").Trim(), CellAlignment.Left, alternate);
+                    BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center, alternate);
+                    BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right, alternate);
+                    BodyCell(table, item.ValorUnitario.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
+                    BodyCell(table, item.ValorTotal.FormatMoney(temSimboloDeDinheiro: true), CellAlignment.Right, alternate);
+                    index++;
+                }   
             }
         });
     }
