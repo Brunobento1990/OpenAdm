@@ -16,7 +16,6 @@ public class ConfiguracoesDePedidoRepository : GenericBaseRepository<Configuraco
         return await AppDbContext
             .ConfiguracoesDePedidos
             .AsNoTracking()
-            .OrderByDescending(x => x.Numero)
             .FirstOrDefaultAsync(x => x.Ativo && x.ParceiroId == parceiroId);
     }
 }

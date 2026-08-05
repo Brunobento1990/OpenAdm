@@ -22,6 +22,8 @@ internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfigurati
             .IsRequired()
             .HasDefaultValue(false);
 
+        builder.HasIndex(x => new { x.Ativo, x.ParceiroId });
+
         base.Configure(builder);
     }
 }

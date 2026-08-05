@@ -98,7 +98,6 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
             .Estoques
             .Include(x => x.Produto)
             .Where(x => produtosIds.Contains(x.ProdutoId))
-            .OrderByDescending(x => x.DataDeAtualizacao)
             .ToListAsync();
     }
 

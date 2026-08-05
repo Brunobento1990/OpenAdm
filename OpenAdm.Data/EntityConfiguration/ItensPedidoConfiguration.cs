@@ -39,6 +39,14 @@ public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItemPedido>
             .HasForeignKey(x => x.ProdutoId)
             .OnDelete(DeleteBehavior.NoAction);
 
+        builder.HasIndex(x => x.ProdutoId)
+            .IncludeProperties(x => new
+            {
+                x.PedidoId,
+                x.PesoId,
+                x.TamanhoId,
+                x.Quantidade
+            });
         builder.HasIndex(x => new { x.ProdutoId, x.TamanhoId, x.PesoId });
     }
 }
