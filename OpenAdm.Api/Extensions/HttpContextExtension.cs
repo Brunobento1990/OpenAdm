@@ -5,7 +5,6 @@ using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
-using Serilog;
 
 namespace OpenAdm.Api.Extensions;
 
@@ -29,7 +28,6 @@ public static class HttpContextExtension
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)httpStatusCode;
         var result = JsonSerializer.Serialize(errorResponse, JsonSerializerOptionsApi.Options);
-        Log.Error(result, "Body response");
         await context.Response.WriteAsync(result);
     }
 

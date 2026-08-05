@@ -2,7 +2,6 @@
 using OpenAdm.Api.Extensions;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
-using Serilog;
 
 namespace OpenAdm.Api.Middlewares;
 
@@ -31,7 +30,7 @@ public class AutenticaMercadoPagoMiddleware
 
         if (string.IsNullOrWhiteSpace(header) && string.IsNullOrWhiteSpace(header2))
         {
-            Log.Warning("Não passou porque não pegou os signatures");
+            Console.WriteLine("Não passou porque não pegou os signatures");
             return;
         }
 
@@ -39,7 +38,7 @@ public class AutenticaMercadoPagoMiddleware
         
         if (!Guid.TryParse(parceiroIdString, out Guid parceiroId))
         {
-            Log.Warning($"Não passou porque não pegou o parceiroId: {parceiroIdString}");
+            Console.WriteLine($"Não passou porque não pegou o parceiroId: {parceiroIdString}");
             return;
         }
 
@@ -47,7 +46,7 @@ public class AutenticaMercadoPagoMiddleware
 
         if (empresaOpenAdm == null)
         {
-            Log.Warning("Não passou porque não pegou o parceiro");
+            Console.WriteLine("Não passou porque não pegou o parceiro");
             return;
         }
 

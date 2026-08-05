@@ -1,7 +1,6 @@
 ﻿using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Domain.Exceptions;
 using System.Text.Json;
-using Serilog;
 
 namespace OpenAdm.Api.Midlewares;
 
@@ -59,12 +58,7 @@ public class LogMiddleware
         };
 
         await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
-        if (ex != null)
-        {
-            Log.Error(ex, mensagem);
-            return;
-        }
 
-        Log.Error(mensagem);
+        Console.WriteLine(mensagem);
     }
 }

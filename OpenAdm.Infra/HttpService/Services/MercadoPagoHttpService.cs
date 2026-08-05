@@ -6,7 +6,6 @@ using OpenAdm.Application.HttpClient.Response;
 using OpenAdm.Application.HttpClient.Request;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Enums;
-using Serilog;
 
 namespace OpenAdm.Infra.HttpService.Services;
 
@@ -35,7 +34,7 @@ public sealed class MercadoPagoHttpService : IHttpClientMercadoPago
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
-            Log.Error(error);
+            Console.WriteLine(error);
             throw new ExceptionApi($"Não foi possível gerar o pagamento.");
         }
 
@@ -56,7 +55,7 @@ public sealed class MercadoPagoHttpService : IHttpClientMercadoPago
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
-            Log.Error(error);
+            Console.WriteLine(error);
             throw new ExceptionApi($"Não foi possível gerar o pagamento.");
         }
 

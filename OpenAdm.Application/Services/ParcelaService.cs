@@ -13,7 +13,6 @@ using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Eventos;
-using Serilog;
 
 namespace OpenAdm.Application.Services;
 
@@ -75,20 +74,20 @@ public sealed class ParcelaService : IParcelaService
     {
         if (string.IsNullOrWhiteSpace(notificationFaturaWebHook.Data?.Id))
         {
-            Log.Warning("data id inválido");
+            Console.WriteLine("data id inválido");
             return;
         }
 
         var parcela = await _parcelaRepository.GetByIdExternoAsync(notificationFaturaWebHook.Data.Id);
         if (parcela == null)
         {
-            Log.Warning("Não encontrou a parcela");
+            Console.WriteLine("Não encontrou a parcela");
             return;
         }
 
         if (parcela.Quitada)
         {
-            Log.Warning("Parcela quitada");
+            Console.WriteLine("Parcela quitada");
             return;
         }
 

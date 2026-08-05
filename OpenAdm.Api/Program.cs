@@ -13,7 +13,6 @@ using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Azure.Configuracao;
 using OpenAdm.IoC;
 using OpenAdm.Pdf;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,8 +58,6 @@ builder.Services
     .InjectHttpClient(urlApiCep, urlApiViaCep,
         builder.Configuration);
 
-builder.ConfigureLog();
-
 var app = builder.Build();
 
 var basePath = "/api";
@@ -102,7 +99,7 @@ _ = Task.Run(async () =>
     }
     catch (Exception ex)
     {
-        Log.Error(ex, "Falha ao executar rotinas iniciais de banco");
+        Console.WriteLine(ex.InnerException?.Message ?? ex.Message);
     }
 });
 
