@@ -226,7 +226,7 @@ internal class PdfPedidoService : IPdfPedidoService
 
             var index = 0;
 
-            foreach (var item in pedido.ItensPedido.OrderBy(x => x.Produto.Numero).ThenBy(x => x.Tamanho?.Descricao).ThenBy(x => x.Peso?.Descricao))
+            foreach (var item in pedido.ItensPedido.OrderBy(x => x.Produto.Referencia).ThenBy(x => x.Produto.Numero))
             {
                 var alternate = index % 2 == 1;
                 BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left, alternate);
