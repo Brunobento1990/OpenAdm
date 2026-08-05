@@ -13,7 +13,6 @@ public class LogMiddleware
         "Ocorreu um erro interno, tente novamente mais tarde!";
 
     private readonly bool _development = VariaveisDeAmbiente.IsDevelopment();
-    private int _statusCode = 200;
 
     public LogMiddleware(RequestDelegate next)
     {
@@ -28,36 +27,32 @@ public class LogMiddleware
         }
         catch (ExceptionUnauthorize ex)
         {
-            _statusCode = 401;
-            await HandleError(httpContext, ex.Message);
+            await HandleError(httpContext, ex.Message, 401);
         }
         catch (ExceptionApi ex)
         {
-            _statusCode = 400;
-            await HandleError(httpContext, ex.Message);
+            await HandleError(httpContext, ex.Message, 400);
         }
         catch (Exception ex)
         {
-            _statusCode = 400;
-
             if (_development)
             {
-                await HandleError(httpContext, ex.Message, ex);
+                await HandleError(httpContext, ex.Message, 400, ex);
             }
             else
             {
                 await HandleError(
                     httpContext,
-                    _erroGenerico, ex);
+                    _erroGenerico, 400, ex);
             }
         }
     }
 
-    public async Task HandleError(HttpContext httpContext, string mensagem, Exception? ex = null)
+    public async Task HandleError(HttpContext httpContext, string mensagem, int statusCode, Exception? ex = null)
     {
         httpContext.Response.Headers.Append("Access-Control-Allow-Origin", "*");
         httpContext.Response.ContentType = "application/json";
-        httpContext.Response.StatusCode = _statusCode;
+        httpContext.Response.StatusCode = statusCode;
         var errorResponse = new ErrorResponse()
         {
             Mensagem = mensagem

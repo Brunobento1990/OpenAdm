@@ -15,13 +15,15 @@ public static class DependencyInjectRepositories
     public static void InjectRepositories(this IServiceCollection services, string connectionString,
         string instanceName)
     {
+        var redis = ConnectionMultiplexer.Connect(connectionString);
+
+        services.AddSingleton<IConnectionMultiplexer>(redis);
+
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = connectionString;
             options.InstanceName = instanceName;
+            options.ConnectionMultiplexerFactory = () => Task.FromResult<IConnectionMultiplexer>(redis);
         });
-
-        services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(connectionString));
 
         services.AddScoped(typeof(IGenericBaseRepository<>), typeof(GenericBaseRepository<>));
         services.AddScoped(typeof(ICachedService<>), typeof(CachedService<>));

@@ -21,7 +21,6 @@ public class CachedService<T> : ICachedService<T> where T : class
         {
             PropertyNameCaseInsensitive = true,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            WriteIndented = true
         };
         _options = new DistributedCacheEntryOptions()
                       .SetAbsoluteExpiration(TimeSpan.FromMinutes(_absolutExpiration))
