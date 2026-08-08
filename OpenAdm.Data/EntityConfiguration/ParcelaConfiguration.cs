@@ -24,11 +24,12 @@ internal class ParcelaConfiguration : IEntityTypeConfiguration<Parcela>
             .HasPrecision(12, 2);
         builder.Property(x => x.Desconto)
             .HasPrecision(12, 2);
+        builder.Property(x => x.Juros)
+            .HasPrecision(12, 2);
         builder.Property(x => x.Observacao)
             .HasMaxLength(500);
         builder.Ignore(x => x.ValorAPagarAReceber);
         builder.Ignore(x => x.ValorPagoRecebido);
-        builder.Ignore(x => x.Status);
         builder.Ignore(x => x.Vencida);
     }
 }

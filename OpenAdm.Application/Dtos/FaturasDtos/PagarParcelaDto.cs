@@ -7,6 +7,7 @@ public class PagarParcelaDto
 {
     public Guid Id { get; set; }
     public decimal? Desconto { get; set; }
+    public decimal? Juros { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public string? Observacao { get; set; }
     public decimal Valor { get; set; }

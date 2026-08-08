@@ -63,7 +63,9 @@ public sealed class ParcelaService : IParcelaService
             desconto: parcelaCriarDto.Desconto,
             observacao: parcelaCriarDto.Observacao,
             faturaId: parcelaCriarDto.FaturaId,
-            idExterno: null);
+            idExterno: null,
+            juros: null,
+            tipoFatura: fatura.Tipo);
 
         await _parcelaRepository.AddAsync(parcela);
 
@@ -115,11 +117,14 @@ public sealed class ParcelaService : IParcelaService
                     dataDeAtualizacao: DateTime.Now,
                     numero: 0,
                     parcelaId: parcela.Id,
-                    dataDePagamento: DateTime.Now,
+                    dataDeEfetivacao: DateTime.UtcNow,
                     valor: parcela.Valor,
                     tipoTransacaoFinanceira: TipoTransacaoFinanceiraEnum.Entrada,
                     meioDePagamento: MeioDePagamentoEnum.Pix,
-                    observacao: "Pagamento efetuado via web hook mercado pago"));
+                    observacao: "Pagamento efetuado via web hook mercado pago",
+                    foiEstornado: false,
+                    desconto: null,
+                    juros: null));
 
         if (parcela.Fatura.PedidoId.HasValue &&
             parcela.Valor >= parcela.Fatura.Pedido?.ValorTotal)
@@ -186,12 +191,13 @@ public sealed class ParcelaService : IParcelaService
         var parcela = await _parcelaRepository.GetByIdAsync(id)
                       ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
-        var transacao = parcela.Estornar();
+        //TODO: ajustar estorno
+        //var transacao = parcela.Estornar();
 
-        parcela.Fatura = null!;
-        parcela.Transacoes = null;
-        await _parcelaRepository.AdicionarTransacaoAsync(transacao);
-        await _parcelaRepository.UpdateAsync(parcela);
+        // parcela.Fatura = null!;
+        // parcela.Transacoes = null;
+        // await _parcelaRepository.AdicionarTransacaoAsync(transacao);
+        // await _parcelaRepository.UpdateAsync(parcela);
 
         await _contasAReceberService.VerificarFechamentoAsync(parcela.FaturaId);
 
@@ -215,22 +221,23 @@ public sealed class ParcelaService : IParcelaService
 
     public async Task<IList<ParcelaPagaDashBoardModel>> FaturasDashBoardAsync()
     {
-        var transacoes = await _transacaoFinanceiraRepository.SumTotalMesesAsync(TipoFaturaEnum.A_Receber);
-        var faturasPagaDashBoardModel = new List<ParcelaPagaDashBoardModel>();
-        foreach (var item in transacoes)
-        {
-            faturasPagaDashBoardModel.Add(new ParcelaPagaDashBoardModel()
-            {
-                Mes = item.Key.ConverterMesIntEmNome(),
-                Count = item.Value
-                    .Where(x => x.Parcela != null &&
-                                x.Parcela.Fatura.Tipo == TipoFaturaEnum.A_Receber &&
-                                !x.EhEstorno)
-                    .Sum(x => x.Valor)
-            });
-        }
+        //TODO: ajustar dash
+        // var transacoes = await _transacaoFinanceiraRepository.SumTotalMesesAsync(TipoFaturaEnum.A_Receber);
+        // var faturasPagaDashBoardModel = new List<ParcelaPagaDashBoardModel>();
+        // foreach (var item in transacoes)
+        // {
+        //     faturasPagaDashBoardModel.Add(new ParcelaPagaDashBoardModel()
+        //     {
+        //         Mes = item.Key.ConverterMesIntEmNome(),
+        //         Count = item.Value
+        //             .Where(x => x.Parcela != null &&
+        //                         x.Parcela.Fatura.Tipo == TipoFaturaEnum.A_Receber &&
+        //                         !x.EhEstorno)
+        //             .Sum(x => x.Valor)
+        //     });
+        // }
 
-        return faturasPagaDashBoardModel;
+        return [];
     }
 
     public async Task<ParcelaViewModel> GetByIdAsync(Guid id)
@@ -249,7 +256,7 @@ public sealed class ParcelaService : IParcelaService
 
     public async Task<decimal> GetSumAReceberAsync()
     {
-        var parcelas = await _parcelaRepository.ListaParcelasTotalizadorAsync(TipoFaturaEnum.A_Receber);
+        var parcelas = await _parcelaRepository.ListaParcelasTotalizadorAsync(TipoFaturaEnum.AReceber);
         return parcelas.Sum(x => x.ValorAPagarAReceber);
     }
 
@@ -257,20 +264,19 @@ public sealed class ParcelaService : IParcelaService
     {
         pagarFaturaAReceberDto.Validar();
 
-        var parcela = await _parcelaRepository.GetByIdAsync(pagarFaturaAReceberDto.Id)
+        var parcela = await _parcelaRepository.ObterParaPagarAsync(pagarFaturaAReceberDto.Id)
                       ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
-        var transacao = parcela.Pagar(
+        parcela.Pagar(
             valor: pagarFaturaAReceberDto.Valor,
             meioDePagamento: pagarFaturaAReceberDto.MeioDePagamento,
             observacao: pagarFaturaAReceberDto.Observacao,
             dataDePagamento: pagarFaturaAReceberDto.DataDePagamento,
-            desconto: pagarFaturaAReceberDto.Desconto);
+            desconto: pagarFaturaAReceberDto.Desconto,
+            juros: pagarFaturaAReceberDto.Juros);
 
-        parcela.Fatura = null!;
-        parcela.Transacoes = null;
-        await _parcelaRepository.AdicionarTransacaoAsync(transacao);
-        await _parcelaRepository.UpdateAsync(parcela);
+        _parcelaRepository.Update(parcela);
+        await _parcelaRepository.SaveChangesAsync();
 
         await _contasAReceberService.VerificarFechamentoAsync(parcela.FaturaId);
 

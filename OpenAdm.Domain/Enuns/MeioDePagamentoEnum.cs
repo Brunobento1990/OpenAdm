@@ -2,9 +2,9 @@
 
 public enum MeioDePagamentoEnum
 {
-    Dinheiro,
-    Pix,
-    Cartao_de_Debito,
-    Cartao_de_Credito,
-    Boleto
+    Dinheiro = 1,
+    Pix = 2,
+    CartaoDeDebito = 3,
+    CartaoDeCredito = 4,
+    Boleto = 5 
 }

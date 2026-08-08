@@ -64,7 +64,7 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
             QuantidadeDeParcelas = 1,
             Total = pedido.ValorTotal,
             UsuarioId = pedido.UsuarioId,
-            Tipo = TipoFaturaEnum.A_Receber
+            Tipo = TipoFaturaEnum.AReceber
         });
         
         return true;

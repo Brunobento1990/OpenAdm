@@ -1,5 +1,8 @@
 ﻿using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Helpers;
+using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Domain.Entities;
 
@@ -17,7 +20,7 @@ public sealed class Parcela : BaseEntity
         string? observacao,
         Guid faturaId,
         string? idExterno,
-        decimal? desconto)
+        decimal? desconto, TipoFaturaEnum tipo, bool quitada, decimal? juros)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         DataDeVencimento = dataDeVencimento;
@@ -28,6 +31,9 @@ public sealed class Parcela : BaseEntity
         FaturaId = faturaId;
         IdExterno = idExterno;
         Desconto = desconto;
+        Tipo = tipo;
+        Quitada = quitada;
+        Juros = juros;
     }
 
     public DateTime DataDeVencimento { get; private set; }
@@ -35,69 +41,20 @@ public sealed class Parcela : BaseEntity
     public MeioDePagamentoEnum? MeioDePagamento { get; private set; }
     public decimal Valor { get; private set; }
     public decimal? Desconto { get; private set; }
+    public decimal? Juros { get; private set; }
     public string? Observacao { get; private set; }
     public string? IdExterno { get; private set; }
+    public TipoFaturaEnum Tipo { get; private set; }
     public Guid FaturaId { get; private set; }
-    public bool Quitada => Status == StatusParcelaEnum.Pago;
-
-    public StatusParcelaEnum Status
-    {
-        get
-        {
-            if (ValorPagoRecebido >= Valor)
-            {
-                return StatusParcelaEnum.Pago;
-            }
-
-            if (ValorPagoRecebido > 0)
-            {
-                return StatusParcelaEnum.Pago_Parcial;
-            }
-
-            return StatusParcelaEnum.Pendente;
-        }
-    }
+    public bool Quitada { get; private set; }
 
     public Fatura Fatura { get; set; } = null!;
 
-    public decimal ValorAPagarAReceber
-    {
-        get
-        {
-            var desconto = Desconto ?? 0;
-            var valor = (Valor - desconto) - ValorPagoRecebido;
-            return valor < 0 ? 0 : valor;
-        }
-    }
+    public decimal ValorAPagarAReceber => Valor - ValorPagoRecebido;
 
-    public decimal ValorPagoRecebido
-    {
-        get
-        {
-            if (Transacoes == null || Transacoes.Count == 0)
-            {
-                return 0;
-            }
+    public decimal ValorPagoRecebido =>
+        CalculoParcelaHelper.CalcularValorPagoRecebido(Tipo, Transacoes?.Cast<ITransacaoParaCalculo>());
 
-            Func<TransacaoFinanceira, bool> wherePagosRecebidos =
-                Fatura.Tipo == TipoFaturaEnum.A_Pagar
-                    ? x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida
-                    : x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada;
-            Func<TransacaoFinanceira, bool> whereEstorno =
-                Fatura.Tipo == TipoFaturaEnum.A_Pagar
-                    ? x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada
-                    : x => x.TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida;
-
-            var totalTransacoesPagos = Transacoes.Where(wherePagosRecebidos)
-                .Sum(x => x.Valor);
-            var totalTransacoesEstorno = Transacoes.Where(whereEstorno)
-                .Sum(x => x.Valor);
-
-            var desconto = Desconto ?? 0;
-
-            return (totalTransacoesPagos - desconto) - totalTransacoesEstorno;
-        }
-    }
 
     public bool Vencida
     {
@@ -130,37 +87,35 @@ public sealed class Parcela : BaseEntity
         Valor += diferenca;
     }
 
-    public TransacaoFinanceira Pagar(
+    public void Pagar(
         decimal valor,
         MeioDePagamentoEnum? meioDePagamento,
         string? observacao,
         DateTime? dataDePagamento,
-        decimal? desconto)
+        decimal? desconto,
+        decimal? juros)
     {
-        Desconto = desconto;
+        if (Quitada)
+        {
+            throw new ExceptionApi($"A parcela: {NumeroDaParcela} já se encontra paga");
+        }
 
-        return TransacaoFinanceira.NovaTransacao(
+        Transacoes ??= [];
+
+        Quitada = (ValorPagoRecebido + valor + (desconto ?? 0) - (juros ?? 0)) >= Valor;
+
+        Transacoes.Add(TransacaoFinanceira.NovaTransacao(
             parcelaId: Id,
-            dataDePagamento: dataDePagamento,
+            dataDeEfetivacao: dataDePagamento,
             valor: valor,
-            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.A_Pagar
+            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.APagar
                 ? TipoTransacaoFinanceiraEnum.Saida
                 : TipoTransacaoFinanceiraEnum.Entrada,
             meioDePagamento: meioDePagamento,
-            observacao: observacao ?? $"Pagamento da parcela: {NumeroDaParcela}");
-    }
-
-    public TransacaoFinanceira Estornar()
-    {
-        return TransacaoFinanceira.NovaTransacao(
-            parcelaId: Id,
-            dataDePagamento: DateTime.Now,
-            valor: ValorPagoRecebido,
-            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.A_Pagar
-                ? TipoTransacaoFinanceiraEnum.Entrada
-                : TipoTransacaoFinanceiraEnum.Saida,
-            meioDePagamento: null,
-            observacao: $"Estorno da parcela: {NumeroDaParcela}");
+            observacao: observacao ?? $"Pagamento da parcela: {NumeroDaParcela}",
+            foiEstornado: false,
+            juros: juros,
+            desconto: desconto));
     }
 
     public static Parcela NovaFatura(
@@ -171,7 +126,9 @@ public sealed class Parcela : BaseEntity
         string? observacao,
         Guid faturaId,
         string? idExterno,
-        decimal? desconto
+        decimal? desconto,
+        decimal? juros,
+        TipoFaturaEnum tipoFatura
     )
     {
         return new Parcela(
@@ -186,6 +143,9 @@ public sealed class Parcela : BaseEntity
             observacao: observacao,
             faturaId: faturaId,
             idExterno: idExterno,
-            desconto: desconto);
+            desconto: desconto,
+            tipo: tipoFatura,
+            quitada: false,
+            juros: juros);
     }
 }

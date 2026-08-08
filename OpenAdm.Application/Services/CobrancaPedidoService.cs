@@ -72,21 +72,22 @@ public class CobrancaPedidoService : ICobrancaPedidoService
 
         if (pedido.Fatura == null)
         {
-            var fatura = Fatura
-                .NovaContasAReceber(
-                    usuarioId: pedido.UsuarioId,
-                    total: pedido.ValorTotalCobrar,
-                    pedidoId: pedido.Id,
-                    quantidadeDeParcelas: 1,
-                    primeiroVencimento: DateTime.Now.AddDays(1),
-                    meioDePagamento: gerarCobrancaPedidoDto.MeioDePagamento,
-                    desconto: null,
-                    observacao: null,
-                    idExterno: resultado.Result.IdExterno,
-                    tipo: TipoFaturaEnum.A_Receber);
+            //TODO: verificar porque tinha o método de nova fatura aqui
+            // var fatura = Fatura
+            //     .NovaContasAReceber(
+            //         usuarioId: pedido.UsuarioId,
+            //         total: pedido.ValorTotalCobrar,
+            //         pedidoId: pedido.Id,
+            //         quantidadeDeParcelas: 1,
+            //         primeiroVencimento: DateTime.Now.AddDays(1),
+            //         meioDePagamento: gerarCobrancaPedidoDto.MeioDePagamento,
+            //         desconto: null,
+            //         observacao: null,
+            //         idExterno: resultado.Result.IdExterno,
+            //         tipo: TipoFaturaEnum.A_Receber);
 
-            await _faturaRepository.AdicionarAsync(fatura);
-            await _faturaRepository.SaveChangesAsync();
+            //await _faturaRepository.AdicionarAsync(fatura);
+            //await _faturaRepository.SaveChangesAsync();
         }
 
         return resultado;

@@ -43,6 +43,14 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             TotalDeRegistros = totalDeRegistros
         };
     }
+    
+    public async Task<Parcela?> ObterParaPagarAsync(Guid id)
+    {
+        return await ParceiroContext
+            .Parcelas
+            .Include(x => x.Transacoes)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 
     public async Task<Parcela?> GetByIdAsync(Guid id)
     {

@@ -48,7 +48,7 @@ public class TransacaoFinanceiraRepository : ITransacaoFinanceiraRepository
                     .ThenInclude(x => x.Pedido)
             .Include(x => x.Parcela)
                 .ThenInclude(x => x!.Fatura.Usuario)
-            .Where(x => x.DataDePagamento.Date <= dataFinal.Date && x.DataDePagamento.Date >= dataInicial.Date);
+            .Where(x => x.DataDeEfetivacao.Date <= dataFinal.Date && x.DataDeEfetivacao.Date >= dataInicial.Date);
 
         if (pedidoId.HasValue)
         {

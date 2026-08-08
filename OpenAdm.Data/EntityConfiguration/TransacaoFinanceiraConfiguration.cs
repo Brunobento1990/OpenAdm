@@ -22,11 +22,17 @@ internal class TransacaoFinanceiraConfiguration : IEntityTypeConfiguration<Trans
         builder.Property(x => x.Valor)
             .IsRequired()
             .HasPrecision(12, 2);
+        
+        builder.Property(x => x.Desconto)
+            .HasPrecision(12, 2);
+        
+        builder.Property(x => x.Juros)
+            .HasPrecision(12, 2);
+        
         builder.Property(x => x.Observacao)
             .HasMaxLength(500);
-
         builder.Ignore(x => x.EhEstorno);
-
+        
         builder.HasOne(x => x.Parcela)
             .WithMany(x => x.Transacoes)
             .HasForeignKey(x => x.ParcelaId)

@@ -2,6 +2,6 @@
 
 public enum TipoFaturaEnum
 {
-    A_Pagar,
-    A_Receber
+    APagar = 1,
+    AReceber = 2
 }

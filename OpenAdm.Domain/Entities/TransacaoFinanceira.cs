@@ -1,9 +1,10 @@
 ﻿using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class TransacaoFinanceira : BaseEntity
+public sealed class TransacaoFinanceira : BaseEntity, ITransacaoParaCalculo
 {
     public TransacaoFinanceira(
         Guid id,
@@ -11,25 +12,31 @@ public sealed class TransacaoFinanceira : BaseEntity
         DateTime dataDeAtualizacao,
         long numero,
         Guid? parcelaId,
-        DateTime dataDePagamento,
+        DateTime dataDeEfetivacao,
         decimal valor,
         TipoTransacaoFinanceiraEnum tipoTransacaoFinanceira,
         MeioDePagamentoEnum? meioDePagamento,
-        string? observacao)
-            : base(id, dataDeCriacao, dataDeAtualizacao, numero)
+        string? observacao, bool? foiEstornado, decimal? desconto, decimal? juros)
+        : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         ParcelaId = parcelaId;
-        DataDePagamento = dataDePagamento;
+        DataDeEfetivacao = dataDeEfetivacao;
         Valor = valor;
         TipoTransacaoFinanceira = tipoTransacaoFinanceira;
         MeioDePagamento = meioDePagamento;
         Observacao = observacao;
+        FoiEstornado = foiEstornado;
+        Desconto = desconto;
+        Juros = juros;
     }
 
     public Guid? ParcelaId { get; private set; }
     public Parcela? Parcela { get; set; }
-    public DateTime DataDePagamento { get; private set; }
+    public DateTime DataDeEfetivacao { get; private set; }
     public decimal Valor { get; private set; }
+    public decimal? Desconto { get; private set; }
+    public decimal? Juros { get; private set; }
+    public bool? FoiEstornado { get; private set; }
     public TipoTransacaoFinanceiraEnum TipoTransacaoFinanceira { get; private set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; private set; }
     public string? Observacao { get; private set; }
@@ -38,18 +45,18 @@ public sealed class TransacaoFinanceira : BaseEntity
     {
         get
         {
-            if (Parcela == null || Parcela.Fatura == null)
+            if (Parcela == null)
             {
                 return false;
             }
 
-            if (Parcela.Fatura.Tipo == TipoFaturaEnum.A_Pagar &&
+            if (Parcela.Tipo == TipoFaturaEnum.APagar &&
                 TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada)
             {
                 return true;
             }
 
-            if (Parcela.Fatura.Tipo == TipoFaturaEnum.A_Receber &&
+            if (Parcela.Tipo == TipoFaturaEnum.AReceber &&
                 TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Saida)
             {
                 return true;
@@ -61,18 +68,24 @@ public sealed class TransacaoFinanceira : BaseEntity
 
     public static TransacaoFinanceira NovaTransacao(
         Guid? parcelaId,
-        DateTime? dataDePagamento,
+        DateTime? dataDeEfetivacao,
         decimal valor,
         TipoTransacaoFinanceiraEnum tipoTransacaoFinanceira,
         MeioDePagamentoEnum? meioDePagamento,
-        string? observacao
-        )
+        string? observacao,
+        bool? foiEstornado,
+        decimal? juros,
+        decimal? desconto)
     {
-        if (dataDePagamento.HasValue)
-        {
-            dataDePagamento = dataDePagamento.Value.AddHours(DateTime.Now.Hour);
-            dataDePagamento = dataDePagamento.Value.AddMinutes(DateTime.Now.Minute);
-        }
+        var data = dataDeEfetivacao.HasValue ?
+            new DateTime(
+                dataDeEfetivacao.Value.Year,
+                dataDeEfetivacao.Value.Month,
+                dataDeEfetivacao.Value.Day,
+                DateTime.Now.Hour,
+                DateTime.Now.Minute,
+                DateTime.Now.Second) :
+            DateTime.Now;
 
         return new TransacaoFinanceira(
             id: Guid.NewGuid(),
@@ -80,10 +93,13 @@ public sealed class TransacaoFinanceira : BaseEntity
             dataDeAtualizacao: DateTime.Now,
             numero: 0,
             parcelaId: parcelaId,
-            dataDePagamento: dataDePagamento ?? DateTime.Now,
+            dataDeEfetivacao: data,
             valor: valor,
             tipoTransacaoFinanceira: tipoTransacaoFinanceira,
             meioDePagamento: meioDePagamento,
-            observacao: observacao);
+            observacao: observacao,
+            foiEstornado: foiEstornado,
+            desconto: desconto,
+            juros: juros);
     }
 }

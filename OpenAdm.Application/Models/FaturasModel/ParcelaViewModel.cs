@@ -16,10 +16,10 @@ public class ParcelaViewModel : BaseViewModel
     public decimal ValorPagoRecebido { get; set; }
     public decimal ValorAPagarAReceber { get; set; }
     public decimal? Desconto { get; set; }
+    public decimal? Juros { get; set; }
     public string? Observacao { get; set; }
     public bool Vencida { get; set; }
     public Guid FaturaId { get; set; }
-    public StatusParcelaEnum Status { get; set; }
     public FaturaViewModel Fatura { get; set; } = null!;
     public IList<TransacaoFinanceiraViewModel>? Transacoes { get; set; }
 
@@ -43,7 +43,7 @@ public class ParcelaViewModel : BaseViewModel
             NumeroDaParcela = faturaContasAReceber.NumeroDaParcela,
             Observacao = faturaContasAReceber.Observacao,
             Valor = faturaContasAReceber.Valor,
-            Status = faturaContasAReceber.Status,
+            Juros = faturaContasAReceber.Juros,
             ValorAPagarAReceber = faturaContasAReceber.ValorAPagarAReceber,
             ValorPagoRecebido = faturaContasAReceber.ValorPagoRecebido,
             Vencida = faturaContasAReceber.Vencida,

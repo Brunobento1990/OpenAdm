@@ -9,7 +9,7 @@ public class TransacaoFinanceiraViewModel : BaseViewModel
 {
     public Guid? ParcelaId { get; set; }
     public ParcelaViewModel? Parcela { get; set; }
-    public DateTime DataDePagamento { get; set; }
+    public DateTime DataDeEfetivacao { get; set; }
     public decimal Valor { get; set; }
     public TipoTransacaoFinanceiraEnum TipoTransacaoFinanceira { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
@@ -24,7 +24,7 @@ public class TransacaoFinanceiraViewModel : BaseViewModel
             Id = transacaoFinanceira.Id,
             DataDeAtualizacao = transacaoFinanceira.DataDeAtualizacao,
             DataDeCriacao = transacaoFinanceira.DataDeCriacao,
-            DataDePagamento = transacaoFinanceira.DataDePagamento,
+            DataDeEfetivacao = transacaoFinanceira.DataDeEfetivacao,
             MeioDePagamento = transacaoFinanceira.MeioDePagamento,
             Numero = transacaoFinanceira.Numero,
             Observacao = transacaoFinanceira.Observacao,

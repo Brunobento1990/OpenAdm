@@ -37,19 +37,20 @@ public sealed class FaturaService : IFaturaService
 
         foreach (var parcelaDto in faturaCriarAdmDto.Parcelas)
         {
-            fatura.Parcelas.Add(new Parcela(
-                id: Guid.NewGuid(),
-                dataDeCriacao: DateTime.Now,
-                dataDeAtualizacao: DateTime.Now,
-                numero: 0,
-                dataDeVencimento: parcelaDto.DataDeVencimento,
-                numeroDaParcela: parcelaDto.NumeroDaParcela,
-                meioDePagamento: parcelaDto.MeioDePagamento,
-                valor: parcelaDto.Valor,
-                desconto: parcelaDto.Desconto,
-                observacao: parcelaDto.Observacao,
-                faturaId: fatura.Id,
-                idExterno: null));
+            //TODO: ajustar criar fatura pelo admin
+            // fatura.Parcelas.Add(new Parcela(
+            //     id: Guid.NewGuid(),
+            //     dataDeCriacao: DateTime.Now,
+            //     dataDeAtualizacao: DateTime.Now,
+            //     numero: 0,
+            //     dataDeVencimento: parcelaDto.DataDeVencimento,
+            //     numeroDaParcela: parcelaDto.NumeroDaParcela,
+            //     meioDePagamento: parcelaDto.MeioDePagamento,
+            //     valor: parcelaDto.Valor,
+            //     desconto: parcelaDto.Desconto,
+            //     observacao: parcelaDto.Observacao,
+            //     faturaId: fatura.Id,
+            //     idExterno: null));
         }
 
         await _contasAReceberRepository.AddAsync(fatura);
@@ -59,19 +60,20 @@ public sealed class FaturaService : IFaturaService
 
     public async Task CriarContasAReceberAsync(CriarFaturaDto contasAReceberDto)
     {
-        var fatura = Fatura.NovaContasAReceber(
-            usuarioId: contasAReceberDto.UsuarioId,
-            pedidoId: contasAReceberDto.PedidoId,
-            total: contasAReceberDto.Total,
-            quantidadeDeParcelas: contasAReceberDto.QuantidadeDeParcelas,
-            primeiroVencimento: contasAReceberDto.DataDoPrimeiroVencimento,
-            meioDePagamento: contasAReceberDto.MeioDePagamento,
-            desconto: contasAReceberDto.Desconto,
-            observacao: contasAReceberDto.Observacao,
-            idExterno: null,
-            tipo: contasAReceberDto.Tipo);
+        //TODO:
+        // var fatura = Fatura.NovaContasAReceber(
+        //     usuarioId: contasAReceberDto.UsuarioId,
+        //     pedidoId: contasAReceberDto.PedidoId,
+        //     total: contasAReceberDto.Total,
+        //     quantidadeDeParcelas: contasAReceberDto.QuantidadeDeParcelas,
+        //     primeiroVencimento: contasAReceberDto.DataDoPrimeiroVencimento,
+        //     meioDePagamento: contasAReceberDto.MeioDePagamento,
+        //     desconto: contasAReceberDto.Desconto,
+        //     observacao: contasAReceberDto.Observacao,
+        //     idExterno: null,
+        //     tipo: contasAReceberDto.Tipo);
 
-        await _contasAReceberRepository.AddAsync(fatura);
+        //await _contasAReceberRepository.AddAsync(fatura);
     }
 
     public async Task<FaturaViewModel> GetByIdAsync(Guid id)
