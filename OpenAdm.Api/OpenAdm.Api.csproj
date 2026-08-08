@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="dotenv.net" Version="4.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
 
   <ItemGroup>

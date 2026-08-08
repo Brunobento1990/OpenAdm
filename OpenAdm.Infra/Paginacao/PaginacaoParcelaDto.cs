@@ -3,6 +3,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
+using OpenAdm.Domain.Extensions;
 
 namespace OpenAdm.Infra.Paginacao;
 
@@ -15,12 +16,17 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
         {
             return x => x.Fatura.Tipo == Tipo;
         }
+        
+        var search = Search.RemoverAcentos();
 
-        return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Numero.ToString()), $"%{Search}%") || EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Usuario.Nome), $"%{Search}%") && x.Fatura.Tipo == Tipo;
+        return x =>
+             (EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Pedido!.Numero.ToString()), $"%{search}%") ||
+             EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Usuario.Nome), $"%{search}%"))
+            && x.Fatura.Tipo == Tipo;
     }
 
-    public override Expression<Func<Parcela, object>>? IncludeCustom()
+    public override IList<Expression<Func<Parcela, object>>>? IncludeCustomList()
     {
-        return x => x.Fatura.Usuario;
+        return [x => x.Fatura.Usuario, x => x.Fatura.Pedido!];
     }
 }

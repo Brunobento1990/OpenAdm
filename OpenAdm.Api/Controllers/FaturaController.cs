@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Api.Extensions;
 using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.ContasAReceberModel;
 using OpenAdm.Domain.Model;
 
@@ -16,12 +18,10 @@ namespace OpenAdm.Api.Controllers;
 public class FaturaController : ControllerBase
 {
     private readonly IFaturaService _faturaService;
-    private readonly IGerarCobrancaPedidoService _gerarCobrancaPedidoService;
 
-    public FaturaController(IFaturaService faturaService, IGerarCobrancaPedidoService gerarCobrancaPedidoService)
+    public FaturaController(IFaturaService faturaService)
     {
         _faturaService = faturaService;
-        _gerarCobrancaPedidoService = gerarCobrancaPedidoService;
     }
 
     [HttpPost("criar")]
@@ -31,6 +31,15 @@ public class FaturaController : ControllerBase
     {
         var result = await _faturaService.CriarAdmAsync(faturaCriarAdmDto);
         return Ok(result);
+    }
+
+    [HttpPost("baixa-automatica")]
+    [ProducesResponseType<ResultadoPadraoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> BaixaAutomatica(BaixaAutomaticaDto dto)
+    {
+        var result = await _faturaService.BaixaAutomaticaAsync(dto);
+        return result.ToActionResult();
     }
 
     [HttpGet("get")]

@@ -2,9 +2,7 @@
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
-using OpenAdm.Domain.Model;
 using OpenAdm.Data.Context;
-using OpenAdm.Infra.Extensions.IQueryable;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -12,36 +10,6 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
 {
     public ParcelaRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
-    }
-
-    public override async Task<PaginacaoViewModel<Parcela>> PaginacaoAsync(FilterModel<Parcela> filterModel)
-    {
-        var select = filterModel.SelectCustom();
-
-        var query = ParceiroContext
-            .Parcelas
-            .AsNoTracking()
-            .Include(x => x.Fatura.Usuario)
-            .Include(x => x.Transacoes)
-            .WhereIsNotNull(filterModel.GetWhereBySearch());
-
-        if (select != null)
-        {
-            query = query.Select(select);
-        }
-
-        var (TotalPaginas, Values) = await query
-            .CustomFilterAsync(filterModel);
-
-        var totalDeRegistros = await ParceiroContext.Parcelas
-            .WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
-
-        return new()
-        {
-            TotalPaginas = TotalPaginas,
-            Values = Values,
-            TotalDeRegistros = totalDeRegistros
-        };
     }
     
     public async Task<Parcela?> ObterParaPagarAsync(Guid id)

@@ -1,10 +1,12 @@
 ﻿using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.ContasAReceberModel;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Application.Services;
 
@@ -12,12 +14,92 @@ public sealed class FaturaService : IFaturaService
 {
     private readonly IFaturaRepository _contasAReceberRepository;
     private readonly IUsuarioService _usuarioService;
+    private readonly ICobrancaPedidoEcommerceRepository _cobrancaPedidoRepository;
+    private readonly IPedidoRepository _pedidoRepository;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
+
     public FaturaService(
         IFaturaRepository contasAReceberRepository,
-        IUsuarioService usuarioService)
+        IUsuarioService usuarioService,
+        ICobrancaPedidoEcommerceRepository cobrancaPedidoRepository,
+        IPedidoRepository pedidoRepository,
+        IParceiroAutenticado parceiroAutenticado)
     {
         _contasAReceberRepository = contasAReceberRepository;
         _usuarioService = usuarioService;
+        _cobrancaPedidoRepository = cobrancaPedidoRepository;
+        _pedidoRepository = pedidoRepository;
+        _parceiroAutenticado = parceiroAutenticado;
+    }
+
+    public async Task<ResultPartner<ResultadoPadraoViewModel>> BaixaAutomaticaAsync(BaixaAutomaticaDto dto)
+    {
+        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(dto.PedidoId, _parceiroAutenticado.Id);
+
+        if (cobranca == null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"Não foi possível localizar a cobrança do pedido!";
+        }
+
+        if (!cobranca.Ativo || cobranca.Status != StatusCobrancaPedidoEcommerceEnum.ACobrar)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"A cobrança do pedido não está disponível para faturamento!";
+        }
+
+        var pedido = await _pedidoRepository.ObterPedidoParaCobrancaAsync(cobranca.PedidoId);
+
+        if (pedido == null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"Não foi possível localizar o pedido da cobrança!";
+        }
+
+        var data = DateTime.UtcNow;
+        var fatura = new Fatura(
+            id: Guid.NewGuid(),
+            dataDeCriacao: data,
+            dataDeAtualizacao: data,
+            numero: 0,
+            status: StatusFaturaEnum.Paga,
+            usuarioId: pedido.UsuarioId,
+            pedidoId: pedido.Id,
+            dataDeFechamento: data,
+            tipo: TipoFaturaEnum.AReceber);
+
+        var parcela = Parcela.NovaFatura(
+            dataDeVencimento: data,
+            numeroDaParcela: 1,
+            meioDePagamento: MeioDePagamentoEnum.Dinheiro,
+            valor: cobranca.Total,
+            observacao: null,
+            faturaId: fatura.Id,
+            idExterno: null,
+            desconto: null,
+            juros: null,
+            tipoFatura: TipoFaturaEnum.AReceber);
+
+        parcela.Fatura = fatura;
+        parcela.Pagar(
+            valor: cobranca.Total,
+            meioDePagamento: MeioDePagamentoEnum.Dinheiro,
+            observacao: "Baixa automática da cobrança do pedido",
+            dataDePagamento: data,
+            desconto: null,
+            juros: null);
+        
+        fatura.Parcelas.Add(parcela);
+
+        await _contasAReceberRepository.AdicionarAsync(fatura);
+        await _contasAReceberRepository.SaveChangesAsync();
+
+        await _cobrancaPedidoRepository.AtualizarStatusAsync(
+            cobranca.Id,
+            _parceiroAutenticado.Id,
+            StatusCobrancaPedidoEcommerceEnum.GeradoFatura);
+
+        return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel
+        {
+            Resultado = true
+        };
     }
 
     public async Task<FaturaViewModel> CriarAdmAsync(FaturaCriarAdmDto faturaCriarAdmDto)

@@ -48,6 +48,9 @@ public sealed class Parcela : BaseEntity
     public Guid FaturaId { get; private set; }
     public bool Quitada { get; private set; }
 
+    public StatusParcelaEnum Status => Quitada ? StatusParcelaEnum.Pago :
+        ValorPagoRecebido > 0 ? StatusParcelaEnum.PagoParcial : StatusParcelaEnum.Pendente;
+
     public Fatura Fatura { get; set; } = null!;
 
     public decimal ValorAPagarAReceber => Valor - ValorPagoRecebido;

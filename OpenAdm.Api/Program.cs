@@ -45,7 +45,8 @@ Criptografia.Configure(key, iv);
 EmailConfiguracaoModel.Configure(email: email, servidor: servidor, senha: senha, porta: porta);
 
 builder.Services.InjectCqs()
-    .AddServicesApplication();
+    .AddServicesApplication()
+    .ConfigurarSwagger();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureController();
 builder.Services.InjectServices();
@@ -59,6 +60,12 @@ builder.Services
         builder.Configuration);
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 var basePath = "/api";
 app.UsePathBase(new PathString(basePath));

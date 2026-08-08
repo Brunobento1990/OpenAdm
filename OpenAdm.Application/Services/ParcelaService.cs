@@ -283,33 +283,21 @@ public sealed class ParcelaService : IParcelaService
         return (ParcelaViewModel)parcela;
     }
 
-    public async Task<PaginacaoViewModel<ParcelaViewModel>> PaginacaoAsync(
+    public async Task<PaginacaoViewModel<ParcelaPaginacaoViewModel>> PaginacaoAsync(
         FilterModel<Parcela> paginacaoFaturaAReceberDto)
     {
         var paginacao = await _parcelaRepository
             .PaginacaoAsync(paginacaoFaturaAReceberDto);
 
-        var pedidosIds = paginacao
-            .Values
-            .Where(x => x.Fatura.PedidoId.HasValue)
-            .Select(x => x.Fatura.PedidoId!.Value)
-            .ToList();
-
-        var pedidos = await _pedidoService.GetPedidosAsync(pedidosIds);
-        var parcelasViewModel = new List<ParcelaViewModel>();
+        var parcelasViewModel = new List<ParcelaPaginacaoViewModel>();
 
         foreach (var parcela in paginacao.Values)
         {
-            var parcelaViewModel = (ParcelaViewModel)parcela;
-            if (parcela.Fatura.PedidoId.HasValue && pedidos.TryGetValue(parcela.Fatura.PedidoId.Value, out var pedido))
-            {
-                parcelaViewModel.NumeroDoPedido = pedido.Numero;
-            }
-
+            var parcelaViewModel = (ParcelaPaginacaoViewModel)parcela;
             parcelasViewModel.Add(parcelaViewModel);
         }
 
-        return new PaginacaoViewModel<ParcelaViewModel>()
+        return new PaginacaoViewModel<ParcelaPaginacaoViewModel>()
         {
             TotalDeRegistros = paginacao.TotalDeRegistros,
             Values = parcelasViewModel,

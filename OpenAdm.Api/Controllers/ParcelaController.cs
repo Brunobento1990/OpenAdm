@@ -25,7 +25,7 @@ public class ParcelaController : ControllerBase
     }
 
     [HttpPost("paginacao")]
-    [ProducesResponseType<PaginacaoViewModel<FaturaViewModel>>(200)]
+    [ProducesResponseType<PaginacaoViewModel<ParcelaPaginacaoViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Paginacao(PaginacaoParcelaDto paginacaoFaturaAReceberDto)
     {

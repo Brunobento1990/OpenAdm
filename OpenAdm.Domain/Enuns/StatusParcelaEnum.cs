@@ -2,7 +2,7 @@
 
 public enum StatusParcelaEnum
 {
-    Pendente,
-    Pago_Parcial,
-    Pago
+    Pendente = 1,
+    PagoParcial = 2,
+    Pago = 3
 }

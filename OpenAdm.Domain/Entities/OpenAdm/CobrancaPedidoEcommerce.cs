@@ -37,4 +37,5 @@ public class CobrancaPedidoEcommerce : BaseEntityParceiro
             total: total,
             status: StatusCobrancaPedidoEcommerceEnum.ACobrar);
     }
+
 }

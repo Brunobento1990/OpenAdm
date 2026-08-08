@@ -13,6 +13,24 @@ public class CobrancaPedidoEcommerceRepository : GenericBaseRepository<CobrancaP
     {
     }
 
+    public async Task<CobrancaPedidoEcommerce?> GetByPedidoIdAsync(Guid pedidoId, Guid parceiroId)
+    {
+        return await AppDbContext
+            .CobrancasPedidosEcommerce
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.PedidoId == pedidoId && x.ParceiroId == parceiroId);
+    }
+
+    public async Task AtualizarStatusAsync(Guid id, Guid parceiroId, StatusCobrancaPedidoEcommerceEnum status)
+    {
+        await AppDbContext
+            .CobrancasPedidosEcommerce
+            .Where(x => x.Id == id && x.ParceiroId == parceiroId)
+            .ExecuteUpdateAsync(x => x
+                .SetProperty(y => y.Status, status)
+                .SetProperty(y => y.DataDeAtualizacao, DateTime.UtcNow));
+    }
+
     public async Task<decimal> TotalACobrarAposAsync(DateTime data, Guid parceiroId)
     {
         return await AppDbContext

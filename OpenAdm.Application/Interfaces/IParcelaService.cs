@@ -18,6 +18,6 @@ public interface IParcelaService
     Task<ParcelaViewModel> GetByIdAsync(Guid id);
     Task<ParcelaViewModel> EditAsync(FaturaEdit faturaAReceberEdit);
     Task<bool> ExcluirAsync(Guid id);
-    Task<PaginacaoViewModel<ParcelaViewModel>> PaginacaoAsync(FilterModel<Parcela> paginacaoFaturaAReceberDto);
+    Task<PaginacaoViewModel<ParcelaPaginacaoViewModel>> PaginacaoAsync(FilterModel<Parcela> paginacaoFaturaAReceberDto);
     Task<IList<ParcelaViewModel>> GetByPedidoIdAsync(Guid pedidoId);
 }
