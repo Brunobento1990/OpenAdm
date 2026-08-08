@@ -38,7 +38,7 @@ public class CobrancaPedidoEcommerceRepository : GenericBaseRepository<CobrancaP
             .AsNoTracking()
             .Where(x => x.ParceiroId == parceiroId && x.Status == StatusCobrancaPedidoEcommerceEnum.ACobrar &&
                         x.Ativo &&
-                        x.DataDeCriacao.Date >= data.Date)
+                        x.DataDeCriacao >= data)
             .SumAsync(x => x.Total);
     }
 

@@ -148,7 +148,8 @@ public sealed class FaturaService : IFaturaService
 
         foreach (var parcelaDto in dto.Parcelas)
         {
-            fatura.Parcelas.Add(new Parcela(
+            var valorParcela = decimal.Round(parcelaDto.Valor, 2, MidpointRounding.AwayFromZero);
+            var parcela = new Parcela(
                 id: Guid.NewGuid(),
                 dataDeCriacao: data,
                 dataDeAtualizacao: data,
@@ -156,14 +157,38 @@ public sealed class FaturaService : IFaturaService
                 dataDeVencimento: parcelaDto.DataDeVencimento,
                 numeroDaParcela: parcelaDto.NumeroDaParcela,
                 meioDePagamento: parcelaDto.MeioDePagamento,
-                valor: decimal.Round(parcelaDto.Valor, 2, MidpointRounding.AwayFromZero),
+                valor: valorParcela,
                 observacao: null,
                 faturaId: fatura.Id,
                 idExterno: null,
                 desconto: null,
                 tipo: TipoFaturaEnum.AReceber,
                 quitada: false,
-                juros: null));
+                juros: null);
+
+            parcela.Fatura = fatura;
+
+            if (parcelaDto.AVista)
+            {
+                parcela.Pagar(
+                    valor: valorParcela,
+                    meioDePagamento: parcelaDto.MeioDePagamento,
+                    observacao: "Pagamento à vista na negociação da cobrança",
+                    dataDePagamento: data,
+                    desconto: null,
+                    juros: null);
+            }
+
+            fatura.Parcelas.Add(parcela);
+        }
+
+        if (fatura.Parcelas.All(x => x.Quitada))
+        {
+            fatura.Fechar();
+        }
+        else if (fatura.Parcelas.Any(x => x.Quitada))
+        {
+            fatura.PagaParcialmente();
         }
 
         await _contasAReceberRepository.AddAsync(fatura);

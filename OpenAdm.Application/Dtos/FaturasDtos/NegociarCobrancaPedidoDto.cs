@@ -46,4 +46,5 @@ public sealed class ParcelaNegociacaoDto
     public int NumeroDaParcela { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public decimal Valor { get; set; }
+    public bool AVista { get; set; }
 }
