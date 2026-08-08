@@ -7,6 +7,7 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IFaturaService
 {
+    Task<ResultPartner<ResultadoPadraoViewModel>> NegociarCobrancaAsync(NegociarCobrancaPedidoDto dto);
     Task<ResultPartner<ResultadoPadraoViewModel>> BaixaAutomaticaAsync(BaixaAutomaticaDto dto);
     Task CriarContasAReceberAsync(CriarFaturaDto contasAReceberDto);
     Task VerificarFechamentoAsync(Guid id);

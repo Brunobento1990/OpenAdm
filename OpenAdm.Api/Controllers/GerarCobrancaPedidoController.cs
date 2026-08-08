@@ -5,6 +5,7 @@ using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pagamentos;
+using OpenAdm.Application.Models.CobrancasPedidosEcommerce;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -19,6 +20,16 @@ public class GerarCobrancaPedidoController : ControllerBase
     public GerarCobrancaPedidoController(ICobrancaPedidoService cobrancaPedidoService)
     {
         _cobrancaPedidoService = cobrancaPedidoService;
+    }
+
+    [IsFuncionario]
+    [HttpGet("cobranca")]
+    [ProducesResponseType<CobrancaPedidoViewModel>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetParaNegociacaoAsync([FromQuery] Guid pedidoId)
+    {
+        var resultado = await _cobrancaPedidoService.GetParaNegociacaoAsync(pedidoId);
+        return resultado.ToActionResult();
     }
 
     [HttpPost("cobrar")]

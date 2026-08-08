@@ -102,6 +102,83 @@ public sealed class FaturaService : IFaturaService
         };
     }
 
+    public async Task<ResultPartner<ResultadoPadraoViewModel>> NegociarCobrancaAsync(NegociarCobrancaPedidoDto dto)
+    {
+        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(dto.PedidoId, _parceiroAutenticado.Id);
+
+        if (cobranca == null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"Não foi possível localizar a cobrança do pedido!";
+        }
+
+        if (!cobranca.Ativo || cobranca.Status != StatusCobrancaPedidoEcommerceEnum.ACobrar)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"A cobrança do pedido já foi negociada!";
+        }
+
+        var erroValidacao = dto.Validar(cobranca.Total);
+        if (!string.IsNullOrWhiteSpace(erroValidacao))
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)erroValidacao;
+        }
+
+        var pedido = await _pedidoRepository.ObterPedidoParaCobrancaAsync(dto.PedidoId);
+
+        if (pedido == null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"Não foi possível localizar o pedido da cobrança!";
+        }
+
+        if (pedido.Fatura != null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"O pedido já possui uma fatura!";
+        }
+
+        var data = DateTime.UtcNow;
+        var fatura = new Fatura(
+            id: Guid.NewGuid(),
+            dataDeCriacao: data,
+            dataDeAtualizacao: data,
+            numero: 0,
+            status: StatusFaturaEnum.Aberta,
+            usuarioId: pedido.UsuarioId,
+            pedidoId: pedido.Id,
+            dataDeFechamento: null,
+            tipo: TipoFaturaEnum.AReceber);
+
+        foreach (var parcelaDto in dto.Parcelas)
+        {
+            fatura.Parcelas.Add(new Parcela(
+                id: Guid.NewGuid(),
+                dataDeCriacao: data,
+                dataDeAtualizacao: data,
+                numero: 0,
+                dataDeVencimento: parcelaDto.DataDeVencimento,
+                numeroDaParcela: parcelaDto.NumeroDaParcela,
+                meioDePagamento: parcelaDto.MeioDePagamento,
+                valor: decimal.Round(parcelaDto.Valor, 2, MidpointRounding.AwayFromZero),
+                observacao: null,
+                faturaId: fatura.Id,
+                idExterno: null,
+                desconto: null,
+                tipo: TipoFaturaEnum.AReceber,
+                quitada: false,
+                juros: null));
+        }
+
+        await _contasAReceberRepository.AddAsync(fatura);
+
+        await _cobrancaPedidoRepository.AtualizarStatusAsync(
+            cobranca.Id,
+            _parceiroAutenticado.Id,
+            StatusCobrancaPedidoEcommerceEnum.GeradoFatura);
+
+        return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel
+        {
+            Resultado = true
+        };
+    }
+
     public async Task<FaturaViewModel> CriarAdmAsync(FaturaCriarAdmDto faturaCriarAdmDto)
     {
         _ = await _usuarioService.GetUsuarioByIdAdmAsync(id: faturaCriarAdmDto.UsuarioId);
@@ -194,7 +271,6 @@ public sealed class FaturaService : IFaturaService
             contasAReceber.PagaParcialmente();
             contasAReceber.Parcelas = [];
             await _contasAReceberRepository.UpdateAsync(contasAReceber);
-            return;
         }
     }
 }

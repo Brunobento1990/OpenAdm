@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OpenAdm.Application.Dtos.FaturasDtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pagamentos;
+using OpenAdm.Application.Models.CobrancasPedidosEcommerce;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
@@ -18,10 +19,12 @@ public class CobrancaPedidoService : ICobrancaPedidoService
     private readonly IConfiguration _configuration;
     private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly IFaturaRepository _faturaRepository;
+    private readonly ICobrancaPedidoEcommerceRepository _cobrancaPedidoRepository;
 
     public CobrancaPedidoService(IServiceProvider serviceProvider,
         IConfiguracaoDePagamentoService configuracaoDePagamentoService, IPedidoRepository pedidoRepository,
-        IConfiguration configuration, IParceiroAutenticado parceiroAutenticado, IFaturaRepository faturaRepository)
+        IConfiguration configuration, IParceiroAutenticado parceiroAutenticado, IFaturaRepository faturaRepository,
+        ICobrancaPedidoEcommerceRepository cobrancaPedidoRepository)
     {
         _serviceProvider = serviceProvider;
         _configuracaoDePagamentoService = configuracaoDePagamentoService;
@@ -29,6 +32,24 @@ public class CobrancaPedidoService : ICobrancaPedidoService
         _configuration = configuration;
         _parceiroAutenticado = parceiroAutenticado;
         _faturaRepository = faturaRepository;
+        _cobrancaPedidoRepository = cobrancaPedidoRepository;
+    }
+
+    public async Task<ResultPartner<CobrancaPedidoViewModel>> GetParaNegociacaoAsync(Guid pedidoId)
+    {
+        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(pedidoId, _parceiroAutenticado.Id);
+
+        if (cobranca == null)
+        {
+            return (ResultPartner<CobrancaPedidoViewModel>)"Não foi possível localizar a cobrança do pedido";
+        }
+
+        if (cobranca.Status != StatusCobrancaPedidoEcommerceEnum.ACobrar)
+        {
+            return (ResultPartner<CobrancaPedidoViewModel>)"A cobrança do pedido já foi negociada";
+        }
+
+        return (ResultPartner<CobrancaPedidoViewModel>)(CobrancaPedidoViewModel)cobranca;
     }
 
     public async Task<ResultPartner<PagamentoViewModel>> CobrarAsync(GerarCobrancaPedidoDto gerarCobrancaPedidoDto)
