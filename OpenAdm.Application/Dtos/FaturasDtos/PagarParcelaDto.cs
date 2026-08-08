@@ -11,7 +11,7 @@ public class PagarParcelaDto
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public string? Observacao { get; set; }
     public decimal Valor { get; set; }
-    public DateTime DataDePagamento { get; set; }
+    public DateTime? DataDePagamento { get; set; }
 
     public void Validar()
     {

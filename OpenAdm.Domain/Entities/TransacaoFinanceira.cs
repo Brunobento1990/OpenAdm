@@ -102,4 +102,27 @@ public sealed class TransacaoFinanceira : BaseEntity, ITransacaoParaCalculo
             desconto: desconto,
             juros: juros);
     }
+
+    public TransacaoFinanceira Estornar()
+    {
+        FoiEstornado = true;
+        DataDeAtualizacao = DateTime.UtcNow;
+
+        return new TransacaoFinanceira(
+            id: Guid.NewGuid(),
+            dataDeCriacao: DateTime.UtcNow,
+            dataDeAtualizacao: DateTime.UtcNow,
+            numero: 0,
+            parcelaId: ParcelaId,
+            dataDeEfetivacao: DateTime.UtcNow,
+            valor: Valor,
+            tipoTransacaoFinanceira: TipoTransacaoFinanceira == TipoTransacaoFinanceiraEnum.Entrada
+                ? TipoTransacaoFinanceiraEnum.Saida
+                : TipoTransacaoFinanceiraEnum.Entrada,
+            meioDePagamento: MeioDePagamento,
+            observacao: "Estorno",
+            foiEstornado: false,
+            desconto: Desconto,
+            juros: Juros);
+    }
 }

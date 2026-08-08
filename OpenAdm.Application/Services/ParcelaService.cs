@@ -21,8 +21,6 @@ public sealed class ParcelaService : IParcelaService
     private readonly IParcelaRepository _parcelaRepository;
     private readonly IFaturaService _contasAReceberService;
     private readonly IUpdateStatusPedidoService _updateStatusPedidoService;
-    private readonly IPedidoService _pedidoService;
-    private readonly ITransacaoFinanceiraRepository _transacaoFinanceiraRepository;
     private readonly IEventoAplicacaoRepository _eventoAplicacaoRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly IConfiguracaoDePagamentoRepository _configuracaoDePagamentoRepository;
@@ -32,8 +30,6 @@ public sealed class ParcelaService : IParcelaService
         IParcelaRepository parcelaRepository,
         IFaturaService contasAReceberService,
         IUpdateStatusPedidoService updateStatusPedidoService,
-        IPedidoService pedidoService,
-        ITransacaoFinanceiraRepository transacaoFinanceiraRepository,
         IEventoAplicacaoRepository eventoAplicacaoRepository, IParceiroAutenticado parceiroAutenticado,
         IConfiguracaoDePagamentoRepository configuracaoDePagamentoRepository,
         IHttpClientMercadoPago httpClientMercadoPago)
@@ -41,8 +37,6 @@ public sealed class ParcelaService : IParcelaService
         _parcelaRepository = parcelaRepository;
         _contasAReceberService = contasAReceberService;
         _updateStatusPedidoService = updateStatusPedidoService;
-        _pedidoService = pedidoService;
-        _transacaoFinanceiraRepository = transacaoFinanceiraRepository;
         _eventoAplicacaoRepository = eventoAplicacaoRepository;
         _parceiroAutenticado = parceiroAutenticado;
         _configuracaoDePagamentoRepository = configuracaoDePagamentoRepository;
@@ -188,19 +182,15 @@ public sealed class ParcelaService : IParcelaService
 
     public async Task<bool> EstornarAsync(Guid id)
     {
-        var parcela = await _parcelaRepository.GetByIdAsync(id)
+        var parcela = await _parcelaRepository.ObterParaEstornarAsync(id)
                       ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
-        //TODO: ajustar estorno
-        //var transacao = parcela.Estornar();
-
-        // parcela.Fatura = null!;
-        // parcela.Transacoes = null;
-        // await _parcelaRepository.AdicionarTransacaoAsync(transacao);
-        // await _parcelaRepository.UpdateAsync(parcela);
-
-        await _contasAReceberService.VerificarFechamentoAsync(parcela.FaturaId);
-
+        var estornos = parcela.Estornar();
+        
+        _parcelaRepository.Update(parcela);
+        await _parcelaRepository.AdicionarTransacoesAsync(estornos);
+        await _parcelaRepository.SaveChangesAsync();
+        
         return true;
     }
 
@@ -267,7 +257,7 @@ public sealed class ParcelaService : IParcelaService
         var parcela = await _parcelaRepository.ObterParaPagarAsync(pagarFaturaAReceberDto.Id)
                       ?? throw new ExceptionApi("Não foi possível localizar a parcela!");
 
-        parcela.Pagar(
+        var transacao = parcela.Pagar(
             valor: pagarFaturaAReceberDto.Valor,
             meioDePagamento: pagarFaturaAReceberDto.MeioDePagamento,
             observacao: pagarFaturaAReceberDto.Observacao,
@@ -275,6 +265,7 @@ public sealed class ParcelaService : IParcelaService
             desconto: pagarFaturaAReceberDto.Desconto,
             juros: pagarFaturaAReceberDto.Juros);
 
+        await _parcelaRepository.AdicionarTransacaoAsync(transacao);
         _parcelaRepository.Update(parcela);
         await _parcelaRepository.SaveChangesAsync();
 

@@ -20,6 +20,14 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<Parcela?> ObterParaEstornarAsync(Guid id)
+    {
+        return await ParceiroContext
+            .Parcelas
+            .Include(x => x.Transacoes)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
     public async Task<Parcela?> GetByIdAsync(Guid id)
     {
         return await ParceiroContext
@@ -91,5 +99,10 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
     {
         await ParceiroContext.TransacoesFinanceiras.AddAsync(transacaoFinanceira);
         await ParceiroContext.SaveChangesAsync();
+    }
+
+    public async Task AdicionarTransacoesAsync(IEnumerable<TransacaoFinanceira> transacoes)
+    {
+        await ParceiroContext.TransacoesFinanceiras.AddRangeAsync(transacoes);
     }
 }

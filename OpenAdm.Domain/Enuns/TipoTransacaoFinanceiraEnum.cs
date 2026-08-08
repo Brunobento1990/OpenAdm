@@ -2,6 +2,6 @@
 
 public enum TipoTransacaoFinanceiraEnum
 {
-    Entrada,
-    Saida
+    Entrada = 1,
+    Saida = 2
 }

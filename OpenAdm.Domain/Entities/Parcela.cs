@@ -90,7 +90,7 @@ public sealed class Parcela : BaseEntity
         Valor += diferenca;
     }
 
-    public void Pagar(
+    public TransacaoFinanceira Pagar(
         decimal valor,
         MeioDePagamentoEnum? meioDePagamento,
         string? observacao,
@@ -102,23 +102,51 @@ public sealed class Parcela : BaseEntity
         {
             throw new ExceptionApi($"A parcela: {NumeroDaParcela} já se encontra paga");
         }
-
-        Transacoes ??= [];
-
+        
         Quitada = (ValorPagoRecebido + valor + (desconto ?? 0) - (juros ?? 0)) >= Valor;
 
-        Transacoes.Add(TransacaoFinanceira.NovaTransacao(
+        return TransacaoFinanceira.NovaTransacao(
             parcelaId: Id,
             dataDeEfetivacao: dataDePagamento,
             valor: valor,
-            tipoTransacaoFinanceira: Fatura.Tipo == TipoFaturaEnum.APagar
+            tipoTransacaoFinanceira: Tipo == TipoFaturaEnum.APagar
                 ? TipoTransacaoFinanceiraEnum.Saida
                 : TipoTransacaoFinanceiraEnum.Entrada,
             meioDePagamento: meioDePagamento,
             observacao: observacao ?? $"Pagamento da parcela: {NumeroDaParcela}",
             foiEstornado: false,
             juros: juros,
-            desconto: desconto));
+            desconto: desconto);
+    }
+
+    public IList<TransacaoFinanceira> Estornar()
+    {
+        var tipoTransacaoDePagamento = Tipo == TipoFaturaEnum.APagar
+            ? TipoTransacaoFinanceiraEnum.Saida
+            : TipoTransacaoFinanceiraEnum.Entrada;
+
+        var transacoesParaEstornar = Transacoes?
+            .Where(x => x.FoiEstornado != true &&
+                        x.TipoTransacaoFinanceira == tipoTransacaoDePagamento)
+            .ToList() ?? [];
+
+        if (transacoesParaEstornar.Count == 0)
+        {
+            throw new ExceptionApi("Não há transações para estornar!");
+        }
+
+        var estornos = new List<TransacaoFinanceira>();
+
+        foreach (var transacao in transacoesParaEstornar)
+        {
+            var estorno = transacao.Estornar();
+            estornos.Add(estorno);
+        }
+
+        Quitada = false;
+        DataDeAtualizacao = DateTime.UtcNow;
+
+        return estornos;
     }
 
     public static Parcela NovaFatura(
