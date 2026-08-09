@@ -41,10 +41,10 @@ public class HomeSevice : IHomeSevice
 
         var cache = await _cache.GetItemAsync(key);
 
-        // if (cache != null)
-        // {
-        //     return cache;
-        // }
+        if (cache != null)
+        {
+            return cache;
+        }
 
         var movimentos = await _movimentacaoDeProdutosService.MovimentoDashBoardAsync();
         var pedidosStatus = await _homeRepository.ObterStatusPedidosAsync();
@@ -53,12 +53,13 @@ public class HomeSevice : IHomeSevice
         var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
         var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
         var variacaoPedido = await _pedidoRepository.ObterHomeAsync();
-        //var usuariosSemPedido = await _usuarioRepository.UsuariosSemPedidoAsync();
         var totalizadorProdutoEstoque = await _homeRepository.ObterTotalizadoProtudoEstoqueAsync();
         var dataInicio = DateTime.Today.AddDays(-6);
         var pedidosPorDia = await _homeRepository.ContatorPedido7DiasAsync(dataInicio);
         var produtosMaisVendidos = await _homeRepository.ProdutosMaisVendidosAsync(false);
         var produtosMenosVendidos = await _homeRepository.ProdutosMaisVendidosAsync(true);
+        var totaisParcelas = await _homeRepository
+            .ObterTotalParcelasPorVencimentoAsync(DateTime.UtcNow.Date);
 
         var totalCobrancaHoje =
             await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.Now,
@@ -102,6 +103,13 @@ public class HomeSevice : IHomeSevice
 
         cache = new HomeAdmViewModel()
         {
+            Parcelas = new()
+            {
+                AReceberHoje = totaisParcelas.AReceberHoje,
+                AReceberSemana = totaisParcelas.AReceberSemana,
+                APagarHoje = totaisParcelas.APagarHoje,
+                APagarSemana = totaisParcelas.APagarSemana
+            },
             Cobranca = new()
             {
                 TotalHoje = totalCobrancaHoje,
@@ -134,27 +142,7 @@ public class HomeSevice : IHomeSevice
                 TotalAnoAnterior = variacaoPedido.TotalAnoAnterior,
                 AnoAtual = variacaoPedido.AnoAtual,
                 AnoAnterior = variacaoPedido.AnoAnterior
-            },
-            // UsuarioSemPedidoCpf = usuariosSemPedido.Where(x => !x.IsAtacado).Select(x =>
-            //     new Models.Usuarios.UsuarioViewModel()
-            //     {
-            //         Cnpj = x.Cnpj,
-            //         Cpf = x.Cpf,
-            //         Id = x.Id,
-            //         Nome = x.Nome,
-            //         Telefone = x.Telefone,
-            //         Numero = x.Numero
-            //     }),
-            // UsuarioSemPedidoCnpj = usuariosSemPedido.Where(x => x.IsAtacado).Select(x =>
-            //     new Models.Usuarios.UsuarioViewModel()
-            //     {
-            //         Cnpj = x.Cnpj,
-            //         Cpf = x.Cpf,
-            //         Id = x.Id,
-            //         Nome = x.Nome,
-            //         Telefone = x.Telefone,
-            //         Numero = x.Numero
-            //     })
+            }
         };
 
         await _cache.SetItemAsync(key, cache);

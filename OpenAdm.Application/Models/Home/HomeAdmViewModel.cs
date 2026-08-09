@@ -23,9 +23,18 @@ public class HomeAdmViewModel
     public decimal QuantidadeProdutoDisponivel => TotalProdutoEstoque - TotalProdutoEstoqueReservado;
     public int TotalDePedidos { get; set; }
     public CobrancaHomeAdmViewModel Cobranca { get; set; } = new();
+    public TotalParcelasHomeAdmViewModel Parcelas { get; set; } = new();
     public IEnumerable<PedidoPorDiaModel> PedidosPorDia { get; set; } = [];
     public IEnumerable<ProdutoMaisVendidoModel> ProdutosMaisVendidos { get; set; } = [];
     public IEnumerable<ProdutoMaisVendidoModel> ProdutosMenosVendidos { get; set; } = [];
+}
+
+public sealed class TotalParcelasHomeAdmViewModel
+{
+    public decimal AReceberHoje { get; set; }
+    public decimal AReceberSemana { get; set; }
+    public decimal APagarHoje { get; set; }
+    public decimal APagarSemana { get; set; }
 }
 
 public class CobrancaHomeAdmViewModel

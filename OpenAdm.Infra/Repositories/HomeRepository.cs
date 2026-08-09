@@ -31,6 +31,33 @@ public class HomeRepository : IHomeRepository
             .ToListAsync();
     }
 
+    public async Task<TotalParcelasPorVencimentoHomeModel> ObterTotalParcelasPorVencimentoAsync(DateTime hoje)
+    {
+        var amanha = hoje.AddDays(1);
+        var fimDaSemana = hoje.AddDays(8);
+
+        return await _parceiroContext
+            .Parcelas
+            .AsNoTracking()
+            .Where(x => !x.Quitada &&
+                        x.DataDeVencimento >= hoje &&
+                        x.DataDeVencimento < fimDaSemana &&
+                        (x.Tipo == TipoFaturaEnum.AReceber || x.Tipo == TipoFaturaEnum.APagar))
+            .GroupBy(_ => 1)
+            .Select(parcelas => new TotalParcelasPorVencimentoHomeModel
+            {
+                AReceberHoje = parcelas.Sum(x =>
+                    x.Tipo == TipoFaturaEnum.AReceber && x.DataDeVencimento < amanha ? x.Valor : 0),
+                AReceberSemana = parcelas.Sum(x =>
+                    x.Tipo == TipoFaturaEnum.AReceber && x.DataDeVencimento >= amanha ? x.Valor : 0),
+                APagarHoje = parcelas.Sum(x =>
+                    x.Tipo == TipoFaturaEnum.APagar && x.DataDeVencimento < amanha ? x.Valor : 0),
+                APagarSemana = parcelas.Sum(x =>
+                    x.Tipo == TipoFaturaEnum.APagar && x.DataDeVencimento >= amanha ? x.Valor : 0)
+            })
+            .FirstOrDefaultAsync() ?? new TotalParcelasPorVencimentoHomeModel();
+    }
+
     public async Task<int> CountDePedidosAsync()
     {
         return await _parceiroContext
