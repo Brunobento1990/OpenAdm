@@ -2,6 +2,7 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.ContasAReceberModel;
+using OpenAdm.Application.Models.FaturasModel;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
@@ -63,7 +64,8 @@ public sealed class FaturaService : IFaturaService
             usuarioId: pedido.UsuarioId,
             pedidoId: pedido.Id,
             dataDeFechamento: data,
-            tipo: TipoFaturaEnum.AReceber);
+            tipo: TipoFaturaEnum.AReceber,
+            total: cobranca.Total);
 
         var parcela = Parcela.NovaFatura(
             dataDeVencimento: data,
@@ -144,7 +146,8 @@ public sealed class FaturaService : IFaturaService
             usuarioId: pedido.UsuarioId,
             pedidoId: pedido.Id,
             dataDeFechamento: null,
-            tipo: TipoFaturaEnum.AReceber);
+            tipo: TipoFaturaEnum.AReceber,
+            total: cobranca.Total);
 
         foreach (var parcelaDto in dto.Parcelas)
         {
@@ -217,7 +220,8 @@ public sealed class FaturaService : IFaturaService
             usuarioId: faturaCriarAdmDto.UsuarioId,
             pedidoId: faturaCriarAdmDto.PedidoId,
             dataDeFechamento: null,
-            tipo: faturaCriarAdmDto.Tipo);
+            tipo: faturaCriarAdmDto.Tipo,
+            total: faturaCriarAdmDto.Parcelas.Sum(x => x.Valor));
 
         foreach (var parcelaDto in faturaCriarAdmDto.Parcelas)
         {
@@ -240,6 +244,56 @@ public sealed class FaturaService : IFaturaService
         await _contasAReceberRepository.AddAsync(fatura);
 
         return (FaturaViewModel)fatura;
+    }
+
+    public async Task<ResultPartner<ResultadoPadraoViewModel>> CriarBonificadaAsync(BaixaAutomaticaDto dto)
+    {
+        var pedido = await _pedidoRepository.ObterPedidoParaCobrancaAsync(dto.PedidoId);
+
+        if (pedido == null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"Não foi possível localizar o pedido!";
+        }
+
+        if (pedido.Fatura != null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"O pedido já possui uma fatura!";
+        }
+
+        var data = DateTime.UtcNow;
+        var fatura = new Fatura(
+            id: Guid.NewGuid(),
+            dataDeCriacao: data,
+            dataDeAtualizacao: data,
+            numero: 0,
+            status: StatusFaturaEnum.Paga,
+            usuarioId: pedido.UsuarioId,
+            pedidoId: pedido.Id,
+            dataDeFechamento: data,
+            tipo: TipoFaturaEnum.Bonificado,
+            total: pedido.ValorTotalCobrar);
+
+        await _contasAReceberRepository.AddAsync(fatura);
+
+        return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel
+        {
+            Resultado = true
+        };
+    }
+
+    public async Task<PaginacaoViewModel<FaturaBonificadaPaginacaoViewModel>> PaginacaoBonificadasAsync(
+        FilterModel<Fatura> dto)
+    {
+        var paginacao = await _contasAReceberRepository.PaginacaoAsync(dto);
+
+        return new PaginacaoViewModel<FaturaBonificadaPaginacaoViewModel>
+        {
+            TotalDeRegistros = paginacao.TotalDeRegistros,
+            TotalPaginas = paginacao.TotalPaginas,
+            Values = paginacao.Values
+                .Select(x => (FaturaBonificadaPaginacaoViewModel)x)
+                .ToList()
+        };
     }
 
     public async Task CriarContasAReceberAsync(CriarFaturaDto contasAReceberDto)

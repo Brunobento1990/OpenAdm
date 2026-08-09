@@ -20,7 +20,9 @@ internal class FaturaConfiguration : IEntityTypeConfiguration<Fatura>
         builder.Property(x => x.Numero)
             .ValueGeneratedOnAdd();
         builder.HasIndex(x => x.Tipo);
-        builder.Ignore(x => x.Total);
+        builder.Property(x => x.Total)
+            .HasPrecision(12, 2)
+            .IsRequired();
         builder.Ignore(x => x.ValorAPagarAReceber);
         builder.Ignore(x => x.ValorPagoRecebido);
         builder.HasMany(x => x.Parcelas)

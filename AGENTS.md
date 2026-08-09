@@ -12,7 +12,7 @@ OpenAdm is a multi-project .NET solution (`OpenAdm.sln`) organized by layer. `Op
 - `dotnet run --project OpenAdm.Worker/OpenAdm.Worker.csproj`: start the background worker.
 
 ## Coding Style & Naming Conventions
-Projects target `net10.0` with nullable reference types and implicit usings enabled. Use four-space indentation and standard C# conventions: PascalCase for classes, methods, properties, DTOs, and enums; camelCase for locals and parameters; interfaces prefixed with `I`. Keep Portuguese domain names consistent with existing files, for example `PedidoService`, `ConfiguracaoDeFreteController`, and `PaginacaoPedidoDto`.
+Projects target `net10.0` with nullable reference types and implicit usings enabled. Use four-space indentation and standard C# conventions: PascalCase for classes, methods, properties, DTOs, and enums; camelCase for locals and parameters; interfaces prefixed with `I`. Prefer `DateTime.UtcNow` over `DateTime.Now` when recording application timestamps. Keep Portuguese domain names consistent with existing files, for example `PedidoService`, `ConfiguracaoDeFreteController`, and `PaginacaoPedidoDto`.
 
 ## Testing Guidelines
 Tests use xUnit with Moq, Bogus, ExpectedObjects, EF Core InMemory, and coverlet. Place new tests under `OpenAdm.Test/<Layer>/Test/` and name classes with the `*Test` suffix. Prefer descriptive Portuguese test method names that state expected behavior, such as `DeveGerarUmToken`. Use builders from `OpenAdm.Test/Domain/Builder/` for reusable entity setup.

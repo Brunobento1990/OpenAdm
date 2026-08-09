@@ -17,7 +17,7 @@ public class FaturaViewModel : BaseViewModel
     public PedidoViewModel? Pedido { get; set; }
     public DateTime? DataDeFechamento { get;  set; }
     public IList<ParcelaViewModel> Parcelas { get; set; } = [];
-    public decimal Total { get { return Parcelas.Sum(x => x.Valor); } }
+    public decimal Total { get; set; }
 
     public static explicit operator FaturaViewModel(Fatura fatura)
     {
@@ -33,7 +33,8 @@ public class FaturaViewModel : BaseViewModel
             Status = fatura.Status,
             UsuarioId = fatura.UsuarioId,
             Usuario = fatura.Usuario == null ? null! : new UsuarioViewModel().ToModel(fatura.Usuario),
-            Tipo = fatura.Tipo
+            Tipo = fatura.Tipo,
+            Total = fatura.Total
         };
     }
 }

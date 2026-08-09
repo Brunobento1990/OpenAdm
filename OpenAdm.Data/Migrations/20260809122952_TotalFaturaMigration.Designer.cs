@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenAdm.Data.Context;
@@ -11,9 +12,11 @@ using OpenAdm.Data.Context;
 namespace OpenAdm.Data.Migrations
 {
     [DbContext(typeof(ParceiroContext))]
-    partial class ParceiroContextModelSnapshot : ModelSnapshot
+    [Migration("20260809122952_TotalFaturaMigration")]
+    partial class TotalFaturaMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,12 +33,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("Descricao")
@@ -188,12 +191,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<long>("Numero")
@@ -237,16 +240,16 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime?>("DataDeFechamento")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("Numero")
                         .ValueGeneratedOnAdd()
@@ -290,12 +293,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<long>("Numero")
@@ -349,12 +352,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<long>("Numero")
@@ -400,12 +403,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<long>("Numero")
@@ -455,16 +458,16 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeVencimento")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("Desconto")
                         .HasPrecision(12, 2)
@@ -521,12 +524,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("MotivoCancelamento")
@@ -570,12 +573,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("Descricao")
@@ -636,12 +639,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("Descricao")
@@ -698,12 +701,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("Descricao")
@@ -749,12 +752,12 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<string>("Descricao")
@@ -812,16 +815,16 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeEfetivacao")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<decimal?>("Desconto")
                         .HasPrecision(12, 2)
@@ -881,16 +884,16 @@ namespace OpenAdm.Data.Migrations
 
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime>("DataDeCriacao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("now()");
 
                     b.Property<DateTime?>("DataExpiracaoTokenEsqueceuSenha")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -898,7 +901,7 @@ namespace OpenAdm.Data.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("ForcarLogin")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nome")
                         .IsRequired()

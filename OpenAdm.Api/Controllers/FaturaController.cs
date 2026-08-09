@@ -6,7 +6,9 @@ using OpenAdm.Application.Dtos.Response;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.ContasAReceberModel;
+using OpenAdm.Application.Models.FaturasModel;
 using OpenAdm.Domain.Model;
+using OpenAdm.Infra.Paginacao;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -30,6 +32,25 @@ public class FaturaController : ControllerBase
     public async Task<IActionResult> Criar(FaturaCriarAdmDto faturaCriarAdmDto)
     {
         var result = await _faturaService.CriarAdmAsync(faturaCriarAdmDto);
+        return Ok(result);
+    }
+
+    [HttpPost("bonificar")]
+    [ProducesResponseType<ResultadoPadraoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> Bonificar(BaixaAutomaticaDto dto)
+    {
+        var result = await _faturaService.CriarBonificadaAsync(dto);
+
+        return result.ToActionResult();
+    }
+
+    [HttpPost("paginacao/bonificado")]
+    [ProducesResponseType<PaginacaoViewModel<FaturaBonificadaPaginacaoViewModel>>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> Paginacao(PaginacaoFaturaBonificadaDto dto)
+    {
+        var result = await _faturaService.PaginacaoBonificadasAsync(dto);
         return Ok(result);
     }
 
