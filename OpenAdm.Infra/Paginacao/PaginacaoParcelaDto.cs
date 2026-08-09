@@ -13,6 +13,7 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
     public DateTime? DataVencimentoInicial { get; set; }
     public DateTime? DataVencimentoFinal { get; set; }
     public bool? Quitada { get; set; }
+    public Guid? PedidoId { get; set; }
 
     public override Expression<Func<Parcela, bool>> GetWhereBySearch()
     {
@@ -22,6 +23,7 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
         if (string.IsNullOrWhiteSpace(Search))
         {
             return x => x.Fatura.Tipo == Tipo &&
+                (!PedidoId.HasValue || x.Fatura.PedidoId == PedidoId.Value) &&
                 (!Quitada.HasValue || x.Quitada == Quitada.Value) &&
                 (!dataVencimentoInicial.HasValue || x.DataDeVencimento >= dataVencimentoInicial.Value) &&
                 (!dataVencimentoFinalExclusiva.HasValue || x.DataDeVencimento < dataVencimentoFinalExclusiva.Value);
@@ -33,6 +35,7 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
              (EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Pedido!.Numero.ToString()), $"%{search}%") ||
              EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Usuario.Nome), $"%{search}%"))
             && x.Fatura.Tipo == Tipo
+            && (!PedidoId.HasValue || x.Fatura.PedidoId == PedidoId.Value)
             && (!Quitada.HasValue || x.Quitada == Quitada.Value)
             && (!dataVencimentoInicial.HasValue || x.DataDeVencimento >= dataVencimentoInicial.Value)
             && (!dataVencimentoFinalExclusiva.HasValue || x.DataDeVencimento < dataVencimentoFinalExclusiva.Value);
