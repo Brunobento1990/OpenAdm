@@ -13,6 +13,8 @@ public sealed class ParcelaPaginacaoViewModel
     public decimal Valor { get; set; }
     public StatusParcelaEnum Status { get; set; }
     public decimal ValorPagoRecebido { get; set; }
+    public decimal ValorPagoRecebidoLiquido { get; set; }
+    public decimal DescontoConcedido { get; set; }
     public decimal ValorAPagarAReceber { get; set; }
     public DateTime Vencimento { get; set; }
     public bool Quitada { get; set; }
@@ -27,6 +29,8 @@ public sealed class ParcelaPaginacaoViewModel
             NomeUsuario = parcela.Fatura.Usuario.Nome,
             Valor = parcela.Valor,
             ValorPagoRecebido = parcela.ValorPagoRecebido,
+            ValorPagoRecebidoLiquido = parcela.ValorPagoRecebidoLiquido,
+            DescontoConcedido = parcela.DescontoConcedido,
             ValorAPagarAReceber = parcela.ValorAPagarAReceber,
             Vencimento = parcela.DataDeVencimento,
             Quitada = parcela.Quitada,

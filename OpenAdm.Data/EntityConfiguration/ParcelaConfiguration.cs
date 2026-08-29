@@ -30,6 +30,8 @@ internal class ParcelaConfiguration : IEntityTypeConfiguration<Parcela>
             .HasMaxLength(500);
         builder.Ignore(x => x.ValorAPagarAReceber);
         builder.Ignore(x => x.ValorPagoRecebido);
+        builder.Ignore(x => x.ValorPagoRecebidoLiquido);
+        builder.Ignore(x => x.DescontoConcedido);
         builder.Ignore(x => x.Vencida);
     }
 }

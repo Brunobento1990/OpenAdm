@@ -58,6 +58,11 @@ public sealed class Parcela : BaseEntity
     public decimal ValorPagoRecebido =>
         CalculoParcelaHelper.CalcularValorPagoRecebido(Tipo, Transacoes?.Cast<ITransacaoParaCalculo>());
 
+    public decimal ValorPagoRecebidoLiquido =>
+        CalculoParcelaHelper.CalcularValorPagoRecebidoLiquido(Tipo, Transacoes?.Cast<ITransacaoParaCalculo>());
+
+    public decimal DescontoConcedido =>
+        CalculoParcelaHelper.CalcularDescontoConcedido(Tipo, Transacoes?.Cast<ITransacaoParaCalculo>());
 
     public bool Vencida
     {
@@ -78,16 +83,6 @@ public sealed class Parcela : BaseEntity
         Valor = valor;
         Desconto = desconto;
         Observacao = observacao;
-    }
-
-    public void TirarDiferenca(decimal diferenca)
-    {
-        Valor -= diferenca;
-    }
-
-    public void AdicionarDiferenca(decimal diferenca)
-    {
-        Valor += diferenca;
     }
 
     public TransacaoFinanceira Pagar(

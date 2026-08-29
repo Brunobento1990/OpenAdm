@@ -14,6 +14,8 @@ public class ParcelaViewModel : BaseViewModel
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public decimal Valor { get; set; }
     public decimal ValorPagoRecebido { get; set; }
+    public decimal ValorPagoRecebidoLiquido { get; set; }
+    public decimal DescontoConcedido { get; set; }
     public decimal ValorAPagarAReceber { get; set; }
     public decimal? Desconto { get; set; }
     public decimal? Juros { get; set; }
@@ -46,6 +48,8 @@ public class ParcelaViewModel : BaseViewModel
             Juros = faturaContasAReceber.Juros,
             ValorAPagarAReceber = faturaContasAReceber.ValorAPagarAReceber,
             ValorPagoRecebido = faturaContasAReceber.ValorPagoRecebido,
+            ValorPagoRecebidoLiquido = faturaContasAReceber.ValorPagoRecebidoLiquido,
+            DescontoConcedido = faturaContasAReceber.DescontoConcedido,
             Vencida = faturaContasAReceber.Vencida,
             Transacoes = faturaContasAReceber.Transacoes?.Select(x =>
             {
