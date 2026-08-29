@@ -82,11 +82,11 @@ public sealed class FaturaService : IFaturaService
         parcela.Fatura = fatura;
         parcela.Transacoes ??= [];
         parcela.Transacoes.Add(parcela.Pagar(
-            valor: cobranca.Total,
+            valor: cobranca.Total - (dto.Desconto ?? 0),
             meioDePagamento: MeioDePagamentoEnum.Dinheiro,
             observacao: "Baixa automática da cobrança do pedido",
             dataDePagamento: data,
-            desconto: null,
+            desconto: dto.Desconto,
             juros: null));
         
         fatura.Parcelas.Add(parcela);
