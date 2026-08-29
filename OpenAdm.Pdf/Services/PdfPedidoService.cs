@@ -154,50 +154,50 @@ internal class PdfPedidoService : IPdfPedidoService
             return;
         }
 
-        container.Element(SectionBox).Column(column =>
-        {
-            column.Item().Element(container => SectionTitle(container, "INFORMAÇÕES COMPLEMENTARES"));
-
-            if (endereco != null)
-            {
-                column.Item().PaddingTop(4).Column(enderecoColumn =>
-                {
-                    enderecoColumn.Item().Row(row =>
-                    {
-                        row.Spacing(8);
-                        row.RelativeItem(3).Element(item => Field(item, "Logradouro", $"{endereco.Logradouro} nº {endereco.Numero}"));
-                    });
-
-                    enderecoColumn.Item().Row(row =>
-                    {
-                        row.Spacing(8);
-                        row.RelativeItem().Element(item => Field(item, "Bairro", endereco.Bairro));
-                        row.RelativeItem().Element(item => Field(item, "Cidade/UF", $"{endereco.Localidade}/{endereco.Uf}"));
-                        row.RelativeItem().Element(item => Field(item, "CEP", endereco.Cep));
-                    });
-
-                    if (!string.IsNullOrWhiteSpace(endereco.Complemento) || !string.IsNullOrWhiteSpace(endereco.TipoFrete))
-                    {
-                        enderecoColumn.Item().Row(row =>
-                        {
-                            row.Spacing(8);
-                            row.RelativeItem().Element(item => Field(item, "Complemento", endereco.Complemento));
-                            row.RelativeItem().Element(item => Field(item, "Prazo/Entrega", endereco.TipoFrete));
-                        });
-                    }
-                });
-            }
-
-            if (primeiraParcela?.MeioDePagamento != null || !string.IsNullOrWhiteSpace(primeiraParcela?.Observacao))
-            {
-                column.Item().PaddingTop(endereco != null ? 2 : 10).Row(row =>
-                {
-                    row.Spacing(8);
-                    row.RelativeItem().Element(item => Field(item, "Forma de pagamento", primeiraParcela?.MeioDePagamento?.ToString()));
-                    row.RelativeItem(2).Element(item => Field(item, "Observações", primeiraParcela?.Observacao));
-                });
-            }
-        });
+        // container.Element(SectionBox).Column(column =>
+        // {
+        //     column.Item().Element(container => SectionTitle(container, "INFORMAÇÕES COMPLEMENTARES"));
+        //
+        //     if (endereco != null)
+        //     {
+        //         column.Item().PaddingTop(4).Column(enderecoColumn =>
+        //         {
+        //             enderecoColumn.Item().Row(row =>
+        //             {
+        //                 row.Spacing(8);
+        //                 row.RelativeItem(3).Element(item => Field(item, "Logradouro", $"{endereco.Logradouro} nº {endereco.Numero}"));
+        //             });
+        //
+        //             enderecoColumn.Item().Row(row =>
+        //             {
+        //                 row.Spacing(8);
+        //                 row.RelativeItem().Element(item => Field(item, "Bairro", endereco.Bairro));
+        //                 row.RelativeItem().Element(item => Field(item, "Cidade/UF", $"{endereco.Localidade}/{endereco.Uf}"));
+        //                 row.RelativeItem().Element(item => Field(item, "CEP", endereco.Cep));
+        //             });
+        //
+        //             if (!string.IsNullOrWhiteSpace(endereco.Complemento) || !string.IsNullOrWhiteSpace(endereco.TipoFrete))
+        //             {
+        //                 enderecoColumn.Item().Row(row =>
+        //                 {
+        //                     row.Spacing(8);
+        //                     row.RelativeItem().Element(item => Field(item, "Complemento", endereco.Complemento));
+        //                     row.RelativeItem().Element(item => Field(item, "Prazo/Entrega", endereco.TipoFrete));
+        //                 });
+        //             }
+        //         });
+        //     }
+        //
+        //     if (primeiraParcela?.MeioDePagamento != null || !string.IsNullOrWhiteSpace(primeiraParcela?.Observacao))
+        //     {
+        //         column.Item().PaddingTop(endereco != null ? 2 : 10).Row(row =>
+        //         {
+        //             row.Spacing(8);
+        //             row.RelativeItem().Element(item => Field(item, "Forma de pagamento", primeiraParcela?.MeioDePagamento?.ToString()));
+        //             row.RelativeItem(2).Element(item => Field(item, "Observações", primeiraParcela?.Observacao));
+        //         });
+        //     }
+        // });
     }
 
     private static void ComposeItensTable(IContainer container, Pedido pedido)
@@ -235,7 +235,7 @@ internal class PdfPedidoService : IPdfPedidoService
                     var alternate = index % 2 == 1;
                     BodyCell(table, item.Produto.Referencia ?? "", CellAlignment.Left, alternate);
                     BodyCell(table, string.IsNullOrWhiteSpace(item.Produto.Referencia) ?
-                        item.Produto.Descricao :
+                        item.Produto.Numero.ToString() :
                         item.Produto.Descricao.Replace(item.Produto.Referencia ?? "", "").Replace("-", "").Trim(), CellAlignment.Left, alternate);
                     BodyCell(table, item.Tamanho?.Descricao ?? item.Peso?.Descricao ?? "", CellAlignment.Center, alternate);
                     BodyCell(table, item.Quantidade.ToString(), CellAlignment.Right, alternate);
