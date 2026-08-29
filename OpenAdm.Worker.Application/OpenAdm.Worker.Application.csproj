@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\OpenAdm.Domain\OpenAdm.Domain.csproj" />
+      <ProjectReference Include="..\OpenAdm.Pdf\OpenAdm.Pdf.csproj" />
     </ItemGroup>
 
     <ItemGroup>

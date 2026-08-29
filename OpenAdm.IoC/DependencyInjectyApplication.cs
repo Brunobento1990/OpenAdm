@@ -52,7 +52,6 @@ public static class DependencyInjectyApplication
         services.AddScoped<IGetCarrinhoService, GetCarrinhoService>();
         services.AddScoped<IDeleteProdutoCarrinhoService, DeleteProdutoCarrinhoService>();
         services.AddScoped<IPedidoDownloadService, PedidoDownloadService>();
-        services.AddScoped<IPedidoPublicoService, PedidoPublicoService>();
         services.AddScoped<ICreatePedidoService, CreatePedidoService>();
         services.AddScoped<IUpdateStatusPedidoService, UpdateStatusPedidoService>();
         services.AddScoped<IDeletePedidoService, DeletePedidoService>();

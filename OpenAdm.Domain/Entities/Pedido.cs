@@ -17,13 +17,11 @@ public sealed class Pedido : BaseEntity
         string? motivoCancelamento)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
-        IdPublico = Guid.NewGuid();
         StatusPedido = statusPedido;
         UsuarioId = usuarioId;
         MotivoCancelamento = motivoCancelamento;
     }
 
-    public Guid IdPublico { get; private set; }
     public StatusPedido StatusPedido { get; private set; }
     public Guid UsuarioId { get; private set; }
     public string? MotivoCancelamento { get; private set; }

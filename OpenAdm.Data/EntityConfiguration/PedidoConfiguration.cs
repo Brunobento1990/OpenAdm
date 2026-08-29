@@ -19,10 +19,6 @@ public class PedidoConfiguration : IEntityTypeConfiguration<Pedido>
             .HasDefaultValueSql("now()");
         builder.Property(x => x.Numero)
             .ValueGeneratedOnAdd();
-        builder.Property(x => x.IdPublico)
-            .IsRequired();
-        builder.HasIndex(x => x.IdPublico)
-            .IsUnique();
         builder.Ignore(x => x.ValorTotal);
         builder.HasIndex(x => x.StatusPedido);
         builder.Property(x => x.MotivoCancelamento)

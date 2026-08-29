@@ -1,5 +1,6 @@
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Worker;
+using OpenAdm.Pdf;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -8,6 +9,7 @@ Criptografia.Configure(builder.Configuration["Criptografia:Key"]!, builder.Confi
 builder.Services
     .AddServicesApplication()
     .AddRepositories()
+    .ConfigurarPdf()
     .AddHttpClientInfra(builder.Configuration)
     .AddFilas(builder.Configuration)
     .InjectContext(builder.Configuration["ConnectionStrings:DefaultConnection"]!)

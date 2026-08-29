@@ -10,7 +10,7 @@ using OpenAdm.Domain.Enuns;
 namespace OpenAdm.Infra.Repositories;
 
 public class PedidoRepository(ParceiroContext parceiroContext)
-    : GenericRepository<Pedido>(parceiroContext), IPedidoRepository, IPedidoPublicoRepository
+    : GenericRepository<Pedido>(parceiroContext), IPedidoRepository
 {
     public override async Task<PaginacaoViewModel<Pedido>> PaginacaoAsync(FilterModel<Pedido> filterModel)
     {
@@ -131,26 +131,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         }
 
         return pedido;
-    }
-
-    public async Task<Pedido?> GetPedidoCompletoByIdPublicoAsync(Guid idPublico)
-    {
-        return await ParceiroContext
-            .Pedidos
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Produto)
-                    .ThenInclude(x => x.Categoria)
-            .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Tamanho)
-            .Include(x => x.ItensPedido)
-                .ThenInclude(x => x.Peso)
-            .Include(x => x.Usuario)
-            .Include(x => x.EnderecoEntrega)
-            .Include(x => x.Fatura!)
-                .ThenInclude(x => x.Parcelas)
-            .FirstOrDefaultAsync(x => x.IdPublico == idPublico);
     }
 
     public async Task<IDictionary<Guid, Pedido>> GetPedidosAsync(IList<Guid> ids)

@@ -10,6 +10,7 @@ COPY ["OpenAdm.Worker.Infra/OpenAdm.Worker.Infra.csproj", "OpenAdm.Worker.Infra/
 COPY ["OpenAdm.Data/OpenAdm.Data.csproj", "OpenAdm.Data/"]
 COPY ["OpenAdm.Domain/OpenAdm.Domain.csproj", "OpenAdm.Domain/"]
 COPY ["OpenAdm.Worker.Application/OpenAdm.Worker.Application.csproj", "OpenAdm.Worker.Application/"]
+COPY ["OpenAdm.Pdf/OpenAdm.Pdf.csproj", "OpenAdm.Pdf/"]
 RUN dotnet restore "OpenAdm.Worker/OpenAdm.Worker.csproj"
 COPY . .
 WORKDIR "/src/OpenAdm.Worker"
