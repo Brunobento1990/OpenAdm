@@ -15,15 +15,18 @@ public class AutenticaMercadoPagoMiddleware
     }
 
     public async Task Invoke(
-        HttpContext httpContext,
-        IEmpresaOpenAdmRepository empresaOpenAdmRepository,
-        IParceiroAutenticado parceiroAutenticado)
+        HttpContext httpContext)
     {
         if (!httpContext.TemAtributo<AutenticaMercadoPagoAttribute>())
         {
             await _next(httpContext);
             return;
         }
+
+        IEmpresaOpenAdmRepository empresaOpenAdmRepository =
+            httpContext.RequestServices.GetRequiredService<IEmpresaOpenAdmRepository>();
+        IParceiroAutenticado parceiroAutenticado =
+            httpContext.RequestServices.GetRequiredService<IParceiroAutenticado>();
 
         var header = httpContext.Request.Headers["X-Signature"].FirstOrDefault();
         var header2 = httpContext.Request.Headers["x-signature"].FirstOrDefault();
@@ -35,7 +38,7 @@ public class AutenticaMercadoPagoMiddleware
         }
 
         var parceiroIdString = httpContext.Request.Query["parceiroId"].ToString();
-        
+
         if (!Guid.TryParse(parceiroIdString, out Guid parceiroId))
         {
             Console.WriteLine($"Não passou porque não pegou o parceiroId: {parceiroIdString}");

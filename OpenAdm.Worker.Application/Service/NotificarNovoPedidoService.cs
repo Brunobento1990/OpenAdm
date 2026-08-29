@@ -1,9 +1,9 @@
+using Microsoft.Extensions.Configuration;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Eventos;
-using OpenAdm.Pdf.Interfaces;
 using OpenAdm.Worker.Application.DTOs;
 using OpenAdm.Worker.Application.HttpService.Interface;
 using OpenAdm.Worker.Application.HttpService.Request;
@@ -13,26 +13,26 @@ namespace OpenAdm.Worker.Application.Service;
 
 public class NotificarNovoPedidoService : IEventoAplicacaoService
 {
-    private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IParceiroRepository _parceiroRepository;
     private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IHttpClientWhatsApp _httpClientWhatsApp;
     private readonly IEmailService _emailService;
+    private readonly string _openAdmApiBaseUrl;
 
-    public NotificarNovoPedidoService(IPdfPedidoService pdfPedidoService,
-        IPedidoRepository pedidoRepository,
+    public NotificarNovoPedidoService(IPedidoRepository pedidoRepository,
         IParceiroRepository parceiroRepository,
         IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IHttpClientWhatsApp httpClientWhatsApp,
-        IEmailService emailService)
+        IEmailService emailService,
+        IConfiguration configuration)
     {
-        _pdfPedidoService = pdfPedidoService;
         _pedidoRepository = pedidoRepository;
         _parceiroRepository = parceiroRepository;
         _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _httpClientWhatsApp = httpClientWhatsApp;
         _emailService = emailService;
+        _openAdmApiBaseUrl = configuration["OpenAdmApi:BaseUrl"]?.TrimEnd('/') ?? string.Empty;
     }
 
     public async Task<ResultPartner<ResultadoEventoAplicacaoDTO>> ExecutarAsync(EventoAplicacao eventoAplicacao)
@@ -69,26 +69,24 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
                 "Não foi possível localizar a configuração de pedido para envio da notificação";
         }
 
-        var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
+        if (string.IsNullOrWhiteSpace(_openAdmApiBaseUrl))
+        {
+            return (ResultPartner<ResultadoEventoAplicacaoDTO>)
+                "Não foi possível localizar a URL pública da API para envio da notificação";
+        }
+
+        var linkPedido = $"{_openAdmApiBaseUrl}/publico/{eventoAplicacao.EmpresaOpenAdmId}/pedido/{pedido.IdPublico}/pdf";
 
         if (!string.IsNullOrWhiteSpace(configuracoesDePedido.WhatsApp))
         {
-            var payload = new EnviarPDFWppRequest()
+            var payload = new EnviarMsgWppRequest()
             {
                 Number = $"55{configuracoesDePedido.WhatsApp.LimparMascaraTelefone()}",
-                Mediatype = "document",
-                Mimetype = "application/pdf",
-                Caption =
-                    $"🛒 Novo pedido confirmado!\nParceiro: {parceiro.NomeFantasia}\nCliente: {pedido.Usuario.Nome}\nPedido: #{pedido.Numero}\nTotal: {pedido.ValorTotal.FormatMoney()}",
-                Media = Convert.ToBase64String(pdf),
-                FileName = $"pedido-{pedido.Numero}.pdf",
-                Delay = 0,
-                LinkPreview = false,
-                MentionsEveryOne = false,
-                Mentioned = null!
+                Text =
+                    $"🛒 Novo pedido confirmado!\nParceiro: {parceiro.NomeFantasia}\nCliente: {pedido.Usuario.Nome}\nPedido: #{pedido.Numero}\nTotal: {pedido.ValorTotal.FormatMoney()}\n\nPDF do pedido:\n{linkPedido}"
             };
 
-            var resultado = await _httpClientWhatsApp.EnviarPdfAsync(payload);
+            var resultado = await _httpClientWhatsApp.EnviarMsgAsync(payload);
 
             if (resultado)
             {
@@ -105,14 +103,12 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
         var htmlEnvio = await File.ReadAllTextAsync(Path.Combine("Htmls", "NovoPedido.html"));
         htmlEnvio = htmlEnvio.Replace("***pedido***", pedido.Numero.ToString());
         htmlEnvio = htmlEnvio.Replace("***empresa***", parceiro.NomeFantasia);
+        htmlEnvio = htmlEnvio.Replace("***linkPedido***", linkPedido);
 
         var emailModel = new EnviarEmailDTO()
         {
             Assunto = "Novo pedido",
             Email = configuracoesDePedido.EmailDeEnvio,
-            Arquivo = pdf,
-            NomeDoArquivo = $"pedido-{pedido.Numero}",
-            TipoDoArquivo = "application/pdf",
             Html = htmlEnvio
         };
 

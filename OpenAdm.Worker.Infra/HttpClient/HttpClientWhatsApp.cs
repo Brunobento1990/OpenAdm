@@ -38,24 +38,6 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
         return telefone;
     }
 
-    public async Task<bool> EnviarPdfAsync(EnviarPDFWppRequest request)
-    {
-        using var client = _httpClientFactory.CreateClient(nameof(HttpClientEnum.WhatsApp));
-
-        var body = new EnviarPDFWuzApiWppRequest()
-        {
-            Phone = NormalizarTelefoneWuzApi(request.Number),
-            FileName = request.FileName,
-            Document = $"data:application/pdf;base64,{request.Media}",
-            Caption =  request.Caption
-        };
-        
-        var response = await client.PostAsync($"chat/send/document",
-            JsonSerializerOptionsApi.ToJson(body));
-        
-        return response.IsSuccessStatusCode;
-    }
-
     public async Task<bool> EnviarMsgAsync(EnviarMsgWppRequest request)
     {
         using var client = _httpClientFactory.CreateClient(nameof(HttpClientEnum.WhatsApp));

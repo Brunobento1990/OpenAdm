@@ -529,6 +529,9 @@ namespace OpenAdm.Data.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<Guid>("IdPublico")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("MotivoCancelamento")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -546,6 +549,9 @@ namespace OpenAdm.Data.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdPublico")
+                        .IsUnique();
 
                     b.HasIndex("StatusPedido");
 
