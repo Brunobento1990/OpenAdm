@@ -5,6 +5,7 @@ using OpenAdm.Domain.Model;
 using OpenAdm.Application.Dtos.Pesos;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -16,6 +17,9 @@ public class PesoService : IPesoService
     {
         _pesoRepository = pesoRepository;
     }
+
+    public Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+        => _pesoRepository.BuscarDropDownAsync(filtro);
 
     public async Task<PesoViewModel> CreatePesoAsync(CreatePesoDto createPesoDto)
     {

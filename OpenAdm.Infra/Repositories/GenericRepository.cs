@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
 using OpenAdm.Infra.Extensions.IQueryable;
 using OpenAdm.Domain.PaginateDto;
+using System.Linq.Expressions;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -47,17 +48,21 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
 
     public virtual async Task<PaginacaoViewModel<T>> PaginacaoAsync(FilterModel<T> filterModel)
     {
+        filterModel.ValidarEObterPropriedadeDeOrdenacao();
+
         var include = filterModel.IncludeCustom();
         var includes = filterModel.IncludeCustomList();
         var select = filterModel.SelectCustom();
         var where = filterModel.Where();
 
-        var query = ParceiroContext
+        var queryBase = ParceiroContext
             .Set<T>()
             .AsNoTracking()
-            .AsSplitQuery()
             .WhereIsNotNull(filterModel.GetWhereBySearch())
             .WhereIsNotNull(where);
+
+        var totalDeRegistros = await queryBase.CountAsync();
+        var query = queryBase.AsSplitQuery();
 
         if (include != null)
         {
@@ -78,9 +83,7 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
         }
 
         var (TotalPaginas, Values) = await query
-            .CustomFilterAsync(filterModel);
-
-        var totalDeRegistros = await ParceiroContext.Set<T>().WhereIsNotNull(filterModel.GetWhereBySearch()).CountAsync();
+            .CustomFilterAsync(filterModel, totalDeRegistros);
 
         return new()
         {
@@ -99,6 +102,25 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
             .WhereIsNotNull(paginacaoDropDown.Where())
             .Skip(0)
             .Take(50)
+            .ToListAsync();
+    }
+
+    protected async Task<IList<TResult>> BuscarDropDownAsync<TResult>(
+        DropDownFiltro filtro,
+        Expression<Func<T, bool>>? where,
+        Expression<Func<T, string>> orderBy,
+        Expression<Func<T, Guid>> thenBy,
+        Expression<Func<T, TResult>> select)
+    {
+        return await ParceiroContext
+            .Set<T>()
+            .AsNoTracking()
+            .WhereIsNotNull(where)
+            .OrderBy(orderBy)
+            .ThenBy(thenBy)
+            .Skip(filtro.Skip)
+            .Take(filtro.Take)
+            .Select(select)
             .ToListAsync();
     }
 

@@ -2,6 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Data.Context;
+using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
+using System.Linq.Expressions;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -9,6 +12,21 @@ public class PesoRepository : GenericRepository<Peso>, IPesoRepository
 {
     public PesoRepository(ParceiroContext parceiroContext) : base(parceiroContext)
     {
+    }
+
+    public async Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+    {
+        var search = filtro.Search?.Trim();
+        Expression<Func<Peso, bool>> where = string.IsNullOrWhiteSpace(search)
+            ? x => x.Ativo
+            : x => x.Ativo && EF.Functions.ILike(EF.Functions.Unaccent(x.Descricao), $"%{search}%");
+
+        return await BuscarDropDownAsync(
+            filtro,
+            where,
+            x => x.Descricao,
+            x => x.Id,
+            x => new DropDownItemModel { Id = x.Id, Descricao = x.Descricao });
     }
 
     public async Task<IDictionary<Guid, string>> GetDescricaoPesosAsync(IList<Guid> ids)

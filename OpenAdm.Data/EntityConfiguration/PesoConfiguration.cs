@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Entities;
 
-namespace OpenAdm.Infra.EntityConfiguration;
+namespace OpenAdm.Data.EntityConfiguration;
 
 public class PesoConfiguration : IEntityTypeConfiguration<Peso>
 {

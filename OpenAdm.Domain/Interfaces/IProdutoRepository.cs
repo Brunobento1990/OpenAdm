@@ -6,6 +6,7 @@ namespace OpenAdm.Domain.Interfaces;
 
 public interface IProdutoRepository : IGenericRepository<Produto>
 {
+    Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro);
     Task<IList<Produto>> GetAllProdutosAsync();
     Task<IList<Produto>> GetProdutosByCategoriaIdAsync(Guid categoriaId);
     Task<IList<Produto>> GetProdutosByListIdAsync(List<Guid> ids);

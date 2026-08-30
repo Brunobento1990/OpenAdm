@@ -14,6 +14,21 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 {
     private const int _take = 6;
 
+    public async Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+    {
+        var search = filtro.Search?.Trim();
+        Expression<Func<Produto, bool>>? where = string.IsNullOrWhiteSpace(search)
+            ? null
+            : x => EF.Functions.ILike(EF.Functions.Unaccent(x.Descricao), $"%{search}%");
+
+        return await BuscarDropDownAsync(
+            filtro,
+            where,
+            x => x.Descricao,
+            x => x.Id,
+            x => new DropDownItemModel { Id = x.Id, Descricao = x.Descricao });
+    }
+
     public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(
         PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {

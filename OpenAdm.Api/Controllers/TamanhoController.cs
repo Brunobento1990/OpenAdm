@@ -3,6 +3,8 @@ using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.Paginacao;
+using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -23,6 +25,16 @@ public class TamanhoController : ControllerBase
     {
         var tamanhosViewModel = await _tamanhoService.GetTamanhoViewModelsAsync();
         return Ok(tamanhosViewModel);
+    }
+
+    [Autentica]
+    [IsFuncionario]
+    [HttpGet("dropdown")]
+    [ProducesResponseType<IList<DropDownItemModel>>(200)]
+    public async Task<IActionResult> DropDown([FromQuery] string? search = null)
+    {
+        var filtro = new DropDownFiltro { Search = search };
+        return Ok(await _tamanhoService.BuscarDropDownAsync(filtro));
     }
 
     [Autentica]

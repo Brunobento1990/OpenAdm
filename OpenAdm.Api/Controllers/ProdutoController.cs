@@ -63,15 +63,15 @@ public class ProdutoController : ControllerBase
         return Ok(paginacao);
     }
 
-    [HttpPost("paginacao-drop-down")]
+    [HttpGet("dropdown")]
     [Autentica]
     [IsFuncionario]
-    [ProducesResponseType<IEnumerable<ProdutoViewModel>>(200)]
+    [ProducesResponseType<IList<DropDownItemModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> ProdutoPaginacaoDropDown(PaginacaoProdutoDropDown paginacaoProdutoDropDown)
+    public async Task<IActionResult> DropDown([FromQuery] string? search = null)
     {
-        var paginacao = await _produtoService.GetDropDownPaginacaoAsync(paginacaoProdutoDropDown);
-        return Ok(paginacao);
+        var filtro = new DropDownFiltro { Search = search };
+        return Ok(await _produtoService.BuscarDropDownAsync(filtro));
     }
 
     [HttpPost("create")]

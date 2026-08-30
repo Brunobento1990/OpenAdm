@@ -5,6 +5,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -16,6 +17,9 @@ public class TamanhoService : ITamanhoService
     {
         _tamanhoRepository = tamanhoRepository;
     }
+
+    public Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+        => _tamanhoRepository.BuscarDropDownAsync(filtro);
 
     public async Task<TamanhoViewModel> CreateTamanhoAsync(CreateTamanhoDto createTamanhoDto)
     {

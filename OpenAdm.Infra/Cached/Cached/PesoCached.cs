@@ -19,6 +19,9 @@ public class PesoCached : IPesoRepository
         _cachedService = cachedService;
     }
 
+    public Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+        => _pesoRepository.BuscarDropDownAsync(filtro);
+
     public async Task<Peso> AddAsync(Peso entity)
     {
         await _cachedService.RemoveCachedAsync(_keyList);

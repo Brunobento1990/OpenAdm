@@ -6,6 +6,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Pesos;
 using OpenAdm.Domain.Model;
 using OpenAdm.Infra.Paginacao;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -37,6 +38,17 @@ public class PesoController : ControllerBase
     {
         var pesosViewModel = await _pesoService.GetPesosViewModelAsync();
         return Ok(pesosViewModel);
+    }
+
+    [Autentica]
+    [IsFuncionario]
+    [HttpGet("dropdown")]
+    [ProducesResponseType<IList<DropDownItemModel>>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> DropDown([FromQuery] string? search = null)
+    {
+        var filtro = new DropDownFiltro { Search = search };
+        return Ok(await _pesoService.BuscarDropDownAsync(filtro));
     }
 
     [Autentica]
