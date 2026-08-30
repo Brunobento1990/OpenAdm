@@ -139,7 +139,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                     .Select(tm =>
                         new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao,
                             tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal, tm.Tamanho.AlturaReal,
-                            tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal)
+                            tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal, tm.Tamanho.Ativo)
                     )
                     .ToList();
 
@@ -220,7 +220,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 .Select(tm =>
                     new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao,
                         tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal, tm.Tamanho.AlturaReal,
-                        tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal)
+                        tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal, tm.Tamanho.Ativo)
                 )
                 .ToList();
 

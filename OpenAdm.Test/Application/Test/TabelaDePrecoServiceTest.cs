@@ -23,7 +23,7 @@ public class TabelaDePrecoServiceTest
 
         var tamanhos = new List<Tamanho>()
         {
-            new Tamanho(tamanhoId, date, date, 0, "Tamanho", 0, null, null, null)
+            new Tamanho(tamanhoId, date, date, 0, "Tamanho", 0, null, null, null, true)
         };
 
         var tabelaDePrecoDto = new CreateTabelaDePrecoDto()

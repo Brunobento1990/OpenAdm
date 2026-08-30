@@ -8,7 +8,7 @@ namespace OpenAdm.Application.Interfaces;
 public interface ITamanhoService
 {
     Task<TamanhoViewModel> GetTamanhoViewModelAsync(Guid id);
-    Task DeleteTamanhoAsync(Guid id);
+    Task InativarAtivarAsync(Guid id, bool ativo);
     Task<TamanhoViewModel> CreateTamanhoAsync(CreateTamanhoDto createTamanhoDto);
     Task<TamanhoViewModel> UpdateTamanhoAsync(UpdateTamanhoDto updateTamanhoDto);
     Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(FilterModel<Tamanho> paginacaoTamanhoDto);

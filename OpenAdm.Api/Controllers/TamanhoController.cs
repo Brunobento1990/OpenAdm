@@ -45,10 +45,10 @@ public class TamanhoController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteTamanho([FromQuery] Guid id)
+    [HttpPut("ativar/{id}/{ativo}")]
+    public async Task<IActionResult> InativarAtivar(Guid id, bool ativo)
     {
-        await _tamanhoService.DeleteTamanhoAsync(id);
+        await _tamanhoService.InativarAtivarAsync(id, ativo);
         return Ok();
     }
 

@@ -13,8 +13,8 @@ public class CreateTamanhoDto
 
     public Tamanho ToEntity()
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         return new Tamanho(Guid.NewGuid(), date, date, 0, Descricao, PesoReal, AlturaReal, LarguraReal,
-            ComprimentoReal);
+            ComprimentoReal, true);
     }
 }

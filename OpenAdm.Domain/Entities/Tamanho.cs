@@ -10,7 +10,7 @@ public sealed class Tamanho : BaseEntity
         DateTime dataDeAtualizacao,
         long numero,
         string descricao,
-        decimal? pesoReal, decimal? alturaReal, decimal? larguraReal, decimal? comprimentoReal)
+        decimal? pesoReal, decimal? alturaReal, decimal? larguraReal, decimal? comprimentoReal, bool ativo)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Descricao = descricao;
@@ -18,6 +18,7 @@ public sealed class Tamanho : BaseEntity
         AlturaReal = alturaReal;
         LarguraReal = larguraReal;
         ComprimentoReal = comprimentoReal;
+        Ativo = ativo;
     }
 
     public void Update(string descricao, decimal? pesoReal, decimal? alturaReal, decimal? larguraReal,
@@ -35,6 +36,12 @@ public sealed class Tamanho : BaseEntity
     public decimal? LarguraReal { get; set; }
     public decimal? ComprimentoReal { get; set; }
     public string Descricao { get; private set; }
+    public bool Ativo { get; private set; }
     public List<ItemPedido> ItensPedido { get; set; } = [];
     public List<Produto> Produtos { get; set; } = [];
+
+    public void InativarAtivar(bool ativo)
+    {
+        Ativo = ativo;
+    }
 }
