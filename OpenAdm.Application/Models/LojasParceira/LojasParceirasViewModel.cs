@@ -10,6 +10,7 @@ public class LojasParceirasViewModel : BaseModel
     public string? Facebook { get; set; }
     public string? Endereco { get; set; }
     public string? Contato { get; set; }
+    public bool Ativo { get; set; }
 
     public LojasParceirasViewModel ToModel(LojaParceira lojasParceiras)
     {
@@ -23,6 +24,7 @@ public class LojasParceirasViewModel : BaseModel
         Endereco = lojasParceiras.Endereco;
         Contato = lojasParceiras.Contato;
         Nome = lojasParceiras.Nome;
+        Ativo = lojasParceiras.Ativo;
 
         return this;
     }

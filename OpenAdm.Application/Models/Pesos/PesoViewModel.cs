@@ -13,6 +13,7 @@ public class PesoViewModel : BaseModel
     public decimal? ComprimentoReal { get; set; }
     public PrecoProdutoViewModel? PrecoProduto { get; set; }
     public bool TemEstoqueDisponivel { get; set; } = true;
+    public bool Ativo { get; set; }
 
     public PesoViewModel ToModel(Peso entity)
     {
@@ -25,6 +26,7 @@ public class PesoViewModel : BaseModel
         AlturaReal = entity.AlturaReal;
         LarguraReal = entity.LarguraReal;
         ComprimentoReal = entity.ComprimentoReal;
+        Ativo = entity.Ativo;
         return this;
     }
 }

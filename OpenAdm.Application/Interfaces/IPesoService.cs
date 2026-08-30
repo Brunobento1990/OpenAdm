@@ -8,6 +8,7 @@ namespace OpenAdm.Application.Interfaces;
 public interface IPesoService
 {
     Task<PesoViewModel> GetPesoViewModelAsync(Guid id);
+    Task InativarAtivarAsync(Guid id, bool ativo);
     Task DeletePesoAsync(Guid id);
     Task<PesoViewModel> CreatePesoAsync(CreatePesoDto createPesoDto);
     Task<PesoViewModel> UpdatePesoAsync(UpdatePesoDto updatePesoDto);

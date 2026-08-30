@@ -148,7 +148,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                     .Select(tm =>
                         new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero,
                             tm.Peso.Descricao, tm.Peso.PesoReal, tm.Peso.AlturaReal,
-                            tm.Peso.LarguraReal, tm.Peso.ComprimentoReal)
+                            tm.Peso.LarguraReal, tm.Peso.ComprimentoReal, tm.Peso.Ativo)
                     )
                     .ToList();
             });
@@ -229,7 +229,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 .Select(tm =>
                     new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero,
                         tm.Peso.Descricao, tm.Peso.PesoReal, tm.Peso.AlturaReal,
-                        tm.Peso.LarguraReal, tm.Peso.ComprimentoReal)
+                        tm.Peso.LarguraReal, tm.Peso.ComprimentoReal, tm.Peso.Ativo)
                 )
                 .ToList();
         }

@@ -14,6 +14,6 @@ public class CreatePesoDto
     public Peso ToEntity()
     {
         var date = DateTime.Now;
-        return new Peso(Guid.NewGuid(), date, date, 0, Descricao, PesoReal, AlturaReal, LarguraReal, ComprimentoReal);
+        return new Peso(Guid.NewGuid(), date, date, 0, Descricao, PesoReal, AlturaReal, LarguraReal, ComprimentoReal, true);
     }
 }

@@ -17,7 +17,8 @@ public class BannerService
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private const string ERRO_NOT_FOUND = "Não foi possível localizar o banner!";
 
-    public BannerService(IBannerRepository bannerRepository, IUploadImageBlobClient uploadImageBlobClient, IUsuarioAutenticado usuarioAutenticado)
+    public BannerService(IBannerRepository bannerRepository, IUploadImageBlobClient uploadImageBlobClient,
+        IUsuarioAutenticado usuarioAutenticado)
     {
         _bannerRepository = bannerRepository;
         _uploadImageBlobClient = uploadImageBlobClient;
@@ -38,24 +39,21 @@ public class BannerService
         return new BannerViewModel().ToModel(banner);
     }
 
-    public async Task DeleteBannerAsync(Guid id)
+    public async Task DeleteBannerAsync(Guid id, bool ativo)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
+                     ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
-        var resultBlobDelete = await _uploadImageBlobClient.DeleteImageAsync(banner.NomeFoto);
+        banner.Update(banner.Foto, banner.NomeFoto, ativo);
 
-        if (!resultBlobDelete)
-            throw new ExceptionApi("Não foi possível excluir a foto do banner, tente novamente mais tarde, ou entre em contato com o suporte!");
-
-        _bannerRepository.Delete(banner);
+        _bannerRepository.Update(banner);
         await _bannerRepository.SaveChangesAsync();
     }
 
     public async Task<BannerViewModel> EditBannerAsync(BannerEditDto bannerEditDto)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(bannerEditDto.Id)
-            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
+                     ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         var foto = banner.Foto;
         var nomeFoto = banner.NomeFoto;
@@ -66,7 +64,8 @@ public class BannerService
             {
                 var resultBlobDelete = await _uploadImageBlobClient.DeleteImageAsync(banner.NomeFoto);
                 if (!resultBlobDelete)
-                    throw new ExceptionApi("Não foi possível excluir a foto do banner, tente novamente mais tarde, ou entre em contato com o suporte!");
+                    throw new ExceptionApi(
+                        "Não foi possível excluir a foto do banner, tente novamente mais tarde, ou entre em contato com o suporte!");
             }
 
             nomeFoto = $"{Guid.NewGuid()}.jpeg";
@@ -84,7 +83,7 @@ public class BannerService
     public async Task<BannerViewModel> GetBannerByIdAsync(Guid id)
     {
         var banner = await _bannerRepository.GetBannerByIdAsync(id)
-            ?? throw new ExceptionApi(ERRO_NOT_FOUND);
+                     ?? throw new ExceptionApi(ERRO_NOT_FOUND);
 
         return new BannerViewModel().ToModel(banner);
     }
@@ -106,7 +105,7 @@ public class BannerService
         return new()
         {
             TotalPaginas = paginacao.TotalPaginas,
-            Values = paginacao.Values.Select(x => new BannerViewModel().ToModel(x)).ToList(),
+            Values = paginacao.Values.Select(x => new BannerViewModel().ToModel(x)),
             TotalDeRegistros = paginacao.TotalDeRegistros
         };
     }

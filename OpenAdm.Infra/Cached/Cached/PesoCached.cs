@@ -49,14 +49,14 @@ public class PesoCached : IPesoRepository
         return await _pesoRepository.UpdateAsync(entity);
     }
 
-    public async Task<Peso?> GetPesoByIdAsync(Guid id)
+    public async Task<Peso?> GetPesoByIdAsNoTrackingAsync(Guid id)
     {
         var key = id.ToString();
         var peso = await _cachedService.GetItemAsync(key);
 
         if (peso == null)
         {
-            peso = await _pesoRepository.GetPesoByIdAsync(id);
+            peso = await _pesoRepository.GetPesoByIdAsNoTrackingAsync(id);
 
             if (peso != null)
             {
@@ -66,6 +66,9 @@ public class PesoCached : IPesoRepository
 
         return peso;
     }
+
+    public Task<Peso?> GetPesoByIdAsync(Guid id)
+        => _pesoRepository.GetPesoByIdAsync(id);
 
     public async Task<IList<Peso>> GetPesosAsync()
     {

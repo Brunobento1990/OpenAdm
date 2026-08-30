@@ -7,10 +7,9 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IBannerService
 {
-    Task<IList<BannerViewModel>> GetBannersAsync();
     Task<PaginacaoViewModel<BannerViewModel>> GetPaginacaoAsync(FilterModel<Banner> paginacaoBannerDto);
     Task<BannerViewModel> CreateBannerAsync(BannerCreateDto bannerCreateDto);
-    Task DeleteBannerAsync(Guid id);
+    Task DeleteBannerAsync(Guid id, bool ativo);
     Task<BannerViewModel> GetBannerByIdAsync(Guid id);
     Task<BannerViewModel> EditBannerAsync(BannerEditDto bannerEditDto);
 }

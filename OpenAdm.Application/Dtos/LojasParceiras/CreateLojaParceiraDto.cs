@@ -35,6 +35,7 @@ public class CreateLojaParceiraDto
             Facebook,
             Endereco,
             Contato,
-            parceiroId);
+            parceiroId,
+            true);
     }
 }

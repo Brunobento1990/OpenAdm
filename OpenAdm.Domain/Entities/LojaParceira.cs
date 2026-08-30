@@ -16,7 +16,7 @@ public sealed class LojaParceira : BaseEntityParceiro
         string? facebook,
         string? endereco,
         string? contato,
-        Guid parceiroId)
+        Guid parceiroId, bool ativo)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         NomeFoto = nomeFoto;
@@ -25,6 +25,7 @@ public sealed class LojaParceira : BaseEntityParceiro
         Facebook = facebook;
         Endereco = endereco;
         Contato = contato;
+        Ativo = ativo;
         Nome = nome;
     }
 
@@ -35,8 +36,15 @@ public sealed class LojaParceira : BaseEntityParceiro
     public string? Facebook { get; private set; }
     public string? Endereco { get; private set; }
     public string? Contato { get; private set; }
+    public bool Ativo { get; private set; }
 
-    public void Update(string nome, string? nomeFoto, string? foto, string? instagram, string? facebook, string? endereco, string? contato)
+    public void InativarAtivar(bool ativo)
+    {
+        Ativo = ativo;
+    }
+
+    public void Update(string nome, string? nomeFoto, string? foto, string? instagram, string? facebook,
+        string? endereco, string? contato)
     {
         Nome = nome;
         NomeFoto = nomeFoto;

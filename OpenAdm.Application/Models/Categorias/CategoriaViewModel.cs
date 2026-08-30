@@ -8,6 +8,7 @@ public class CategoriaViewModel : BaseModel
     public string Descricao { get; set; } = string.Empty;
     public string? Foto { get; set; }
     public bool InativoEcommerce { get; set; }
+    public bool Ativo { get; set; }
     public List<ProdutoViewModel>? Produtos { get; set; }
 
     public CategoriaViewModel ToModel(Categoria entity)
@@ -20,19 +21,21 @@ public class CategoriaViewModel : BaseModel
         Foto = entity.Foto;
         Produtos = entity.Produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
         InativoEcommerce = entity.InativoEcommerce;
+        Ativo = !entity.InativoEcommerce;
 
         return this;
     }
 
     public CategoriaViewModel ToViewModel(Categoria entity)
     {
+        Ativo = entity.InativoEcommerce;
         Id = entity.Id;
         DataDeCriacao = entity.DataDeCriacao;
         DataDeAtualizacao = entity.DataDeAtualizacao;
         Numero = entity.Numero;
         Descricao = entity.Descricao;
         Foto = entity.Foto;
-        InativoEcommerce = entity.InativoEcommerce;
+        InativoEcommerce = !entity.InativoEcommerce;
 
         return this;
     }

@@ -117,11 +117,4 @@ public class CategoriaService : ICategoriaService
         categoria.InativarAtivarEcommerce();
         await _categoriaRepository.UpdateAsync(categoria);
     }
-
-    public async Task<IList<CategoriaViewModel>> GetCategoriasDropDownAsync()
-    {
-        var categorias = await _categoriaRepository.GetCategoriasDropDownAsync();
-
-        return categorias.Select(x => new CategoriaViewModel().ToModel(x)).ToList();
-    }
 }

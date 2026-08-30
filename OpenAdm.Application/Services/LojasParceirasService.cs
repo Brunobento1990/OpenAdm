@@ -62,6 +62,16 @@ public class LojasParceirasService : ILojasParceirasService
         return new LojasParceirasViewModel().ToModel(lojaParceira);
     }
 
+    public async Task InativarAsync(Guid id, bool ativo)
+    {
+        var lojaParceira = await GetLojaAsync(id);
+
+        lojaParceira.InativarAtivar(ativo);
+
+        _lojasParceirasRepository.Update(lojaParceira);
+        await _lojasParceirasRepository.SaveChangesAsync();
+    }
+
     public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(
         FilterModel<LojaParceira> paginacaoLojasParceirasDto)
     {

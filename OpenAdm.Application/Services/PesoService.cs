@@ -65,9 +65,20 @@ public class PesoService : IPesoService
         return pesos.Select(x => new PesoViewModel().ToModel(x)).ToList();
     }
 
-    public async Task<PesoViewModel> GetPesoViewModelAsync(Guid id)
+    public async Task InativarAtivarAsync(Guid id, bool ativo)
     {
         var peso = await _pesoRepository.GetPesoByIdAsync(id)
+                   ?? throw new ExceptionApi("Não foi possível localizar o peso");
+
+        peso.InativarAtivar(ativo);
+
+        _pesoRepository.Update(peso);
+        await _pesoRepository.SaveChangesAsync();
+    }
+
+    public async Task<PesoViewModel> GetPesoViewModelAsync(Guid id)
+    {
+        var peso = await _pesoRepository.GetPesoByIdAsNoTrackingAsync(id)
                    ?? throw new ExceptionApi("Não foi possível localizar o peso");
 
         return new PesoViewModel().ToModel(peso);

@@ -7,7 +7,11 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface ILojasParceirasService
 {
-    Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(FilterModel<LojaParceira> paginacaoLojasParceirasDto);
+    Task InativarAsync(Guid id, bool ativo);
+
+    Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(
+        FilterModel<LojaParceira> paginacaoLojasParceirasDto);
+
     Task<LojasParceirasViewModel> GetLojasParceirasViewModelAsync(Guid id);
     Task<IList<string?>> ListLojasParceirasViewModelAsync();
     Task<IEnumerable<LojasParceirasViewModel>> TodasLojasAsync();

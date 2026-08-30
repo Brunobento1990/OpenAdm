@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OpenAdm.Data.EntityConfiguration;
 using OpenAdm.Data.EntityConfiguration.OpenAdm;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Entities.OpenAdm;

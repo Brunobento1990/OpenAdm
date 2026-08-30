@@ -18,7 +18,7 @@ public class LojasParceirasRepository : GenericBaseRepository<LojaParceira>, ILo
             .Where(x => x.Foto != null)
             .OrderByDescending(x => x.DataDeCriacao)
             .Take(5)
-            .Where(x => x.ParceiroId == parceiroId)
+            .Where(x => x.ParceiroId == parceiroId && x.Ativo)
             .Select(x => x.Foto)
             .ToListAsync();
     }
@@ -35,7 +35,7 @@ public class LojasParceirasRepository : GenericBaseRepository<LojaParceira>, ILo
         return await AppDbContext
             .LojasParceiras
             .AsNoTracking()
-            .Where(x => x.ParceiroId == parceiroId)
+            .Where(x => x.ParceiroId == parceiroId && x.Ativo)
             .ToListAsync();
     }
 }

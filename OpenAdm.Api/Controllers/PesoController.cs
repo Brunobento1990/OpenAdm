@@ -20,6 +20,15 @@ public class PesoController : ControllerBase
     {
         _pesoService = pesoService;
     }
+    
+    [Autentica]
+    [IsFuncionario]
+    [HttpPut, Route("ativar/{id}/{ativo}")]
+    public async Task<IActionResult> DeleteBanner(Guid id, bool ativo)
+    {
+        await _pesoService.InativarAtivarAsync(id, ativo);
+        return Ok();
+    }
 
     [HttpGet("list")]
     [ProducesResponseType<IList<PesoViewModel>>(200)]

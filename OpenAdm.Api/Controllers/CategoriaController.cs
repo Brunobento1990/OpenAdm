@@ -72,12 +72,12 @@ public class CategoriaController(ICategoriaService categoriaService)
         return Ok(categoriaViewModel);
     }
 
-    [HttpPut("inativar-ativar")]
+    [HttpPut, Route("ativar/{id}/{ativo}")]
     [IsFuncionario]
     [Autentica]
     [ProducesResponseType(200)]
     [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> InativarAtivar([FromQuery] Guid id)
+    public async Task<IActionResult> InativarAtivar(Guid id, bool ativo)
     {
         await _categoriaService.InativarAtivarEcommerceAsync(id);
         return Ok(new
