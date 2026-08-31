@@ -6,6 +6,7 @@ using OpenAdm.Application.Models.Banners;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 

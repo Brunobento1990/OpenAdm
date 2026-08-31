@@ -7,6 +7,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Application.Dtos.MovimentosDeProdutos;
 using System.Text;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Pdf.Interfaces;
 using OpenAdm.Pdf.DTOs;
 

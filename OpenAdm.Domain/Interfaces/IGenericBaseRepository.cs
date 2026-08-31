@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Domain.Interfaces;
 

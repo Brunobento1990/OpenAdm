@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Paginacao;
 

@@ -3,6 +3,7 @@ using OpenAdm.Data.Context;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Worker.Infra.Repositories;
 

@@ -2,6 +2,7 @@
 using OpenAdm.Application.Models.MovimentacaoDeProdutos;
 using OpenAdm.Domain.Model;
 using OpenAdm.Application.Dtos.MovimentosDeProdutos;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Interfaces;
 

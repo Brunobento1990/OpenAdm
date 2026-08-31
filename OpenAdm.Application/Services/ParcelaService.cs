@@ -13,6 +13,7 @@ using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Eventos;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 

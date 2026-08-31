@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Paginacao;
 

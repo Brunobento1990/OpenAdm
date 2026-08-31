@@ -48,8 +48,6 @@ public class GenericRepository<T>(ParceiroContext parceiroContext)
 
     public virtual async Task<PaginacaoViewModel<T>> PaginacaoAsync(FilterModel<T> filterModel)
     {
-        filterModel.ValidarEObterPropriedadeDeOrdenacao();
-
         var include = filterModel.IncludeCustom();
         var includes = filterModel.IncludeCustomList();
         var select = filterModel.SelectCustom();

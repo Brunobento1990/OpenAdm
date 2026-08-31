@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using OpenAdm.Domain.Exceptions;
 
-namespace OpenAdm.Domain.Model;
+namespace OpenAdm.Domain.PaginateDto;
 
 public abstract class FilterModel<T>
 {
@@ -15,6 +15,15 @@ public abstract class FilterModel<T>
     public bool Asc { get; set; } = false;
     public Guid ParceiroId { get; set; }
     public abstract Expression<Func<T, bool>>? GetWhereBySearch();
+    public virtual Expression<Func<T, object>>? OrderByCustom()
+    {
+        return null;
+    }
+    
+    public virtual Expression<Func<T, object>>? ThenOrderByCustom()
+    {
+        return null;
+    }
 
     public virtual Expression<Func<T, object>>? IncludeCustom()
     {
@@ -46,13 +55,7 @@ public abstract class FilterModel<T>
 
         if (string.IsNullOrWhiteSpace(OrderBy))
             throw new ExceptionApi("Informe a propriedade de ordenação.");
-
-        var propriedade = typeof(T).GetProperties()
-            .FirstOrDefault(x => string.Equals(x.Name, OrderBy.Trim(), StringComparison.OrdinalIgnoreCase));
-
-        if (propriedade == null)
-            throw new ExceptionApi($"A propriedade '{OrderBy}' não é válida para ordenação.");
-
-        return propriedade.Name;
+        
+        return OrderBy;
     }
 }

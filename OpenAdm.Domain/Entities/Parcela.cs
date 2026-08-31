@@ -48,8 +48,28 @@ public sealed class Parcela : BaseEntity
     public Guid FaturaId { get; private set; }
     public bool Quitada { get; private set; }
 
-    public StatusParcelaEnum Status => Quitada ? StatusParcelaEnum.Pago :
-        ValorPagoRecebido > 0 ? StatusParcelaEnum.PagoParcial : StatusParcelaEnum.Pendente;
+    public StatusParcelaEnum Status
+    {
+        get
+        {
+            if (Quitada)
+            {
+                return StatusParcelaEnum.Pago;
+            }
+            
+            if (Vencida)
+            {
+                return StatusParcelaEnum.Vencida;
+            }
+
+            if (ValorPagoRecebido > 0)
+            {
+                return StatusParcelaEnum.PagoParcial;
+            }
+
+            return StatusParcelaEnum.Pendente;
+        }
+    }
 
     public Fatura Fatura { get; set; } = null!;
 
@@ -66,7 +86,7 @@ public sealed class Parcela : BaseEntity
 
     public bool Vencida
     {
-        get => DataDeVencimento.Date < DateTime.Now.Date;
+        get => Quitada ? false : DataDeVencimento.Date < DateTime.Now.Date;
     }
 
     public IList<TransacaoFinanceira>? Transacoes { get; set; }
@@ -97,7 +117,7 @@ public sealed class Parcela : BaseEntity
         {
             throw new ExceptionApi($"A parcela: {NumeroDaParcela} já se encontra paga");
         }
-        
+
         Quitada = (ValorPagoRecebido + valor + (desconto ?? 0) - (juros ?? 0)) >= Valor;
 
         return TransacaoFinanceira.NovaTransacao(

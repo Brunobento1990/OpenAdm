@@ -6,6 +6,7 @@ using OpenAdm.Infra.Extensions.IQueryable;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model.Pedidos;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Repositories;
 
