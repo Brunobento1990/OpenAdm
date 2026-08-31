@@ -45,7 +45,7 @@ public class FaturaController : ControllerBase
         return result.ToActionResult();
     }
 
-    [HttpPost("paginacao/bonificado")]
+    [HttpPost("bonificado/paginacao")]
     [ProducesResponseType<PaginacaoViewModel<FaturaBonificadaPaginacaoViewModel>>(200)]
     [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> Paginacao(PaginacaoFaturaBonificadaDto dto)
