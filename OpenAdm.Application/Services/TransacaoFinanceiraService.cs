@@ -14,7 +14,7 @@ public class TransacaoFinanceiraService : ITransacaoFinanceiraService
         _transacaoFinanceiraRepository = transacaoFinanceiraRepository;
     }
 
-    public async Task<IList<TransacaoFinanceiraViewModel>> TransacoesNoPeriodoAsync(
+    public async Task<IDictionary<DateTime, TransacoesFinanceirasPorDiaViewModel>> TransacoesNoPeriodoAsync(
         TransacaoFinanceiraNoPeriodoDto transacaoFinanceiraNoPeriodoDto)
     {
         var transacoes = await _transacaoFinanceiraRepository
@@ -23,6 +23,18 @@ public class TransacaoFinanceiraService : ITransacaoFinanceiraService
                 pedidoId: transacaoFinanceiraNoPeriodoDto.PedidoId,
                 clienteId: transacaoFinanceiraNoPeriodoDto.ClienteId);
 
-        return transacoes.Select(x => (TransacaoFinanceiraViewModel)x).ToList();
+        return transacoes
+            .GroupBy(x => x.DataDeEfetivacao.Date)
+            .OrderByDescending(x => x.Key)
+            .ToDictionary(
+                x => x.Key,
+                x => new TransacoesFinanceirasPorDiaViewModel
+                {
+                    Transacoes = x
+                        .OrderByDescending(transacao => transacao.DataDeEfetivacao)
+                        .Select(transacao => (TransacaoFinanceiraViewModel)transacao)
+                        .ToList(),
+                    Total = x.Sum(transacao => transacao.Valor)
+                });
     }
 }

@@ -5,5 +5,6 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface ITransacaoFinanceiraService
 {
-    Task<IList<TransacaoFinanceiraViewModel>> TransacoesNoPeriodoAsync(TransacaoFinanceiraNoPeriodoDto transacaoFinanceiraNoPeriodoDto);
+    Task<IDictionary<DateTime, TransacoesFinanceirasPorDiaViewModel>> TransacoesNoPeriodoAsync(
+        TransacaoFinanceiraNoPeriodoDto transacaoFinanceiraNoPeriodoDto);
 }
