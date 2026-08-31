@@ -288,7 +288,7 @@ public class UsuarioService : IUsuarioService
             throw new ExceptionApi("Data de expiração de token inválida, recupere a senha novamente");
         }
 
-        if ((usuario.DataExpiracaoTokenEsqueceuSenha.Value - DateTime.Now).TotalMinutes > 120)
+        if ((usuario.DataExpiracaoTokenEsqueceuSenha.Value - DateTime.UtcNow).TotalMinutes > 120)
         {
             throw new ExceptionApi("Data de expiração de token expirada, recupere a senha novamente");
         }

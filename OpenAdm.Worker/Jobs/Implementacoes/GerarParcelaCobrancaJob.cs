@@ -28,7 +28,7 @@ public class GerarParcelaCobrancaJob : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var agora = DateTime.Now;
+            var agora = DateTime.UtcNow;
             var proximaExecucao = agora.Date.AddDays(agora.Hour >= _horaExecucao ? 1 : 0)
                 .AddHours(_horaExecucao);
 
@@ -36,7 +36,7 @@ public class GerarParcelaCobrancaJob : BackgroundService
 
             await Task.Delay(delay, stoppingToken);
 
-            if (DateTime.Now.EhFimDeSemana())
+            if (DateTime.UtcNow.EhFimDeSemana())
             {
                 LogService.Info("GerarParcelaCobranca: Fim de semana");
                 continue;

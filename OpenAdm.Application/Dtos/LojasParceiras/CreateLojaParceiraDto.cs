@@ -21,7 +21,7 @@ public class CreateLojaParceiraDto
 
     public LojaParceira ToEntity(string? nomeFoto, long numero, Guid parceiroId)
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         return new LojaParceira(
             Guid.NewGuid(),

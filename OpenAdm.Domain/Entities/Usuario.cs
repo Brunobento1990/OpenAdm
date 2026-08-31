@@ -55,7 +55,7 @@ public sealed class Usuario : BaseEntity
     public void EsqueceuSenha()
     {
         TokenEsqueceuSenha = Guid.NewGuid();
-        DataExpiracaoTokenEsqueceuSenha = DateTime.Now;
+        DataExpiracaoTokenEsqueceuSenha = DateTime.UtcNow;
     }
 
     public void UpdateSenha(string senha)

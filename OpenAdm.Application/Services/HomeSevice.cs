@@ -62,11 +62,11 @@ public class HomeSevice : IHomeSevice
             .ObterTotalParcelasPorVencimentoAsync(DateTime.UtcNow.Date);
 
         var totalCobrancaHoje =
-            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.Now,
+            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.UtcNow,
                 _usuarioAutenticado.ParceiroId);
 
         var totalCobrancaSemana =
-            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.Now.AddDays(-7),
+            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.UtcNow.AddDays(-7),
                 _usuarioAutenticado.ParceiroId);
 
         var totalCobranca = await _cobrancaPedidoEcommerceRepository.TotalACobrarAsync(_usuarioAutenticado.ParceiroId);

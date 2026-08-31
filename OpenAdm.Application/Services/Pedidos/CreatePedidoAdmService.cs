@@ -31,7 +31,7 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
             throw new ExceptionApi("Informe os itens do pedido!");
         }
         var usuario = await _usuarioService.GetUsuarioByIdValidacaoAsync(id: pedidoAdmCreateDto.UsuarioId);
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id, null);
 
         pedido.ProcessarItensPedido(pedidoAdmCreateDto.ItensPedido);
@@ -56,7 +56,7 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
 
         await _faturaService.CriarContasAReceberAsync(new()
         {
-            DataDoPrimeiroVencimento = DateTime.Now.AddMonths(1),
+            DataDoPrimeiroVencimento = DateTime.UtcNow.AddMonths(1),
             Desconto = null,
             MeioDePagamento = null,
             Observacao = $"Pedido: {pedido.Numero}",

@@ -49,20 +49,20 @@ public class EventoAplicacao
     public void AdicionarMensagem(string mensagem)
     {
         Mensagem = mensagem.Limitar(1000);
-        DataDeAtualizacao = DateTime.Now;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public void AdicionarTentativa()
     {
         QuantidadeDeTentativa++;
-        DataDeAtualizacao = DateTime.Now;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public void Finalizada(string? mensagem)
     {
         Mensagem = string.IsNullOrWhiteSpace(mensagem) ? mensagem : mensagem.Limitar(1000);
         Finalizado = true;
-        DataDeAtualizacao = DateTime.Now;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public static EventoAplicacao Criar(
@@ -72,8 +72,8 @@ public class EventoAplicacao
     {
         return new EventoAplicacao(
             id: Guid.NewGuid(),
-            dataDeCriacao: DateTime.Now,
-            dataDeAtualizacao: DateTime.Now,
+            dataDeCriacao: DateTime.UtcNow,
+            dataDeAtualizacao: DateTime.UtcNow,
             dados: JsonDocument.Parse(dados),
             tipoEventoAplicacao, false, null, 0, empresaOpenAdmId);
     }

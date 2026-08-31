@@ -49,7 +49,7 @@ public class CreateUsuarioPessoaFisicaDto : BaseModel
     {
         var senha = PasswordAdapter.GenerateHash(Senha);
 
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         return new Usuario(
             Guid.NewGuid(),
             date,

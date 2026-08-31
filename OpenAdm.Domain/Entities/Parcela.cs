@@ -86,7 +86,7 @@ public sealed class Parcela : BaseEntity
 
     public bool Vencida
     {
-        get => Quitada ? false : DataDeVencimento.Date < DateTime.Now.Date;
+        get => Quitada ? false : DataDeVencimento.Date < DateTime.UtcNow.Date;
     }
 
     public IList<TransacaoFinanceira>? Transacoes { get; set; }
@@ -179,8 +179,8 @@ public sealed class Parcela : BaseEntity
     {
         return new Parcela(
             id: Guid.NewGuid(),
-            dataDeCriacao: DateTime.Now,
-            dataDeAtualizacao: DateTime.Now,
+            dataDeCriacao: DateTime.UtcNow,
+            dataDeAtualizacao: DateTime.UtcNow,
             numero: 0,
             dataDeVencimento: dataDeVencimento,
             numeroDaParcela: numeroDaParcela,

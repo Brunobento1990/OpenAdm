@@ -35,7 +35,7 @@ public sealed class Estoque : BaseEntity
         }
 
         Quantidade = novaQuantidade;
-        DataDeAtualizacao = DateTime.Now;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public void AjustarQuantidade(decimal quantidade, bool permitirEstoqueNegativo)
@@ -46,7 +46,7 @@ public sealed class Estoque : BaseEntity
         }
 
         Quantidade = quantidade;
-        DataDeAtualizacao = DateTime.Now;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public Guid ProdutoId { get; private set; }
@@ -63,8 +63,8 @@ public sealed class Estoque : BaseEntity
         Guid? tamanhoId,
         Guid? pesoId)
     {
-        return new Estoque(id: Guid.NewGuid(), dataDeCriacao: DateTime.Now,
-            dataDeAtualizacao: DateTime.Now, numero: 0, produtoId: produtoId, quantidade: quantidade,
+        return new Estoque(id: Guid.NewGuid(), dataDeCriacao: DateTime.UtcNow,
+            dataDeAtualizacao: DateTime.UtcNow, numero: 0, produtoId: produtoId, quantidade: quantidade,
             tamanhoId: tamanhoId, pesoId: pesoId);
     }
 }

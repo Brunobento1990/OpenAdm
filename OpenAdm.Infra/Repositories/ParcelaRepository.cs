@@ -77,7 +77,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
 
     public async Task<IDictionary<int, decimal>> SumTotalMesesAsync(TipoFaturaEnum faturaEnum)
     {
-        var dataInicio = DateTime.Now.AddMonths(-3);
+        var dataInicio = DateTime.UtcNow.AddMonths(-3);
         var dataSplit = dataInicio.ToString("MM/dd/yyyy").Split('/');
         var ano = int.Parse(dataSplit[2][..4]);
         var mes = int.Parse(dataSplit[0]);

@@ -55,8 +55,8 @@ public class ConfiguracaoDePagamentoService : IConfiguracaoDePagamentoService
         {
             configuracao = new Domain.Entities.ConfiguracaoDePagamento(
                 id: Guid.NewGuid(),
-                dataDeCriacao: DateTime.Now,
-                dataDeAtualizacao: DateTime.Now,
+                dataDeCriacao: DateTime.UtcNow,
+                dataDeAtualizacao: DateTime.UtcNow,
                 numero: 0,
                 publicKey: Criptografia.Encrypt(configuracaoDePagamentoCreateOrUpdate.PublicKey),
                 accessToken: Criptografia.Encrypt(configuracaoDePagamentoCreateOrUpdate.AccessToken),

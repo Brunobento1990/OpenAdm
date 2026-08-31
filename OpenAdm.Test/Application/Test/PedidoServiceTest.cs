@@ -436,7 +436,7 @@ public class PedidoServiceTest
 
     private static Usuario BuildUsuarioComTelefone(bool atacado = true)
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         return new Usuario(
             Guid.NewGuid(), date, date, 0,
             "usuario@teste.com", "senha123", "Usuário Teste",
@@ -476,7 +476,7 @@ public class PedidoServiceTest
         Guid produtoId, Guid? pesoId = null, Guid? tamanhoId = null,
         bool vendaSomenteComEstoque = false)
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         var item = new ItemTabelaDePreco(
             Guid.NewGuid(), date, date, 0,
             produtoId,
@@ -501,7 +501,7 @@ public class PedidoServiceTest
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoUsuarioNaoTemTelefone()
     {
         var usuario = new Usuario(
-            Guid.NewGuid(), DateTime.Now, DateTime.Now, 0,
+            Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 0,
             "usuario@teste.com", "senha123", "Usuário Teste",
             telefone: null,
             cnpj: "12345678000100", cpf: null,

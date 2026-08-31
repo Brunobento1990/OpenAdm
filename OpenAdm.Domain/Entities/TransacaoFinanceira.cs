@@ -82,15 +82,15 @@ public sealed class TransacaoFinanceira : BaseEntity, ITransacaoParaCalculo
                 dataDeEfetivacao.Value.Year,
                 dataDeEfetivacao.Value.Month,
                 dataDeEfetivacao.Value.Day,
-                DateTime.Now.Hour,
-                DateTime.Now.Minute,
-                DateTime.Now.Second) :
-            DateTime.Now;
+                DateTime.UtcNow.Hour,
+                DateTime.UtcNow.Minute,
+                DateTime.UtcNow.Second) :
+            DateTime.UtcNow;
 
         return new TransacaoFinanceira(
             id: Guid.NewGuid(),
-            dataDeCriacao: DateTime.Now,
-            dataDeAtualizacao: DateTime.Now,
+            dataDeCriacao: DateTime.UtcNow,
+            dataDeAtualizacao: DateTime.UtcNow,
             numero: 0,
             parcelaId: parcelaId,
             dataDeEfetivacao: data,

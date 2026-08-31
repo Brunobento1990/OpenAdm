@@ -28,8 +28,8 @@ public class CobrancaPedidoEcommerce : BaseEntityParceiro
     {
         return new CobrancaPedidoEcommerce(
             id: Guid.NewGuid(),
-            dataDeCriacao: DateTime.Now,
-            dataDeAtualizacao: DateTime.Now,
+            dataDeCriacao: DateTime.UtcNow,
+            dataDeAtualizacao: DateTime.UtcNow,
             numero: numero,
             parceiroId: parceiroId,
             pedidoId: pedidoId,

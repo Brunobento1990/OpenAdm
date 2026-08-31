@@ -12,7 +12,7 @@ public class CreateTabelaDePrecoDto
 
     public TabelaDePreco ToEntity()
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var tabelaDePreco = new TabelaDePreco(
             Guid.NewGuid(),

@@ -211,12 +211,14 @@ public sealed class FaturaService : IFaturaService
 
     public async Task<FaturaViewModel> CriarAdmAsync(FaturaCriarAdmDto faturaCriarAdmDto)
     {
+        faturaCriarAdmDto.Validar();
         _ = await _usuarioService.GetUsuarioByIdAdmAsync(id: faturaCriarAdmDto.UsuarioId);
 
+        var data = DateTime.UtcNow;
         var fatura = new Fatura(
             id: Guid.NewGuid(),
-            dataDeCriacao: DateTime.Now,
-            dataDeAtualizacao: DateTime.Now,
+            dataDeCriacao: data,
+            dataDeAtualizacao: data,
             numero: 0,
             status: StatusFaturaEnum.Aberta,
             usuarioId: faturaCriarAdmDto.UsuarioId,
@@ -227,20 +229,44 @@ public sealed class FaturaService : IFaturaService
 
         foreach (var parcelaDto in faturaCriarAdmDto.Parcelas)
         {
-            //TODO: ajustar criar fatura pelo admin
-            // fatura.Parcelas.Add(new Parcela(
-            //     id: Guid.NewGuid(),
-            //     dataDeCriacao: DateTime.Now,
-            //     dataDeAtualizacao: DateTime.Now,
-            //     numero: 0,
-            //     dataDeVencimento: parcelaDto.DataDeVencimento,
-            //     numeroDaParcela: parcelaDto.NumeroDaParcela,
-            //     meioDePagamento: parcelaDto.MeioDePagamento,
-            //     valor: parcelaDto.Valor,
-            //     desconto: parcelaDto.Desconto,
-            //     observacao: parcelaDto.Observacao,
-            //     faturaId: fatura.Id,
-            //     idExterno: null));
+            var parcela = Parcela.NovaFatura(
+                dataDeVencimento: parcelaDto.DataDeVencimento,
+                numeroDaParcela: parcelaDto.NumeroDaParcela,
+                meioDePagamento: parcelaDto.MeioDePagamento,
+                valor: parcelaDto.Valor,
+                observacao: parcelaDto.Observacao,
+                faturaId: fatura.Id,
+                idExterno: null,
+                desconto: null,
+                juros: null,
+                tipoFatura: fatura.Tipo);
+
+            parcela.Fatura = fatura;
+
+            if (parcelaDto.AVista)
+            {
+                parcela.Transacoes =
+                [
+                    parcela.Pagar(
+                        valor: parcelaDto.Valor,
+                        meioDePagamento: parcelaDto.MeioDePagamento,
+                        observacao: parcelaDto.Observacao,
+                        dataDePagamento: data,
+                        desconto: null,
+                        juros: null)
+                ];
+            }
+
+            fatura.Parcelas.Add(parcela);
+        }
+
+        if (fatura.Parcelas.All(x => x.Quitada))
+        {
+            fatura.Fechar();
+        }
+        else if (fatura.Parcelas.Any(x => x.Quitada))
+        {
+            fatura.PagaParcialmente();
         }
 
         await _contasAReceberRepository.AddAsync(fatura);

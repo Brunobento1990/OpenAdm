@@ -181,7 +181,7 @@ public class EstoqueService : IEstoqueService
             dto.PesoId,
             dto.TamanhoId);
 
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         if (estoque == null)
         {
@@ -251,7 +251,7 @@ public class EstoqueService : IEstoqueService
             novaQuantidade,
             permitirEstoqueNegativo);
 
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var movimento = new MovimentacaoDeProduto(
             Guid.NewGuid(),

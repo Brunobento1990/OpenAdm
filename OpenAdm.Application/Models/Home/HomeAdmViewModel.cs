@@ -53,7 +53,7 @@ public class ItemCobrancaHomeAdmViewModel
     public decimal Valor { get; set; }
     public DateTime Data { get; set; }
     public string Cliente { get; set; } = string.Empty;
-    public int ADias => (DateTime.Now - Data).Days;
+    public int ADias => (DateTime.UtcNow - Data).Days;
 }
 
 public class PedidoPorDiaModel

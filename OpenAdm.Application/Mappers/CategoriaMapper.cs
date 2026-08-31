@@ -7,7 +7,7 @@ public partial class EntityMapper
 {
     public static Categoria ToCategoriaCreate(CategoriaCreateDto categoriaCreateDto, string? nomeFoto)
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         return new Categoria(
             id: Guid.NewGuid(),
             dataDeCriacao: date,

@@ -50,14 +50,14 @@ public sealed class Fatura : BaseEntity
 
     public void Fechar()
     {
-        DataDeFechamento = DateTime.Now;
+        DataDeFechamento = DateTime.UtcNow;
         Status = StatusFaturaEnum.Paga;
-        DataDeAtualizacao = DateTime.Now;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public void PagaParcialmente()
     {
         Status = StatusFaturaEnum.Paga_Parcialmente;
-        DataDeAtualizacao = DateTime.Now;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 }

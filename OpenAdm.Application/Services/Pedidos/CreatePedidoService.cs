@@ -87,7 +87,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
                 $"Seu pedido não atingiu o mínimo configurado que é de: {pedidoMinimo} reais";
         }
 
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id, null);
 
         var produtosIds = pedidoCreateDto.ItensQuantidadesValidas.Select(x => x.ProdutoId).Distinct().ToList();

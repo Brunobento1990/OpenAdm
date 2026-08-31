@@ -21,7 +21,7 @@ public class CreateProdutoDto
     public IList<ItemTabelaDePreco>? ObterItensTabelaDePreco()
     {
         return!TabelaDePrecoId.HasValue ? null : ItensTabelaDePreco
-        .Select(x => new ItemTabelaDePreco(Guid.NewGuid(), DateTime.Now, DateTime.Now, 0, Guid.Empty, x.ValorUnitarioAtacado, x.ValorUnitarioVarejo, TabelaDePrecoId.Value, x.TamanhoId, x.PesoId)).ToList();
+        .Select(x => new ItemTabelaDePreco(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 0, Guid.Empty, x.ValorUnitarioAtacado, x.ValorUnitarioVarejo, TabelaDePrecoId.Value, x.TamanhoId, x.PesoId)).ToList();
     }
 
     public void Validar()
@@ -33,7 +33,7 @@ public class CreateProdutoDto
     }
     public Produto ToEntity(string nomeFoto)
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         var produto = new Produto(
             Guid.NewGuid(),
             date,

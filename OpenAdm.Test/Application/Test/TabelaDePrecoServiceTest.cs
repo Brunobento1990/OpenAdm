@@ -14,7 +14,7 @@ public class TabelaDePrecoServiceTest
     {
         var pesoId = Guid.NewGuid();
         var tamanhoId = Guid.NewGuid();
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var pesos = new List<Peso>()
         {

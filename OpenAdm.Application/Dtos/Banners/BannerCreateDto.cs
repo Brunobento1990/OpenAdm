@@ -23,7 +23,7 @@ public class BannerCreateDto
         }
 
         NovaFoto = foto;
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
         return new Banner(Guid.NewGuid(), date, date, numero, NovaFoto, true, nomeFoto, parceiroId);
     }
 }

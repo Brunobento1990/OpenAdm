@@ -100,7 +100,7 @@ public class CobrancaPedidoService : ICobrancaPedidoService
             //         total: pedido.ValorTotalCobrar,
             //         pedidoId: pedido.Id,
             //         quantidadeDeParcelas: 1,
-            //         primeiroVencimento: DateTime.Now.AddDays(1),
+            //         primeiroVencimento: DateTime.UtcNow.AddDays(1),
             //         meioDePagamento: gerarCobrancaPedidoDto.MeioDePagamento,
             //         desconto: null,
             //         observacao: null,

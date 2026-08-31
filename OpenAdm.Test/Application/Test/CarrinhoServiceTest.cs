@@ -62,11 +62,11 @@ public class CarrinhoServiceTest
     //    var quantidade = 12;
     //    var categoria = CategoriaBuilder.Init().Build();
     //    var carrinhoRepository = new CarrinhoRepositoryMemory();
-    //    var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho", 0);
+    //    var tamanho = new Tamanho(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, "Novo tamanho", 0);
     //    var produto = ProdutoBuilder.Init().Build();
     //    produto.Categoria = categoria;
     //    produto.Tamanhos.Add(tamanho);
-    //    var itemTabelaDePreco = new ItemTabelaDePreco(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, produto.Id, 1, 2, Guid.NewGuid(), tamanho.Id, null);
+    //    var itemTabelaDePreco = new ItemTabelaDePreco(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, produto.Id, 1, 2, Guid.NewGuid(), tamanho.Id, null);
     //    var usuario = UsuarioBuilder.Init().Build();
     //    var carrinho = new CarrinhoModel()
     //    {
@@ -102,7 +102,7 @@ public class CarrinhoServiceTest
     //public async Task DeveAdicionarProdutoNoCarrinho()
     //{
     //    var usuario = UsuarioBuilder.Init().Build();
-    //    var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho", 0);
+    //    var tamanho = new Tamanho(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, "Novo tamanho", 0);
     //    var produto = ProdutoBuilder.Init().Build();
     //    var addCarrinho = new List<AddCarrinhoModel>()
     //    {
@@ -134,7 +134,7 @@ public class CarrinhoServiceTest
     //public async Task DeveDeletarProdutoDoCarrinho()
     //{
     //    var usuario = UsuarioBuilder.Init().Build();
-    //    var tamanho = new Tamanho(Guid.NewGuid(), DateTime.Now, DateTime.Now, 1, "Novo tamanho", 0);
+    //    var tamanho = new Tamanho(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, "Novo tamanho", 0);
     //    var produto = ProdutoBuilder.Init().Build();
     //    var addCarrinho = new List<AddCarrinhoModel>()
     //    {

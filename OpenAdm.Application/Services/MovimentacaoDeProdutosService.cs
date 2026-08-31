@@ -20,7 +20,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
     private readonly IPesoRepository _pesoRepository;
     private readonly ITamanhoRepository _tamanhoRepository;
     private readonly IMovimentacaoDeProdutoRelatorioService _movimentacaoDeProdutoRelatorioService;
-    private readonly ICategoriaRepository _categoriaRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
 
     public MovimentacaoDeProdutosService(
@@ -29,7 +28,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         IPesoRepository pesoRepository,
         ITamanhoRepository tamanhoRepository,
         IMovimentacaoDeProdutoRelatorioService movimentacaoDeProdutoRelatorioService,
-        ICategoriaRepository categoriaRepository,
         IParceiroAutenticado parceiroAutenticado)
     {
         _movimentacaoDeProdutorepository = movimentacaoDeProdutorepository;
@@ -37,7 +35,6 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
         _pesoRepository = pesoRepository;
         _tamanhoRepository = tamanhoRepository;
         _movimentacaoDeProdutoRelatorioService = movimentacaoDeProdutoRelatorioService;
-        _categoriaRepository = categoriaRepository;
         _parceiroAutenticado = parceiroAutenticado;
     }
 
@@ -197,7 +194,7 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
     public async Task MovimentarItensPedidoAsync(IList<ItemPedido> itens)
     {
-        var data = DateTime.Now;
+        var data = DateTime.UtcNow;
         var movimentos = itens.Select(x => new MovimentacaoDeProduto(
             id: Guid.NewGuid(),
             dataDeCriacao: data,
@@ -215,13 +212,12 @@ public class MovimentacaoDeProdutosService : IMovimentacaoDeProdutosService
 
     public async Task<IList<MovimentoDeProdutoDashBoardModel>> MovimentoDashBoardAsync()
     {
-        var dataInicio = DateTime.Now.AddMonths(-3);
+        var dataInicio = DateTime.UtcNow.AddMonths(-3);
         var novaDataInicio = new DateTime(dataInicio.Year, dataInicio.Month, 1);
-        var dataFinal = DateTime.Now;
+        var dataFinal = DateTime.UtcNow;
 
         var movimentos = await _movimentacaoDeProdutorepository.CountTresMesesAsync(novaDataInicio, dataFinal);
         var movimentosDash = new List<MovimentoDeProdutoDashBoardModel>();
-        var categorias = await _categoriaRepository.GetCategoriasAsync();
         var produtosIds = movimentos.Values.SelectMany(x => x.Select(y => y.ProdutoId)).DistinctBy(x => x).ToList();
         var produtos = await _produtoRepository.GetDictionaryProdutosAsync(produtosIds);
 
