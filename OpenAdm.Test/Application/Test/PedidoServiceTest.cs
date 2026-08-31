@@ -490,7 +490,8 @@ public class PedidoServiceTest
             "Produto Teste", null,
             Guid.NewGuid(), null, null, null,
             inativoEcommerce: false,
-            vendaSomenteComEstoqueDisponivel: vendaSomenteComEstoque);
+            vendaSomenteComEstoqueDisponivel: vendaSomenteComEstoque,
+            ativo: true);
         return item;
     }
 

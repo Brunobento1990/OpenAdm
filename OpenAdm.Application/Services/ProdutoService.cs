@@ -174,6 +174,17 @@ public class ProdutoService : IProdutoService
         await _produtoRepository.UpdateAsync(produto);
     }
 
+    public async Task InativarAtivarAsync(Guid id, bool ativo)
+    {
+        var produto = await _produtoRepository.GetProdutoByIdParaEditarAsync(id)
+                      ?? throw new ExceptionApi("Não foi possível localizar o produto");
+
+        produto.InativarAtivar(ativo);
+
+        _produtoRepository.Update(produto);
+        await _produtoRepository.SaveChangesAsync();
+    }
+
     public async Task<ProdutoViewModel> UpdateProdutoAsync(UpdateProdutoDto updateProdutoDto)
     {
         updateProdutoDto.Validar();

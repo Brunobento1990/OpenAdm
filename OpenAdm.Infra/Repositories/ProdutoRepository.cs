@@ -17,9 +17,9 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     public async Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
     {
         var search = filtro.Search?.Trim();
-        Expression<Func<Produto, bool>>? where = string.IsNullOrWhiteSpace(search)
-            ? null
-            : x => EF.Functions.ILike(EF.Functions.Unaccent(x.Descricao), $"%{search}%");
+        Expression<Func<Produto, bool>> where = string.IsNullOrWhiteSpace(search)
+            ? x => x.Ativo
+            : x => x.Ativo && EF.Functions.ILike(EF.Functions.Unaccent(x.Descricao), $"%{search}%");
 
         return await BuscarDropDownAsync(
             filtro,
@@ -59,7 +59,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Include(x => x.Tamanhos)
             .Include(x => x.Pesos)
-            .Where(x => !x.InativoEcommerce)
+            .Where(x => x.Ativo && !x.InativoEcommerce)
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)
@@ -97,6 +97,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         var totalPages = await ParceiroContext
             .Produtos
             .AsNoTracking()
+            .Where(x => x.Ativo && !x.InativoEcommerce)
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)
@@ -113,7 +114,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext
             .Produtos
-            .AsQueryable()
+            .Where(x => x.Ativo && !x.InativoEcommerce)
             .TotalPage(_take);
     }
 
@@ -125,7 +126,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsQueryable()
             .OrderBy(x => x.Numero)
             .Include(x => x.Categoria)
-            .Where(x => x.CategoriaId == categoriaId)
+            .Where(x => x.CategoriaId == categoriaId && x.Ativo && !x.InativoEcommerce)
             .ToListAsync();
 
         var produtosIds = produtos.Select(x => x.Id).ToList();
@@ -180,7 +181,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Include(x => x.Pesos)
             .Include(x => x.Tamanhos)
-            .Where(x => ids.Contains(x.Id))
+            .Where(x => ids.Contains(x.Id) && x.Ativo && !x.InativoEcommerce)
             .AsNoTracking()
             .ToListAsync();
 
@@ -201,7 +202,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .Include(x => x.Pesos)
             .Include(x => x.Tamanhos)
-            .Where(x => ids.Contains(x.Id))
+            .Where(x => ids.Contains(x.Id) && x.Ativo && !x.InativoEcommerce)
             .ToListAsync();
     }
 
@@ -257,6 +258,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Produtos
             .AsNoTracking()
+            .Where(x => x.Ativo)
             .OrderByDescending(x => x.Numero)
             .ToListAsync();
     }

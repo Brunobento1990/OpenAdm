@@ -45,7 +45,8 @@ public class CreateProdutoDto
             NovaFoto,
             nomeFoto,
             false,
-            VendaSomenteComEstoqueDisponivel);
+            VendaSomenteComEstoqueDisponivel,
+            true);
 
         produto.ItensTabelaDePreco = ObterItensTabelaDePreco() ?? [];
 

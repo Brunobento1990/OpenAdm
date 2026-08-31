@@ -23,8 +23,8 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
             .AsQueryable()
             .AsNoTracking()
             .OrderBy(c => c.Numero)
-            .Include(x => x.Produtos.Where(x => !x.InativoEcommerce))
-            .Where(x => !x.InativoEcommerce && x.Produtos.Where(x => !x.InativoEcommerce).Count() > 0)
+            .Include(x => x.Produtos.Where(x => x.Ativo && !x.InativoEcommerce))
+            .Where(x => !x.InativoEcommerce && x.Produtos.Any(x => x.Ativo && !x.InativoEcommerce))
             .ToListAsync();
 
         foreach (var categoria in categorias)
@@ -44,7 +44,8 @@ public class CategoriaRepository(ParceiroContext parceiroContext)
                         x.UrlFoto,
                         x.NomeFoto,
                         x.InativoEcommerce,
-                        x.VendaSomenteComEstoqueDisponivel))
+                        x.VendaSomenteComEstoqueDisponivel,
+                        x.Ativo))
                 .OrderBy(x => x.Numero)
                 .Take(3)];
         }

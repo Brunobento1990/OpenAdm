@@ -129,4 +129,15 @@ public class ProdutoController : ControllerBase
             result = true
         });
     }
+
+    [HttpPut("ativar/{id}/{ativo}")]
+    [IsFuncionario]
+    [Autentica]
+    [ProducesResponseType(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> InativarAtivar(Guid id, bool ativo)
+    {
+        await _produtoService.InativarAtivarAsync(id, ativo);
+        return Ok();
+    }
 }

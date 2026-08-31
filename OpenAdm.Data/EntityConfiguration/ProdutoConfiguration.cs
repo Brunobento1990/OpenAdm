@@ -31,6 +31,8 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
         builder.Property(x => x.Referencia)
             .HasMaxLength(255)
             .HasDefaultValue(null);
+        builder.Property(x => x.Ativo)
+            .HasDefaultValue(true);
         builder.HasMany(x => x.Pesos)
             .WithMany(x => x.Produtos)
             .UsingEntity<PesoProduto>();
@@ -38,5 +40,10 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
             .WithMany(x => x.Produtos)
             .UsingEntity<TamanhoProduto>();
         builder.HasIndex(x => x.InativoEcommerce);
+        builder.HasIndex(x => x.Ativo);
+        builder.HasIndex(x => new { x.Ativo, x.Descricao });
+        builder.HasIndex(x => new { x.Ativo, x.InativoEcommerce, x.Numero });
+        builder.HasIndex(x => new { x.Ativo, x.InativoEcommerce, x.Referencia });
+        builder.HasIndex(x => new { x.CategoriaId, x.Ativo, x.InativoEcommerce, x.Numero });
     }
 }

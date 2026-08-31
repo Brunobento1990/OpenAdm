@@ -24,7 +24,7 @@ public class CategoriaEcommerceService : ICategoriaEcommerceService
             {
                 Descricao = x.Descricao,
                 Id = x.Id,
-                QuantidadeDeProdutos = x.Produtos.Count(y => !y.InativoEcommerce)
+                QuantidadeDeProdutos = x.Produtos.Count(y => y.Ativo && !y.InativoEcommerce)
             }).ToListAsync();
     }
 
@@ -39,6 +39,7 @@ public class CategoriaEcommerceService : ICategoriaEcommerceService
                 Descricao = x.Descricao,
                 Id = x.Id,
                 Produtos = x.Produtos
+                    .Where(y => y.Ativo && !y.InativoEcommerce)
                     .OrderBy(y => y.DataDeCriacao)
                     .Take(3)
                     .Select(y => new ProdutoCategoriaEcommerceHomeQuery()
