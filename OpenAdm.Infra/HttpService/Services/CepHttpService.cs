@@ -19,7 +19,7 @@ public sealed class CepHttpService : IHttpClientCep
     public async Task<ConsultaCepResponse> ConsultaCepAsync(string cepOrigem)
     {
         using var client = _httpClientFactory.CreateClient($"{HttpServiceEnum.ConsultaCep}");
-        var url = $"/ws/{cepOrigem}/json";
+        var url = $"/ws/{cepOrigem.Replace("-","").Trim()}/json";
         var response = await client.GetAsync(url);
         if (!response.IsSuccessStatusCode)
         {
