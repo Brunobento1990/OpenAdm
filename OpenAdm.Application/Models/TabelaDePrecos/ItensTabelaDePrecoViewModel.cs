@@ -35,15 +35,19 @@ public class ItensTabelaDePrecoViewModel : BaseModel
         if (itensTabelaDePreco.TamanhoId != null)
         {
             TamanhoId = itensTabelaDePreco.TamanhoId;
-            Tamanho = tamanhos
-                .Select(x => new TamanhoViewModel().ToModel(x))
-                .FirstOrDefault(x => x.Id == itensTabelaDePreco.TamanhoId.Value);
+            Tamanho = itensTabelaDePreco.Tamanho != null
+                ? new TamanhoViewModel().ToModel(itensTabelaDePreco.Tamanho)
+                : tamanhos
+                    .Select(x => new TamanhoViewModel().ToModel(x))
+                    .FirstOrDefault(x => x.Id == itensTabelaDePreco.TamanhoId.Value);
         }
 
         if (itensTabelaDePreco.PesoId != null)
         {
             PesoId = itensTabelaDePreco.PesoId;
-            Peso = pesos
+            Peso = itensTabelaDePreco.Peso != null
+                ? new PesoViewModel().ToModel(itensTabelaDePreco.Peso)
+                : pesos
                     .Select(x => new PesoViewModel().ToModel(x))
                     .FirstOrDefault(x => x.Id == itensTabelaDePreco.PesoId.Value);
         }

@@ -15,11 +15,16 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
     }
 
-    public async Task CreateItemTabelaDePrecoAsync(CreateItensTabelaDePrecoDto createItensTabelaDePrecoDto)
+    public async Task<ItensTabelaDePrecoViewModel> CreateItemTabelaDePrecoAsync(CreateItensTabelaDePrecoDto createItensTabelaDePrecoDto)
     {
         var itemTabelaDePreco = createItensTabelaDePrecoDto.ToEntity();
 
         await _itemTabelaDePrecoRepository.AddAsync(itemTabelaDePreco);
+
+        var itemCompleto = await _itemTabelaDePrecoRepository.GetItemTabelaDePrecoByIdAsync(itemTabelaDePreco.Id)
+            ?? throw new ExceptionApi("Não foi possível localizar o item da tabela de preço!");
+
+        return new ItensTabelaDePrecoViewModel().ToModel(itemCompleto, [], []);
     }
 
     public async Task CreateListItemTabelaDePrecoAsync(IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto)
@@ -28,7 +33,8 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
 
         var itensTabelaDePreco = createItensTabelaDePrecoDto.Select(x => x.ToEntity()).ToList();
 
-        await _itemTabelaDePrecoRepository.DeleteItensTabelaDePrecoByProdutoIdAsync(createItensTabelaDePrecoDto.First().ProdutoId);
+        await _itemTabelaDePrecoRepository.DeleteItensTabelaDePrecoByProdutoIdAsync(createItensTabelaDePrecoDto.First()
+            .ProdutoId);
 
         await _itemTabelaDePrecoRepository.AddRangeAsync(itensTabelaDePreco);
     }
@@ -36,10 +42,27 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
     public async Task DeleteItemAsync(Guid id)
     {
         var item = await _itemTabelaDePrecoRepository.GetItemTabelaDePrecoByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o item da tabela de preço!");
+                   ?? throw new ExceptionApi("Não foi possível localizar o item da tabela de preço!");
 
 
         await _itemTabelaDePrecoRepository.DeleteAsync(item);
+    }
+
+    public async Task<ItensTabelaDePrecoViewModel> UpdateValoresAsync(
+        UpdateItemTabelaDePrecoDto updateItemTabelaDePrecoDto)
+    {
+        updateItemTabelaDePrecoDto.Validar();
+
+        var item = await _itemTabelaDePrecoRepository.GetItemTabelaDePrecoByIdAsync(updateItemTabelaDePrecoDto.Id)
+                   ?? throw new ExceptionApi("Não foi possível localizar o item da tabela de preço!");
+
+        item.UpdateValores(
+            updateItemTabelaDePrecoDto.ValorUnitarioAtacado,
+            updateItemTabelaDePrecoDto.ValorUnitarioVarejo);
+
+        await _itemTabelaDePrecoRepository.UpdateAsync(item);
+
+        return new ItensTabelaDePrecoViewModel().ToModel(item, [], []);
     }
 
     public async Task<IList<ItensTabelaDePrecoViewModel>> ObterItensDaTabelaDePrecoAsync(Guid tebaleDePrecoId)
@@ -80,9 +103,11 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
         await _itemTabelaDePrecoRepository.SaveChangesAsync();
     }
 
-    public async Task UpdatePrecoPorTamanhoAsync(UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto)
+    public async Task UpdatePrecoPorTamanhoAsync(
+        UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto)
     {
-        var itens = await _itemTabelaDePrecoRepository.ObterPorTamanhoIdAsync(updateItensTabelaDePrecoPorTamanhoDto.TamanhoId);
+        var itens = await _itemTabelaDePrecoRepository.ObterPorTamanhoIdAsync(updateItensTabelaDePrecoPorTamanhoDto
+            .TamanhoId);
         if (itens.Count == 0)
         {
             throw new ExceptionApi("Não há itens a serem atualizados");

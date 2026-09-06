@@ -5,10 +5,11 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IItemTabelaDePrecoService
 {
-    Task CreateItemTabelaDePrecoAsync(CreateItensTabelaDePrecoDto createItensTabelaDePrecoDto);
+    Task<ItensTabelaDePrecoViewModel> CreateItemTabelaDePrecoAsync(CreateItensTabelaDePrecoDto createItensTabelaDePrecoDto);
     Task CreateListItemTabelaDePrecoAsync(IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto);
     Task DeleteItemAsync(Guid id);
     Task<IList<ItensTabelaDePrecoViewModel>> ObterItensDaTabelaDePrecoAsync(Guid tebaleDePrecoId);
     Task UpdatePrecoPorPesoAsync(UpdateItensTabelaDePrecoPorPesoDto updateItensTabelaDePrecoPorPesoDto);
     Task UpdatePrecoPorTamanhoAsync(UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto);
+    Task<ItensTabelaDePrecoViewModel> UpdateValoresAsync(UpdateItemTabelaDePrecoDto updateItemTabelaDePrecoDto);
 }

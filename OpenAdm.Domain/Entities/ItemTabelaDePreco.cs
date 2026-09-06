@@ -22,10 +22,18 @@ public sealed class ItemTabelaDePreco : BaseItem
         ProdutoId = produtoId;
     }
 
+    public void UpdateValores(decimal valorUnitarioAtacado, decimal valorUnitarioVarejo)
+    {
+        ValorUnitarioAtacado = valorUnitarioAtacado;
+        ValorUnitarioVarejo = valorUnitarioVarejo;
+    }
+
     public decimal ValorUnitarioAtacado { get; private set; }
     public decimal ValorUnitarioVarejo { get; private set; }
     public Guid TabelaDePrecoId { get; private set; }
     public TabelaDePreco TabelaDePreco { get; set; } = null!;
     public Guid? TamanhoId { get; private set; }
+    public Tamanho? Tamanho { get; set; }
     public Guid? PesoId { get; private set; }
+    public Peso? Peso { get; set; }
 }

@@ -35,6 +35,9 @@ public class ItemTabelaDePrecoRepository : GenericRepository<ItemTabelaDePreco>,
         return await ParceiroContext
             .ItensTabelaDePreco
             .AsNoTracking()
+            .Include(x => x.Produto)
+            .Include(x => x.Peso)
+            .Include(x => x.Tamanho)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 

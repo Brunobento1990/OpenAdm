@@ -24,26 +24,35 @@ public class ItemTabelaDePrecoController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreateItemTabelaDePreco(CreateItensTabelaDePrecoDto createItensTabelaDePrecoDto)
     {
-        await _itemTabelaDePrecoService.CreateItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
-        return Ok();
+        var response = await _itemTabelaDePrecoService.CreateItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
+        return Ok(response);
     }
 
     [HttpPost("create-list")]
-    public async Task<IActionResult> CreateListItemTabelaDePreco(IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto)
+    public async Task<IActionResult> CreateListItemTabelaDePreco(
+        IList<CreateItensTabelaDePrecoDto> createItensTabelaDePrecoDto)
     {
         await _itemTabelaDePrecoService.CreateListItemTabelaDePrecoAsync(createItensTabelaDePrecoDto);
         return Ok();
+    }
+
+    [HttpPut("update")]
+    public async Task<IActionResult> UpdateValores(UpdateItemTabelaDePrecoDto updateItemTabelaDePrecoDto)
+    {
+        var response = await _itemTabelaDePrecoService.UpdateValoresAsync(updateItemTabelaDePrecoDto);
+        return Ok(response);
     }
 
     [HttpDelete("delete")]
     public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
     {
         await _itemTabelaDePrecoService.DeleteItemAsync(id);
-        return Ok();
+        return Ok(new { Resultado = true });
     }
 
     [HttpPut("atualizar-por-peso")]
-    public async Task<IActionResult> AtualizarPorPeso(UpdateItensTabelaDePrecoPorPesoDto updateItensTabelaDePrecoPorPesoDto)
+    public async Task<IActionResult> AtualizarPorPeso(
+        UpdateItensTabelaDePrecoPorPesoDto updateItensTabelaDePrecoPorPesoDto)
     {
         await _itemTabelaDePrecoService.UpdatePrecoPorPesoAsync(updateItensTabelaDePrecoPorPesoDto);
 
@@ -54,7 +63,8 @@ public class ItemTabelaDePrecoController : ControllerBase
     }
 
     [HttpPut("atualizar-por-tamanho")]
-    public async Task<IActionResult> AtualizarPorTamanho(UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto)
+    public async Task<IActionResult> AtualizarPorTamanho(
+        UpdateItensTabelaDePrecoPorTamanhoDto updateItensTabelaDePrecoPorTamanhoDto)
     {
         await _itemTabelaDePrecoService.UpdatePrecoPorTamanhoAsync(updateItensTabelaDePrecoPorTamanhoDto);
 
