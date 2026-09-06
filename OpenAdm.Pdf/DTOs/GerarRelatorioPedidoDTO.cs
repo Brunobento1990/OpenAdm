@@ -3,9 +3,9 @@
 public class GerarRelatorioPedidoDTO
 {
     public GerarRelatorioPedidoDTO(
-        DateTime dataInicial,
-        DateTime dataFinal,
-        string? logo,
+        DateTime? dataInicial,
+        DateTime? dataFinal,
+        byte[]? logo,
         decimal total)
     {
         DataInicial = dataInicial;
@@ -13,9 +13,9 @@ public class GerarRelatorioPedidoDTO
         Logo = logo;
         Total = total;
     }
-    public DateTime DataInicial { get; private set; }
-    public DateTime DataFinal { get; private set; }
-    public string? Logo { get; private set; }
+    public DateTime? DataInicial { get; private set; }
+    public DateTime? DataFinal { get; private set; }
+    public byte[]? Logo { get; private set; }
     public decimal Total { get; private set; }
     public IList<RelatorioItensPedidoDto> RelatorioItensPedidoDto { get; set; } = new List<RelatorioItensPedidoDto>();
 }
