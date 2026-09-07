@@ -14,6 +14,21 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
 {
     private const int _take = 6;
 
+    public async Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+    {
+        var search = filtro.Search?.Trim();
+        Expression<Func<Produto, bool>> where = string.IsNullOrWhiteSpace(search)
+            ? x => x.Ativo
+            : x => x.Ativo && EF.Functions.ILike(EF.Functions.Unaccent(x.Descricao), $"%{search}%");
+
+        return await BuscarDropDownAsync(
+            filtro,
+            where,
+            x => x.Descricao,
+            x => x.Id,
+            x => new DropDownItemModel { Id = x.Id, Descricao = x.Descricao });
+    }
+
     public async Task<PaginacaoViewModel<Produto>> GetProdutosAsync(
         PaginacaoProdutoEcommerceDto paginacaoProdutoEcommerceDto)
     {
@@ -44,7 +59,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Include(x => x.Tamanhos)
             .Include(x => x.Pesos)
-            .Where(x => !x.InativoEcommerce)
+            .Where(x => x.Ativo && !x.InativoEcommerce)
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)
@@ -82,6 +97,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         var totalPages = await ParceiroContext
             .Produtos
             .AsNoTracking()
+            .Where(x => x.Ativo && !x.InativoEcommerce)
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)
@@ -98,7 +114,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext
             .Produtos
-            .AsQueryable()
+            .Where(x => x.Ativo && !x.InativoEcommerce)
             .TotalPage(_take);
     }
 
@@ -110,7 +126,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsQueryable()
             .OrderBy(x => x.Numero)
             .Include(x => x.Categoria)
-            .Where(x => x.CategoriaId == categoriaId)
+            .Where(x => x.CategoriaId == categoriaId && x.Ativo && !x.InativoEcommerce)
             .ToListAsync();
 
         var produtosIds = produtos.Select(x => x.Id).ToList();
@@ -139,7 +155,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                     .Select(tm =>
                         new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao,
                             tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal, tm.Tamanho.AlturaReal,
-                            tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal)
+                            tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal, tm.Tamanho.Ativo)
                     )
                     .ToList();
 
@@ -148,7 +164,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                     .Select(tm =>
                         new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero,
                             tm.Peso.Descricao, tm.Peso.PesoReal, tm.Peso.AlturaReal,
-                            tm.Peso.LarguraReal, tm.Peso.ComprimentoReal)
+                            tm.Peso.LarguraReal, tm.Peso.ComprimentoReal, tm.Peso.Ativo)
                     )
                     .ToList();
             });
@@ -165,7 +181,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Include(x => x.Pesos)
             .Include(x => x.Tamanhos)
-            .Where(x => ids.Contains(x.Id))
+            .Where(x => ids.Contains(x.Id) && x.Ativo && !x.InativoEcommerce)
             .AsNoTracking()
             .ToListAsync();
 
@@ -186,7 +202,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .Include(x => x.Pesos)
             .Include(x => x.Tamanhos)
-            .Where(x => ids.Contains(x.Id))
+            .Where(x => ids.Contains(x.Id) && x.Ativo && !x.InativoEcommerce)
             .ToListAsync();
     }
 
@@ -220,7 +236,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 .Select(tm =>
                     new Tamanho(tm.Tamanho.Id, tm.Tamanho.DataDeCriacao, tm.Tamanho.DataDeAtualizacao,
                         tm.Tamanho.Numero, tm.Tamanho.Descricao, tm.Tamanho.PesoReal, tm.Tamanho.AlturaReal,
-                        tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal)
+                        tm.Tamanho.LarguraReal, tm.Tamanho.ComprimentoReal, tm.Tamanho.Ativo)
                 )
                 .ToList();
 
@@ -229,7 +245,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
                 .Select(tm =>
                     new Peso(tm.Peso.Id, tm.Peso.DataDeCriacao, tm.Peso.DataDeAtualizacao, tm.Peso.Numero,
                         tm.Peso.Descricao, tm.Peso.PesoReal, tm.Peso.AlturaReal,
-                        tm.Peso.LarguraReal, tm.Peso.ComprimentoReal)
+                        tm.Peso.LarguraReal, tm.Peso.ComprimentoReal, tm.Peso.Ativo)
                 )
                 .ToList();
         }
@@ -242,6 +258,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Produtos
             .AsNoTracking()
+            .Where(x => x.Ativo)
             .OrderByDescending(x => x.Numero)
             .ToListAsync();
     }

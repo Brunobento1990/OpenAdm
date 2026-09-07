@@ -40,6 +40,7 @@ public class EstoqueRepository : GenericRepository<Estoque>, IEstoqueRepository
     {
         return await ParceiroContext
             .Estoques
+            .Include(x => x.Produto)
             .Where(x => ids.Contains(x.Id))
             .ToDictionaryAsync(x => x.Id);
     }

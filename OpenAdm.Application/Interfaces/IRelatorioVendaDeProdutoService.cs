@@ -6,4 +6,5 @@ namespace OpenAdm.Application.Interfaces;
 public interface IRelatorioVendaDeProdutoService
 {
     Task<RelatorioVendaDeProdutoViewModel> ListarAsync(RelatorioVendaDeProdutoDTO relatorioVendaDeProdutoDto);
+    Task<byte[]> ImprimirAsync(RelatorioVendaDeProdutoDTO relatorioVendaDeProdutoDto);
 }

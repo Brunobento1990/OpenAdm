@@ -22,6 +22,6 @@ public class DeletePedidoController : ControllerBase
     public async Task<IActionResult> Delete([FromQuery] Guid id)
     {
         await _deletePedidoService.DeletePedidoAsync(id);
-        return Ok();
+        return Ok(new { Resultado = true });
     }
 }

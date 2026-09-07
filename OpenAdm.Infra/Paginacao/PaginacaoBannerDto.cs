@@ -1,17 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OpenAdm.Domain.Entities;
+﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
 using System.Linq.Expressions;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Paginacao;
 
 public class PaginacaoBannerDto : FilterModel<Banner>
 {
-    public override Expression<Func<Banner, bool>>? GetWhereBySearch()
+    public override Expression<Func<Banner, bool>> GetWhereBySearch()
     {
-        if (string.IsNullOrWhiteSpace(Search))
-            return null;
+        if (ListarInativo)
+        {
+            return x => x.ParceiroId == ParceiroId;
+        }
 
-        return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Numero.ToString()), $"%{Search}%");
+        return x => x.ParceiroId == ParceiroId && x.Ativo;
     }
 }

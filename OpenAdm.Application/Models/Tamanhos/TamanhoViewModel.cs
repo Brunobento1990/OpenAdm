@@ -13,6 +13,8 @@ public class TamanhoViewModel : BaseModel
     public decimal? LarguraReal { get; set; }
     public decimal? ComprimentoReal { get; set; }
     public PrecoProdutoViewModel? PrecoProduto { get; set; }
+    public bool Ativo { get; set; }
+
     public TamanhoViewModel ToModel(Tamanho entity)
     {
         Id = entity.Id;
@@ -24,6 +26,7 @@ public class TamanhoViewModel : BaseModel
         AlturaReal = entity.AlturaReal;
         LarguraReal = entity.LarguraReal;
         ComprimentoReal = entity.ComprimentoReal;
+        Ativo = entity.Ativo;
         return this;
     }
 }

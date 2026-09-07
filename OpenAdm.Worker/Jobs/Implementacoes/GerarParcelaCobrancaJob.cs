@@ -28,7 +28,7 @@ public class GerarParcelaCobrancaJob : BackgroundService
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            var agora = DateTime.Now;
+            var agora = DateTime.UtcNow;
             var proximaExecucao = agora.Date.AddDays(agora.Hour >= _horaExecucao ? 1 : 0)
                 .AddHours(_horaExecucao);
 
@@ -36,7 +36,7 @@ public class GerarParcelaCobrancaJob : BackgroundService
 
             await Task.Delay(delay, stoppingToken);
 
-            if (DateTime.Now.EhFimDeSemana())
+            if (DateTime.UtcNow.EhFimDeSemana())
             {
                 LogService.Info("GerarParcelaCobranca: Fim de semana");
                 continue;
@@ -82,8 +82,13 @@ public class GerarParcelaCobrancaJob : BackgroundService
                             int.Parse(_configuration["ParcelaCobranca:DiasVencimento"]!))
                     );
 
-                    var linkParaPagamento =
-                        $"{parceiro.EmpresaOpenAdm.UrlAdmin}/financeiro/cobranca";
+                    var admin = parceiro.EmpresaOpenAdm.Link;
+                    if (admin == null)
+                    {
+                        LogService.Info($"Não foi encontrada URL administrativa para o parceiro: {parceiro.NomeFantasia}");
+                        continue;
+                    }
+                    var linkParaPagamento = $"https://adm.{admin.Url}/financeiro/cobranca";
 
                     var mensagemCobranca =
                         $"Olá, {parceiro.NomeFantasia} 👋\nSua mensalidade já está disponível.\n📅 Competência: {DateTime.UtcNow.Month}/{DateTime.UtcNow.Year}\n💰 Valor: R$ {valor.FormatMoney()}\n📆 Vencimento: {parcelaCobranca.DataDeVencimento.DateTimeSomenteDataToString()}\n🔹 Link de pagamento:\n{linkParaPagamento}\nSe tiver qualquer dúvida, é só responder essa mensagem 🙂";

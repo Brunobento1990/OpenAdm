@@ -16,9 +16,10 @@ public class RelatorioVendaDeProdutoRepository : IRelatorioVendaDeProdutoReposit
         _context = context;
     }
 
-    public async Task<(ICollection<RelatorioVendaDeProdutoModel>, int TotalPagina)> ListarAsync(DateTime? dataInicial,
+    public async Task<(ICollection<RelatorioVendaDeProdutoModel> Dados, int TotalPagina, decimal QuantidadeTotal,
+        decimal ValorTotal)> ListarAsync(DateTime? dataInicial,
         DateTime? dataFinal,
-        int skip, int take, bool asc)
+        int skip, int? take, bool asc)
     {
         var query = _context.ItensPedidos
             .AsNoTracking()
@@ -33,6 +34,9 @@ public class RelatorioVendaDeProdutoRepository : IRelatorioVendaDeProdutoReposit
         {
             query = query.Where(x => x.Pedido.DataDeCriacao <= dataFinal.Value);
         }
+
+        var quantidadeTotal = await query.SumAsync(x => x.Quantidade);
+        var valorTotal = await query.SumAsync(x => x.ValorUnitario * x.Quantidade);
 
         var agrupado = query
             .GroupBy(x => new
@@ -52,6 +56,7 @@ public class RelatorioVendaDeProdutoRepository : IRelatorioVendaDeProdutoReposit
             Descricao = g.Key.Descricao,
             Foto = g.Key.UrlFoto,
             Quantidade = g.Sum(x => x.Quantidade),
+            ValorTotal = g.Sum(x => x.ValorUnitario * x.Quantidade),
             Peso = g.Key.PesoDescricao,
             Tamanho = g.Key.TamanhoDescricao
         });
@@ -65,12 +70,15 @@ public class RelatorioVendaDeProdutoRepository : IRelatorioVendaDeProdutoReposit
             novaQuery = novaQuery.OrderByDescending(x => x.Quantidade);
         }
 
-        var dados = await novaQuery
-            .Paginate(skip, take)
-            .ToListAsync();
+        var totalPagina = take.HasValue
+            ? await novaQuery.CountCustomAsync(take.Value)
+            : 1;
 
-        var totalPagina = await novaQuery.CountCustomAsync(take);
+        if (take.HasValue)
+            novaQuery = novaQuery.Paginate(skip, take.Value);
 
-        return (dados, totalPagina);
+        var dados = await novaQuery.ToListAsync();
+
+        return (dados, totalPagina, quantidadeTotal, valorTotal);
     }
 }

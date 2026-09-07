@@ -75,8 +75,8 @@ public class ConfiguracaoDeFreteService : IConfiguracaoDeFreteService
         var config = await _configuracaoDeFreteRepository.ObterDoParceiroAsync(_parceiroAutenticado.Id);
         if (config == null)
         {
-            config = new ConfiguracaoDeFrete(id: Guid.NewGuid(), dataDeCriacao: DateTime.Now,
-                dataDeAtualizacao: DateTime.Now, parceiroId: _parceiroAutenticado.Id, numero: 0)
+            config = new ConfiguracaoDeFrete(id: Guid.NewGuid(), dataDeCriacao: DateTime.UtcNow,
+                dataDeAtualizacao: DateTime.UtcNow, parceiroId: _parceiroAutenticado.Id, numero: 0)
             {
                 Token = configuracao.Token,
                 Ativo = configuracao.Ativo,

@@ -97,12 +97,8 @@ public class ProdutoService : IProdutoService
         return produtos.Select(x => new ProdutoViewModel().ToModel(x)).ToList();
     }
 
-    public async Task<IEnumerable<ProdutoViewModel>> GetDropDownPaginacaoAsync(
-        PaginacaoDropDown<Produto> paginacaoDropDown)
-    {
-        var produtos = await _produtoRepository.PaginacaoDropDownAsync(paginacaoDropDown);
-        return produtos.Select(x => new ProdutoViewModel().ToModel(x));
-    }
+    public Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+        => _produtoRepository.BuscarDropDownAsync(filtro);
 
     public async Task<PaginacaoViewModel<ProdutoViewModel>> GetPaginacaoAsync(FilterModel<Produto> paginacaoProdutoDto)
     {
@@ -176,6 +172,17 @@ public class ProdutoService : IProdutoService
         produto.InativarAtivarEcommerce();
 
         await _produtoRepository.UpdateAsync(produto);
+    }
+
+    public async Task InativarAtivarAsync(Guid id, bool ativo)
+    {
+        var produto = await _produtoRepository.GetProdutoByIdParaEditarAsync(id)
+                      ?? throw new ExceptionApi("Não foi possível localizar o produto");
+
+        produto.InativarAtivar(ativo);
+
+        _produtoRepository.Update(produto);
+        await _produtoRepository.SaveChangesAsync();
     }
 
     public async Task<ProdutoViewModel> UpdateProdutoAsync(UpdateProdutoDto updateProdutoDto)

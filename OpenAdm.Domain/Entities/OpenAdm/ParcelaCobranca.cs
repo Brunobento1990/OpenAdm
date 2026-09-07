@@ -51,7 +51,7 @@ public class ParcelaCobranca
     {
         return new ParcelaCobranca(
             id: Guid.NewGuid(),
-            dataDeCadastro: DateTime.Now,
+            dataDeCadastro: DateTime.UtcNow,
             dataDeVencimento: dataDeVencimento,
             dataDePagamento: null,
             numero: numero,
@@ -67,6 +67,6 @@ public class ParcelaCobranca
     public void Pagar(decimal valor)
     {
         ValorPago += valor;
-        DataDePagamento = DateTime.Now;
+        DataDePagamento = DateTime.UtcNow;
     }
 }

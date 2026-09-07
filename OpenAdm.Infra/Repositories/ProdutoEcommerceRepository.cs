@@ -27,7 +27,7 @@ public class ProdutoEcommerceRepository : IProdutoEcommerceRepository
             .AsNoTracking()
             .Include(x => x.Tamanhos)
             .Include(x => x.Pesos)
-            .Where(x => !x.InativoEcommerce)
+            .Where(x => x.Ativo && !x.InativoEcommerce)
             .AsQueryable();
 
         if (categoriasIds?.Count > 0)

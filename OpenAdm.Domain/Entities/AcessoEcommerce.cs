@@ -26,6 +26,6 @@ public sealed class AcessoEcommerce
 
     public static AcessoEcommerce NovoAcesso(long quantidade, Guid parceiroId)
     {
-        return new AcessoEcommerce(id: Guid.NewGuid(), dataDeCriacao: DateTime.Now, quantidade: quantidade, parceiroId);
+        return new AcessoEcommerce(id: Guid.NewGuid(), dataDeCriacao: DateTime.UtcNow, quantidade: quantidade, parceiroId);
     }
 }

@@ -25,7 +25,7 @@ public class ConexaoWhatsAppJob : BackgroundService
         {
             await Task.Delay(TimeSpan.FromMinutes(_delayEmMinutos), stoppingToken);
 
-            if (DateTime.Now.EhMadrugada())
+            if (DateTime.UtcNow.EhMadrugada())
             {
                 LogService.Info("ConexaoWhatsApp: Madrugada");
                 continue;

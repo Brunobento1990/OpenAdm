@@ -2,5 +2,5 @@
 
 public interface IPedidoDownloadService
 {
-    Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId);
+    Task<(byte[] Pdf, long NumeroPedido)> DownloadPedidoPdfAsync(Guid pedidoId);
 }

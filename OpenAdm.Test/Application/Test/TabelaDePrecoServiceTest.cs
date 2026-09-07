@@ -14,16 +14,16 @@ public class TabelaDePrecoServiceTest
     {
         var pesoId = Guid.NewGuid();
         var tamanhoId = Guid.NewGuid();
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var pesos = new List<Peso>()
         {
-            new Peso(pesoId, date, date, 0, "Peso", 0, null, null, null)
+            new Peso(pesoId, date, date, 0, "Peso", 0, null, null, null, true)
         };
 
         var tamanhos = new List<Tamanho>()
         {
-            new Tamanho(tamanhoId, date, date, 0, "Tamanho", 0, null, null, null)
+            new Tamanho(tamanhoId, date, date, 0, "Tamanho", 0, null, null, null, true)
         };
 
         var tabelaDePrecoDto = new CreateTabelaDePrecoDto()

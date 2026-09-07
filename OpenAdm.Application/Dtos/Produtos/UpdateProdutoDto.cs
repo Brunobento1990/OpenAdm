@@ -40,6 +40,6 @@ public class UpdateProdutoDto : CreateProdutoDto
     public IList<ItemTabelaDePreco>? ObterItensTabelaDePrecoEdit()
     {
         return !TabelaDePrecoId.HasValue ? null : ItensTabelaDePreco
-        .Select(x => new ItemTabelaDePreco(Guid.NewGuid(), DateTime.Now, DateTime.Now, 0, Id, x.ValorUnitarioAtacado, x.ValorUnitarioVarejo, TabelaDePrecoId.Value, x.TamanhoId, x.PesoId)).ToList();
+        .Select(x => new ItemTabelaDePreco(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 0, Id, x.ValorUnitarioAtacado, x.ValorUnitarioVarejo, TabelaDePrecoId.Value, x.TamanhoId, x.PesoId)).ToList();
     }
 }

@@ -3,6 +3,8 @@ using OpenAdm.Api.Attributes;
 using OpenAdm.Application.Dtos.Tamanhos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Infra.Paginacao;
+using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Api.Controllers;
 
@@ -27,6 +29,16 @@ public class TamanhoController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
+    [HttpGet("dropdown")]
+    [ProducesResponseType<IList<DropDownItemModel>>(200)]
+    public async Task<IActionResult> DropDown([FromQuery] string? search = null)
+    {
+        var filtro = new DropDownFiltro { Search = search };
+        return Ok(await _tamanhoService.BuscarDropDownAsync(filtro));
+    }
+
+    [Autentica]
+    [IsFuncionario]
     [HttpPost("paginacao")]
     public async Task<IActionResult> Paginacao(PaginacaoTamanhoDto paginacaoTamanhoDto)
     {
@@ -45,10 +57,10 @@ public class TamanhoController : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteTamanho([FromQuery] Guid id)
+    [HttpPut("ativar/{id}/{ativo}")]
+    public async Task<IActionResult> InativarAtivar(Guid id, bool ativo)
     {
-        await _tamanhoService.DeleteTamanhoAsync(id);
+        await _tamanhoService.InativarAtivarAsync(id, ativo);
         return Ok();
     }
 

@@ -34,7 +34,9 @@ public class EsqueceuSenhaService : IEsqueceuSenhaService
         htmlEnvio = htmlEnvio.Replace("***empresa***", parceiro.NomeFantasia);
         htmlEnvio = htmlEnvio.Replace("***ecommerce***", parceiro.NomeFantasia);
         htmlEnvio = htmlEnvio.Replace("***usuario***", usuario.Nome);
-        htmlEnvio = htmlEnvio.Replace("***link***", $"{parceiro.EmpresaOpenAdm.UrlEcommerce}/recuperar-senha/{usuario.TokenEsqueceuSenha}");
+        var ecommerce = parceiro.EmpresaOpenAdm.Link
+            ?? throw new ExceptionApi("Não foi possível localizar o domínio da empresa");
+        htmlEnvio = htmlEnvio.Replace("***link***", $"https://loja.{ecommerce.Url}/recuperar-senha/{usuario.TokenEsqueceuSenha}");
 
         var fromEnvioEmail = new FromEnvioEmailApiModel()
         {

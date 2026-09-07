@@ -9,6 +9,7 @@ using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using System.Text;
 using OpenAdm.Application.Queries;
+using OpenAdm.Domain.PaginateDto;
 using OpenAdm.Pdf.Interfaces;
 using OpenAdm.Pdf.DTOs;
 

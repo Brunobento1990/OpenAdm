@@ -6,6 +6,7 @@ using OpenAdm.Infra.Extensions.IQueryable;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model.Pedidos;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -156,9 +157,13 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Include(x => x.ItensPedido)
             .ThenInclude(x => x.Peso)
             .Include(x => x.Usuario)
-            .Where(x => x.DataDeCriacao.Date <= relatorioPedidoDto.DataFinal.Date &&
-                        x.DataDeCriacao.Date >= relatorioPedidoDto.DataInicial.Date &&
-                        x.StatusPedido == StatusPedido.Entregue)
+            .Where(x => x.StatusPedido == StatusPedido.Entregue)
+            .WhereIsNotNull(relatorioPedidoDto.DataInicial.HasValue
+                ? x => x.DataDeCriacao.Date >= relatorioPedidoDto.DataInicial.Value.Date
+                : null)
+            .WhereIsNotNull(relatorioPedidoDto.DataFinal.HasValue
+                ? x => x.DataDeCriacao.Date <= relatorioPedidoDto.DataFinal.Value.Date
+                : null)
             .WhereIsNotNull(relatorioPedidoDto.WhereUsuarioId())
             .ToListAsync();
     }

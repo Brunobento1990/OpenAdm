@@ -1,32 +1,55 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Extensions.IQueryable;
 
 public static class CustomFilter
 {
-    public static async Task<(int TotalPaginas, IList<TEntity> Values)> CustomFilterAsync<TEntity>(this IQueryable<TEntity> querable, FilterModel<TEntity> filterModel)
+    public static async Task<(int TotalPaginas, IList<TEntity> Values)> CustomFilterAsync<TEntity>(
+        this IQueryable<TEntity> querable, FilterModel<TEntity> filterModel)
     {
-        var total = await querable
-            .CountCustomAsync(filterModel.Take);
+        var totalDeRegistros = await querable.CountAsync();
+        return await querable.CustomFilterAsync(filterModel, totalDeRegistros);
+    }
+
+    public static async Task<(int TotalPaginas, IList<TEntity> Values)> CustomFilterAsync<TEntity>(
+        this IQueryable<TEntity> querable,
+        FilterModel<TEntity> filterModel,
+        int totalDeRegistros)
+    {
+        var totalPaginas = CalcularTotalDePaginas(totalDeRegistros, filterModel.Take);
 
         var coluna = filterModel.OrderBy[..1].ToUpper() + filterModel.OrderBy[1..];
+        var orderBy = filterModel.OrderByCustom();
+        var thenOrderBy = filterModel.ThenOrderByCustom();
 
-        querable = filterModel.Asc ? querable.OrderBy(x => EF.Property<TEntity>(x!, coluna))
-            : querable.OrderByDescending(x => EF.Property<TEntity>(x!, coluna));
+        orderBy ??= x => EF.Property<TEntity>(x!, coluna)!;
+
+        if (thenOrderBy != null)
+        {
+            querable = filterModel.Asc ? querable.OrderBy(orderBy).ThenBy(thenOrderBy) : querable.OrderByDescending(orderBy).ThenByDescending(thenOrderBy);
+        }
+        else
+        {
+            querable = filterModel.Asc ? querable.OrderBy(orderBy) : querable.OrderByDescending(orderBy);
+        }
 
         var values = await querable
             .Paginate(filterModel.Skip, filterModel.Take)
             .ToListAsync();
 
-        return (total, values);
+        return (totalPaginas, values);
     }
+
+    private static int CalcularTotalDePaginas(int totalDeRegistros, int take)
+        => (int)Math.Ceiling((decimal)totalDeRegistros / take);
 
     public static async Task<int> CountCustomAsync<TEntity>(this IQueryable<TEntity> querable, int take)
     {
-        var count = await querable
-            .CountAsync();
+        if (take <= 0)
+            throw new ArgumentOutOfRangeException(nameof(take), "Take deve ser maior que zero.");
 
-        return (int)Math.Ceiling((decimal)count / take);
+        var count = await querable.CountAsync();
+        return CalcularTotalDePaginas(count, take);
     }
 }

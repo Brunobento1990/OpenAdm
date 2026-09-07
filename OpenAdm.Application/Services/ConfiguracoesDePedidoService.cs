@@ -31,8 +31,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         {
             return new ConfiguracoesDePedido(
                 id: Guid.NewGuid(),
-                dataDeCriacao: DateTime.Now,
-                dataDeAtualizacao: DateTime.Now,
+                dataDeCriacao: DateTime.UtcNow,
+                dataDeAtualizacao: DateTime.UtcNow,
                 numero: 0,
                 emailDeEnvio: "",
                 ativo: true,
@@ -54,7 +54,7 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 
         if (configuracaoDePedido == null)
         {
-            var date = DateTime.Now;
+            var date = DateTime.UtcNow;
             configuracaoDePedido = new ConfiguracoesDePedido(
                 id: Guid.NewGuid(),
                 dataDeCriacao: date,

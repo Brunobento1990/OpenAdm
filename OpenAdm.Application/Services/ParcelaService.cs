@@ -13,6 +13,7 @@ using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Model.Eventos;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -50,7 +51,7 @@ public sealed class ParcelaService : IParcelaService
         var proximoNumeroParcela = (fatura.Parcelas.MaxBy(x => x.NumeroDaParcela)?.NumeroDaParcela ?? 0) + 1;
 
         var parcela = Parcela.NovaFatura(
-            dataDeVencimento: parcelaCriarDto.DataDeVencimento ?? DateTime.Now,
+            dataDeVencimento: parcelaCriarDto.DataDeVencimento ?? DateTime.UtcNow,
             numeroDaParcela: proximoNumeroParcela,
             meioDePagamento: parcelaCriarDto.MeioDePagamento,
             valor: parcelaCriarDto.Valor,
@@ -107,8 +108,8 @@ public sealed class ParcelaService : IParcelaService
             .AdicionarTransacaoAsync(
                 new TransacaoFinanceira(
                     id: Guid.NewGuid(),
-                    dataDeCriacao: DateTime.Now,
-                    dataDeAtualizacao: DateTime.Now,
+                    dataDeCriacao: DateTime.UtcNow,
+                    dataDeAtualizacao: DateTime.UtcNow,
                     numero: 0,
                     parcelaId: parcela.Id,
                     dataDeEfetivacao: DateTime.UtcNow,

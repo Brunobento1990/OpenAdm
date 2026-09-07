@@ -18,8 +18,8 @@ public class ProdutoBuilder
     public ProdutoBuilder()
     {
         _id = Guid.NewGuid();
-        _created = DateTime.Now;
-        _update = DateTime.Now;
+        _created = DateTime.UtcNow;
+        _update = DateTime.UtcNow;
         var faker = new Faker();
         _numero = faker.Random.Long(1, 10000);
         _descricao = faker.Name.JobDescriptor();
@@ -58,6 +58,6 @@ public class ProdutoBuilder
     public Produto Build()
     {
         return new Produto(_id, _created, _update, _numero, _descricao, _especificacaoTecnica, _categoriaId,
-            _referencia, _foto, _nomeFoto, false, false);
+            _referencia, _foto, _nomeFoto, false, false, true);
     }
 }

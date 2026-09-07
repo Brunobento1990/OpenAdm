@@ -20,7 +20,7 @@ public sealed class PedidoDownloadService : IPedidoDownloadService
         _parceiroAutenticado = parceiroAutenticado;
     }
 
-    public async Task<byte[]> DownloadPedidoPdfAsync(Guid pedidoId)
+    public async Task<(byte[] Pdf, long NumeroPedido)> DownloadPedidoPdfAsync(Guid pedidoId)
     {
         var pedido = await _pedidoRepository.GetPedidoCompletoByIdAsync(pedidoId)
             ?? throw new ExceptionApi("Não foi possível localizar o pedido!");
@@ -28,6 +28,6 @@ public sealed class PedidoDownloadService : IPedidoDownloadService
         var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
         var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
 
-        return pdf;
+        return (pdf, pedido.Numero);
     }
 }

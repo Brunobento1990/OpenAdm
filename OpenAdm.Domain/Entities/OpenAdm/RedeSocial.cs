@@ -35,8 +35,8 @@ public sealed class RedeSocial : BaseEntity
     {
         return new RedeSocial(
             id: Guid.NewGuid(),
-            dataDeCriacao: DateTime.Now,
-            dataDeAtualizacao: DateTime.Now,
+            dataDeCriacao: DateTime.UtcNow,
+            dataDeAtualizacao: DateTime.UtcNow,
             numero: 0,
             link: link,
             redeSocialEnum: redeSocialEnum,

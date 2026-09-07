@@ -17,7 +17,7 @@ public class TransacaoFinanceiraRepository : ITransacaoFinanceiraRepository
 
     public async Task<IDictionary<int, List<TransacaoFinanceira>>> SumTotalMesesAsync(TipoFaturaEnum faturaEnum)
     {
-        var dataInicio = DateTime.Now.AddMonths(-3);
+        var dataInicio = DateTime.UtcNow.AddMonths(-3);
         var dataSplit = dataInicio.ToString("MM/dd/yyyy").Split('/');
         var ano = int.Parse(dataSplit[2][..4]);
         var mes = int.Parse(dataSplit[0]);

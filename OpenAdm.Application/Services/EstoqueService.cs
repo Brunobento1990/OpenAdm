@@ -6,6 +6,7 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -180,7 +181,7 @@ public class EstoqueService : IEstoqueService
             dto.PesoId,
             dto.TamanhoId);
 
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         if (estoque == null)
         {
@@ -250,7 +251,7 @@ public class EstoqueService : IEstoqueService
             novaQuantidade,
             permitirEstoqueNegativo);
 
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var movimento = new MovimentacaoDeProduto(
             Guid.NewGuid(),

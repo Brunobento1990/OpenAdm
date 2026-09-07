@@ -16,7 +16,7 @@ public class AcessoEcommerceService : IAcessoEcommerceService
 
     public async Task AtualizarAcessoAsync()
     {
-        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(DateTime.Now.Year, DateTime.Now.Month, _usuarioAutenticado.ParceiroId);
+        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(DateTime.UtcNow.Year, DateTime.Now.Month, _usuarioAutenticado.ParceiroId);
 
         if (acesso == null)
         {
@@ -31,7 +31,7 @@ public class AcessoEcommerceService : IAcessoEcommerceService
 
     public async Task<long> QuantidadeDeAcessoAsync()
     {
-        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(DateTime.Now.Year, DateTime.Now.Month, _usuarioAutenticado.ParceiroId);
+        var acesso = await _acessoEcommerceRepository.ObterPorDataAsync(DateTime.UtcNow.Year, DateTime.Now.Month, _usuarioAutenticado.ParceiroId);
         return acesso?.Quantidade ?? 0;
     }
 }

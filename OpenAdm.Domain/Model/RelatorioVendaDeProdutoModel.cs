@@ -8,4 +8,5 @@ public class RelatorioVendaDeProdutoModel
     public string? Peso { get; set; }
     public string? Tamanho { get; set; }
     public decimal Quantidade { get; set; }
+    public decimal ValorTotal { get; set; }
 }

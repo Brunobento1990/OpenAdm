@@ -29,5 +29,13 @@ public class ItensTabelaDePrecoConfiguration : IEntityTypeConfiguration<ItemTabe
             .WithMany(x => x.ItensTabelaDePreco)
             .HasForeignKey(x => x.ProdutoId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.Peso)
+            .WithMany()
+            .HasForeignKey(x => x.PesoId)
+            .OnDelete(DeleteBehavior.NoAction);
+        builder.HasOne(x => x.Tamanho)
+            .WithMany()
+            .HasForeignKey(x => x.TamanhoId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

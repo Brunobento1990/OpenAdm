@@ -1,7 +1,9 @@
-﻿using OpenAdm.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Infra.EntityConfiguration;
 
-namespace OpenAdm.Infra.EntityConfiguration;
+namespace OpenAdm.Data.EntityConfiguration;
 
 internal class LojasParceirasConfiguration : BaseEntityEmpresaConfiguration<LojaParceira>
 {
@@ -22,6 +24,11 @@ internal class LojasParceirasConfiguration : BaseEntityEmpresaConfiguration<Loja
         builder.Property(x => x.Nome)
             .IsRequired()
             .HasMaxLength(255);
+
+        builder.HasIndex(x => new { x.ParceiroId, x.Ativo });
+
+        builder.Property(x => x.Ativo)
+            .HasDefaultValue(true);
 
         base.Configure(builder);
     }

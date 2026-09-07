@@ -18,8 +18,8 @@ public class ItensPedidoBuilder
     public ItensPedidoBuilder()
     {
         _id = Guid.NewGuid();
-        _created = DateTime.Now;
-        _update = DateTime.Now;
+        _created = DateTime.UtcNow;
+        _update = DateTime.UtcNow;
         var faker = new Faker();
         _numero = 10;
         _pesoId = null;

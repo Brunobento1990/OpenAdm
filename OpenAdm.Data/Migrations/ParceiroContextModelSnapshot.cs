@@ -385,9 +385,13 @@ namespace OpenAdm.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("PesoId");
+
                     b.HasIndex("ProdutoId");
 
                     b.HasIndex("TabelaDePrecoId");
+
+                    b.HasIndex("TamanhoId");
 
                     b.ToTable("ItensTabelaDePreco");
                 });
@@ -564,6 +568,11 @@ namespace OpenAdm.Data.Migrations
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)");
 
+                    b.Property<bool>("Ativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<decimal?>("ComprimentoReal")
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)");
@@ -599,7 +608,11 @@ namespace OpenAdm.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Ativo");
+
                     b.HasIndex("Descricao");
+
+                    b.HasIndex("Descricao", "Ativo");
 
                     b.ToTable("Pesos");
                 });
@@ -630,6 +643,11 @@ namespace OpenAdm.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<bool>("Ativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
 
                     b.Property<Guid>("CategoriaId")
                         .HasColumnType("uuid");
@@ -678,11 +696,19 @@ namespace OpenAdm.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoriaId");
+                    b.HasIndex("Ativo");
 
                     b.HasIndex("Descricao");
 
                     b.HasIndex("InativoEcommerce");
+
+                    b.HasIndex("Ativo", "Descricao");
+
+                    b.HasIndex("Ativo", "InativoEcommerce", "Numero");
+
+                    b.HasIndex("Ativo", "InativoEcommerce", "Referencia");
+
+                    b.HasIndex("CategoriaId", "Ativo", "InativoEcommerce", "Numero");
 
                     b.ToTable("Produtos");
                 });
@@ -743,6 +769,11 @@ namespace OpenAdm.Data.Migrations
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)");
 
+                    b.Property<bool>("Ativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<decimal?>("ComprimentoReal")
                         .HasPrecision(12, 2)
                         .HasColumnType("numeric(12,2)");
@@ -778,7 +809,11 @@ namespace OpenAdm.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Ativo");
+
                     b.HasIndex("Descricao");
+
+                    b.HasIndex("Descricao", "Ativo");
 
                     b.ToTable("Tamanhos");
                 });
@@ -1035,6 +1070,11 @@ namespace OpenAdm.Data.Migrations
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.ItemTabelaDePreco", b =>
                 {
+                    b.HasOne("OpenAdm.Domain.Entities.Peso", "Peso")
+                        .WithMany()
+                        .HasForeignKey("PesoId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("OpenAdm.Domain.Entities.Produto", "Produto")
                         .WithMany("ItensTabelaDePreco")
                         .HasForeignKey("ProdutoId")
@@ -1047,9 +1087,18 @@ namespace OpenAdm.Data.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("OpenAdm.Domain.Entities.Tamanho", "Tamanho")
+                        .WithMany()
+                        .HasForeignKey("TamanhoId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Peso");
+
                     b.Navigation("Produto");
 
                     b.Navigation("TabelaDePreco");
+
+                    b.Navigation("Tamanho");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.MovimentacaoDeProduto", b =>

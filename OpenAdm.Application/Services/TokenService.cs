@@ -19,12 +19,12 @@ public class TokenService : ITokenService
 
     public string GenerateRefreshToken(Guid id, bool isFuncionario)
     {
-        return Genereate(id, isFuncionario, DateTime.Now.AddDays(30));
+        return Genereate(id, isFuncionario, DateTime.UtcNow.AddDays(30));
     }
 
     public string GenerateToken(Guid id, bool isFuncionario)
     {
-        return Genereate(id, isFuncionario, DateTime.Now.AddHours(ConfiguracaoDeToken.Expiration));
+        return Genereate(id, isFuncionario, DateTime.UtcNow.AddHours(ConfiguracaoDeToken.Expiration));
     }
 
     private static string Genereate(Guid id, bool isFuncionario, DateTime expires)
@@ -49,7 +49,7 @@ public class TokenService : ITokenService
         var claims = new List<Claim>()
         {
             new(KeyId, id.ToString()),
-            new(KeyDataLogin, DateTime.Now.FormatarDataJson()),
+            new(KeyDataLogin, DateTime.UtcNow.FormatarDataJson()),
             new(KeyIsFuncionario, isFuncionario ? "TRUE" : "FALSE"),
         };
 

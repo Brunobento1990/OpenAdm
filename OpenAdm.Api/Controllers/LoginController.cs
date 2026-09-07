@@ -23,6 +23,8 @@ public class LoginController : ControllerBase
     }
 
     [HttpPost("funcionario")]
+    [ProducesResponseType<ResponseLoginFuncionarioViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
     public async Task<IActionResult> LoginFuncionario(RequestLogin requestLogin)
     {
         var responselogin = await _loginFuncionarioService.LoginFuncionarioAsync(requestLogin);

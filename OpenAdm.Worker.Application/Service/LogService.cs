@@ -32,7 +32,6 @@ public static class LogService
         var originalColor = Console.ForegroundColor;
 
         Console.ForegroundColor = color;
-        Console.WriteLine($"[{DateTime.Now:HH:mm:ss}] {message}");
         
         Console.ForegroundColor = originalColor;
     }

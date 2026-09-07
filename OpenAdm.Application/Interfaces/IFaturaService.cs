@@ -4,6 +4,7 @@ using OpenAdm.Application.Models.ContasAReceberModel;
 using OpenAdm.Application.Models.FaturasModel;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Interfaces;
 

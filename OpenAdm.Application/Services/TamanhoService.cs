@@ -5,6 +5,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -17,6 +18,9 @@ public class TamanhoService : ITamanhoService
         _tamanhoRepository = tamanhoRepository;
     }
 
+    public Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+        => _tamanhoRepository.BuscarDropDownAsync(filtro);
+
     public async Task<TamanhoViewModel> CreateTamanhoAsync(CreateTamanhoDto createTamanhoDto)
     {
         var tamanho = createTamanhoDto.ToEntity();
@@ -24,12 +28,15 @@ public class TamanhoService : ITamanhoService
         return new TamanhoViewModel().ToModel(tamanho);
     }
 
-    public async Task DeleteTamanhoAsync(Guid id)
+    public async Task InativarAtivarAsync(Guid id, bool ativo)
     {
         var tamanho = await _tamanhoRepository.GetTamanhoByIdAsync(id)
                       ?? throw new ExceptionApi("Não foi possível localizar o tamanho");
 
-        await _tamanhoRepository.DeleteAsync(tamanho);
+        tamanho.InativarAtivar(ativo);
+
+        _tamanhoRepository.Update(tamanho);
+        await _tamanhoRepository.SaveChangesAsync();
     }
 
     public async Task<PaginacaoViewModel<TamanhoViewModel>> GetPaginacaoAsync(FilterModel<Tamanho> paginacaoTamanhoDto)

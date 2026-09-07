@@ -13,6 +13,7 @@ public static class AddServices
 
         services.AddScoped<IPdfPedidoService, PdfPedidoService>();
         services.AddScoped<IMovimentacaoDeProdutoRelatorioService, MovimentacaoDeProdutoRelatorioService>();
+        services.AddScoped<IRelatorioVendaDeProdutoPdfService, RelatorioVendaDeProdutoPdfService>();
 
         return services;
     }

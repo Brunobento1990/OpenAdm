@@ -9,8 +9,8 @@ public class ParcelaCriarAdmDto
     public int NumeroDaParcela { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public decimal Valor { get; set; }
-    public decimal? Desconto { get; set; }
     public string? Observacao { get; set; }
+    public bool AVista { get; set; }
 }
 
 public class ParcelaCriarDto

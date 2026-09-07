@@ -51,10 +51,10 @@ public class BannerController(IBannerService bannerService) : ControllerBase
 
     [Autentica]
     [IsFuncionario]
-    [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteBanner([FromQuery] Guid id)
+    [HttpPut, Route("ativar/{id}/{ativo}")]
+    public async Task<IActionResult> DeleteBanner(Guid id, bool ativo)
     {
-        await _bannerService.DeleteBannerAsync(id);
+        await _bannerService.DeleteBannerAsync(id, ativo);
         return Ok();
     }
 

@@ -55,7 +55,7 @@ public class CreateUsuarioAdminDto : BaseModel
 
     public Usuario ToEntity()
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         var usuario = new Usuario(
             Guid.NewGuid(),

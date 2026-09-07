@@ -2,6 +2,7 @@
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Data.Context;
+using OpenAdm.Domain.Helpers;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -17,9 +18,11 @@ public class EmpresaOpenAdmRepository : IEmpresaOpenAdmRepository
     public async Task<EmpresaOpenAdm?> ObterPorOrigemAsync(string origem)
     {
         return await _appDbContext
-            .Empresas
+            .LinksEmpresas
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => (x.UrlEcommerce == origem || x.UrlAdmin == origem) && x.Ativo);
+            .Where(x => x.Url == origem)
+            .Select(x => x.Empresa)
+            .FirstOrDefaultAsync(x => x.Ativo);
     }
 
     public async Task<EmpresaOpenAdm?> ObterPorIdAsync(Guid id)
@@ -29,4 +32,5 @@ public class EmpresaOpenAdmRepository : IEmpresaOpenAdmRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id && x.Ativo);
     }
+
 }

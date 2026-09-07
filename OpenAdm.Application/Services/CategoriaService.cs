@@ -7,6 +7,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -116,12 +117,5 @@ public class CategoriaService : ICategoriaService
 
         categoria.InativarAtivarEcommerce();
         await _categoriaRepository.UpdateAsync(categoria);
-    }
-
-    public async Task<IList<CategoriaViewModel>> GetCategoriasDropDownAsync()
-    {
-        var categorias = await _categoriaRepository.GetCategoriasDropDownAsync();
-
-        return categorias.Select(x => new CategoriaViewModel().ToModel(x)).ToList();
     }
 }

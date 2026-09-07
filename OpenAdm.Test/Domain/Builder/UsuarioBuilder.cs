@@ -18,8 +18,8 @@ public class UsuarioBuilder
     public UsuarioBuilder()
     {
         _id = Guid.NewGuid();
-        _created = DateTime.Now;
-        _update = DateTime.Now;
+        _created = DateTime.UtcNow;
+        _update = DateTime.UtcNow;
         var faker = new Faker();
         _numero = faker.Random.Long(1, 10000);
         _email = faker.Person.Email;

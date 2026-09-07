@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Helpers;
 
 namespace OpenAdm.Worker.Infra.Repositories;
 
@@ -16,7 +17,14 @@ public class EmpresaOpenAdmRepository : IEmpresaOpenAdmRepository
 
     public Task<EmpresaOpenAdm?> ObterPorOrigemAsync(string origem)
     {
-        throw new NotImplementedException();
+        var dominio = DominioEmpresaHelper.Normalizar(origem);
+        return _context.LinksEmpresas
+            .AsNoTracking()
+            .Where(x =>
+                x.Url == dominio &&
+                x.Empresa.Ativo)
+            .Select(x => x.Empresa)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<EmpresaOpenAdm?> ObterPorIdAsync(Guid id)
@@ -26,4 +34,5 @@ public class EmpresaOpenAdmRepository : IEmpresaOpenAdmRepository
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
 }

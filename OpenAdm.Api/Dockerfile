@@ -29,5 +29,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY ["OpenAdm.Api/Htmls/", "/app/Htmls/"]
-ENV TZ=America/Sao_Paulo
+
 ENTRYPOINT ["dotnet", "OpenAdm.Api.dll"]

@@ -20,6 +20,15 @@ public class LojasParceirasController : ControllerBase
     {
         _lojasParceirasService = lojasParceirasService;
     }
+    
+    [Autentica]
+    [IsFuncionario]
+    [HttpPut, Route("ativar/{id}/{ativo}")]
+    public async Task<IActionResult> DeleteBanner(Guid id, bool ativo)
+    {
+        await _lojasParceirasService.InativarAsync(id, ativo);
+        return Ok();
+    }
 
     [HttpPost("paginacao")]
     [ProducesResponseType<PaginacaoViewModel<LojasParceirasViewModel>>(200)]

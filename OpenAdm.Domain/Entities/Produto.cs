@@ -16,7 +16,8 @@ public sealed class Produto : BaseEntity
         string? urlFoto,
         string? nomeFoto,
         bool inativoEcommerce,
-        bool vendaSomenteComEstoqueDisponivel)
+        bool vendaSomenteComEstoqueDisponivel,
+        bool ativo)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         Descricao = descricao;
@@ -27,6 +28,7 @@ public sealed class Produto : BaseEntity
         NomeFoto = nomeFoto;
         InativoEcommerce = inativoEcommerce;
         VendaSomenteComEstoqueDisponivel = vendaSomenteComEstoqueDisponivel;
+        Ativo = ativo;
     }
 
     public string Descricao { get; private set; }
@@ -42,6 +44,12 @@ public sealed class Produto : BaseEntity
     public string? NomeFoto { get; private set; }
     public bool InativoEcommerce { get; private set; } = false;
     public bool VendaSomenteComEstoqueDisponivel { get; private set; } = false;
+    public bool Ativo { get; private set; }
+
+    public void InativarAtivar(bool ativo)
+    {
+        Ativo = ativo;
+    }
 
     public void InativarAtivarEcommerce()
     {

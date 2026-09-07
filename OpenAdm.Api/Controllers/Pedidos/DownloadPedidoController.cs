@@ -19,9 +19,10 @@ public class DownloadPedidoController : ControllerBase
     }
 
     [HttpGet("download-pedido")]
+    [Produces("application/pdf")]
     public async Task<IActionResult> DownloadPedido([FromQuery] Guid pedidoId)
     {
-        var pdf = await _pedidoDownloadService.DownloadPedidoPdfAsync(pedidoId);
-        return Ok(new { pdf });
+        var (pdf, numeroPedido) = await _pedidoDownloadService.DownloadPedidoPdfAsync(pedidoId);
+        return File(pdf, "application/pdf", $"pedido-{numeroPedido}.pdf");
     }
 }

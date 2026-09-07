@@ -14,7 +14,7 @@ public class CreateItensTabelaDePrecoDto
 
     public ItemTabelaDePreco ToEntity()
     {
-        var date = DateTime.Now;
+        var date = DateTime.UtcNow;
 
         return new ItemTabelaDePreco(
                 Guid.NewGuid(),

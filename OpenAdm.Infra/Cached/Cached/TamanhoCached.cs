@@ -19,6 +19,9 @@ public class TamanhoCached : ITamanhoRepository
         _cachedService = cachedService;
     }
 
+    public Task<IList<DropDownItemModel>> BuscarDropDownAsync(DropDownFiltro filtro)
+        => _tamanhoRepository.BuscarDropDownAsync(filtro);
+
     public async Task<Tamanho> AddAsync(Tamanho entity)
     {
         await _cachedService.RemoveCachedAsync(_keyList);

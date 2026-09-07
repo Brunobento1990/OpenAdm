@@ -6,6 +6,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -60,6 +61,16 @@ public class LojasParceirasService : ILojasParceirasService
         var lojaParceira = await GetLojaAsync(id);
 
         return new LojasParceirasViewModel().ToModel(lojaParceira);
+    }
+
+    public async Task InativarAsync(Guid id, bool ativo)
+    {
+        var lojaParceira = await GetLojaAsync(id);
+
+        lojaParceira.InativarAtivar(ativo);
+
+        _lojasParceirasRepository.Update(lojaParceira);
+        await _lojasParceirasRepository.SaveChangesAsync();
     }
 
     public async Task<PaginacaoViewModel<LojasParceirasViewModel>> GetPaginacaoAsync(

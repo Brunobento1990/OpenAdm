@@ -21,7 +21,15 @@ public class RelatorioPedidoController : ControllerBase
     [HttpPost("relatorio-por-periodo")]
     public async Task<IActionResult> RelatorioPorPeriodo(RelatorioPedidoDto relatorioPedidoDto)
     {
-        var values = await _relatorioPedidoPorPeriodo.GetRelatorioAsync(relatorioPedidoDto);
-        return Ok(new { values.pdf, values.count });
+        var relatorio = await _relatorioPedidoPorPeriodo.GetListagemAsync(relatorioPedidoDto);
+        return Ok(relatorio);
+    }
+
+    [HttpPost("relatorio-por-periodo/imprimir")]
+    [Produces("application/pdf")]
+    public async Task<IActionResult> ImprimirRelatorioPorPeriodo(RelatorioPedidoDto relatorioPedidoDto)
+    {
+        var (pdf, _) = await _relatorioPedidoPorPeriodo.GetRelatorioAsync(relatorioPedidoDto);
+        return File(pdf, "application/pdf", "relatorio-pedidos.pdf");
     }
 }

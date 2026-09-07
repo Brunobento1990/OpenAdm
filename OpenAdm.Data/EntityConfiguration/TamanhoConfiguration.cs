@@ -22,6 +22,8 @@ public class TamanhoConfiguration : IEntityTypeConfiguration<Tamanho>
         builder.Property(x => x.Descricao)
             .IsRequired()
             .HasMaxLength(255);
+        builder.Property(x => x.Ativo)
+            .HasDefaultValue(true);
         builder.Property(x => x.PesoReal)
             .HasPrecision(12, 2);
         builder.Property(x => x.LarguraReal)
@@ -31,5 +33,7 @@ public class TamanhoConfiguration : IEntityTypeConfiguration<Tamanho>
         builder.Property(x => x.ComprimentoReal)
             .HasPrecision(12, 2);
         builder.HasIndex(x => x.Descricao);
+        builder.HasIndex(x => x.Ativo);
+        builder.HasIndex(x => new { x.Descricao, x.Ativo });
     }
 }
