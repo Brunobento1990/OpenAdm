@@ -35,6 +35,7 @@ public class ParceiroRepository : IParceiroRepository
         return await _appDbContext
             .Parceiros
             .Include(x => x.EmpresaOpenAdm)
+                .ThenInclude(x => x.Link)
             .Include(x => x.RedesSociais)
             .Include(x => x.Telefones)
             .Include(x => x.EnderecoParceiro)

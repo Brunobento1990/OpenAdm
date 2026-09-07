@@ -35,4 +35,5 @@ public class EmpresaOpenAdmCached : IEmpresaOpenAdmRepository
 
     public Task<EmpresaOpenAdm?> ObterPorIdAsync(Guid id)
         => _empresaOpenAdmRepository.ObterPorIdAsync(id);
+
 }

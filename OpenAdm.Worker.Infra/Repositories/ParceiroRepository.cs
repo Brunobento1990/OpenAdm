@@ -62,6 +62,7 @@ public class ParceiroRepository : IParceiroRepository
             .Parceiros
             .AsNoTracking()
             .Include(x => x.EmpresaOpenAdm)
+                .ThenInclude(x => x.Link)
             .Where(x => x.EmpresaOpenAdm.TipoParcelaCobranca == TipoParcelaCobrancaEnum.Mensal)
             .ToListAsync();
     }

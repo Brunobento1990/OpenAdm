@@ -35,7 +35,9 @@ public class AutenticaParceiroMiddleware
             return;
         }
 
-        var empresaOpenAdm = await empresaOpenAdmRepository.ObterPorOrigemAsync(origem!)
+        var dominio = DominioEmpresaHelper.Normalizar(origem!);
+        
+        var empresaOpenAdm = await empresaOpenAdmRepository.ObterPorOrigemAsync(dominio)
                              ?? throw new ExceptionApi("Não foi possível localizar o cadastro da empresa");
 
         parceiroAutenticado.Id = empresaOpenAdm.Id;

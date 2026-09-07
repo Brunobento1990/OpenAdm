@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
 
     public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
     public DbSet<EmpresaOpenAdm> Empresas { get; set; }
+    public DbSet<LinkEmpresa> LinksEmpresas { get; set; }
     public DbSet<EnderecoParceiro> EnderecoParceiro { get; set; }
     public DbSet<Parceiro> Parceiros { get; set; }
     public DbSet<TelefoneParceiro> TelefonesParceiro { get; set; }
@@ -29,10 +30,14 @@ public class AppDbContext : DbContext
     public DbSet<EventoAplicacao> EventosAplicacao { get; set; }
     public DbSet<ParcelaCobranca> ParcelasCobrancas { get; set; }
     public DbSet<CobrancaPedidoEcommerce> CobrancasPedidosEcommerce { get; set; }
+    public DbSet<LinkBioConfiguracao> LinkBioConfiguracoes { get; set; }
+    public DbSet<LinkBioItem> LinkBioItens { get; set; }
+    public DbSet<LinkBioEvento> LinkBioEventos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new EmpresaOpenAdmConfiguration());
+        modelBuilder.ApplyConfiguration(new LinkEmpresaConfiguration());
         modelBuilder.ApplyConfiguration(new ParceiroConfiguration());
         modelBuilder.ApplyConfiguration(new TelefoneParceiroConfiguration());
         modelBuilder.ApplyConfiguration(new RedeSocialConfiguration());
@@ -47,6 +52,9 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new EventoAplicacaoConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaCobrancaConfiguration());
         modelBuilder.ApplyConfiguration(new CobrancaPedidoEcommerceConfiguration());
+        modelBuilder.ApplyConfiguration(new LinkBioConfiguracaoConfiguration());
+        modelBuilder.ApplyConfiguration(new LinkBioItemConfiguration());
+        modelBuilder.ApplyConfiguration(new LinkBioEventoConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

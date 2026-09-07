@@ -63,6 +63,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IParcelaCobrancaService, ParcelaCobrancaService>();
         services.AddScoped<IRelatorioVendaDeProdutoService, RelatorioVendaDeProdutoService>();
         services.AddScoped<IProdutoEcommerceService, ProdutoEcommerceService>();
+        services.AddScoped<ILinkBioService, LinkBioService>();
 
         services.AddKeyedScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>(MeioDePagamentoEnum.Pix);
     }

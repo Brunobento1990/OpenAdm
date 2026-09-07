@@ -38,8 +38,6 @@ public class MigrationRepository : IMigrationService
                     dataDeAtualizacao: DateTime.UtcNow,
                     numero: 0,
                     ativo: true,
-                    urlEcommerce: "http://localhost:3000",
-                    urlAdmin: "http://localhost:7154",
                     connectionString: Criptografia.Encrypt(
                         "User ID=postgres; Password=1234; Host=localhost; Port=4045; Database=open-adm-cliente-develop; Pooling=true;"),
                     TipoParcelaCobrancaEnum.Gratis);
@@ -57,6 +55,9 @@ public class MigrationRepository : IMigrationService
                 {
                     EmpresaOpenAdm = empresaOpenAdm
                 };
+
+                empresaOpenAdm.Link = new LinkEmpresa(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 0,
+                    empresaOpenAdm.Id, "localhost");
 
                 await _appDbContext.Parceiros.AddAsync(empresa);
             }

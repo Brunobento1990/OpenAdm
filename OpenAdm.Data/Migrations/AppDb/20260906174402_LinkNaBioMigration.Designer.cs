@@ -3,6 +3,7 @@ using System;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using OpenAdm.Data.Context;
@@ -12,9 +13,11 @@ using OpenAdm.Data.Context;
 namespace OpenAdm.Data.Migrations.AppDb
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260906174402_LinkNaBioMigration")]
+    partial class LinkNaBioMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -370,9 +373,6 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.Property<bool>("Ativo")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("BackgroundImage")
-                        .HasColumnType("text");
-
                     b.Property<string>("CorDeFundo")
                         .HasColumnType("text");
 
@@ -395,14 +395,15 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.Property<Guid>("EmpresaId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("NomeBackgroundImage")
-                        .HasColumnType("text");
-
                     b.Property<long>("Numero")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Titulo")
                         .IsRequired()
@@ -411,6 +412,9 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.HasKey("Id");
 
                     b.HasIndex("EmpresaId")
+                        .IsUnique();
+
+                    b.HasIndex("Slug")
                         .IsUnique();
 
                     b.ToTable("LinkBioConfiguracoes");
@@ -479,9 +483,6 @@ namespace OpenAdm.Data.Migrations.AppDb
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
-
-                    b.Property<string>("Icone")
-                        .HasColumnType("text");
 
                     b.Property<Guid>("LinkBioConfiguracaoId")
                         .HasColumnType("uuid");
@@ -661,11 +662,30 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.Property<int>("TipoParcelaCobranca")
                         .HasColumnType("integer");
 
+                    b.Property<string>("UrlAdmin")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .HasColumnType("character varying(350)");
+
+                    b.Property<string>("UrlEcommerce")
+                        .IsRequired()
+                        .HasMaxLength(350)
+                        .HasColumnType("character varying(350)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Ativo");
 
                     b.HasIndex("TipoParcelaCobranca");
+
+                    b.HasIndex("UrlAdmin");
+
+                    b.HasIndex("UrlEcommerce");
+
+                    b.HasIndex("UrlAdmin", "UrlEcommerce")
+                        .IsUnique();
+
+                    b.HasIndex("UrlAdmin", "UrlEcommerce", "Ativo");
 
                     b.ToTable("Empresas");
                 });
@@ -709,47 +729,6 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.HasIndex("QuantidadeDeTentativa", "Finalizado");
 
                     b.ToTable("EventosAplicacao");
-                });
-
-            modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.LinkEmpresa", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DataDeAtualizacao")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<DateTime>("DataDeCriacao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp without time zone")
-                        .HasDefaultValueSql("now()");
-
-                    b.Property<Guid>("EmpresaId")
-                        .HasColumnType("uuid");
-
-                    b.Property<long>("Numero")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Numero"));
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(350)
-                        .HasColumnType("character varying(350)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmpresaId")
-                        .IsUnique();
-
-                    b.HasIndex("Url")
-                        .IsUnique();
-
-                    b.ToTable("LinksEmpresas");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.ParcelaCobranca", b =>
@@ -989,17 +968,6 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.Navigation("EmpresaOpenAdm");
                 });
 
-            modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.LinkEmpresa", b =>
-                {
-                    b.HasOne("OpenAdm.Domain.Entities.OpenAdm.EmpresaOpenAdm", "Empresa")
-                        .WithOne("Link")
-                        .HasForeignKey("OpenAdm.Domain.Entities.OpenAdm.LinkEmpresa", "EmpresaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Empresa");
-                });
-
             modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.ParcelaCobranca", b =>
                 {
                     b.HasOne("OpenAdm.Domain.Entities.OpenAdm.EmpresaOpenAdm", "EmpresaOpenAdm")
@@ -1047,11 +1015,6 @@ namespace OpenAdm.Data.Migrations.AppDb
             modelBuilder.Entity("OpenAdm.Domain.Entities.LinkBioConfiguracao", b =>
                 {
                     b.Navigation("Links");
-                });
-
-            modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.EmpresaOpenAdm", b =>
-                {
-                    b.Navigation("Link");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.Parceiro", b =>
