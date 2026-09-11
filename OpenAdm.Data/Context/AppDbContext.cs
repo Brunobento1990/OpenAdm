@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<TelefoneParceiro> TelefonesParceiro { get; set; }
     public DbSet<RedeSocial> RedesSociais { get; set; }
     public DbSet<Funcionario> Funcionarios { get; set; }
+    public DbSet<FuncionarioEsqueceuSenha> FuncionariosEsqueceramSenha { get; set; }
     public DbSet<ConfiguracaoDePagamento> ConfiguracoesDePagamento { get; set; }
     public DbSet<AcessoEcommerce> AcessosEcommerce { get; set; }
     public DbSet<Banner> Banners { get; set; }
@@ -44,6 +45,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new EnderecoParceiroConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracoesDePedidoConfiguration());
         modelBuilder.ApplyConfiguration(new FuncionarioConfiguration());
+        modelBuilder.ApplyConfiguration(new FuncionarioEsqueceuSenhaConfiguration());
         modelBuilder.ApplyConfiguration(new ConfiguracaoDePagamentoConfiguration());
         modelBuilder.ApplyConfiguration(new AcessoEcommerceConfiguration());
         modelBuilder.ApplyConfiguration(new BannerConfiguration());
