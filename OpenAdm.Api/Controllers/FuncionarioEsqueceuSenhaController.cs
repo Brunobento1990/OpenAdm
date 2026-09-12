@@ -12,7 +12,9 @@ namespace OpenAdm.Api.Controllers;
 [ApiController]
 [Route("funcionarios")]
 [AcessoParceiro]
-public class FuncionarioEsqueceuSenhaController(IFuncionarioEsqueceuSenhaService service) : ControllerBase
+public class FuncionarioEsqueceuSenhaController(
+    IFuncionarioEsqueceuSenhaService service,
+    ITrocarSenhaFuncionarioService trocarSenhaService) : ControllerBase
 {
     [HttpPost("esqueceu-senha")]
     [ProducesResponseType<ResultadoPadraoViewModel>(200)]
@@ -29,6 +31,17 @@ public class FuncionarioEsqueceuSenhaController(IFuncionarioEsqueceuSenhaService
     public async Task<IActionResult> RecuperarSenha(RecuperarSenhaFuncionarioDto dto)
     {
         var resultado = await service.RecuperarSenhaAsync(dto);
+        return resultado.ToActionResult();
+    }
+
+    [HttpPut("trocar-senha")]
+    [Autentica]
+    [IsFuncionario]
+    [ProducesResponseType<ResultadoPadraoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> TrocarSenha(TrocarSenhaFuncionarioDto dto)
+    {
+        var resultado = await trocarSenhaService.TrocarAsync(dto);
         return resultado.ToActionResult();
     }
 }

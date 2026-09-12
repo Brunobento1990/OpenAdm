@@ -40,6 +40,7 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<ILoginFuncionarioRepository, LoginFuncionarioRepository>();
         services.AddScoped<IFuncionarioEsqueceuSenhaRepository, FuncionarioEsqueceuSenhaRepository>();
+        services.AddScoped<IFuncionarioRepository, FuncionarioRepository>();
 
         services.AddScoped<IPedidoRepository, PedidoRepository>();
 

@@ -30,6 +30,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ILoginFuncionarioService, LoginFuncionarioService>();
         services.AddScoped<IFuncionarioEsqueceuSenhaService, FuncionarioEsqueceuSenhaService>();
+        services.AddScoped<ITrocarSenhaFuncionarioService, TrocarSenhaFuncionarioService>();
         services.AddScoped<IPedidoService, PedidoService>();
         services.AddScoped<IHomeSevice, HomeSevice>();
         services.AddScoped<ICategoriaService, CategoriaService>();
