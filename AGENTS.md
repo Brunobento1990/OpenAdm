@@ -16,6 +16,8 @@ Projects target `net10.0` with nullable reference types and implicit usings enab
 
 Use `ResultPartner<T>` as the standard return type for new application service operations that can return expected business errors. Controllers should convert it with `ToActionResult()` and declare typed `ProducesResponseType` attributes for success and error responses in Swagger.
 
+For new DTO validation, inherit from `ValidarBaseDTO` and use the custom attributes in `OpenAdm.Application/Attributes`; do not use `System.ComponentModel.DataAnnotations`. New application configuration must be read through `IConfiguration` and stored in `appsettings`; `.env` is legacy and should not receive new settings.
+
 ## Testing Guidelines
 Tests use xUnit with Moq, Bogus, ExpectedObjects, EF Core InMemory, and coverlet. Place new tests under `OpenAdm.Test/<Layer>/Test/` and name classes with the `*Test` suffix. Prefer descriptive Portuguese test method names that state expected behavior, such as `DeveGerarUmToken`. Use builders from `OpenAdm.Test/Domain/Builder/` for reusable entity setup.
 

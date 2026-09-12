@@ -27,4 +27,24 @@ public sealed class FuncionarioEsqueceuSenha : BaseEntityParceiro
     public Guid Token { get; private set; }
     public DateTime DataHoraExpiracao { get; private set; }
     public bool Resetado { get; private set; }
+
+    public string? PodeRecuperarSenha()
+    {
+        if (!Funcionario.Ativo)
+            return "Token de recuperação inválido!";
+
+        if (Resetado)
+            return "Este token de recuperação já foi utilizado!";
+
+        if (DataHoraExpiracao <= DateTime.UtcNow)
+            return "Token expirado, solicite uma nova recuperação de senha!";
+
+        return null;
+    }
+
+    public void MarcarComoResetado()
+    {
+        Resetado = true;
+        DataDeAtualizacao = DateTime.UtcNow;
+    }
 }

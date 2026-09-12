@@ -1,3 +1,4 @@
+using OpenAdm.Application.Dtos.Funcionarios;
 using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
@@ -34,7 +35,9 @@ public class FuncionarioEsqueceuSenhaService : IFuncionarioEsqueceuSenhaService
     public async Task<ResultPartner<ResultadoPadraoViewModel>> SolicitarAsync(EsqueceuSenhaDto esqueceuSenhaDto)
     {
         var parceiro = await _parceiroAutenticado.ObterParceiroAutenticadoAsync();
-        var funcionario = await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(esqueceuSenhaDto.Email.Trim(), _parceiroAutenticado.Id);
+        var funcionario =
+            await _loginFuncionarioRepository.GetFuncionarioByEmailAsync(esqueceuSenhaDto.Email.Trim(),
+                _parceiroAutenticado.Id);
 
         if (funcionario == null)
             return (ResultPartner<ResultadoPadraoViewModel>)"Não foi possível localizar o funcionário!";
@@ -47,10 +50,10 @@ public class FuncionarioEsqueceuSenhaService : IFuncionarioEsqueceuSenhaService
         var agora = DateTime.UtcNow;
         var token = Guid.NewGuid();
         var horasParaExpirar = int.TryParse(
-            _configuration["FuncionarioEsqueceuSenha:ExpiracaoHoras"], out var horasConfiguradas)
-            && horasConfiguradas > 0
-                ? horasConfiguradas
-                : 1;
+                                   _configuration["FuncionarioEsqueceuSenha:ExpiracaoHoras"], out var horasConfiguradas)
+                               && horasConfiguradas > 0
+            ? horasConfiguradas
+            : 1;
         var proximoNumero = await _funcionarioEsqueceuSenhaRepository.ProximoNumeroAsync(_parceiroAutenticado.Id);
         var solicitacao = new FuncionarioEsqueceuSenha(
             Guid.NewGuid(), agora, agora, proximoNumero, funcionario.Id, token,
@@ -87,6 +90,38 @@ public class FuncionarioEsqueceuSenhaService : IFuncionarioEsqueceuSenhaService
                 "Não foi possível enviar o e-mail de recuperação de senha, tente novamente!";
 
         await _funcionarioEsqueceuSenhaRepository.AddAsync(solicitacao);
+        await _funcionarioEsqueceuSenhaRepository.SaveChangesAsync();
+
+        return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel { Resultado = true };
+    }
+
+    public async Task<ResultPartner<ResultadoPadraoViewModel>> RecuperarSenhaAsync(RecuperarSenhaFuncionarioDto dto)
+    {
+        var erroDto = dto.Validar();
+
+        if (!string.IsNullOrWhiteSpace(erroDto))
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)erroDto;
+        }
+
+        var solicitacao =
+            await _funcionarioEsqueceuSenhaRepository.ObterPorTokenAsync(dto.Token, _parceiroAutenticado.Id);
+
+        if (solicitacao == null)
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)"Token de recuperação inválido!";
+        }
+
+        var erro = solicitacao.PodeRecuperarSenha();
+
+        if (!string.IsNullOrWhiteSpace(erro))
+        {
+            return (ResultPartner<ResultadoPadraoViewModel>)erro;
+        }
+
+        solicitacao.Funcionario.AtualizarSenha(dto.HashSenha());
+        solicitacao.MarcarComoResetado();
+        _funcionarioEsqueceuSenhaRepository.Update(solicitacao);
         await _funcionarioEsqueceuSenhaRepository.SaveChangesAsync();
 
         return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel { Resultado = true };

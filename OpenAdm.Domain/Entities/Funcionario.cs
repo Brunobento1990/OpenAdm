@@ -21,4 +21,10 @@ public sealed class Funcionario : BaseEntityParceiro
     public string? Telefone { get; private set; }
     public byte[]? Avatar { get; private set; }
     public bool Ativo { get; private set; }
+
+    public void AtualizarSenha(string senha)
+    {
+        Senha = senha;
+        DataDeAtualizacao = DateTime.UtcNow;
+    }
 }
