@@ -8,6 +8,8 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
+using Microsoft.Extensions.Configuration;
+using OpenAdm.Domain.Entities.OpenAdm;
 
 namespace OpenAdm.Application.Services;
 
@@ -18,19 +20,28 @@ public class UsuarioService : IUsuarioService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly ICnpjConsultaService _cnpjConsultaService;
+    private readonly ISessaoUsuarioRepository _sessaoUsuarioRepository;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
+    private readonly IConfiguration _configuration;
 
     public UsuarioService(
         IUsuarioRepository usuarioRepository,
         ITokenService tokenService,
         IPedidoRepository pedidoRepository,
         IUsuarioAutenticado usuarioAutenticado,
-        ICnpjConsultaService cnpjConsultaService)
+        ICnpjConsultaService cnpjConsultaService,
+        ISessaoUsuarioRepository sessaoUsuarioRepository,
+        IParceiroAutenticado parceiroAutenticado,
+        IConfiguration configuration)
     {
         _usuarioRepository = usuarioRepository;
         _tokenService = tokenService;
         _pedidoRepository = pedidoRepository;
         _usuarioAutenticado = usuarioAutenticado;
         _cnpjConsultaService = cnpjConsultaService;
+        _sessaoUsuarioRepository = sessaoUsuarioRepository;
+        _parceiroAutenticado = parceiroAutenticado;
+        _configuration = configuration;
     }
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto)
@@ -46,10 +57,9 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.AddAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var token = await GerarTokenNovaSessaoAsync(usuario.Id);
 
-        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
+        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token);
     }
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto, bool ativo = true)
@@ -97,13 +107,12 @@ public class UsuarioService : IUsuarioService
 
         if (!ativo)
         {
-            return new ResponseLoginUsuarioViewModel(usuarioViewModel, "", "");
+            return new ResponseLoginUsuarioViewModel(usuarioViewModel, "");
         }
 
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var token = await GerarTokenNovaSessaoAsync(usuario.Id);
 
-        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token, refreshToken);
+        return new ResponseLoginUsuarioViewModel(usuarioViewModel, token);
     }
 
     public async Task<IList<UsuarioViewModel>> GetAllUsuariosAsync()
@@ -203,10 +212,15 @@ public class UsuarioService : IUsuarioService
 
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var sessao = await _sessaoUsuarioRepository.ObterAsync(
+                         _usuarioAutenticado.SessaoId,
+                         usuario.Id,
+                         _parceiroAutenticado.Id,
+                         false)
+                     ?? throw new UnauthorizedAccessException(SessaoUsuarioConfig.ErroSessaoNaoEncontrada);
+        var token = _tokenService.GenerateToken(sessao);
 
-        return new(usuarioViewModel, token, refreshToken);
+        return new(usuarioViewModel, token);
     }
 
     public async Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoDropDown<Usuario> paginacaoUsuarioDropDown)
@@ -274,7 +288,7 @@ public class UsuarioService : IUsuarioService
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
 
-        return new ResponseLoginUsuarioViewModel(usuarioViewModel, "", "");
+        return new ResponseLoginUsuarioViewModel(usuarioViewModel, "");
     }
 
     public async Task<ResponseLoginUsuarioViewModel> RecuperarSenhaAsync(RecuperarSenhaDto recuperarSenhaDto)
@@ -298,9 +312,23 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.UpdateAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var token = await GerarTokenNovaSessaoAsync(usuario.Id);
 
-        return new(usuarioViewModel, token, refreshToken);
+        return new(usuarioViewModel, token);
+    }
+
+    private async Task<string> GerarTokenNovaSessaoAsync(Guid usuarioId)
+    {
+        var agora = DateTime.UtcNow;
+        var dias = int.TryParse(_configuration["SessaoUsuario:ExpiracaoDias"], out var diasConfigurados)
+            ? diasConfigurados
+            : 10;
+        var sessao = new SessaoUsuario(
+            Guid.NewGuid(), agora, agora, usuarioId, _parceiroAutenticado.Id, false, agora,
+            agora.AddDays(dias), null, null, null, null, null, null);
+
+        await _sessaoUsuarioRepository.AdicionarAsync(sessao);
+        await _sessaoUsuarioRepository.SalvarAlteracoesAsync();
+        return _tokenService.GenerateToken(sessao);
     }
 }

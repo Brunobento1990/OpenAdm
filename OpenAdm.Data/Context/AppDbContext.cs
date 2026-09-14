@@ -34,6 +34,7 @@ public class AppDbContext : DbContext
     public DbSet<LinkBioConfiguracao> LinkBioConfiguracoes { get; set; }
     public DbSet<LinkBioItem> LinkBioItens { get; set; }
     public DbSet<LinkBioEvento> LinkBioEventos { get; set; }
+    public DbSet<SessaoUsuario> SessoesUsuarios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -57,6 +58,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new LinkBioConfiguracaoConfiguration());
         modelBuilder.ApplyConfiguration(new LinkBioItemConfiguration());
         modelBuilder.ApplyConfiguration(new LinkBioEventoConfiguration());
+        modelBuilder.ApplyConfiguration(new SessaoUsuarioConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

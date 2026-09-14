@@ -4,13 +4,18 @@ using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using Microsoft.Extensions.Configuration;
+using OpenAdm.Domain.Entities.OpenAdm;
 
 namespace OpenAdm.Application.Services;
 
 public class LoginUsuarioService(
     ILoginUsuarioRepository loginUsuarioRepository,
     ITokenService tokenService,
-    IAcessoEcommerceService acessoEcommerceService)
+    IAcessoEcommerceService acessoEcommerceService,
+    ISessaoUsuarioRepository sessaoUsuarioRepository,
+    IParceiroAutenticado parceiroAutenticado,
+    IConfiguration configuration)
     : ILoginUsuarioService
 {
     private readonly ILoginUsuarioRepository _loginUsuarioRepository = loginUsuarioRepository;
@@ -30,10 +35,10 @@ public class LoginUsuarioService(
         }
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var sessao = await CriarSessaoAsync(usuario.Id);
+        var token = _tokenService.GenerateToken(sessao);
 
-        return new(usuarioViewModel, token, refreshToken);
+        return new(usuarioViewModel, token);
     }
 
     public async Task<ResponseLoginUsuarioViewModel> LoginV2Async(RequestLoginUsuario requestLogin)
@@ -51,9 +56,24 @@ public class LoginUsuarioService(
             throw new ExceptionApi("Usuário inativo. Entre em contato com o administrador do sistema.");
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var sessao = await CriarSessaoAsync(usuario.Id);
+        var token = _tokenService.GenerateToken(sessao);
         await _acessoEcommerceService.AtualizarAcessoAsync();
-        return new(usuarioViewModel, token, refreshToken);
+        return new(usuarioViewModel, token);
+    }
+
+    private async Task<SessaoUsuario> CriarSessaoAsync(Guid usuarioId)
+    {
+        var agora = DateTime.UtcNow;
+        var dias = int.TryParse(configuration["SessaoUsuario:ExpiracaoDias"], out var diasConfigurados)
+            ? diasConfigurados
+            : 10;
+        var sessao = new SessaoUsuario(
+            Guid.NewGuid(), agora, agora, usuarioId, parceiroAutenticado.Id, false, null,
+            agora.AddDays(dias), null, null, null, null, null, null);
+
+        await sessaoUsuarioRepository.AdicionarAsync(sessao);
+        await sessaoUsuarioRepository.SalvarAlteracoesAsync();
+        return sessao;
     }
 }

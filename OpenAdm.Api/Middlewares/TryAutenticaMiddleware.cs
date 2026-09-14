@@ -17,7 +17,8 @@ public class TryAutenticaMiddleware
     public async Task Invoke(
         HttpContext httpContext,
         IUsuarioAutenticado usuarioAutenticado,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        ISessaoUsuarioRepository sessaoUsuarioRepository)
     {
         if (usuarioAutenticado.Id != Guid.Empty)
         {
@@ -32,15 +33,14 @@ public class TryAutenticaMiddleware
         }
 
         var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").LastOrDefault();
-        var refreshToken = httpContext.Request.Headers["refreshToken"].FirstOrDefault();
-
-        if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(refreshToken))
+        if (string.IsNullOrWhiteSpace(token))
         {
             await _next(httpContext);
             return;
         }
 
-        if (!await httpContext.ValidarAcessoAsync(usuarioAutenticado, tokenService, token, refreshToken))
+        if (!await httpContext.ValidarAcessoAsync(
+                usuarioAutenticado, tokenService, sessaoUsuarioRepository, token))
         {
             return;
         }

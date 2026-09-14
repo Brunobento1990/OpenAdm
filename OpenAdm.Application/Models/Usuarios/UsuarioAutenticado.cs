@@ -13,6 +13,7 @@ public sealed class UsuarioAutenticado : IUsuarioAutenticado
     }
 
     public Guid Id { get; set; }
+    public Guid SessaoId { get; set; }
     public Guid ParceiroId { get; set; }
     public bool IsFuncionario { get; set; }
 

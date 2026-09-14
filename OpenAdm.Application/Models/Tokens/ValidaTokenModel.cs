@@ -4,6 +4,8 @@ public class ValidaTokenModel
 {
     public bool Expirado { get; set; }
     public Guid Id { get; set; }
+    public Guid ParceiroId { get; set; }
+    public Guid SessaoId { get; set; }
     public bool EhFuncionario { get; set; }
     public DateTime DataDoLogin { get; set; }
 }

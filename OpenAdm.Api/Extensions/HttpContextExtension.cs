@@ -34,29 +34,14 @@ public static class HttpContextExtension
     public static async Task<bool> ValidarAcessoAsync(this HttpContext httpContext,
         IUsuarioAutenticado usuarioAutenticado,
         ITokenService tokenService,
-        string token,
-        string refreshToken)
+        ISessaoUsuarioRepository sessaoUsuarioRepository,
+        string token)
     {
         var resultadoToken = tokenService.ValidarToken(token);
-        var resultadoRefreshToken = tokenService.ValidarToken(refreshToken);
 
         if (!string.IsNullOrWhiteSpace(resultadoToken.Error) || resultadoToken.Result == null)
         {
             await httpContext.RetornarErroAsync(resultadoToken.Error ?? "JWT inválido", HttpStatusCode.Unauthorized);
-            return false;
-        }
-
-        if (!string.IsNullOrWhiteSpace(resultadoRefreshToken.Error) || resultadoRefreshToken.Result == null)
-        {
-            await httpContext.RetornarErroAsync(resultadoRefreshToken.Error ?? "RefreshToken inválido inválido",
-                HttpStatusCode.Unauthorized);
-            return false;
-        }
-
-        if (resultadoRefreshToken.Result.Expirado)
-        {
-            await httpContext.RetornarErroAsync("Sessão expirada, efetue o login novamente",
-                HttpStatusCode.Unauthorized);
             return false;
         }
 
@@ -71,20 +56,35 @@ public static class HttpContextExtension
                 return false;
             }
 
-            var novoToken = tokenService.GenerateToken(resultadoRefreshToken.Result.Id,
-                resultadoRefreshToken.Result.EhFuncionario);
+            var dadosToken = resultadoToken.Result;
+            var sessao = await sessaoUsuarioRepository.ObterAsync(
+                dadosToken.SessaoId,
+                dadosToken.Id,
+                dadosToken.ParceiroId,
+                dadosToken.EhFuncionario);
+
+            if (sessao == null || !sessao.Ativa)
+            {
+                await httpContext.RetornarErroAsync(
+                    "Sessão expirada, efetue o login novamente",
+                    HttpStatusCode.Unauthorized);
+                return false;
+            }
+
+            var novoToken = tokenService.GenerateToken(sessao);
 
             httpContext.Response.Headers.TryAdd("novotoken", novoToken);
         }
 
-        if (resultadoToken.Result.Id != resultadoRefreshToken.Result.Id)
+        if (resultadoToken.Result.ParceiroId != usuarioAutenticado.ParceiroId)
         {
-            await httpContext.RetornarErroAsync("JWT e refresh token inválido",
+            await httpContext.RetornarErroAsync("JWT inválido para o parceiro informado",
                 HttpStatusCode.Unauthorized);
             return false;
         }
 
         usuarioAutenticado.Id = resultadoToken.Result.Id;
+        usuarioAutenticado.SessaoId = resultadoToken.Result.SessaoId;
         usuarioAutenticado.IsFuncionario = resultadoToken.Result.EhFuncionario;
 
         if (!usuarioAutenticado.IsFuncionario)
@@ -92,10 +92,11 @@ public static class HttpContextExtension
             var usuario = await usuarioAutenticado.GetUsuarioMiddlewareAsync();
 
             if (usuario.ForcarLogin.HasValue &&
-                (usuario.ForcarLogin.Value - resultadoRefreshToken.Result.DataDoLogin).TotalMinutes > 0)
+                usuario.ForcarLogin.Value > resultadoToken.Result.DataDoLogin)
             {
-                await httpContext.RetornarErroAsync("Você foi forçado a efetuar o login novamente!",
-                    httpStatusCode: HttpStatusCode.Unauthorized);
+                await httpContext.RetornarErroAsync(
+                    "Você foi forçado a efetuar o login novamente!",
+                    HttpStatusCode.Unauthorized);
                 return false;
             }
 
