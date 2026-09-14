@@ -3,6 +3,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using System.Linq.Expressions;
 using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Infra.Paginacao;
@@ -12,8 +13,9 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
     public TipoFaturaEnum Tipo { get; set; }
     public DateTime? DataVencimentoInicial { get; set; }
     public DateTime? DataVencimentoFinal { get; set; }
-    public bool? Quitada { get; set; }
+    public StatusParcelaEnum? Status { get; set; }
     public Guid? PedidoId { get; set; }
+    public Guid? ClienteId { get; set; }
 
     public override Expression<Func<Parcela, object>> OrderByCustom()
     {
@@ -37,7 +39,7 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
         {
             return x => x.Fatura.Tipo == Tipo &&
                         (!PedidoId.HasValue || x.Fatura.PedidoId == PedidoId.Value) &&
-                        (!Quitada.HasValue || x.Quitada == Quitada.Value) &&
+                        (!ClienteId.HasValue || x.Fatura.UsuarioId == ClienteId.Value) &&
                         (!dataVencimentoInicial.HasValue || x.DataDeVencimento >= dataVencimentoInicial.Value) &&
                         (!dataVencimentoFinalExclusiva.HasValue ||
                          x.DataDeVencimento < dataVencimentoFinalExclusiva.Value);
@@ -50,9 +52,29 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
              EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Usuario.Nome), $"%{search}%"))
             && x.Fatura.Tipo == Tipo
             && (!PedidoId.HasValue || x.Fatura.PedidoId == PedidoId.Value)
-            && (!Quitada.HasValue || x.Quitada == Quitada.Value)
+            && (!ClienteId.HasValue || x.Fatura.UsuarioId == ClienteId.Value)
             && (!dataVencimentoInicial.HasValue || x.DataDeVencimento >= dataVencimentoInicial.Value)
             && (!dataVencimentoFinalExclusiva.HasValue || x.DataDeVencimento < dataVencimentoFinalExclusiva.Value);
+    }
+
+    public override Expression<Func<Parcela, bool>>? Where()
+    {
+        if (!Status.HasValue)
+        {
+            return null;
+        }
+
+        var hoje = DateTime.UtcNow.Date;
+
+        return Status.Value switch
+        {
+            StatusParcelaEnum.Pendente => x => !x.Quitada && x.DataDeVencimento >= hoje,
+            StatusParcelaEnum.Pago => x => x.Quitada,
+            StatusParcelaEnum.Vencida => x => !x.Quitada && x.DataDeVencimento < hoje,
+            StatusParcelaEnum.PagoParcial => throw new ExceptionApi(
+                "O filtro por status pago parcial ainda não está disponível."),
+            _ => throw new ExceptionApi("Status da parcela inválido.")
+        };
     }
 
     public override IList<Expression<Func<Parcela, object>>> IncludeCustomList()
