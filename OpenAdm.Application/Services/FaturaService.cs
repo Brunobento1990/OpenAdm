@@ -6,6 +6,7 @@ using OpenAdm.Application.Models.FaturasModel;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
@@ -45,7 +46,8 @@ public sealed class FaturaService : IFaturaService
 
         if (!cobranca.Ativo || cobranca.Status != StatusCobrancaPedidoEcommerceEnum.ACobrar)
         {
-            return (ResultPartner<ResultadoPadraoViewModel>)"A cobrança do pedido não está disponível para faturamento!";
+            return (ResultPartner<ResultadoPadraoViewModel>)
+                "A cobrança do pedido não está disponível para faturamento!";
         }
 
         var pedido = await _pedidoRepository.ObterPedidoParaCobrancaAsync(cobranca.PedidoId);
@@ -89,7 +91,7 @@ public sealed class FaturaService : IFaturaService
             dataDePagamento: data,
             desconto: dto.Desconto,
             juros: null));
-        
+
         fatura.Parcelas.Add(parcela);
 
         await _contasAReceberRepository.AdicionarAsync(fatura);
@@ -153,7 +155,7 @@ public sealed class FaturaService : IFaturaService
 
         foreach (var parcelaDto in dto.Parcelas)
         {
-            var valorParcela = decimal.Round(parcelaDto.Valor, 2, MidpointRounding.AwayFromZero);
+            var valorParcela = parcelaDto.Valor.ArredondarCentavos();
             var parcela = new Parcela(
                 id: Guid.NewGuid(),
                 dataDeCriacao: data,
@@ -207,6 +209,142 @@ public sealed class FaturaService : IFaturaService
         {
             Resultado = true
         };
+    }
+
+    public async Task<ResultPartner<ResultadoPadraoViewModel>> RenegociarAsync(RenegociarFaturaDto dto)
+    {
+        var erro = dto.Validar();
+        if (erro != null)
+            return (ResultPartner<ResultadoPadraoViewModel>)erro;
+
+        var fatura = await _contasAReceberRepository.ObterParaRenegociarAsync(dto.FaturaId);
+        if (fatura == null)
+            return (ResultPartner<ResultadoPadraoViewModel>)"Não foi possível localizar a fatura!";
+
+        if (fatura.Tipo == TipoFaturaEnum.Bonificado)
+            return (ResultPartner<ResultadoPadraoViewModel>)"Não é possível renegociar uma fatura bonificada!";
+
+        var parcelasAtivas = fatura.Parcelas.Where(x => x.Ativo).ToList();
+        var parcelasParaCriar = dto.Parcelas.ToList();
+        var parcelasPreservadas = new List<Parcela>();
+        var parcelasParaInativar = new List<Parcela>();
+        var baixasParciaisParaConsolidar = new List<Parcela>();
+
+        foreach (var parcela in parcelasAtivas)
+        {
+            if (parcela.Quitada)
+            {
+                parcelasPreservadas.Add(parcela);
+                continue;
+            }
+
+            if (parcela.ValorPagoRecebido > 0)
+            {
+                parcelasPreservadas.Add(parcela);
+                if (parcela.Valor > parcela.ValorPagoRecebido)
+                    baixasParciaisParaConsolidar.Add(parcela);
+                continue;
+            }
+
+            var mesmaParcela = parcelasParaCriar.FirstOrDefault(x =>
+                x.NumeroDaParcela == parcela.NumeroDaParcela
+                && x.Valor.ArredondarCentavos() == parcela.Valor
+                && x.DataDeVencimento == parcela.DataDeVencimento
+                && x.MeioDePagamento == parcela.MeioDePagamento);
+
+            if (mesmaParcela != null)
+            {
+                parcelasPreservadas.Add(parcela);
+                parcelasParaCriar.Remove(mesmaParcela);
+                continue;
+            }
+
+            if (!string.IsNullOrWhiteSpace(parcela.IdExterno))
+                return (ResultPartner<ResultadoPadraoViewModel>)
+                    $"A parcela {parcela.NumeroDaParcela} possui integração externa e não pode ser alterada!";
+
+            parcelasParaInativar.Add(parcela);
+        }
+
+        var numerosPreservados = parcelasPreservadas.Select(x => x.NumeroDaParcela).ToList();
+        if (numerosPreservados.Distinct().Count() != numerosPreservados.Count)
+            return (ResultPartner<ResultadoPadraoViewModel>)
+                "A fatura já possui números repetidos entre parcelas ativas preservadas!";
+
+        var totalPreservado = parcelasPreservadas.Sum(x =>
+            x.ValorPagoRecebido > 0
+                ? x.ValorPagoRecebido.ArredondarCentavos()
+                : x.Valor);
+        erro = dto.ValidarTotal(fatura.Total - totalPreservado, parcelasParaCriar);
+        if (erro != null)
+            return (ResultPartner<ResultadoPadraoViewModel>)erro;
+
+        foreach (var parcela in baixasParciaisParaConsolidar)
+            parcela.ConsolidarBaixaParcial();
+
+        foreach (var parcela in parcelasParaInativar)
+            parcela.Inativar();
+
+        var numerosOcupados = numerosPreservados.ToHashSet();
+        var proximoNumero = 1;
+        var novasParcelas = new List<Parcela>();
+        foreach (var informada in parcelasParaCriar)
+        {
+            var numeroDaParcela = informada.NumeroDaParcela;
+            if (!numerosOcupados.Add(numeroDaParcela))
+            {
+                while (numerosOcupados.Contains(proximoNumero))
+                    proximoNumero++;
+                numeroDaParcela = proximoNumero;
+                numerosOcupados.Add(numeroDaParcela);
+            }
+
+            var nova = Parcela.NovaFatura(
+                dataDeVencimento: informada.DataDeVencimento,
+                numeroDaParcela: numeroDaParcela,
+                meioDePagamento: informada.MeioDePagamento,
+                valor: informada.Valor.ArredondarCentavos(),
+                observacao: null,
+                faturaId: fatura.Id,
+                idExterno: null,
+                desconto: null,
+                juros: null,
+                tipoFatura: fatura.Tipo);
+            novasParcelas.Add(nova);
+        }
+
+        if (novasParcelas.Count > 0)
+            await _contasAReceberRepository.AdicionarParcelasAsync(novasParcelas);
+
+        if (novasParcelas.Count > 0 || parcelasParaInativar.Count > 0 || baixasParciaisParaConsolidar.Count > 0)
+        {
+            var descricao = $"Fatura renegociada: {novasParcelas.Count} parcela(s) criada(s), " +
+                            $"{parcelasParaInativar.Count} parcela(s) inativada(s) e " +
+                            $"{baixasParciaisParaConsolidar.Count} baixa(s) parcial(is) consolidada(s).";
+            await _contasAReceberRepository.AddHistoricoAsync(FaturaHistorico.Nova(fatura.Id, descricao));
+            await _contasAReceberRepository.SaveChangesAsync();
+        }
+
+        return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel { Resultado = true };
+    }
+
+    public async Task<ResultPartner<FaturaViewModel>> SugerirParcelamentoAsync(Guid faturaId)
+    {
+        if (faturaId == Guid.Empty)
+            return (ResultPartner<FaturaViewModel>)"Informe a fatura!";
+
+        var fatura = await _contasAReceberRepository.GetByIdCompletaAsync(faturaId);
+        if (fatura == null)
+            return (ResultPartner<FaturaViewModel>)"Não foi possível localizar a fatura!";
+
+        var parcelasSugeridas = fatura.Parcelas
+            .Where(x => x.Ativo && x.ValorAPagarAReceber > 0)
+            .Select(ParcelaViewModel.SemRelacionamentos)
+            .ToList();
+        var sugestao = FaturaViewModel.SemParcelas(fatura);
+        sugestao.Parcelas = parcelasSugeridas;
+
+        return (ResultPartner<FaturaViewModel>)sugestao;
     }
 
     public async Task<FaturaViewModel> CriarAdmAsync(FaturaCriarAdmDto faturaCriarAdmDto)
@@ -345,14 +483,14 @@ public sealed class FaturaService : IFaturaService
     public async Task<FaturaViewModel> GetByIdAsync(Guid id)
     {
         var fatura = await _contasAReceberRepository.GetByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
+                     ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
         return (FaturaViewModel)fatura;
     }
 
     public async Task<FaturaViewModel> GetCompletaAsync(Guid id)
     {
         var fatura = await _contasAReceberRepository.GetByIdCompletaAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
+                     ?? throw new ExceptionApi("Não foi possível localizar a fatura!");
 
         return (FaturaViewModel)fatura;
     }
@@ -360,10 +498,10 @@ public sealed class FaturaService : IFaturaService
     public async Task VerificarFechamentoAsync(Guid id)
     {
         var contasAReceber = await _contasAReceberRepository.GetByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar a contas a pagar");
+                             ?? throw new ExceptionApi("Não foi possível localizar a contas a pagar");
 
         if (contasAReceber
-            .Parcelas.Count() == contasAReceber.Parcelas.Count)
+                .Parcelas.Count() == contasAReceber.Parcelas.Count)
         {
             contasAReceber.Fechar();
             contasAReceber.Parcelas = [];
@@ -372,8 +510,8 @@ public sealed class FaturaService : IFaturaService
         }
 
         if (contasAReceber
-            .Parcelas
-            .Count() > 1)
+                .Parcelas
+                .Count() > 1)
         {
             contasAReceber.PagaParcialmente();
             contasAReceber.Parcelas = [];

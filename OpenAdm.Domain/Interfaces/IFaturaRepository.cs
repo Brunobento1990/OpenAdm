@@ -6,7 +6,7 @@ public interface IFaturaRepository : IGenericRepository<Fatura>
 {
     Task<Fatura?> GetByIdAsync(Guid id);
     Task<Fatura?> GetByIdCompletaAsync(Guid id);
-    Task<Fatura?> GetByPedidoIdAsync(Guid id);
-    Task EditarAsync(Fatura fatura);
-    void ExcluirParcelasAsync(IList<Parcela> parcelas);
+    Task<Fatura?> ObterParaRenegociarAsync(Guid id);
+    Task AdicionarParcelasAsync(IEnumerable<Parcela> parcelas);
+    Task AddHistoricoAsync(FaturaHistorico historico);
 }

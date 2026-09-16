@@ -7,10 +7,12 @@ public sealed class ParcelaPaginacaoViewModel
 {
     public Guid Id { get; set; }
     public long NumeroFatura { get; set; }
+    public Guid FaturaId { get; set; }
     public int NumeroDaParcela { get; set; }
     public long? NumeroPedido { get; set; }
     public string NomeUsuario { get; set; } = string.Empty;
     public decimal Valor { get; set; }
+    public bool Ativo { get; set; }
     public StatusParcelaEnum Status { get; set; }
     public decimal ValorPagoRecebido { get; set; }
     public decimal ValorPagoRecebidoLiquido { get; set; }
@@ -28,6 +30,8 @@ public sealed class ParcelaPaginacaoViewModel
             NumeroDaParcela = parcela.NumeroDaParcela,
             NomeUsuario = parcela.Fatura.Usuario.Nome,
             Valor = parcela.Valor,
+            FaturaId = parcela.FaturaId,
+            Ativo = parcela.Ativo,
             ValorPagoRecebido = parcela.ValorPagoRecebido,
             ValorPagoRecebidoLiquido = parcela.ValorPagoRecebidoLiquido,
             DescontoConcedido = parcela.DescontoConcedido,

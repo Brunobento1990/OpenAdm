@@ -37,7 +37,7 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
 
         if (string.IsNullOrWhiteSpace(Search))
         {
-            return x => x.Fatura.Tipo == Tipo &&
+            return x => x.Ativo && x.Fatura.Tipo == Tipo &&
                         (!PedidoId.HasValue || x.Fatura.PedidoId == PedidoId.Value) &&
                         (!ClienteId.HasValue || x.Fatura.UsuarioId == ClienteId.Value) &&
                         (!dataVencimentoInicial.HasValue || x.DataDeVencimento >= dataVencimentoInicial.Value) &&
@@ -50,6 +50,7 @@ public class PaginacaoParcelaDto : FilterModel<Parcela>
         return x =>
             (EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Pedido!.Numero.ToString()), $"%{search}%") ||
              EF.Functions.ILike(EF.Functions.Unaccent(x.Fatura.Usuario.Nome), $"%{search}%"))
+            && x.Ativo
             && x.Fatura.Tipo == Tipo
             && (!PedidoId.HasValue || x.Fatura.PedidoId == PedidoId.Value)
             && (!ClienteId.HasValue || x.Fatura.UsuarioId == ClienteId.Value)

@@ -2,6 +2,7 @@
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Helpers;
+using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Domain.Entities;
@@ -20,7 +21,7 @@ public sealed class Parcela : BaseEntity
         string? observacao,
         Guid faturaId,
         string? idExterno,
-        decimal? desconto, TipoFaturaEnum tipo, bool quitada, decimal? juros)
+        decimal? desconto, TipoFaturaEnum tipo, bool quitada, decimal? juros, bool ativo = true)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         DataDeVencimento = dataDeVencimento;
@@ -34,6 +35,7 @@ public sealed class Parcela : BaseEntity
         Tipo = tipo;
         Quitada = quitada;
         Juros = juros;
+        Ativo = ativo;
     }
 
     public DateTime DataDeVencimento { get; private set; }
@@ -47,6 +49,20 @@ public sealed class Parcela : BaseEntity
     public TipoFaturaEnum Tipo { get; private set; }
     public Guid FaturaId { get; private set; }
     public bool Quitada { get; private set; }
+    public bool Ativo { get; private set; }
+
+    public void Inativar()
+    {
+        Ativo = false;
+        DataDeAtualizacao = DateTime.UtcNow;
+    }
+
+    public void ConsolidarBaixaParcial()
+    {
+        Valor = ValorPagoRecebido.ArredondarCentavos();
+        Quitada = true;
+        DataDeAtualizacao = DateTime.UtcNow;
+    }
 
     public StatusParcelaEnum Status
     {

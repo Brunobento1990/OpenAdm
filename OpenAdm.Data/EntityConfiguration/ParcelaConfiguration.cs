@@ -22,6 +22,9 @@ internal class ParcelaConfiguration : IEntityTypeConfiguration<Parcela>
         builder.Property(x => x.Valor)
             .IsRequired()
             .HasPrecision(12, 2);
+        builder.Property(x => x.Ativo)
+            .IsRequired()
+            .HasDefaultValue(true);
         builder.Property(x => x.Desconto)
             .HasPrecision(12, 2);
         builder.Property(x => x.Juros)

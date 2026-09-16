@@ -1,4 +1,5 @@
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Extensions;
 
 namespace OpenAdm.Application.Dtos.FaturasDtos;
 
@@ -24,12 +25,8 @@ public sealed class NegociarCobrancaPedidoDto
             return "Os números das parcelas não podem ser repetidos!";
         }
 
-        var totalParcelas = Parcelas.Sum(x =>
-            decimal.Round(x.Valor, 2, MidpointRounding.AwayFromZero));
-        var totalCobrancaArredondado = decimal.Round(
-            totalCobranca,
-            2,
-            MidpointRounding.AwayFromZero);
+        var totalParcelas = Parcelas.Sum(x => x.Valor.ArredondarCentavos());
+        var totalCobrancaArredondado = totalCobranca.ArredondarCentavos();
 
         if (totalParcelas != totalCobrancaArredondado)
         {

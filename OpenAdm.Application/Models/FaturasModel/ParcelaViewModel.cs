@@ -13,6 +13,7 @@ public class ParcelaViewModel : BaseViewModel
     public long NumeroDoPedido { get; set; }
     public MeioDePagamentoEnum? MeioDePagamento { get; set; }
     public decimal Valor { get; set; }
+    public bool Ativo { get; set; }
     public decimal ValorPagoRecebido { get; set; }
     public decimal ValorPagoRecebidoLiquido { get; set; }
     public decimal DescontoConcedido { get; set; }
@@ -32,9 +33,21 @@ public class ParcelaViewModel : BaseViewModel
             faturaContasAReceber.Fatura.Parcelas = [];
         }
 
+        var viewModel = SemRelacionamentos(faturaContasAReceber);
+        viewModel.Fatura = faturaContasAReceber.Fatura != null
+            ? (FaturaViewModel)faturaContasAReceber.Fatura : null!;
+        viewModel.Transacoes = faturaContasAReceber.Transacoes?.Select(x =>
+        {
+            x.Parcela = null;
+            return (TransacaoFinanceiraViewModel)x;
+        }).ToList();
+        return viewModel;
+    }
+
+    public static ParcelaViewModel SemRelacionamentos(Parcela faturaContasAReceber)
+    {
         return new ParcelaViewModel()
         {
-            Fatura = faturaContasAReceber.Fatura != null ? (FaturaViewModel)faturaContasAReceber.Fatura : null!,
             FaturaId = faturaContasAReceber.FaturaId,
             DataDeCriacao = faturaContasAReceber.DataDeCriacao,
             DataDeVencimento = faturaContasAReceber.DataDeVencimento,
@@ -45,17 +58,13 @@ public class ParcelaViewModel : BaseViewModel
             NumeroDaParcela = faturaContasAReceber.NumeroDaParcela,
             Observacao = faturaContasAReceber.Observacao,
             Valor = faturaContasAReceber.Valor,
+            Ativo = faturaContasAReceber.Ativo,
             Juros = faturaContasAReceber.Juros,
             ValorAPagarAReceber = faturaContasAReceber.ValorAPagarAReceber,
             ValorPagoRecebido = faturaContasAReceber.ValorPagoRecebido,
             ValorPagoRecebidoLiquido = faturaContasAReceber.ValorPagoRecebidoLiquido,
             DescontoConcedido = faturaContasAReceber.DescontoConcedido,
-            Vencida = faturaContasAReceber.Vencida,
-            Transacoes = faturaContasAReceber.Transacoes?.Select(x =>
-            {
-                x.Parcela = null;
-                return (TransacaoFinanceiraViewModel)x;
-            }).ToList()
+            Vencida = faturaContasAReceber.Vencida
         };
     }
 }

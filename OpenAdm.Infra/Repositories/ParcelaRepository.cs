@@ -17,7 +17,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
         return await ParceiroContext
             .Parcelas
             .Include(x => x.Transacoes)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id && x.Ativo);
     }
 
     public async Task<Parcela?> ObterParaEstornarAsync(Guid id)
@@ -25,7 +25,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
         return await ParceiroContext
             .Parcelas
             .Include(x => x.Transacoes)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id && x.Ativo);
     }
 
     public async Task<Parcela?> GetByIdAsync(Guid id)
@@ -49,7 +49,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .Include(x => x.Fatura)
                 .ThenInclude(x => x.Pedido!.ItensPedido)
             .AsSingleQuery()
-            .FirstOrDefaultAsync(x => x.IdExterno == idExterno);
+            .FirstOrDefaultAsync(x => x.IdExterno == idExterno && x.Ativo);
     }
 
     public async Task<IList<Parcela>> GetByPedidoIdAsync(Guid pedidoId)
@@ -58,7 +58,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .Parcelas
             .AsNoTracking()
             .Include(x => x.Fatura)
-            .Where(x => x.Fatura.PedidoId == pedidoId);
+            .Where(x => x.Fatura.PedidoId == pedidoId && x.Ativo);
 
         return await query
             .ToListAsync();
@@ -71,7 +71,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .AsNoTracking()
             .Include(x => x.Fatura)
             .Include(x => x.Transacoes)
-            .Where(x => x.Fatura.Tipo == tipoFatura)
+            .Where(x => x.Fatura.Tipo == tipoFatura && x.Ativo)
             .ToListAsync();
     }
 
@@ -88,7 +88,7 @@ public sealed class ParcelaRepository : GenericRepository<Parcela>, IParcelaRepo
             .Include(x => x.Fatura)
             .Where(m => m.DataDeCriacao.Month >= mes &&
                         m.DataDeCriacao.Year == ano &&
-                        m.Fatura.Tipo == faturaEnum)
+                        m.Fatura.Tipo == faturaEnum && m.Ativo)
             .GroupBy(m => m.DataDeCriacao.Month)
             .ToDictionaryAsync(
                 g => g.Key,

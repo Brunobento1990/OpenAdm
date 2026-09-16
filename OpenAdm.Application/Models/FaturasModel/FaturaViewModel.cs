@@ -21,11 +21,17 @@ public class FaturaViewModel : BaseViewModel
 
     public static explicit operator FaturaViewModel(Fatura fatura)
     {
+        var viewModel = SemParcelas(fatura);
+        viewModel.Parcelas = fatura.Parcelas.Select(x => (ParcelaViewModel)x).ToList();
+        return viewModel;
+    }
+
+    public static FaturaViewModel SemParcelas(Fatura fatura)
+    {
         return new FaturaViewModel()
         {
             DataDeCriacao = fatura.DataDeCriacao,
             DataDeFechamento = fatura.DataDeFechamento,
-            Parcelas = fatura.Parcelas.Select(x => (ParcelaViewModel)x).ToList(),
             Id = fatura.Id,
             Numero = fatura.Numero,
             Pedido = fatura.Pedido == null ? null : new PedidoViewModel().ForModel(fatura.Pedido),

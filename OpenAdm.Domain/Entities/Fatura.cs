@@ -35,17 +35,18 @@ public sealed class Fatura : BaseEntity
     public Pedido? Pedido { get; set; }
     public DateTime? DataDeFechamento { get; private set; }
     public IList<Parcela> Parcelas { get; set; } = [];
+    public IList<FaturaHistorico> Historicos { get; set; } = [];
 
     public decimal Total { get; private set; }
 
     public decimal ValorAPagarAReceber
     {
-        get { return Parcelas.Sum(x => x.ValorAPagarAReceber); }
+        get { return Parcelas.Where(x => x.Ativo).Sum(x => x.ValorAPagarAReceber); }
     }
 
     public decimal ValorPagoRecebido
     {
-        get { return Parcelas.Sum(x => x.ValorPagoRecebido); }
+        get { return Parcelas.Where(x => x.Ativo).Sum(x => x.ValorPagoRecebido); }
     }
 
     public void Fechar()
