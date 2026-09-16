@@ -101,6 +101,10 @@ public class FaturaRenegociacaoServiceTest
         var novas = new List<Parcela>();
         repository.Setup(x => x.AdicionarParcelasAsync(It.IsAny<IEnumerable<Parcela>>()))
             .Callback<IEnumerable<Parcela>>(x => novas.AddRange(x)).Returns(Task.CompletedTask);
+        FaturaHistorico? historicoAdicionado = null;
+        repository.Setup(x => x.AddHistoricoAsync(It.IsAny<FaturaHistorico>()))
+            .Callback<FaturaHistorico>(x => historicoAdicionado = x)
+            .Returns(Task.CompletedTask);
 
         var service = CriarServico(repository.Object);
         var resultado = await service.RenegociarAsync(new RenegociarFaturaDto
@@ -116,11 +120,11 @@ public class FaturaRenegociacaoServiceTest
         Assert.Single(novas);
         Assert.Equal(70, novas[0].Valor);
         Assert.Equal(fatura.Id, novas[0].FaturaId);
-        var historico = Assert.Single(fatura.Historicos);
-        Assert.Equal(fatura.Id, historico.FaturaId);
+        Assert.NotNull(historicoAdicionado);
+        Assert.Equal(fatura.Id, historicoAdicionado.FaturaId);
         Assert.Equal(
             "Fatura renegociada: 1 parcela(s) criada(s), 0 parcela(s) inativada(s) e 1 baixa(s) parcial(is) consolidada(s).",
-            historico.Descricao);
+            historicoAdicionado.Descricao);
         repository.Verify(x => x.SaveChangesAsync(), Times.Once);
     }
 

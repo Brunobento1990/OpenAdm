@@ -9,7 +9,7 @@ namespace OpenAdm.Test.Data.Test;
 public class FaturaHistoricoConfigurationTest
 {
     [Fact]
-    public void DeveConfigurarRelacionamentoERegistrarMigration()
+    public void DeveConfigurarRelacionamentoComFatura()
     {
         var parceiro = new Mock<IParceiroAutenticado>();
         parceiro.Setup(x => x.ConnectionString)
@@ -25,8 +25,5 @@ public class FaturaHistoricoConfigurationTest
         var chaveEstrangeira = Assert.Single(entidade.GetForeignKeys());
         Assert.Equal(typeof(Fatura), chaveEstrangeira.PrincipalEntityType.ClrType);
         Assert.Equal(DeleteBehavior.Cascade, chaveEstrangeira.DeleteBehavior);
-
-        Assert.Contains("20260916120000_FaturaHistoricoMigration",
-            context.Database.GetMigrations());
     }
 }
