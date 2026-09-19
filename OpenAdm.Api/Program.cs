@@ -92,7 +92,7 @@ _ = Task.Run(async () =>
 {
     try
     {
-        if (rodarMigration?.ToUpper() != "TRUE")
+        if (rodarMigration.ToUpper() != "TRUE")
         {
             return;
         }

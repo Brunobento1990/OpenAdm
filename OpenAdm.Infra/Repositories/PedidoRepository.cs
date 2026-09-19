@@ -243,53 +243,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
                 .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<VariacaoMensalHome> ObterHomeAsync()
-    {
-        var hoje = DateTime.Today;
-        var mes = hoje.Month;
-        var anoAtual = hoje.Year;
-        var anoAnterior = anoAtual - 1;
-
-        var totais = await ParceiroContext
-            .Pedidos
-            .AsNoTracking()
-            .Where(i =>
-                i.DataDeCriacao.Month == mes &&
-                (i.DataDeCriacao.Year == anoAtual || i.DataDeCriacao.Year == anoAnterior)
-            )
-            .GroupBy(i => i.DataDeCriacao.Year)
-            .Select(g => new
-            {
-                Ano = g.Key,
-                Total = g.Count()
-            })
-            .ToListAsync();
-
-        var totalAnoAtual = totais.FirstOrDefault(x => x.Ano == anoAtual)?.Total ?? 0;
-        var totalAnoAnterior = totais.FirstOrDefault(x => x.Ano == anoAnterior)?.Total ?? 0;
-
-        decimal variacao = 0;
-
-        if (totalAnoAnterior == 0)
-        {
-            variacao = totalAnoAtual == 0 ? 0 : 100;
-        }
-        else
-        {
-            variacao = (decimal)(totalAnoAtual - totalAnoAnterior) / totalAnoAnterior * 100;
-        }
-
-        return new VariacaoMensalHome()
-        {
-            Mes = mes,
-            TotalAnoAnterior = totalAnoAnterior,
-            TotalAnoAtual = totalAnoAtual,
-            Porcentagem = variacao,
-            AnoAnterior = anoAnterior,
-            AnoAtual = anoAtual
-        };
-    }
-
     public async Task<Pedido?> GetPedidoByUsuarioIdAsync(Guid usuarioId)
     {
         return await ParceiroContext

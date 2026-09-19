@@ -1,6 +1,5 @@
 ﻿using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Home;
-using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Pedidos;
 
@@ -52,7 +51,6 @@ public class HomeSevice : IHomeSevice
         var quantidadeDeAcessoEcommerce = await _acessoEcommerceService.QuantidadeDeAcessoAsync();
         var quantidadeDeUsuarioCpf = await _usuarioRepository.GetCountCpfAsync();
         var quantidadeDeUsuarioCnpj = await _usuarioRepository.GetCountCnpjAsync();
-        var variacaoPedido = await _pedidoRepository.ObterHomeAsync();
         var totalizadorProdutoEstoque = await _homeRepository.ObterTotalizadoProtudoEstoqueAsync();
         var dataInicio = DateTime.Today.AddDays(-6);
         var pedidosPorDia = await _homeRepository.ContatorPedido7DiasAsync(dataInicio);
@@ -134,15 +132,6 @@ public class HomeSevice : IHomeSevice
             QuantidadeDeAcessoEcommerce = quantidadeDeAcessoEcommerce,
             QuantidadeDeUsuarioCnpj = quantidadeDeUsuarioCnpj,
             QuantidadeDeUsuarioCpf = quantidadeDeUsuarioCpf,
-            VariacaoMensalPedido = new()
-            {
-                Mes = variacaoPedido.Mes.ConverterMesIntEmNome(),
-                Porcentagem = variacaoPedido.Porcentagem,
-                TotalAnoAtual = variacaoPedido.TotalAnoAtual,
-                TotalAnoAnterior = variacaoPedido.TotalAnoAnterior,
-                AnoAtual = variacaoPedido.AnoAtual,
-                AnoAnterior = variacaoPedido.AnoAnterior
-            }
         };
 
         await _cache.SetItemAsync(key, cache);
