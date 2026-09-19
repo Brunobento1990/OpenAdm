@@ -14,7 +14,6 @@ public interface ILinkBioRepository
     Task AdicionarEventoAsync(LinkBioEvento evento);
     void AtualizarConfiguracao(LinkBioConfiguracao configuracao);
     void AtualizarLink(LinkBioItem link);
-    void ExcluirLink(LinkBioItem link);
     Task<(int Visualizacoes, int Cliques, IList<LinkBioEvento> Eventos,
         IList<(Guid LinkId, string Titulo, int Quantidade)> LinksMaisClicados)> ConsultarEventosAsync(
         Guid empresaId, DateTime dataInicial, DateTime dataFinal);

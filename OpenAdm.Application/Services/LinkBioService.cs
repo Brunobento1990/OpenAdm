@@ -97,7 +97,7 @@ public sealed class LinkBioService(ILinkBioRepository repository, IParceiroRepos
     {
         var link = await repository.ObterLinkAsync(id, usuarioAutenticado.ParceiroId);
         if (link == null) return (ResultPartner<ResultadoPadraoViewModel>)LinkNaoEncontrado;
-        repository.ExcluirLink(link);
+        link.AlterarStatus(false);
         await repository.SaveChangesAsync();
         return ResultadoPadrao();
     }
