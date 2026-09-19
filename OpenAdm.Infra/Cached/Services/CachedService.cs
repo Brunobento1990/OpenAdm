@@ -68,7 +68,7 @@ public class CachedService<T> : ICachedService<T> where T : class
         TimeSpan? tempoExpiracaoDeslizante = null)
     {
         Valid(key);
-        var valueJson = JsonSerializer.Serialize<T>(item, options: _serializerOptions);
+        var valueJson = JsonSerializer.Serialize(item, options: _serializerOptions);
         var options = tempoExpiracao.HasValue || tempoExpiracaoDeslizante.HasValue
             ? CopiarOptionsComExpiracaoPersonalizada(tempoExpiracao, tempoExpiracaoDeslizante)
             : _options;
@@ -79,7 +79,7 @@ public class CachedService<T> : ICachedService<T> where T : class
     public async Task SetListItemAsync(string key, IList<T> itens)
     {
         Valid(key);
-        var valuesJson = JsonSerializer.Serialize<IList<T>>(itens, options: _serializerOptions);
+        var valuesJson = JsonSerializer.Serialize(itens, options: _serializerOptions);
         await _distributedCache.SetStringAsync(NewKey(key), valuesJson, _options);
     }
 
