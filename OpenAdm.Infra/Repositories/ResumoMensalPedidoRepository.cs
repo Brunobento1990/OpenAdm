@@ -38,6 +38,7 @@ public sealed class ResumoMensalPedidoRepository : IResumoMensalPedidoRepository
         var categorias = await _context.ItensPedidos
             .AsNoTracking()
             .Where(x => x.Pedido.StatusPedido == StatusPedido.Entregue &&
+                        !x.Pedido.Excluido &&
                         x.Pedido.DataDeCriacao >= inicio &&
                         x.Pedido.DataDeCriacao < fim)
             .GroupBy(x => new { x.Produto.CategoriaId, x.Produto.Categoria.Descricao })

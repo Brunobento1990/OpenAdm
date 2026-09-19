@@ -9,6 +9,7 @@ internal class EnderecoEntregaPedidoConfiguration : IEntityTypeConfiguration<End
     public void Configure(EntityTypeBuilder<EnderecoEntregaPedido> builder)
     {
         builder.HasKey(x => x.Id);
+        builder.HasQueryFilter(x => !x.Pedido.Excluido);
         builder.Property(x => x.Cep)
             .IsRequired()
             .HasMaxLength(8);

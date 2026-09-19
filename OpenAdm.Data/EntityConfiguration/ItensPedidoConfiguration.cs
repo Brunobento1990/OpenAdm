@@ -9,6 +9,7 @@ public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItemPedido>
     public void Configure(EntityTypeBuilder<ItemPedido> builder)
     {
         builder.HasKey(x => x.Id);
+        builder.HasQueryFilter(x => !x.Pedido.Excluido);
         builder.Property(x => x.DataDeCriacao)
             .IsRequired()
             .ValueGeneratedOnAdd()

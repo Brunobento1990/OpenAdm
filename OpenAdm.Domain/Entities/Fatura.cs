@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Domain.Entities;
 
@@ -60,5 +61,23 @@ public sealed class Fatura : BaseEntity
     {
         Status = StatusFaturaEnum.Paga_Parcialmente;
         DataDeAtualizacao = DateTime.UtcNow;
+    }
+
+    public FaturaHistorico Cancelar()
+    {
+        if (ValorPagoRecebido > 0)
+            throw new ExceptionApi(
+                "Não é possível cancelar uma fatura com pagamento registrado!");
+
+        if (Parcelas.Any(x => x.Ativo && !string.IsNullOrWhiteSpace(x.IdExterno)))
+            throw new ExceptionApi(
+                "Não é possível cancelar uma fatura com parcela integrada externamente!");
+
+        foreach (var parcela in Parcelas.Where(x => x.Ativo))
+            parcela.Inativar();
+
+        Status = StatusFaturaEnum.Cancelada;
+        DataDeAtualizacao = DateTime.UtcNow;
+        return FaturaHistorico.Nova(Id, "Fatura cancelada pela exclusão do pedido.");
     }
 }

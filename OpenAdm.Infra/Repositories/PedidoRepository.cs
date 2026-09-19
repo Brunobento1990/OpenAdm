@@ -77,9 +77,11 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext
             .Pedidos
-            .IgnoreQueryFilters()
             .Include(x => x.Usuario)
             .Include(x => x.ItensPedido)
+            .Include(x => x.Fatura)
+            .ThenInclude(x => x!.Parcelas)
+            .ThenInclude(x => x.Transacoes)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -88,7 +90,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         var pedido = await ParceiroContext
             .Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
             .ThenInclude(x => x.Produto)
             .ThenInclude(x => x.Categoria)
@@ -148,7 +149,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .OrderByDescending(x => x.DataDeCriacao)
             .Include(x => x.ItensPedido)
             .ThenInclude(x => x.Produto)
@@ -172,7 +172,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext.Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
             .OrderByDescending(x => x.Numero)
             .AsQueryable()
@@ -196,7 +195,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .Where(x => x.UsuarioId == usuarioId)
             .CountAsync();
     }

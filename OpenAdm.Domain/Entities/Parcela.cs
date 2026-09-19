@@ -53,12 +53,14 @@ public sealed class Parcela : BaseEntity
 
     public void Inativar()
     {
+        ValidarAtiva();
         Ativo = false;
         DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public void ConsolidarBaixaParcial()
     {
+        ValidarAtiva();
         Valor = ValorPagoRecebido.ArredondarCentavos();
         Quitada = true;
         DataDeAtualizacao = DateTime.UtcNow;
@@ -114,6 +116,7 @@ public sealed class Parcela : BaseEntity
         decimal? desconto,
         string? observacao)
     {
+        ValidarAtiva();
         DataDeVencimento = dataDeVencimento;
         MeioDePagamento = meioDePagamento;
         Valor = valor;
@@ -129,6 +132,8 @@ public sealed class Parcela : BaseEntity
         decimal? desconto,
         decimal? juros)
     {
+        ValidarAtiva();
+
         if (Quitada)
         {
             throw new ExceptionApi($"A parcela: {NumeroDaParcela} já se encontra paga");
@@ -152,6 +157,8 @@ public sealed class Parcela : BaseEntity
 
     public IList<TransacaoFinanceira> Estornar()
     {
+        ValidarAtiva();
+
         var tipoTransacaoDePagamento = Tipo == TipoFaturaEnum.APagar
             ? TipoTransacaoFinanceiraEnum.Saida
             : TipoTransacaoFinanceiraEnum.Entrada;
@@ -178,6 +185,12 @@ public sealed class Parcela : BaseEntity
         DataDeAtualizacao = DateTime.UtcNow;
 
         return estornos;
+    }
+
+    private void ValidarAtiva()
+    {
+        if (!Ativo)
+            throw new ExceptionApi($"Não é possível realizar operações na parcela inativa: {NumeroDaParcela}!");
     }
 
     public static Parcela NovaFatura(

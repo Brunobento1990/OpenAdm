@@ -25,6 +25,7 @@ public sealed class Pedido : BaseEntity
     public StatusPedido StatusPedido { get; private set; }
     public Guid UsuarioId { get; private set; }
     public string? MotivoCancelamento { get; private set; }
+    public bool Excluido { get; private set; }
     public Usuario Usuario { get; set; } = null!;
     public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
     public Fatura? Fatura { get; set; }
@@ -61,6 +62,21 @@ public sealed class Pedido : BaseEntity
 
         StatusPedido = StatusPedido.Cancelado;
         MotivoCancelamento = motivoCancelamento;
+    }
+
+    public void Excluir()
+    {
+        if (StatusPedido == StatusPedido.Entregue)
+            throw new ExceptionApi("Não é possível excluir um pedido entregue!");
+
+        if (Fatura?.ValorPagoRecebido > 0)
+            throw new ExceptionApi("Não é possível excluir um pedido com pagamento registrado!");
+
+        if (Fatura?.Parcelas.Any(x => x.Ativo && !string.IsNullOrWhiteSpace(x.IdExterno)) == true)
+            throw new ExceptionApi("Não é possível excluir um pedido com parcela integrada externamente!");
+
+        Excluido = true;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 
     public void ProcessarItensPedido(IEnumerable<ItemPedidoModel> itensPedidoModels)
