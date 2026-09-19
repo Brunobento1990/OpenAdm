@@ -15,6 +15,7 @@ public class HomeSevice : IHomeSevice
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly ICachedService<HomeAdmViewModel> _cache;
     private readonly ICobrancaPedidoEcommerceRepository _cobrancaPedidoEcommerceRepository;
+    private readonly IResumoMensalHomeService _resumoMensalHomeService;
 
     public HomeSevice(
         IMovimentacaoDeProdutosService movimentacaoDeProdutosService,
@@ -22,7 +23,8 @@ public class HomeSevice : IHomeSevice
         IAcessoEcommerceService acessoEcommerceService,
         IUsuarioRepository usuarioRepository,
         IHomeRepository homeRepository, IUsuarioAutenticado usuarioAutenticado, ICachedService<HomeAdmViewModel> cache,
-        ICobrancaPedidoEcommerceRepository cobrancaPedidoEcommerceRepository)
+        ICobrancaPedidoEcommerceRepository cobrancaPedidoEcommerceRepository,
+        IResumoMensalHomeService resumoMensalHomeService)
     {
         _movimentacaoDeProdutosService = movimentacaoDeProdutosService;
         _pedidoRepository = pedidoRepository;
@@ -32,6 +34,7 @@ public class HomeSevice : IHomeSevice
         _usuarioAutenticado = usuarioAutenticado;
         _cache = cache;
         _cobrancaPedidoEcommerceRepository = cobrancaPedidoEcommerceRepository;
+        _resumoMensalHomeService = resumoMensalHomeService;
     }
 
     public async Task<HomeAdmViewModel> GetHomeAdmAsync()
@@ -58,6 +61,7 @@ public class HomeSevice : IHomeSevice
         var produtosMenosVendidos = await _homeRepository.ProdutosMaisVendidosAsync(true);
         var totaisParcelas = await _homeRepository
             .ObterTotalParcelasPorVencimentoAsync(DateTime.UtcNow.Date);
+        var resumoMensal = await _resumoMensalHomeService.ObterAsync();
 
         var totalCobrancaHoje =
             await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.UtcNow,
@@ -101,6 +105,7 @@ public class HomeSevice : IHomeSevice
 
         cache = new HomeAdmViewModel()
         {
+            ResumoMensal = resumoMensal,
             Parcelas = new()
             {
                 AReceberHoje = totaisParcelas.AReceberHoje,

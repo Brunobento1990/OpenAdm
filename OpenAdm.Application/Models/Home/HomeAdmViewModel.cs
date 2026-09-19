@@ -7,6 +7,7 @@ namespace OpenAdm.Application.Models.Home;
 
 public class HomeAdmViewModel
 {
+    public ResumoMensalHomeViewModel ResumoMensal { get; set; } = new();
     public IEnumerable<MovimentoDeProdutoDashBoardModel> Movimentos { get; set; } = [];
     public IEnumerable<StatusPedidoHomeModel> StatusPedido { get; set; } = [];
     public long QuantidadeDeAcessoEcommerce { get; set; }
