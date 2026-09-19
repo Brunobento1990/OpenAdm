@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Application.Interfaces;
 using System.Text.Json;
@@ -11,20 +12,30 @@ public class CachedService<T> : ICachedService<T> where T : class
     private readonly IDistributedCache _distributedCache;
     private readonly DistributedCacheEntryOptions _options;
     private readonly JsonSerializerOptions _serializerOptions;
-    private static readonly double _absolutExpiration = 5;
-    private static readonly double _slidingExpiration = 3;
     private readonly IParceiroAutenticado _parceiroAutenticado;
 
-    public CachedService(IDistributedCache distributedCache, IParceiroAutenticado parceiroAutenticado)
+    public CachedService(
+        IDistributedCache distributedCache,
+        IParceiroAutenticado parceiroAutenticado,
+        IConfiguration configuration)
     {
+        var expiracaoAbsolutaMinutos = ObterMinutosConfigurados(
+            configuration,
+            "Cache:ExpiracaoAbsolutaMinutos",
+            15);
+        var expiracaoDeslizanteMinutos = ObterMinutosConfigurados(
+            configuration,
+            "Cache:ExpiracaoDeslizanteMinutos",
+            7);
+
         _serializerOptions = new()
         {
             PropertyNameCaseInsensitive = true,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
         _options = new DistributedCacheEntryOptions()
-                      .SetAbsoluteExpiration(TimeSpan.FromMinutes(_absolutExpiration))
-                      .SetSlidingExpiration(TimeSpan.FromMinutes(_slidingExpiration));
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(expiracaoAbsolutaMinutos))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(expiracaoDeslizanteMinutos));
 
         _distributedCache = distributedCache;
         _parceiroAutenticado = parceiroAutenticado;
@@ -50,11 +61,19 @@ public class CachedService<T> : ICachedService<T> where T : class
         await _distributedCache.RemoveAsync(NewKey(key));
     }
 
-    public async Task SetItemAsync(string key, T item)
+    public async Task SetItemAsync(
+        string key,
+        T item,
+        TimeSpan? tempoExpiracao = null,
+        TimeSpan? tempoExpiracaoDeslizante = null)
     {
         Valid(key);
         var valueJson = JsonSerializer.Serialize<T>(item, options: _serializerOptions);
-        await _distributedCache.SetStringAsync(NewKey(key), valueJson, _options);
+        var options = tempoExpiracao.HasValue || tempoExpiracaoDeslizante.HasValue
+            ? CopiarOptionsComExpiracaoPersonalizada(tempoExpiracao, tempoExpiracaoDeslizante)
+            : _options;
+
+        await _distributedCache.SetStringAsync(NewKey(key), valueJson, options);
     }
 
     public async Task SetListItemAsync(string key, IList<T> itens)
@@ -73,5 +92,39 @@ public class CachedService<T> : ICachedService<T> where T : class
     private string NewKey(string key)
     {
         return $"{_parceiroAutenticado.Id}_{key}";
+    }
+
+    private DistributedCacheEntryOptions CopiarOptionsComExpiracaoPersonalizada(
+        TimeSpan? tempoExpiracao,
+        TimeSpan? tempoExpiracaoDeslizante)
+    {
+        ValidarTempoExpiracao(tempoExpiracao, nameof(tempoExpiracao));
+        ValidarTempoExpiracao(tempoExpiracaoDeslizante, nameof(tempoExpiracaoDeslizante));
+
+        return new DistributedCacheEntryOptions
+        {
+            AbsoluteExpirationRelativeToNow = tempoExpiracao ?? _options.AbsoluteExpirationRelativeToNow,
+            SlidingExpiration = tempoExpiracaoDeslizante ?? _options.SlidingExpiration
+        };
+    }
+
+    private static void ValidarTempoExpiracao(TimeSpan? tempoExpiracao, string nomeParametro)
+    {
+        if (tempoExpiracao.HasValue && tempoExpiracao.Value <= TimeSpan.Zero)
+        {
+            throw new ArgumentOutOfRangeException(
+                nomeParametro,
+                "O tempo de expiração deve ser maior que zero.");
+        }
+    }
+
+    private static double ObterMinutosConfigurados(
+        IConfiguration configuration,
+        string chave,
+        double valorPadrao)
+    {
+        return double.TryParse(configuration[chave], out var minutos) && minutos > 0
+            ? minutos
+            : valorPadrao;
     }
 }
