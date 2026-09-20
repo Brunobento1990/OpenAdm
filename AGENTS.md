@@ -25,4 +25,7 @@ Tests use xUnit with Moq, Bogus, ExpectedObjects, EF Core InMemory, and coverlet
 Recent history uses short Portuguese messages such as `fix`, `ajuste`, and brief feature notes. Prefer concise imperative messages that name the area changed, for example `ajusta cobranca de pedido`. Pull requests should include a short summary, affected projects, test results, linked issue when applicable, and screenshots or sample requests for API behavior changes.
 
 ## Security & Configuration Tips
-Do not commit real secrets. Keep local configuration in `OpenAdm.Api/.env` based on `.env.example`; required settings include JWT, PostgreSQL, Redis, Azure Storage, email, and external API values. Review migration changes in `OpenAdm.Data/Migrations/` before enabling `RODAR_MIGRATION=TRUE`.
+Do not commit real secrets. Keep local configuration in `OpenAdm.Api/.env` based on `.env.example`; required settings include JWT, PostgreSQL, Redis, Azure Storage, email, and external API values.
+
+## Migration Policy
+Migrations and database updates are the exclusive responsibility of the developer. Agents must never create, generate, modify, rename, delete, restore, revert, or execute migrations, must not edit EF Core model snapshot files, and must not run database migration/update commands. Preserve every existing or uncommitted file under `OpenAdm.Data/Migrations/` exactly as found. When a code change requires a schema change, implement only the non-migration code and explicitly inform the developer that they must create and apply the required migration.
