@@ -33,6 +33,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<ITrocarSenhaFuncionarioService, TrocarSenhaFuncionarioService>();
         services.AddScoped<IPedidoService, PedidoService>();
         services.AddScoped<IHomeSevice, HomeSevice>();
+        services.AddScoped<IResumoMensalHomeService, ResumoMensalHomeService>();
         services.AddScoped<ICategoriaService, CategoriaService>();
         services.AddScoped<IProdutoService, ProdutoService>();
         services.AddScoped<ILoginUsuarioService, LoginUsuarioService>();

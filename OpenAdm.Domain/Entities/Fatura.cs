@@ -1,5 +1,6 @@
 ﻿using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Exceptions;
 
 namespace OpenAdm.Domain.Entities;
 
@@ -35,17 +36,18 @@ public sealed class Fatura : BaseEntity
     public Pedido? Pedido { get; set; }
     public DateTime? DataDeFechamento { get; private set; }
     public IList<Parcela> Parcelas { get; set; } = [];
+    public IList<FaturaHistorico> Historicos { get; set; } = [];
 
     public decimal Total { get; private set; }
 
     public decimal ValorAPagarAReceber
     {
-        get { return Parcelas.Sum(x => x.ValorAPagarAReceber); }
+        get { return Parcelas.Where(x => x.Ativo).Sum(x => x.ValorAPagarAReceber); }
     }
 
     public decimal ValorPagoRecebido
     {
-        get { return Parcelas.Sum(x => x.ValorPagoRecebido); }
+        get { return Parcelas.Where(x => x.Ativo).Sum(x => x.ValorPagoRecebido); }
     }
 
     public void Fechar()
@@ -59,5 +61,23 @@ public sealed class Fatura : BaseEntity
     {
         Status = StatusFaturaEnum.Paga_Parcialmente;
         DataDeAtualizacao = DateTime.UtcNow;
+    }
+
+    public FaturaHistorico Cancelar()
+    {
+        if (ValorPagoRecebido > 0)
+            throw new ExceptionApi(
+                "Não é possível cancelar uma fatura com pagamento registrado!");
+
+        if (Parcelas.Any(x => x.Ativo && !string.IsNullOrWhiteSpace(x.IdExterno)))
+            throw new ExceptionApi(
+                "Não é possível cancelar uma fatura com parcela integrada externamente!");
+
+        foreach (var parcela in Parcelas.Where(x => x.Ativo))
+            parcela.Inativar();
+
+        Status = StatusFaturaEnum.Cancelada;
+        DataDeAtualizacao = DateTime.UtcNow;
+        return FaturaHistorico.Nova(Id, "Fatura cancelada pela exclusão do pedido.");
     }
 }

@@ -10,7 +10,9 @@ public sealed class LinkBioRepository(AppDbContext appDbContext) : ILinkBioRepos
 {
     public Task<LinkBioConfiguracao?> ObterConfiguracaoAsync(Guid empresaId, bool rastrear = false)
     {
-        var query = appDbContext.LinkBioConfiguracoes.Include(x => x.Links).AsQueryable();
+        var query = appDbContext.LinkBioConfiguracoes
+            .Include(x => x.Links.Where(link => link.Ativo))
+            .AsQueryable();
         
         if (!rastrear)
         {
@@ -21,12 +23,12 @@ public sealed class LinkBioRepository(AppDbContext appDbContext) : ILinkBioRepos
     }
 
     public Task<LinkBioConfiguracao?> ObterPaginaPublicaAsync(Guid empresaId) => appDbContext.LinkBioConfiguracoes
-        .AsNoTracking().Include(x => x.Links)
+        .AsNoTracking().Include(x => x.Links.Where(link => link.Ativo))
         .FirstOrDefaultAsync(x => x.EmpresaId == empresaId && x.Ativo);
 
     public Task<LinkBioItem?> ObterLinkAsync(Guid id, Guid empresaId) => appDbContext.LinkBioItens
         .Include(x => x.LinkBioConfiguracao)
-        .FirstOrDefaultAsync(x => x.Id == id && x.LinkBioConfiguracao.EmpresaId == empresaId);
+        .FirstOrDefaultAsync(x => x.Id == id && x.Ativo && x.LinkBioConfiguracao.EmpresaId == empresaId);
 
     public Task<LinkBioItem?> ObterLinkPublicoAsync(Guid id, Guid configuracaoId) => appDbContext.LinkBioItens
         .AsNoTracking().FirstOrDefaultAsync(x => x.Id == id && x.LinkBioConfiguracaoId == configuracaoId && x.Ativo);
@@ -38,7 +40,6 @@ public sealed class LinkBioRepository(AppDbContext appDbContext) : ILinkBioRepos
     public async Task AdicionarEventoAsync(LinkBioEvento evento) => await appDbContext.LinkBioEventos.AddAsync(evento);
     public void AtualizarConfiguracao(LinkBioConfiguracao configuracao) => appDbContext.LinkBioConfiguracoes.Update(configuracao);
     public void AtualizarLink(LinkBioItem link) => appDbContext.LinkBioItens.Update(link);
-    public void ExcluirLink(LinkBioItem link) => appDbContext.LinkBioItens.Remove(link);
 
     public async Task<(int Visualizacoes, int Cliques, IList<LinkBioEvento> Eventos,
         IList<(Guid LinkId, string Titulo, int Quantidade)> LinksMaisClicados)> ConsultarEventosAsync(

@@ -18,7 +18,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
         return await ParceiroContext
             .ItensPedidos
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .FirstOrDefaultAsync(x => x.Id == id && !x.Pedido.Excluido);
     }
 
     public async Task<IList<ItemPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId)
@@ -29,7 +29,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
             .Include(x => x.Produto)
             .Include(x => x.Tamanho)
             .Include(x => x.Peso)
-            .Where(x => x.PedidoId == pedidoId)
+            .Where(x => x.PedidoId == pedidoId && !x.Pedido.Excluido)
             .ToListAsync();
 
         foreach (var item in itens)
@@ -56,6 +56,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
             .AsNoTracking()
             .Where(x =>
                 x.Pedido.StatusPedido == StatusPedido.Aberto &&
+                !x.Pedido.Excluido &&
                 produtosIds.Contains(x.ProdutoId))
             .GroupBy(x => new
             {
@@ -83,7 +84,7 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
             .ThenInclude(x => x.Categoria)
             .Include(x => x.Peso)
             .Include(x => x.Tamanho)
-            .Where(x => x.Pedido.StatusPedido == Domain.Enuns.StatusPedido.Aberto);
+            .Where(x => x.Pedido.StatusPedido == Domain.Enuns.StatusPedido.Aberto && !x.Pedido.Excluido);
 
         if (pedidosIds.Count > 0)
         {

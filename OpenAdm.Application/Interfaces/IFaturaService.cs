@@ -10,6 +10,8 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface IFaturaService
 {
+    Task<ResultPartner<FaturaViewModel>> SugerirParcelamentoAsync(Guid faturaId);
+    Task<ResultPartner<ResultadoPadraoViewModel>> RenegociarAsync(RenegociarFaturaDto dto);
     Task<ResultPartner<ResultadoPadraoViewModel>> NegociarCobrancaAsync(NegociarCobrancaPedidoDto dto);
     Task<ResultPartner<ResultadoPadraoViewModel>> BaixaAutomaticaAsync(BaixaAutomaticaDto dto);
     Task CriarContasAReceberAsync(CriarFaturaDto contasAReceberDto);

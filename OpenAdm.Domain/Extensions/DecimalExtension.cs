@@ -4,6 +4,9 @@ namespace OpenAdm.Domain.Extensions;
 
 public static class DecimalExtension
 {
+    public static decimal ArredondarCentavos(this decimal valor) =>
+        decimal.Round(valor, 2, MidpointRounding.AwayFromZero);
+
     public static string FormatMoney(this decimal value, bool temSimboloDeDinheiro = false)
     {
         var currency = temSimboloDeDinheiro ? "R$" : "";

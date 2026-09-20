@@ -110,11 +110,6 @@ public class PedidoRepository : IPedidoRepository
         throw new NotImplementedException();
     }
 
-    public Task<VariacaoMensalHome> ObterHomeAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     public Task<Pedido?> ObterPedidoParaCobrancaAsync(Guid id)
     {
         throw new NotImplementedException();

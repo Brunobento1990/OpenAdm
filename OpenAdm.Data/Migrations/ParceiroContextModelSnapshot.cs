@@ -282,6 +282,32 @@ namespace OpenAdm.Data.Migrations
                     b.ToTable("Faturas");
                 });
 
+            modelBuilder.Entity("OpenAdm.Domain.Entities.FaturaHistorico", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("FaturaId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FaturaId");
+
+                    b.ToTable("FaturaHistorico", (string)null);
+                });
+
             modelBuilder.Entity("OpenAdm.Domain.Entities.ItemPedido", b =>
                 {
                     b.Property<Guid>("Id")
@@ -457,6 +483,11 @@ namespace OpenAdm.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Ativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp without time zone")
@@ -533,6 +564,9 @@ namespace OpenAdm.Data.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
+                    b.Property<bool>("Excluido")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("MotivoCancelamento")
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -554,6 +588,8 @@ namespace OpenAdm.Data.Migrations
                     b.HasIndex("StatusPedido");
 
                     b.HasIndex("UsuarioId");
+
+                    b.HasIndex("Excluido", "StatusPedido");
 
                     b.ToTable("Pedidos");
                 });
@@ -1035,6 +1071,17 @@ namespace OpenAdm.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("OpenAdm.Domain.Entities.FaturaHistorico", b =>
+                {
+                    b.HasOne("OpenAdm.Domain.Entities.Fatura", "Fatura")
+                        .WithMany("Historicos")
+                        .HasForeignKey("FaturaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Fatura");
+                });
+
             modelBuilder.Entity("OpenAdm.Domain.Entities.ItemPedido", b =>
                 {
                     b.HasOne("OpenAdm.Domain.Entities.Pedido", "Pedido")
@@ -1212,6 +1259,8 @@ namespace OpenAdm.Data.Migrations
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.Fatura", b =>
                 {
+                    b.Navigation("Historicos");
+
                     b.Navigation("Parcelas");
                 });
 

@@ -77,9 +77,11 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext
             .Pedidos
-            .IgnoreQueryFilters()
             .Include(x => x.Usuario)
             .Include(x => x.ItensPedido)
+            .Include(x => x.Fatura)
+            .ThenInclude(x => x!.Parcelas)
+            .ThenInclude(x => x.Transacoes)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
@@ -88,7 +90,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         var pedido = await ParceiroContext
             .Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
             .ThenInclude(x => x.Produto)
             .ThenInclude(x => x.Categoria)
@@ -148,7 +149,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .OrderByDescending(x => x.DataDeCriacao)
             .Include(x => x.ItensPedido)
             .ThenInclude(x => x.Produto)
@@ -172,7 +172,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext.Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .Include(x => x.ItensPedido)
             .OrderByDescending(x => x.Numero)
             .AsQueryable()
@@ -196,7 +195,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
         return await ParceiroContext
             .Pedidos
             .AsNoTracking()
-            .IgnoreQueryFilters()
             .Where(x => x.UsuarioId == usuarioId)
             .CountAsync();
     }
@@ -241,53 +239,6 @@ public class PedidoRepository(ParceiroContext parceiroContext)
                 .Include(x => x.Fatura!.Parcelas)
                 .ThenInclude(x => x.Transacoes)
                 .FirstOrDefaultAsync(x => x.Id == id);
-    }
-
-    public async Task<VariacaoMensalHome> ObterHomeAsync()
-    {
-        var hoje = DateTime.Today;
-        var mes = hoje.Month;
-        var anoAtual = hoje.Year;
-        var anoAnterior = anoAtual - 1;
-
-        var totais = await ParceiroContext
-            .Pedidos
-            .AsNoTracking()
-            .Where(i =>
-                i.DataDeCriacao.Month == mes &&
-                (i.DataDeCriacao.Year == anoAtual || i.DataDeCriacao.Year == anoAnterior)
-            )
-            .GroupBy(i => i.DataDeCriacao.Year)
-            .Select(g => new
-            {
-                Ano = g.Key,
-                Total = g.Count()
-            })
-            .ToListAsync();
-
-        var totalAnoAtual = totais.FirstOrDefault(x => x.Ano == anoAtual)?.Total ?? 0;
-        var totalAnoAnterior = totais.FirstOrDefault(x => x.Ano == anoAnterior)?.Total ?? 0;
-
-        decimal variacao = 0;
-
-        if (totalAnoAnterior == 0)
-        {
-            variacao = totalAnoAtual == 0 ? 0 : 100;
-        }
-        else
-        {
-            variacao = (decimal)(totalAnoAtual - totalAnoAnterior) / totalAnoAnterior * 100;
-        }
-
-        return new VariacaoMensalHome()
-        {
-            Mes = mes,
-            TotalAnoAnterior = totalAnoAnterior,
-            TotalAnoAtual = totalAnoAtual,
-            Porcentagem = variacao,
-            AnoAnterior = anoAnterior,
-            AnoAtual = anoAtual
-        };
     }
 
     public async Task<Pedido?> GetPedidoByUsuarioIdAsync(Guid usuarioId)

@@ -11,17 +11,6 @@ public sealed class FaturaRepository : GenericRepository<Fatura>, IFaturaReposit
     {
     }
 
-    public async Task EditarAsync(Fatura fatura)
-    {
-        ParceiroContext.Faturas.Update(fatura);
-        await ParceiroContext.SaveChangesAsync();
-    }
-
-    public void ExcluirParcelasAsync(IList<Parcela> parcelas)
-    {
-        ParceiroContext.RemoveRange(parcelas);
-    }
-
     public async Task<Fatura?> GetByIdAsync(Guid id)
     {
         return await ParceiroContext
@@ -37,22 +26,27 @@ public sealed class FaturaRepository : GenericRepository<Fatura>, IFaturaReposit
             .Faturas
             .AsNoTracking()
             .Include(x => x.Parcelas)
+            .ThenInclude(x => x.Transacoes)
             .Include(x => x.Usuario)
             .Include(x => x.Pedido)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 
-    public async Task<Fatura?> GetByPedidoIdAsync(Guid id)
+    public async Task<Fatura?> ObterParaRenegociarAsync(Guid id)
     {
-        return await ParceiroContext
-            .Faturas
+        return await ParceiroContext.Faturas
             .Include(x => x.Parcelas)
-                .ThenInclude(x => x.Transacoes)
-            .Include(x => x.Usuario)
-            .Include(x => x.Pedido)
-                .ThenInclude(x => x!.ItensPedido)
-            .Include(x => x.Pedido)
-                .ThenInclude(x => x!.Usuario)
-            .FirstOrDefaultAsync(x => x.PedidoId == id);
+            .ThenInclude(x => x.Transacoes)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task AdicionarParcelasAsync(IEnumerable<Parcela> parcelas)
+    {
+        await ParceiroContext.Parcelas.AddRangeAsync(parcelas);
+    }
+
+    public async Task AddHistoricoAsync(FaturaHistorico historico)
+    {
+        await ParceiroContext.FaturasHistoricos.AddAsync(historico);
     }
 }

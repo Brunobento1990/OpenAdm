@@ -71,7 +71,7 @@ public class HomeRepository : IHomeRepository
         var query =
             _parceiroContext.ItensPedidos
                 .AsNoTracking()
-                .Where(x => x.Pedido.StatusPedido == StatusPedido.Entregue)
+                .Where(x => x.Pedido.StatusPedido == StatusPedido.Entregue && !x.Pedido.Excluido)
                 .GroupBy(x => new
                 {
                     x.ProdutoId,
@@ -104,6 +104,7 @@ public class HomeRepository : IHomeRepository
     {
         return await _parceiroContext.ItensPedidos
             .AsNoTracking()
+            .Where(x => !x.Pedido.Excluido)
             .GroupBy(x => new
             {
                 x.ProdutoId,
@@ -138,7 +139,7 @@ public class HomeRepository : IHomeRepository
         var quantidadeReservada = await _parceiroContext
             .ItensPedidos
             .AsNoTracking()
-            .Where(x => x.Pedido.StatusPedido == StatusPedido.Aberto)
+            .Where(x => x.Pedido.StatusPedido == StatusPedido.Aberto && !x.Pedido.Excluido)
             .SumAsync(x => (decimal?)x.Quantidade) ?? 0;
 
         return new TotalizadorProtudoEstoqueHome

@@ -72,6 +72,24 @@ public class FaturaController : ControllerBase
         return result.ToActionResult();
     }
 
+    [HttpPost("renegociar")]
+    [ProducesResponseType<ResultadoPadraoViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> Renegociar(RenegociarFaturaDto dto)
+    {
+        var result = await _faturaService.RenegociarAsync(dto);
+        return result.ToActionResult();
+    }
+
+    [HttpGet("sugerir-parcelamento")]
+    [ProducesResponseType<FaturaViewModel>(200)]
+    [ProducesResponseType<ErrorResponse>(400)]
+    public async Task<IActionResult> SugerirParcelamento([FromQuery] Guid faturaId)
+    {
+        var result = await _faturaService.SugerirParcelamentoAsync(faturaId);
+        return result.ToActionResult();
+    }
+
     [HttpGet("get")]
     [ProducesResponseType<FaturaViewModel>(200)]
     [ProducesResponseType<ErrorResponse>(400)]

@@ -4,5 +4,6 @@ public enum StatusFaturaEnum
 {
     Aberta,
     Paga_Parcialmente,
-    Paga
+    Paga,
+    Cancelada
 }

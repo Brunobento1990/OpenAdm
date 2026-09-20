@@ -152,6 +152,9 @@ public sealed class ParcelaService : IParcelaService
         var parcela = await _parcelaRepository.GetByIdAsync(parcelaEditDto.Id)
                       ?? throw new ExceptionApi("Não foi possível localizar a parcela");
 
+        if (!parcela.Ativo)
+            throw new ExceptionApi("Não é possível editar uma parcela inativa!");
+
         parcela.Edit(
             dataDeVencimento: parcelaEditDto.DataDeVencimento,
             meioDePagamento: parcelaEditDto.MeioDePagamento,
