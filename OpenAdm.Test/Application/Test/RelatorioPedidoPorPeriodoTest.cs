@@ -4,6 +4,7 @@ using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model.Pedidos;
 using OpenAdm.Pdf.Interfaces;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -12,17 +13,19 @@ public class RelatorioPedidoPorPeriodoTest
     [Fact]
     public async Task GetListagemAsync_DeveRetornarTopTresProdutosPorQuantidadeEValorAgrupadosPorUsuario()
     {
-        var usuarioId = Guid.NewGuid();
-        var usuario = CriarUsuario(usuarioId, "Cliente");
-        var produtoA = CriarProduto("Produto A");
-        var produtoB = CriarProduto("Produto B");
-        var produtoC = CriarProduto("Produto C");
-        var produtoD = CriarProduto("Produto D");
+        var usuario = UsuarioBuilder.Init().SemNome("Cliente").Build();
+        var usuarioId = usuario.Id;
+        var produtoA = ProdutoBuilder.Init().SemDescricao("Produto A").Build();
+        var produtoB = ProdutoBuilder.Init().SemDescricao("Produto B").Build();
+        var produtoC = ProdutoBuilder.Init().SemDescricao("Produto C").Build();
+        var produtoD = ProdutoBuilder.Init().SemDescricao("Produto D").Build();
 
         var pedidos = new List<Pedido>
         {
-            CriarPedido(usuario, (produtoA, 2, 100), (produtoB, 8, 5), (produtoD, 1, 1)),
-            CriarPedido(usuario, (produtoA, 3, 100), (produtoC, 4, 20))
+            PedidoBuilder.Init().ComStatusPedido(StatusPedido.Entregue).ComUsuario(usuario)
+                .ComProdutos((produtoA, 2, 100), (produtoB, 8, 5), (produtoD, 1, 1)).Build(),
+            PedidoBuilder.Init().ComStatusPedido(StatusPedido.Entregue).ComUsuario(usuario)
+                .ComProdutos((produtoA, 3, 100), (produtoC, 4, 20)).Build()
         };
 
         var pedidoRepository = new Mock<IPedidoRepository>();
@@ -58,70 +61,4 @@ public class RelatorioPedidoPorPeriodoTest
             x => x.ProdutoId == produtoD.Id);
     }
 
-    private static Pedido CriarPedido(
-        Usuario usuario,
-        params (Produto produto, decimal quantidade, decimal valorUnitario)[] produtos)
-    {
-        var pedido = new Pedido(
-            Guid.NewGuid(),
-            DateTime.UtcNow,
-            DateTime.UtcNow,
-            1,
-            StatusPedido.Entregue,
-            usuario.Id,
-            null)
-        {
-            Usuario = usuario
-        };
-
-        pedido.ItensPedido = produtos
-            .Select(x => new ItemPedido(
-                Guid.NewGuid(),
-                DateTime.UtcNow,
-                DateTime.UtcNow,
-                1,
-                null,
-                null,
-                x.produto.Id,
-                pedido.Id,
-                x.valorUnitario,
-                x.quantidade)
-            {
-                Produto = x.produto
-            })
-            .ToList();
-
-        return pedido;
-    }
-
-    private static Usuario CriarUsuario(Guid id, string nome) => new(
-        id,
-        DateTime.UtcNow,
-        DateTime.UtcNow,
-        1,
-        "cliente@teste.com",
-        "senha",
-        nome,
-        null,
-        null,
-        null,
-        true,
-        null,
-        null,
-        null);
-
-    private static Produto CriarProduto(string descricao) => new(
-        Guid.NewGuid(),
-        DateTime.UtcNow,
-        DateTime.UtcNow,
-        1,
-        descricao,
-        null,
-        Guid.NewGuid(),
-        null,
-        null,
-        null,
-        false,
-        false,
-        true);
 }

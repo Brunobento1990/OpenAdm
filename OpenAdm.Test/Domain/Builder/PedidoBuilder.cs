@@ -12,6 +12,9 @@ public class PedidoBuilder
     private readonly long _numero;
     private StatusPedido _statusPedido;
     private Guid _usuarioId;
+    private Usuario? _usuario;
+    private IList<ItemPedido> _itensPedido = [];
+    private (Produto produto, decimal quantidade, decimal valorUnitario)[]? _produtos;
 
 
     public PedidoBuilder()
@@ -33,10 +36,35 @@ public class PedidoBuilder
         return this;
     }
 
+    public PedidoBuilder ComUsuario(Usuario usuario)
+    {
+        _usuario = usuario;
+        _usuarioId = usuario.Id;
+        return this;
+    }
+
+    public PedidoBuilder ComItens(IList<ItemPedido> itensPedido)
+    {
+        _itensPedido = itensPedido;
+        return this;
+    }
+
+    public PedidoBuilder ComProdutos(params (Produto produto, decimal quantidade, decimal valorUnitario)[] produtos)
+    {
+        _produtos = produtos;
+        return this;
+    }
+
     public Pedido Build()
     {
         var pedido = new Pedido(_id, _created, _update, _numero, _statusPedido, _usuarioId, null);
-        pedido.Usuario = UsuarioBuilder.Init().Build();
+        pedido.Usuario = _usuario ?? UsuarioBuilder.Init().Build();
+        pedido.ItensPedido = _produtos?.Select(x => ItensPedidoBuilder.Init()
+            .ComProduto(x.produto)
+            .ComPedido(pedido.Id)
+            .ComQuantidade(x.quantidade)
+            .ComValorUnitario(x.valorUnitario)
+            .Build()).ToList() ?? _itensPedido;
         return pedido;
     }
 

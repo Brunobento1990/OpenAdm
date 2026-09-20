@@ -91,15 +91,6 @@ public static class HttpContextExtension
         {
             var usuario = await usuarioAutenticado.GetUsuarioMiddlewareAsync();
 
-            if (usuario.ForcarLogin.HasValue &&
-                usuario.ForcarLogin.Value > resultadoToken.Result.DataDoLogin)
-            {
-                await httpContext.RetornarErroAsync(
-                    "Você foi forçado a efetuar o login novamente!",
-                    HttpStatusCode.Unauthorized);
-                return false;
-            }
-
             if (!usuario.AcessoLiberadoEcommerce)
             {
                 await httpContext.RetornarErroAsync("Seu acesso esta bloqueado!",

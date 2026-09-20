@@ -3,6 +3,7 @@ using OpenAdm.Application.Dtos.Funcionarios;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -26,7 +27,9 @@ public class TrocarSenhaFuncionarioServiceTest
     [Fact]
     public async Task DeveTrocarSenhaQuandoSenhaAtualForValida()
     {
-        var funcionario = CriarFuncionario("senha-atual");
+        var funcionario = FuncionarioBuilder.Init().ComId(_usuarioAutenticado.Object.Id)
+            .ComParceiroId(_parceiroAutenticado.Object.Id)
+            .ComSenha(PasswordAdapter.GenerateHash("senha-atual")).Build();
         ConfigurarFuncionario(funcionario);
 
         var resultado = await _service.TrocarAsync(CriarDto("senha-atual"));
@@ -41,7 +44,9 @@ public class TrocarSenhaFuncionarioServiceTest
     [Fact]
     public async Task NaoDeveTrocarSenhaQuandoSenhaAtualForInvalida()
     {
-        var funcionario = CriarFuncionario("senha-atual");
+        var funcionario = FuncionarioBuilder.Init().ComId(_usuarioAutenticado.Object.Id)
+            .ComParceiroId(_parceiroAutenticado.Object.Id)
+            .ComSenha(PasswordAdapter.GenerateHash("senha-atual")).Build();
         ConfigurarFuncionario(funcionario);
 
         var resultado = await _service.TrocarAsync(CriarDto("senha-incorreta"));
@@ -68,7 +73,9 @@ public class TrocarSenhaFuncionarioServiceTest
     [Fact]
     public async Task NaoDeveTrocarSenhaQuandoNovaSenhaForIgualAAtual()
     {
-        var funcionario = CriarFuncionario("senha-atual");
+        var funcionario = FuncionarioBuilder.Init().ComId(_usuarioAutenticado.Object.Id)
+            .ComParceiroId(_parceiroAutenticado.Object.Id)
+            .ComSenha(PasswordAdapter.GenerateHash("senha-atual")).Build();
         ConfigurarFuncionario(funcionario);
         var dto = new TrocarSenhaFuncionarioDto
         {
@@ -90,19 +97,6 @@ public class TrocarSenhaFuncionarioServiceTest
             .Setup(x => x.ObterPorIdAsync(_usuarioAutenticado.Object.Id, _parceiroAutenticado.Object.Id))
             .ReturnsAsync(funcionario);
     }
-
-    private Funcionario CriarFuncionario(string senha) => new(
-        _usuarioAutenticado.Object.Id,
-        DateTime.UtcNow,
-        DateTime.UtcNow,
-        1,
-        "funcionario@email.com",
-        PasswordAdapter.GenerateHash(senha),
-        "Funcionário",
-        null,
-        null,
-        true,
-        _parceiroAutenticado.Object.Id);
 
     private static TrocarSenhaFuncionarioDto CriarDto(string senhaAtual) => new()
     {

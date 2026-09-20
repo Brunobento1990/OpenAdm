@@ -107,8 +107,7 @@ public class UsuarioRepository(ParceiroContext parceiroContext)
                 x.Cpf,
                 x.Ativo,
                 x.TokenEsqueceuSenha,
-                x.DataExpiracaoTokenEsqueceuSenha,
-                x.ForcarLogin)
+                x.DataExpiracaoTokenEsqueceuSenha)
             {
                 EnderecoUsuario = x.EnderecoUsuario
             })

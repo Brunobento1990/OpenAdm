@@ -1,5 +1,5 @@
 namespace OpenAdm.Api.Attributes;
 
-public class AutenticaUsuarioAttribute : Attribute
+public class UsuarioSessaoAttribute : Attribute
 {
 }

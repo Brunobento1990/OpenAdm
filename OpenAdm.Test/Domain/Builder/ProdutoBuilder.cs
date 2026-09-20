@@ -4,7 +4,7 @@ namespace OpenAdm.Test.Domain.Builder;
 
 public class ProdutoBuilder
 {
-    private readonly Guid _id;
+    private Guid _id;
     private readonly DateTime _created;
     private readonly DateTime _update;
     private readonly long _numero;
@@ -14,6 +14,7 @@ public class ProdutoBuilder
     private readonly string _foto;
     private readonly string _nomeFoto;
     private readonly Guid _categoriaId;
+    private bool _vendaSomenteComEstoqueDisponivel;
 
     public ProdutoBuilder()
     {
@@ -33,6 +34,18 @@ public class ProdutoBuilder
     public ProdutoBuilder SemDescricao(string descricao)
     {
         _descricao = descricao;
+        return this;
+    }
+
+    public ProdutoBuilder ComId(Guid id)
+    {
+        _id = id;
+        return this;
+    }
+
+    public ProdutoBuilder VendaSomenteComEstoqueDisponivel(bool vendaSomenteComEstoqueDisponivel = true)
+    {
+        _vendaSomenteComEstoqueDisponivel = vendaSomenteComEstoqueDisponivel;
         return this;
     }
 
@@ -58,6 +71,6 @@ public class ProdutoBuilder
     public Produto Build()
     {
         return new Produto(_id, _created, _update, _numero, _descricao, _especificacaoTecnica, _categoriaId,
-            _referencia, _foto, _nomeFoto, false, false, true);
+            _referencia, _foto, _nomeFoto, false, _vendaSomenteComEstoqueDisponivel, true);
     }
 }
