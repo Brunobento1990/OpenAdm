@@ -5,5 +5,6 @@ namespace OpenAdm.Application.Interfaces;
 public interface ISessaoUsuarioService
 {
     Task<SessaoUsuario> CriarAsync(Guid usuarioId, bool ehFuncionario);
-    Task DerrubarSessaoUsuarioIdAsync(Guid usuarioId);
+    Task DerrubarSessaoAsync(Guid sessaoId);
+    Task DerrubarSessoesAsync(Guid usuarioId, bool ehFuncionario);
 }

@@ -12,5 +12,5 @@ public interface ISessaoUsuarioRepository
         bool ehFuncionario);
     Task SalvarAlteracoesAsync();
     Task DerrubarSessaoAsync(Guid sessaoId);
-    Task DerrubarSessaoUsuarioIdAsync(Guid usuarioId);
+    Task DerrubarSessoesAsync(Guid usuarioId, Guid parceiroId, bool ehFuncionario);
 }

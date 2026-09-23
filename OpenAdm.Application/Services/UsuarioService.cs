@@ -195,6 +195,7 @@ public class UsuarioService : IUsuarioService
         usuario.UpdateSenha(updateSenhaUsuarioDto.HashSenha());
 
         await _usuarioRepository.UpdateAsync(usuario);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
     }
 
     public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto)
@@ -209,7 +210,7 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
 
-        await _sessaoUsuarioService.DerrubarSessaoUsuarioIdAsync(usuario.Id);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
 
         var sessao = await _sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
 
@@ -246,7 +247,7 @@ public class UsuarioService : IUsuarioService
 
         if (!usuario.Ativo)
         {
-            await _sessaoUsuarioService.DerrubarSessaoUsuarioIdAsync(usuario.Id);
+            await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
         }
 
         return true;
@@ -306,7 +307,7 @@ public class UsuarioService : IUsuarioService
             throw new ExceptionApi("Data de expiração de token inválida, recupere a senha novamente");
         }
 
-        if ((usuario.DataExpiracaoTokenEsqueceuSenha.Value - DateTime.UtcNow).TotalMinutes > 120)
+        if (DateTime.UtcNow - usuario.DataExpiracaoTokenEsqueceuSenha.Value >= TimeSpan.FromHours(2))
         {
             throw new ExceptionApi("Data de expiração de token expirada, recupere a senha novamente");
         }
@@ -314,6 +315,8 @@ public class UsuarioService : IUsuarioService
         usuario.UpdateSenha(recuperarSenhaDto.HashSenha());
 
         await _usuarioRepository.UpdateAsync(usuario);
+
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = await GerarTokenNovaSessaoAsync(usuario.Id);

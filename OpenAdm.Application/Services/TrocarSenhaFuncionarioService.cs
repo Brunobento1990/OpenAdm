@@ -10,7 +10,8 @@ namespace OpenAdm.Application.Services;
 public class TrocarSenhaFuncionarioService(
     IFuncionarioRepository funcionarioRepository,
     IUsuarioAutenticado usuarioAutenticado,
-    IParceiroAutenticado parceiroAutenticado) : ITrocarSenhaFuncionarioService
+    IParceiroAutenticado parceiroAutenticado,
+    ISessaoUsuarioService sessaoUsuarioService) : ITrocarSenhaFuncionarioService
 {
     public async Task<ResultPartner<ResultadoPadraoViewModel>> TrocarAsync(TrocarSenhaFuncionarioDto dto)
     {
@@ -40,6 +41,7 @@ public class TrocarSenhaFuncionarioService(
         funcionario.AtualizarSenha(PasswordAdapter.GenerateHash(dto.Senha));
         funcionarioRepository.Update(funcionario);
         await funcionarioRepository.SaveChangesAsync();
+        await sessaoUsuarioService.DerrubarSessoesAsync(funcionario.Id, ehFuncionario: true);
 
         return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel { Resultado = true };
     }

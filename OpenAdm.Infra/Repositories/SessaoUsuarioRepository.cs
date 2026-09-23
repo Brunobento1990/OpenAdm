@@ -41,10 +41,14 @@ public class SessaoUsuarioRepository(AppDbContext appDbContext) : ISessaoUsuario
                 x.SetProperty(y => y.RevogadoEm, DateTime.UtcNow));
     }
 
-    public async Task DerrubarSessaoUsuarioIdAsync(Guid usuarioId)
+    public async Task DerrubarSessoesAsync(Guid usuarioId, Guid parceiroId, bool ehFuncionario)
     {
         await appDbContext.SessoesUsuarios
-            .Where(x => x.UsuarioId == usuarioId && x.RevogadoEm == null)
+            .Where(x =>
+                x.UsuarioId == usuarioId &&
+                x.ParceiroId == parceiroId &&
+                x.EhFuncionario == ehFuncionario &&
+                x.RevogadoEm == null)
             .ExecuteUpdateAsync(x =>
                 x.SetProperty(y => y.RevogadoEm, DateTime.UtcNow));
     }

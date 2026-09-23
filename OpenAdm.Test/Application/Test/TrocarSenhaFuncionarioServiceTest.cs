@@ -1,5 +1,6 @@
 using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Dtos.Funcionarios;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
@@ -12,6 +13,7 @@ public class TrocarSenhaFuncionarioServiceTest
     private readonly Mock<IFuncionarioRepository> _funcionarioRepository = new();
     private readonly Mock<IUsuarioAutenticado> _usuarioAutenticado = new();
     private readonly Mock<IParceiroAutenticado> _parceiroAutenticado = new();
+    private readonly Mock<ISessaoUsuarioService> _sessaoUsuarioService = new();
     private readonly TrocarSenhaFuncionarioService _service;
 
     public TrocarSenhaFuncionarioServiceTest()
@@ -21,7 +23,8 @@ public class TrocarSenhaFuncionarioServiceTest
         _service = new TrocarSenhaFuncionarioService(
             _funcionarioRepository.Object,
             _usuarioAutenticado.Object,
-            _parceiroAutenticado.Object);
+            _parceiroAutenticado.Object,
+            _sessaoUsuarioService.Object);
     }
 
     [Fact]
@@ -39,6 +42,7 @@ public class TrocarSenhaFuncionarioServiceTest
         Assert.True(PasswordAdapter.VerifyPassword("nova-senha", funcionario.Senha));
         _funcionarioRepository.Verify(x => x.Update(funcionario), Times.Once);
         _funcionarioRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(funcionario.Id, true), Times.Once);
     }
 
     [Fact]

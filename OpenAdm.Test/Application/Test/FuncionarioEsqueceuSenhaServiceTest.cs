@@ -13,6 +13,7 @@ public class FuncionarioEsqueceuSenhaServiceTest
 {
     private readonly Mock<IFuncionarioEsqueceuSenhaRepository> _repository = new();
     private readonly Mock<IParceiroAutenticado> _parceiroAutenticado = new();
+    private readonly Mock<ISessaoUsuarioService> _sessaoUsuarioService = new();
     private readonly FuncionarioEsqueceuSenhaService _service;
 
     public FuncionarioEsqueceuSenhaServiceTest()
@@ -23,7 +24,8 @@ public class FuncionarioEsqueceuSenhaServiceTest
             _repository.Object,
             Mock.Of<IEmailApiService>(),
             _parceiroAutenticado.Object,
-            Mock.Of<IConfiguration>());
+            Mock.Of<IConfiguration>(),
+            _sessaoUsuarioService.Object);
     }
 
     [Fact]
@@ -52,6 +54,8 @@ public class FuncionarioEsqueceuSenhaServiceTest
         Assert.True(PasswordAdapter.VerifyPassword("nova-senha", solicitacao.Funcionario.Senha));
         _repository.Verify(x => x.Update(solicitacao), Times.Once);
         _repository.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _sessaoUsuarioService.Verify(
+            x => x.DerrubarSessoesAsync(solicitacao.Funcionario.Id, true), Times.Once);
     }
 
     [Fact]

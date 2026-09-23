@@ -17,19 +17,22 @@ public class FuncionarioEsqueceuSenhaService : IFuncionarioEsqueceuSenhaService
     private readonly IEmailApiService _emailService;
     private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly IConfiguration _configuration;
+    private readonly ISessaoUsuarioService _sessaoUsuarioService;
 
     public FuncionarioEsqueceuSenhaService(
         ILoginFuncionarioRepository loginFuncionarioRepository,
         IFuncionarioEsqueceuSenhaRepository funcionarioEsqueceuSenhaRepository,
         IEmailApiService emailService,
         IParceiroAutenticado parceiroAutenticado,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        ISessaoUsuarioService sessaoUsuarioService)
     {
         _loginFuncionarioRepository = loginFuncionarioRepository;
         _funcionarioEsqueceuSenhaRepository = funcionarioEsqueceuSenhaRepository;
         _emailService = emailService;
         _parceiroAutenticado = parceiroAutenticado;
         _configuration = configuration;
+        _sessaoUsuarioService = sessaoUsuarioService;
     }
 
     public async Task<ResultPartner<ResultadoPadraoViewModel>> SolicitarAsync(EsqueceuSenhaDto esqueceuSenhaDto)
@@ -123,6 +126,7 @@ public class FuncionarioEsqueceuSenhaService : IFuncionarioEsqueceuSenhaService
         solicitacao.MarcarComoResetado();
         _funcionarioEsqueceuSenhaRepository.Update(solicitacao);
         await _funcionarioEsqueceuSenhaRepository.SaveChangesAsync();
+        await _sessaoUsuarioService.DerrubarSessoesAsync(solicitacao.Funcionario.Id, ehFuncionario: true);
 
         return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel { Resultado = true };
     }

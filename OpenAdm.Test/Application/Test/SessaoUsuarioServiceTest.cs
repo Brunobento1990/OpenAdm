@@ -50,4 +50,29 @@ public class SessaoUsuarioServiceTest
         _sessaoUsuarioRepository.Verify(x => x.AdicionarAsync(sessao), Times.Once);
         _sessaoUsuarioRepository.Verify(x => x.SalvarAlteracoesAsync(), Times.Once);
     }
+
+    [Fact]
+    public async Task DeveDerrubarSomenteSessaoInformada()
+    {
+        var sessaoId = Guid.NewGuid();
+
+        await _sessaoUsuarioService.DerrubarSessaoAsync(sessaoId);
+
+        _sessaoUsuarioRepository.Verify(x => x.DerrubarSessaoAsync(sessaoId), Times.Once);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task DeveDerrubarSessoesPorUsuarioParceiroETipo(bool ehFuncionario)
+    {
+        var usuarioId = Guid.NewGuid();
+        var parceiroId = Guid.NewGuid();
+        _parceiroAutenticado.SetupGet(x => x.Id).Returns(parceiroId);
+
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuarioId, ehFuncionario);
+
+        _sessaoUsuarioRepository.Verify(
+            x => x.DerrubarSessoesAsync(usuarioId, parceiroId, ehFuncionario), Times.Once);
+    }
 }

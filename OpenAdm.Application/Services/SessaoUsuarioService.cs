@@ -30,6 +30,9 @@ public class SessaoUsuarioService(
         return sessao;
     }
 
-    public Task DerrubarSessaoUsuarioIdAsync(Guid usuarioId)
-        => sessaoUsuarioRepository.DerrubarSessaoUsuarioIdAsync(usuarioId);
+    public Task DerrubarSessaoAsync(Guid sessaoId)
+        => sessaoUsuarioRepository.DerrubarSessaoAsync(sessaoId);
+
+    public Task DerrubarSessoesAsync(Guid usuarioId, bool ehFuncionario)
+        => sessaoUsuarioRepository.DerrubarSessoesAsync(usuarioId, parceiroAutenticado.Id, ehFuncionario);
 }
