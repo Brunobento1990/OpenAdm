@@ -1,8 +1,10 @@
 using OpenAdm.Application.Adapters;
 using OpenAdm.Application.Dtos.Funcionarios;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -11,6 +13,7 @@ public class TrocarSenhaFuncionarioServiceTest
     private readonly Mock<IFuncionarioRepository> _funcionarioRepository = new();
     private readonly Mock<IUsuarioAutenticado> _usuarioAutenticado = new();
     private readonly Mock<IParceiroAutenticado> _parceiroAutenticado = new();
+    private readonly Mock<ISessaoUsuarioService> _sessaoUsuarioService = new();
     private readonly TrocarSenhaFuncionarioService _service;
 
     public TrocarSenhaFuncionarioServiceTest()
@@ -20,13 +23,16 @@ public class TrocarSenhaFuncionarioServiceTest
         _service = new TrocarSenhaFuncionarioService(
             _funcionarioRepository.Object,
             _usuarioAutenticado.Object,
-            _parceiroAutenticado.Object);
+            _parceiroAutenticado.Object,
+            _sessaoUsuarioService.Object);
     }
 
     [Fact]
     public async Task DeveTrocarSenhaQuandoSenhaAtualForValida()
     {
-        var funcionario = CriarFuncionario("senha-atual");
+        var funcionario = FuncionarioBuilder.Init().ComId(_usuarioAutenticado.Object.Id)
+            .ComParceiroId(_parceiroAutenticado.Object.Id)
+            .ComSenha(PasswordAdapter.GenerateHash("senha-atual")).Build();
         ConfigurarFuncionario(funcionario);
 
         var resultado = await _service.TrocarAsync(CriarDto("senha-atual"));
@@ -36,12 +42,15 @@ public class TrocarSenhaFuncionarioServiceTest
         Assert.True(PasswordAdapter.VerifyPassword("nova-senha", funcionario.Senha));
         _funcionarioRepository.Verify(x => x.Update(funcionario), Times.Once);
         _funcionarioRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(funcionario.Id, true), Times.Once);
     }
 
     [Fact]
     public async Task NaoDeveTrocarSenhaQuandoSenhaAtualForInvalida()
     {
-        var funcionario = CriarFuncionario("senha-atual");
+        var funcionario = FuncionarioBuilder.Init().ComId(_usuarioAutenticado.Object.Id)
+            .ComParceiroId(_parceiroAutenticado.Object.Id)
+            .ComSenha(PasswordAdapter.GenerateHash("senha-atual")).Build();
         ConfigurarFuncionario(funcionario);
 
         var resultado = await _service.TrocarAsync(CriarDto("senha-incorreta"));
@@ -68,7 +77,9 @@ public class TrocarSenhaFuncionarioServiceTest
     [Fact]
     public async Task NaoDeveTrocarSenhaQuandoNovaSenhaForIgualAAtual()
     {
-        var funcionario = CriarFuncionario("senha-atual");
+        var funcionario = FuncionarioBuilder.Init().ComId(_usuarioAutenticado.Object.Id)
+            .ComParceiroId(_parceiroAutenticado.Object.Id)
+            .ComSenha(PasswordAdapter.GenerateHash("senha-atual")).Build();
         ConfigurarFuncionario(funcionario);
         var dto = new TrocarSenhaFuncionarioDto
         {
@@ -90,19 +101,6 @@ public class TrocarSenhaFuncionarioServiceTest
             .Setup(x => x.ObterPorIdAsync(_usuarioAutenticado.Object.Id, _parceiroAutenticado.Object.Id))
             .ReturnsAsync(funcionario);
     }
-
-    private Funcionario CriarFuncionario(string senha) => new(
-        _usuarioAutenticado.Object.Id,
-        DateTime.UtcNow,
-        DateTime.UtcNow,
-        1,
-        "funcionario@email.com",
-        PasswordAdapter.GenerateHash(senha),
-        "Funcionário",
-        null,
-        null,
-        true,
-        _parceiroAutenticado.Object.Id);
 
     private static TrocarSenhaFuncionarioDto CriarDto(string senhaAtual) => new()
     {

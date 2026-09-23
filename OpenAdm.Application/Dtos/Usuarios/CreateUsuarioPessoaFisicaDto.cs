@@ -63,7 +63,6 @@ public class CreateUsuarioPessoaFisicaDto : BaseModel
             cpf: Cpf,
             true,
             null,
-            null,
             null);
     }
 }

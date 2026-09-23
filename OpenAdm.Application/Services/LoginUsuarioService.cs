@@ -10,7 +10,8 @@ namespace OpenAdm.Application.Services;
 public class LoginUsuarioService(
     ILoginUsuarioRepository loginUsuarioRepository,
     ITokenService tokenService,
-    IAcessoEcommerceService acessoEcommerceService)
+    IAcessoEcommerceService acessoEcommerceService,
+    ISessaoUsuarioService sessaoUsuarioService)
     : ILoginUsuarioService
 {
     private readonly ILoginUsuarioRepository _loginUsuarioRepository = loginUsuarioRepository;
@@ -30,10 +31,10 @@ public class LoginUsuarioService(
         }
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
+        var token = _tokenService.GenerateToken(sessao);
 
-        return new(usuarioViewModel, token, refreshToken);
+        return new(usuarioViewModel, token);
     }
 
     public async Task<ResponseLoginUsuarioViewModel> LoginV2Async(RequestLoginUsuario requestLogin)
@@ -51,9 +52,10 @@ public class LoginUsuarioService(
             throw new ExceptionApi("Usuário inativo. Entre em contato com o administrador do sistema.");
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var token = _tokenService.GenerateToken(usuario.Id, false);
-        var refreshToken = _tokenService.GenerateRefreshToken(usuario.Id, false);
+        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
+        var token = _tokenService.GenerateToken(sessao);
         await _acessoEcommerceService.AtualizarAcessoAsync();
-        return new(usuarioViewModel, token, refreshToken);
+        return new(usuarioViewModel, token);
     }
+
 }

@@ -10,7 +10,16 @@ public class FuncionarioRepository(AppDbContext appDbContext)
 {
     public Task<Funcionario?> ObterPorIdAsync(Guid id, Guid parceiroId)
     {
-        return AppDbContext.Funcionarios
+        return AppDbContext
+            .Funcionarios
             .FirstOrDefaultAsync(x => x.Id == id && x.ParceiroId == parceiroId && x.Ativo);
+    }
+
+    public async Task<Funcionario?> ObterPorIdMiddlewareAsync(Guid id, Guid parceiroId)
+    {
+        return await AppDbContext
+            .Funcionarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Id == id && x.ParceiroId == parceiroId);
     }
 }

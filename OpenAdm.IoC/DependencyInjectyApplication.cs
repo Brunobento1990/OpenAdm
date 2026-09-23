@@ -3,10 +3,12 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Carrinhos;
 using OpenAdm.Application.Interfaces.Ecommerce;
 using OpenAdm.Application.Interfaces.Pedidos;
+using OpenAdm.Application.Models;
 using OpenAdm.Application.Services;
 using OpenAdm.Application.Services.Carrinhos;
 using OpenAdm.Application.Services.Pedidos;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.IoC;
 
@@ -67,6 +69,9 @@ public static class DependencyInjectyApplication
         services.AddScoped<IRelatorioVendaDeProdutoService, RelatorioVendaDeProdutoService>();
         services.AddScoped<IProdutoEcommerceService, ProdutoEcommerceService>();
         services.AddScoped<ILinkBioService, LinkBioService>();
+        services.AddScoped<IUsuarioSessaoRequest, UsuarioSessaoRequest>();
+        services.AddScoped<ISessaoUsuarioService, SessaoUsuarioService>();
+        services.AddScoped<IAutenticaUsuarioService, AutenticaUsuarioService>();
 
         services.AddKeyedScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>(MeioDePagamentoEnum.Pix);
     }

@@ -434,21 +434,6 @@ public class PedidoServiceTest
         Itens = itens ?? [BuildItemValido()]
     };
 
-    private static Usuario BuildUsuarioComTelefone(bool atacado = true)
-    {
-        var date = DateTime.UtcNow;
-        return new Usuario(
-            Guid.NewGuid(), date, date, 0,
-            "usuario@teste.com", "senha123", "Usuário Teste",
-            "11999999999",
-            cnpj: atacado ? "12345678000100" : null,
-            cpf: atacado ? null : "12345678901",
-            ativo: true,
-            tokenEsqueceuSenha: null,
-            dataExpiracaoTokenEsqueceuSenha: null,
-            forcarLogin: null);
-    }
-
     private void SetupFreteNaoCobra() =>
         _configuracaoDeFreteServiceMock
             .Setup(x => x.CobrarAsync())
@@ -472,40 +457,12 @@ public class PedidoServiceTest
                 VendaDeProdutoComEstoque = vendaDeProdutoComEstoque
             });
 
-    private static ItemTabelaDePreco BuildItemTabelaDePreco(
-        Guid produtoId, Guid? pesoId = null, Guid? tamanhoId = null,
-        bool vendaSomenteComEstoque = false)
-    {
-        var date = DateTime.UtcNow;
-        var item = new ItemTabelaDePreco(
-            Guid.NewGuid(), date, date, 0,
-            produtoId,
-            valorUnitarioAtacado: 10,
-            valorUnitarioVarejo: 10,
-            tabelaDePrecoId: Guid.NewGuid(),
-            tamanhoId: tamanhoId,
-            pesoId: pesoId);
-        item.Produto = new Produto(
-            produtoId, date, date, 0,
-            "Produto Teste", null,
-            Guid.NewGuid(), null, null, null,
-            inativoEcommerce: false,
-            vendaSomenteComEstoqueDisponivel: vendaSomenteComEstoque,
-            ativo: true);
-        return item;
-    }
-
     // ─── Testes dos ifs do método ────────────────────────────────────────────────
 
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoUsuarioNaoTemTelefone()
     {
-        var usuario = new Usuario(
-            Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 0,
-            "usuario@teste.com", "senha123", "Usuário Teste",
-            telefone: null,
-            cnpj: "12345678000100", cpf: null,
-            ativo: true, tokenEsqueceuSenha: null, dataExpiracaoTokenEsqueceuSenha: null, forcarLogin: null);
+        var usuario = UsuarioBuilder.Init().SemTelefone(null).Build();
         _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(usuario);
 
         var result = await _createPedidoService.CreatePedidoAsync(BuildDtoValido());
@@ -516,7 +473,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoCobraFreteEFreteIdNaoInformado()
     {
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteCobra();
         var dto = BuildDtoValido();
         dto.FreteId = null;
@@ -530,7 +487,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoCobraFreteEFreteIdZero()
     {
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteCobra();
         var dto = BuildDtoValido();
         dto.FreteId = 0;
@@ -544,7 +501,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoCobraFreteEValorFreteNaoInformado()
     {
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteCobra();
         var dto = BuildDtoValido();
         dto.FreteId = 1;
@@ -558,7 +515,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoCobraFreteEValorFreteZero()
     {
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteCobra();
         var dto = BuildDtoValido();
         dto.FreteId = 1;
@@ -572,7 +529,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoPedidoNaoAtingeMinimoPedidoAtacado()
     {
-        var usuario = BuildUsuarioComTelefone(atacado: true);
+        var usuario = UsuarioBuilder.Init().Build();
         _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(usuario);
         SetupFreteNaoCobra();
         SetupConfiguracaoDePedido(pedidoMinimoAtacado: 1000);
@@ -592,7 +549,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoPedidoNaoAtingeMinimoPedidoVarejo()
     {
-        var usuario = BuildUsuarioComTelefone(atacado: false);
+        var usuario = UsuarioBuilder.Init().Varejo().Build();
         _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(usuario);
         SetupFreteNaoCobra();
         SetupConfiguracaoDePedido(pedidoMinimoVarejo: 500);
@@ -611,7 +568,7 @@ public class PedidoServiceTest
     [Fact]
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoItemTabelaDePrecoNaoEncontrado()
     {
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteNaoCobra();
         SetupConfiguracaoDePedido();
         _itemTabelaDePrecoRepositoryMock
@@ -638,12 +595,13 @@ public class PedidoServiceTest
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoEstoqueNaoEncontradoPorConfigDePedido()
     {
         var produtoId = Guid.NewGuid();
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteNaoCobra();
         SetupConfiguracaoDePedido(vendaDeProdutoComEstoque: true);
         _itemTabelaDePrecoRepositoryMock
             .Setup(x => x.GetItensTabelaDePrecoByIdProdutosAsync(It.IsAny<IList<Guid>>()))
-            .ReturnsAsync([BuildItemTabelaDePreco(produtoId)]);
+            .ReturnsAsync([ItemTabelaDePrecoBuilder.Init()
+                .ComProduto(ProdutoBuilder.Init().ComId(produtoId).Build()).Build()]);
         _estoqueRepositoryMock
             .Setup(x => x.GetPosicaoEstoqueDosProdutosAsync(It.IsAny<IList<Guid>>()))
             .ReturnsAsync([]);
@@ -664,12 +622,14 @@ public class PedidoServiceTest
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoEstoqueNaoEncontradoPorConfigDoProduto()
     {
         var produtoId = Guid.NewGuid();
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteNaoCobra();
         SetupConfiguracaoDePedido(vendaDeProdutoComEstoque: false);
         _itemTabelaDePrecoRepositoryMock
             .Setup(x => x.GetItensTabelaDePrecoByIdProdutosAsync(It.IsAny<IList<Guid>>()))
-            .ReturnsAsync([BuildItemTabelaDePreco(produtoId, vendaSomenteComEstoque: true)]);
+            .ReturnsAsync([ItemTabelaDePrecoBuilder.Init()
+                .ComProduto(ProdutoBuilder.Init().ComId(produtoId)
+                    .VendaSomenteComEstoqueDisponivel().Build()).Build()]);
         _estoqueRepositoryMock
             .Setup(x => x.GetPosicaoEstoqueDosProdutosAsync(It.IsAny<IList<Guid>>()))
             .ReturnsAsync([]);
@@ -689,12 +649,13 @@ public class PedidoServiceTest
     public async Task CreatePedidoAsync_DeveRetornarErro_QuandoQuantidadeEstoqueInsuficiente()
     {
         var produtoId = Guid.NewGuid();
-        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(BuildUsuarioComTelefone());
+        _usuarioAutenticadoMock.Setup(x => x.GetUsuarioAutenticadoAsync()).ReturnsAsync(UsuarioBuilder.Init().Build());
         SetupFreteNaoCobra();
         SetupConfiguracaoDePedido(vendaDeProdutoComEstoque: true);
         _itemTabelaDePrecoRepositoryMock
             .Setup(x => x.GetItensTabelaDePrecoByIdProdutosAsync(It.IsAny<IList<Guid>>()))
-            .ReturnsAsync([BuildItemTabelaDePreco(produtoId)]);
+            .ReturnsAsync([ItemTabelaDePrecoBuilder.Init()
+                .ComProduto(ProdutoBuilder.Init().ComId(produtoId).Build()).Build()]);
         // estoque disponível = 2, pedido pede 10
         var estoque = Estoque.NovoEstoque(quantidade: 2, produtoId: produtoId, tamanhoId: null, pesoId: null);
 

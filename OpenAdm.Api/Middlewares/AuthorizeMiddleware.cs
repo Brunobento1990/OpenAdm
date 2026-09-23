@@ -18,7 +18,8 @@ public class AuthorizeMiddleware
     public async Task Invoke(
         HttpContext httpContext,
         IUsuarioAutenticado usuarioAutenticado,
-        ITokenService tokenService)
+        ITokenService tokenService,
+        ISessaoUsuarioRepository sessaoUsuarioRepository)
     {
         if (!httpContext.TemAtributo<AutenticaAttribute>())
         {
@@ -27,15 +28,14 @@ public class AuthorizeMiddleware
         }
 
         var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").LastOrDefault();
-        var refreshToken = httpContext.Request.Headers["refreshToken"].FirstOrDefault();
-
-        if (string.IsNullOrWhiteSpace(token) || string.IsNullOrWhiteSpace(refreshToken))
+        if (string.IsNullOrWhiteSpace(token))
         {
             await httpContext.RetornarErroAsync("Efetue o login", HttpStatusCode.Unauthorized);
             return;
         }
 
-        if (!await httpContext.ValidarAcessoAsync(usuarioAutenticado, tokenService, token, refreshToken))
+        if (!await httpContext.ValidarAcessoAsync(
+                usuarioAutenticado, tokenService, sessaoUsuarioRepository, token))
         {
             return;
         }

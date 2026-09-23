@@ -3,6 +3,7 @@ using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -16,9 +17,9 @@ public class TransacaoFinanceiraServiceTest
         var dataMaisRecenteNoMesmoDia = new DateTime(2026, 8, 30, 17, 15, 0);
         var transacoes = new List<TransacaoFinanceira>
         {
-            CriarTransacao(dataMaisAntiga),
-            CriarTransacao(dataMaisRecente),
-            CriarTransacao(dataMaisRecenteNoMesmoDia)
+            TransacaoFinanceiraBuilder.Init().ComDataDeEfetivacao(dataMaisAntiga).Build(),
+            TransacaoFinanceiraBuilder.Init().ComDataDeEfetivacao(dataMaisRecente).Build(),
+            TransacaoFinanceiraBuilder.Init().ComDataDeEfetivacao(dataMaisRecenteNoMesmoDia).Build()
         };
         var repository = new Mock<ITransacaoFinanceiraRepository>();
         repository
@@ -48,21 +49,4 @@ public class TransacaoFinanceiraServiceTest
         Assert.Equal(100, resultado[new DateTime(2026, 8, 29)].Total);
     }
 
-    private static TransacaoFinanceira CriarTransacao(DateTime dataDeEfetivacao)
-    {
-        return new TransacaoFinanceira(
-            Guid.NewGuid(),
-            dataDeEfetivacao,
-            dataDeEfetivacao,
-            0,
-            null,
-            dataDeEfetivacao,
-            100,
-            TipoTransacaoFinanceiraEnum.Entrada,
-            null,
-            null,
-            false,
-            null,
-            null);
-    }
 }

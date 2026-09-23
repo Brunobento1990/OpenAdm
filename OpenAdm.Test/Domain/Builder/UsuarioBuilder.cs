@@ -12,8 +12,10 @@ public class UsuarioBuilder
     private string _senha;
     private string _nome;
     private string? _telefone;
-    private readonly string? _cnpj;
-    private readonly string? _cpf;
+    private string? _cnpj;
+    private string? _cpf;
+    private Guid? _tokenEsqueceuSenha;
+    private DateTime? _dataExpiracaoTokenEsqueceuSenha;
 
     public UsuarioBuilder()
     {
@@ -62,9 +64,23 @@ public class UsuarioBuilder
         return this;
     }
 
+    public UsuarioBuilder Varejo()
+    {
+        _cnpj = null;
+        _cpf = "12345678901";
+        return this;
+    }
+
+    public UsuarioBuilder ComRecuperacaoDeSenha(Guid token, DateTime solicitadaEm)
+    {
+        _tokenEsqueceuSenha = token;
+        _dataExpiracaoTokenEsqueceuSenha = solicitadaEm;
+        return this;
+    }
+
     public Usuario Build()
     {
-        return new Usuario(_id, _created, _update, _numero, _email, _senha, _nome, _telefone, _cnpj, _cpf, true, null,
-            null, null);
+        return new Usuario(_id, _created, _update, _numero, _email, _senha, _nome, _telefone, _cnpj, _cpf, true,
+            _tokenEsqueceuSenha, _dataExpiracaoTokenEsqueceuSenha);
     }
 }

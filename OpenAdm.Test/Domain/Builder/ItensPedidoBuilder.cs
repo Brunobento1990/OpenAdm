@@ -14,6 +14,7 @@ public class ItensPedidoBuilder
     private Guid _pedidoId;
     private decimal _quantidade;
     private decimal _valorUnitario;
+    private Produto? _produto;
 
     public ItensPedidoBuilder()
     {
@@ -57,9 +58,36 @@ public class ItensPedidoBuilder
         return this;
     }
 
+    public ItensPedidoBuilder ComProduto(Produto produto)
+    {
+        _produto = produto;
+        _produtoId = produto.Id;
+        return this;
+    }
+
+    public ItensPedidoBuilder ComPedido(Guid pedidoId)
+    {
+        _pedidoId = pedidoId;
+        return this;
+    }
+
+    public ItensPedidoBuilder ComQuantidade(decimal quantidade)
+    {
+        _quantidade = quantidade;
+        return this;
+    }
+
+    public ItensPedidoBuilder ComValorUnitario(decimal valorUnitario)
+    {
+        _valorUnitario = valorUnitario;
+        return this;
+    }
+
     public ItemPedido Build()
     {
-        return new ItemPedido(_id, _created, _update, _numero, _pesoId, _tamanhoId, _produtoId, _pedidoId, _valorUnitario, _quantidade);
+        var item = new ItemPedido(_id, _created, _update, _numero, _pesoId, _tamanhoId, _produtoId, _pedidoId, _valorUnitario, _quantidade);
+        item.Produto = _produto!;
+        return item;
     }
 
     public static IList<ItemPedido> BuildItens()

@@ -6,28 +6,26 @@ using OpenAdm.Domain.Exceptions;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.Entities.OpenAdm;
+using OpenAdm.Domain.Extensions;
 
 namespace OpenAdm.Application.Services;
 
 public class TokenService : ITokenService
 {
-    private static string KeyId = "Id";
-    private static string KeyDataLogin = "DataLogin";
-    private static string KeyIsFuncionario = "EhFuncionario";
+    private const string KeySessaoId = "SessaoId";
+    private const string KeyUsuarioId = "UsuarioId";
+    private const string KeyParceiroId = "ParceiroId";
+    private const string KeyIsFuncionario = "EhFuncionario";
+    private const string KeyDataLogin = "DataLogin";
 
-    public string GenerateRefreshToken(Guid id, bool isFuncionario)
+    public string GenerateToken(SessaoUsuario sessao)
     {
-        return Genereate(id, isFuncionario, DateTime.UtcNow.AddDays(30));
+        return Generate(sessao, DateTime.UtcNow.AddHours(ConfiguracaoDeToken.Expiration));
     }
 
-    public string GenerateToken(Guid id, bool isFuncionario)
-    {
-        return Genereate(id, isFuncionario, DateTime.UtcNow.AddHours(ConfiguracaoDeToken.Expiration));
-    }
-
-    private static string Genereate(Guid id, bool isFuncionario, DateTime expires)
+    private static string Generate(SessaoUsuario sessao, DateTime expires)
     {
         var key = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(ConfiguracaoDeToken.Key));
@@ -37,20 +35,22 @@ public class TokenService : ITokenService
         var token = new JwtSecurityToken(
             issuer: ConfiguracaoDeToken.Issue,
             audience: ConfiguracaoDeToken.Audience,
-            claims: GenerateClaims(id, isFuncionario),
+            claims: GenerateClaims(sessao),
             expires: expires,
             signingCredentials: credenciais);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private static Claim[] GenerateClaims(Guid id, bool isFuncionario)
+    private static Claim[] GenerateClaims(SessaoUsuario sessao)
     {
         var claims = new List<Claim>()
         {
-            new(KeyId, id.ToString()),
-            new(KeyDataLogin, DateTime.UtcNow.FormatarDataJson()),
-            new(KeyIsFuncionario, isFuncionario ? "TRUE" : "FALSE"),
+            new(KeySessaoId, sessao.Id.ToString()),
+            new(KeyUsuarioId, sessao.UsuarioId.ToString()),
+            new(KeyParceiroId, sessao.ParceiroId.ToString()),
+            new(KeyIsFuncionario, sessao.EhFuncionario ? "TRUE" : "FALSE"),
+            new(KeyDataLogin, sessao.DataDeCriacao.FormatarDataJson()),
         };
 
         claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
@@ -77,13 +77,17 @@ public class TokenService : ITokenService
 
             var jwtToken = (JwtSecurityToken)validatedToken;
 
-            var id = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyId)?.Value;
+            var sessaoId = jwtToken.Claims.FirstOrDefault(c => c.Type == KeySessaoId)?.Value;
+            var usuarioId = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyUsuarioId)?.Value;
+            var parceiroId = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyParceiroId)?.Value;
             var ehFuncionario = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyIsFuncionario)?.Value;
             var dataLogin = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyDataLogin)?.Value;
 
-            if (!Guid.TryParse(id, out Guid idParse) ||
-                string.IsNullOrWhiteSpace(ehFuncionario) ||
-                !DateTime.TryParse(dataLogin, out DateTime dataLoginParse))
+            if (!Guid.TryParse(sessaoId, out var sessaoIdParse) ||
+                !Guid.TryParse(usuarioId, out var usuarioIdParse) ||
+                !Guid.TryParse(parceiroId, out var parceiroIdParse) ||
+                !DateTime.TryParse(dataLogin, out var dataLoginParse) ||
+                ehFuncionario is not ("TRUE" or "FALSE"))
             {
                 return (ResultPartner<ValidaTokenModel>)"JWT inválido, efetue o login";
             }
@@ -91,9 +95,11 @@ public class TokenService : ITokenService
             return (ResultPartner<ValidaTokenModel>)new ValidaTokenModel()
             {
                 Expirado = false,
-                DataDoLogin = dataLoginParse,
                 EhFuncionario = ehFuncionario == "TRUE",
-                Id = idParse
+                Id = usuarioIdParse,
+                ParceiroId = parceiroIdParse,
+                SessaoId = sessaoIdParse,
+                DataDoLogin = dataLoginParse
             };
         }
         catch (SecurityTokenExpiredException)

@@ -9,10 +9,14 @@ namespace OpenAdm.Application.Services;
 public class AtualizarSenhaUsuarioAdmService : IAtualizarSenhaUsuarioAdmService
 {
     private readonly IUsuarioRepository _usuarioRepository;
+    private readonly ISessaoUsuarioService _sessaoUsuarioService;
 
-    public AtualizarSenhaUsuarioAdmService(IUsuarioRepository usuarioRepository)
+    public AtualizarSenhaUsuarioAdmService(
+        IUsuarioRepository usuarioRepository,
+        ISessaoUsuarioService sessaoUsuarioService)
     {
         _usuarioRepository = usuarioRepository;
+        _sessaoUsuarioService = sessaoUsuarioService;
     }
 
     public async Task<bool> AtualizarAsync(AtualizarSenhaUsuarioAdmDto atualizarSenhaUsuarioAdmDto)
@@ -24,6 +28,7 @@ public class AtualizarSenhaUsuarioAdmService : IAtualizarSenhaUsuarioAdmService
         usuario.UpdateSenha(PasswordAdapter.GenerateHash(atualizarSenhaUsuarioAdmDto.Senha));
 
         await _usuarioRepository.UpdateAsync(usuario);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
 
         return true;
     }

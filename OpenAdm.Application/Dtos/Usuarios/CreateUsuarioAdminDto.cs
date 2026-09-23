@@ -70,7 +70,6 @@ public class CreateUsuarioAdminDto : BaseModel
             Cpf,
             true,
             null,
-            null,
             null);
 
         usuario.EnderecoUsuario = EnderecoUsuario == null

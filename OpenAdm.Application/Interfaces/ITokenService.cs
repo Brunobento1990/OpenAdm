@@ -5,8 +5,7 @@ namespace OpenAdm.Application.Interfaces;
 
 public interface ITokenService
 {
-    string GenerateToken(Guid id, bool isFuncionario);
-    string GenerateRefreshToken(Guid id, bool isFuncionario);
+    string GenerateToken(OpenAdm.Domain.Entities.OpenAdm.SessaoUsuario sessao);
     Task<TokenResponseGoogleModel> ValidarTokenGoogleAsync(string token);
     ResultPartner<ValidaTokenModel> ValidarToken(string token, bool validaLifeTime = true);
 }

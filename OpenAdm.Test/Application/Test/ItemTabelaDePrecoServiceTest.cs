@@ -3,6 +3,7 @@ using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -13,7 +14,7 @@ public class ItemTabelaDePrecoServiceTest
     [Fact]
     public async Task CreateItemTabelaDePrecoAsync_DeveRetornarItemCompleto()
     {
-        var produto = CriarProduto();
+        var produto = ProdutoBuilder.Init().SemDescricao("Produto").Build();
         var peso = new Peso(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, "1 kg", 1, null, null, null, true);
         var tamanho = new Tamanho(Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, "M", null, null, null, null, true);
         var itemCompleto = new ItemTabelaDePreco(
@@ -102,18 +103,4 @@ public class ItemTabelaDePrecoServiceTest
 
     private ItemTabelaDePrecoService CriarService() => new(_repository.Object);
 
-    private static Produto CriarProduto() => new(
-        Guid.NewGuid(),
-        DateTime.UtcNow,
-        DateTime.UtcNow,
-        1,
-        "Produto",
-        null,
-        Guid.NewGuid(),
-        null,
-        null,
-        null,
-        false,
-        false,
-        true);
 }

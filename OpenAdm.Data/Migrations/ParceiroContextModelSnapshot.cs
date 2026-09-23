@@ -968,9 +968,6 @@ namespace OpenAdm.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<DateTime?>("ForcarLogin")
-                        .HasColumnType("timestamp without time zone");
-
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(255)

@@ -24,6 +24,12 @@ public class FaturaBuilder
         return this;
     }
 
+    public FaturaBuilder ComTotal(decimal total)
+    {
+        _total = total;
+        return this;
+    }
+
     public Fatura Build() => new(
         _id,
         _dataDeCriacao,

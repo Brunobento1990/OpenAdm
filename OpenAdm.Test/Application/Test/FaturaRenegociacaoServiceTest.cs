@@ -5,6 +5,7 @@ using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -56,7 +57,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveRetornarFaturaSemParcelasQuandoNaoHaSaldo()
     {
-        var fatura = CriarFatura(30);
+        var fatura = FaturaBuilder.Init().ComTotal(30).Build();
         var quitada = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 30, null,
             fatura.Id, null, null, null, fatura.Tipo);
         quitada.Fatura = fatura;
@@ -86,7 +87,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveConsolidarBaixaParcialECriarParcelaParaSaldo()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var antiga = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 100, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
         antiga.Transacoes =
@@ -131,7 +132,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveRenumerarNovaParcelaQueUsaNumeroDeBaixaParcialPreservada()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var antiga = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 100, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
         antiga.Transacoes =
@@ -164,7 +165,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveRenumerarNovasParcelasEmOrdemSemRepetirNumeroPreservado()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var antiga = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 100, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
         antiga.Transacoes =
@@ -197,7 +198,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task NaoDeveGravarQuandoParcelaNaoMudou()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var vencimento = DateTime.UtcNow.Date.AddDays(30);
         fatura.Parcelas.Add(Parcela.NovaFatura(vencimento, 1, null, 100, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber));
@@ -220,7 +221,7 @@ public class FaturaRenegociacaoServiceTest
     [InlineData(70.01)]
     public async Task NaoDeveAlterarBaixaParcialQuandoSaldoInformadoNaoTotaliza(decimal saldo)
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var antiga = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 100, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
         antiga.Transacoes =
@@ -248,7 +249,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveArredondarCadaNovaParcelaAntesDeTotalizar()
     {
-        var fatura = CriarFatura(20.01m);
+        var fatura = FaturaBuilder.Init().ComTotal(20.01m).Build();
         var repository = new Mock<IFaturaRepository>();
         repository.Setup(x => x.ObterParaRenegociarAsync(fatura.Id)).ReturnsAsync(fatura);
         var novas = new List<Parcela>();
@@ -273,7 +274,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task NaoDeveGravarValorComMaisCasasQuandoArredondadoNaoMuda()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var vencimento = DateTime.UtcNow.Date.AddDays(30);
         fatura.Parcelas.Add(Parcela.NovaFatura(vencimento, 1, null, 100, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber));
@@ -293,7 +294,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DevePreservarParcelaIgualEInativarAAlterada()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var vencimento = DateTime.UtcNow.Date.AddDays(30);
         var igual = Parcela.NovaFatura(vencimento, 1, null, 50, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
@@ -328,7 +329,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveManterValorPagoEParcelaSemAlteracaoAoDistribuirSaldo()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var vencimento = DateTime.UtcNow.Date.AddDays(30);
         var parcial = Parcela.NovaFatura(vencimento, 1, null, 50, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
@@ -368,7 +369,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task NaoDeveGravarSeNovasParcelasNaoCompletamTotalPreservado()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var vencimento = DateTime.UtcNow.Date.AddDays(30);
         var igual = Parcela.NovaFatura(vencimento, 1, null, 50, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
@@ -399,7 +400,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task NaoDeveSubstituirParcelaComIntegracaoExterna()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var vencimento = DateTime.UtcNow.Date.AddDays(30);
         var antiga = Parcela.NovaFatura(vencimento, 1, null, 100, null,
             fatura.Id, "pagamento-externo", null, null, TipoFaturaEnum.AReceber);
@@ -421,7 +422,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DevePreservarParcelaQuitadaEValidarApenasSaldoPendente()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var vencimento = DateTime.UtcNow.Date.AddDays(30);
         var paga = Parcela.NovaFatura(vencimento, 1, null, 40, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
@@ -449,7 +450,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveSomarDuasBaixasParciaisAntesDeDistribuirSaldo()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var primeira = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 50, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
         primeira.Transacoes =
@@ -493,7 +494,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveIgnorarParcelaInativaAoValidarTotal()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var inativa = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 100, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
         inativa.Inativar();
@@ -519,7 +520,7 @@ public class FaturaRenegociacaoServiceTest
     [Fact]
     public async Task DeveRejeitarFaturaComNumeroRepetidoEntreParcelaPagaEPendente()
     {
-        var fatura = CriarFatura(100);
+        var fatura = FaturaBuilder.Init().ComTotal(100).Build();
         var paga = Parcela.NovaFatura(DateTime.UtcNow.Date, 1, null, 30, null,
             fatura.Id, null, null, null, TipoFaturaEnum.AReceber);
         paga.Transacoes = [paga.Pagar(30, null, null, DateTime.UtcNow, null, null)];
@@ -543,10 +544,6 @@ public class FaturaRenegociacaoServiceTest
         repository.Verify(x => x.AdicionarParcelasAsync(It.IsAny<IEnumerable<Parcela>>()), Times.Never);
         repository.Verify(x => x.SaveChangesAsync(), Times.Never);
     }
-
-    private static Fatura CriarFatura(decimal total) => new(Guid.NewGuid(), DateTime.UtcNow,
-        DateTime.UtcNow, 0, StatusFaturaEnum.Aberta, Guid.NewGuid(), null, null,
-        TipoFaturaEnum.AReceber, total);
 
     private static FaturaService CriarServico(IFaturaRepository repository) => new(repository,
         Mock.Of<IUsuarioService>(), Mock.Of<ICobrancaPedidoEcommerceRepository>(),

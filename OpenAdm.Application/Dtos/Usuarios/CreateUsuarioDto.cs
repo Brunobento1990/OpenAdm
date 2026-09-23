@@ -84,7 +84,6 @@ public class CreateUsuarioDto : BaseModel
             TipoPessoa == TipoPessoa.Fisica ? Cpf : null,
             ativo,
             null,
-            null,
             null);
     }
 }

@@ -892,6 +892,67 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.ToTable("RedesSociais");
                 });
 
+            modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.SessaoUsuario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataDeAtualizacao")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp without time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<string>("Dispositivo")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("EhFuncionario")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("EnderecoIp")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("ExpiraEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Navegador")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("ParceiroId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("RevogadoEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("SistemaOperacional")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("UltimaAtividadeEm")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId", "ParceiroId", "EhFuncionario", "RevogadoEm", "ExpiraEm");
+
+                    b.ToTable("SessoesUsuarios");
+                });
+
             modelBuilder.Entity("OpenAdm.Domain.Entities.OpenAdm.TelefoneParceiro", b =>
                 {
                     b.Property<Guid>("Id")

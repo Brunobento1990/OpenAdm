@@ -13,13 +13,16 @@ public class LoginFuncionarioService
     private readonly ITokenService _tokenService;
     private readonly ILoginFuncionarioRepository _loginFuncionarioRepository;
     private readonly IParceiroAutenticado _parceiroAutenticado;
+    private readonly ISessaoUsuarioService _sessaoUsuarioService;
 
     public LoginFuncionarioService(ITokenService tokenService, ILoginFuncionarioRepository loginFuncionarioRepository,
-        IParceiroAutenticado parceiroAutenticado)
+        IParceiroAutenticado parceiroAutenticado,
+        ISessaoUsuarioService sessaoUsuarioService)
     {
         _tokenService = tokenService;
         _loginFuncionarioRepository = loginFuncionarioRepository;
         _parceiroAutenticado = parceiroAutenticado;
+        _sessaoUsuarioService = sessaoUsuarioService;
     }
 
     public async Task<ResponseLoginFuncionarioViewModel> LoginFuncionarioAsync(RequestLogin requestLogin)
@@ -31,9 +34,9 @@ public class LoginFuncionarioService
             throw new ExceptionApi("E-mail ou senha inválidos!");
 
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
-        var token = _tokenService.GenerateToken(funcionario.Id, true);
-        var refreshToken = _tokenService.GenerateRefreshToken(funcionario.Id, true);
+        var sessao = await _sessaoUsuarioService.CriarAsync(funcionario.Id, ehFuncionario: true);
 
-        return new(token, refreshToken, funcionarioViewModel);
+        var token = _tokenService.GenerateToken(sessao);
+        return new(token, funcionarioViewModel);
     }
 }

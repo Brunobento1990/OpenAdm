@@ -5,6 +5,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -12,6 +13,7 @@ public class FuncionarioEsqueceuSenhaServiceTest
 {
     private readonly Mock<IFuncionarioEsqueceuSenhaRepository> _repository = new();
     private readonly Mock<IParceiroAutenticado> _parceiroAutenticado = new();
+    private readonly Mock<ISessaoUsuarioService> _sessaoUsuarioService = new();
     private readonly FuncionarioEsqueceuSenhaService _service;
 
     public FuncionarioEsqueceuSenhaServiceTest()
@@ -22,14 +24,19 @@ public class FuncionarioEsqueceuSenhaServiceTest
             _repository.Object,
             Mock.Of<IEmailApiService>(),
             _parceiroAutenticado.Object,
-            Mock.Of<IConfiguration>());
+            Mock.Of<IConfiguration>(),
+            _sessaoUsuarioService.Object);
     }
 
     [Fact]
     public async Task DeveRecuperarSenhaDoFuncionario()
     {
         var senhaAnterior = PasswordAdapter.GenerateHash("senha-anterior");
-        var solicitacao = CriarSolicitacao(DateTime.UtcNow.AddHours(1), false, senhaAnterior);
+        var funcionario = FuncionarioBuilder.Init().ComSenha(senhaAnterior).Build();
+        var solicitacao = FuncionarioEsqueceuSenhaBuilder.Init()
+            .ComFuncionario(funcionario)
+            .ComExpiracao(DateTime.UtcNow.AddHours(1))
+            .Build();
         _repository
             .Setup(x => x.ObterPorTokenAsync(solicitacao.Token, _parceiroAutenticado.Object.Id))
             .ReturnsAsync(solicitacao);
@@ -47,6 +54,8 @@ public class FuncionarioEsqueceuSenhaServiceTest
         Assert.True(PasswordAdapter.VerifyPassword("nova-senha", solicitacao.Funcionario.Senha));
         _repository.Verify(x => x.Update(solicitacao), Times.Once);
         _repository.Verify(x => x.SaveChangesAsync(), Times.Once);
+        _sessaoUsuarioService.Verify(
+            x => x.DerrubarSessoesAsync(solicitacao.Funcionario.Id, true), Times.Once);
     }
 
     [Fact]
@@ -66,7 +75,10 @@ public class FuncionarioEsqueceuSenhaServiceTest
     [Fact]
     public async Task NaoDeveRecuperarSenhaComTokenJaUtilizado()
     {
-        var solicitacao = CriarSolicitacao(DateTime.UtcNow.AddHours(1), true);
+        var solicitacao = FuncionarioEsqueceuSenhaBuilder.Init()
+            .ComExpiracao(DateTime.UtcNow.AddHours(1))
+            .Resetado()
+            .Build();
         ConfigurarSolicitacao(solicitacao);
 
         var resultado = await _service.RecuperarSenhaAsync(CriarDto(solicitacao.Token));
@@ -78,7 +90,9 @@ public class FuncionarioEsqueceuSenhaServiceTest
     [Fact]
     public async Task NaoDeveRecuperarSenhaComTokenExpirado()
     {
-        var solicitacao = CriarSolicitacao(DateTime.UtcNow.AddMinutes(-1));
+        var solicitacao = FuncionarioEsqueceuSenhaBuilder.Init()
+            .ComExpiracao(DateTime.UtcNow.AddMinutes(-1))
+            .Build();
         ConfigurarSolicitacao(solicitacao);
 
         var resultado = await _service.RecuperarSenhaAsync(CriarDto(solicitacao.Token));
@@ -107,23 +121,4 @@ public class FuncionarioEsqueceuSenhaServiceTest
         ConfirmacaoSenha = "nova-senha"
     };
 
-    private static FuncionarioEsqueceuSenha CriarSolicitacao(
-        DateTime expiracao,
-        bool resetado = false,
-        string? senha = null)
-    {
-        var parceiroId = Guid.NewGuid();
-        var funcionario = new Funcionario(
-            Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, "funcionario@email.com",
-            senha ?? PasswordAdapter.GenerateHash("senha-anterior"), "Funcionário", null, null, true, parceiroId);
-        var solicitacao = new FuncionarioEsqueceuSenha(
-            Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, 1, funcionario.Id,
-            Guid.NewGuid(), expiracao, resetado, parceiroId);
-
-        typeof(FuncionarioEsqueceuSenha)
-            .GetProperty(nameof(FuncionarioEsqueceuSenha.Funcionario))!
-            .SetValue(solicitacao, funcionario);
-
-        return solicitacao;
-    }
 }
