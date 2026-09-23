@@ -4,8 +4,6 @@ using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
-using Microsoft.Extensions.Configuration;
-using OpenAdm.Domain.Entities.OpenAdm;
 
 namespace OpenAdm.Application.Services;
 
@@ -13,9 +11,7 @@ public class LoginUsuarioService(
     ILoginUsuarioRepository loginUsuarioRepository,
     ITokenService tokenService,
     IAcessoEcommerceService acessoEcommerceService,
-    ISessaoUsuarioRepository sessaoUsuarioRepository,
-    IParceiroAutenticado parceiroAutenticado,
-    IConfiguration configuration)
+    ISessaoUsuarioService sessaoUsuarioService)
     : ILoginUsuarioService
 {
     private readonly ILoginUsuarioRepository _loginUsuarioRepository = loginUsuarioRepository;
@@ -35,7 +31,7 @@ public class LoginUsuarioService(
         }
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var sessao = await CriarSessaoAsync(usuario.Id);
+        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
         var token = _tokenService.GenerateToken(sessao);
 
         return new(usuarioViewModel, token);
@@ -56,24 +52,10 @@ public class LoginUsuarioService(
             throw new ExceptionApi("Usuário inativo. Entre em contato com o administrador do sistema.");
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var sessao = await CriarSessaoAsync(usuario.Id);
+        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
         var token = _tokenService.GenerateToken(sessao);
         await _acessoEcommerceService.AtualizarAcessoAsync();
         return new(usuarioViewModel, token);
     }
 
-    private async Task<SessaoUsuario> CriarSessaoAsync(Guid usuarioId)
-    {
-        var agora = DateTime.UtcNow;
-        var dias = int.TryParse(configuration["SessaoUsuario:ExpiracaoDias"], out var diasConfigurados)
-            ? diasConfigurados
-            : 10;
-        var sessao = new SessaoUsuario(
-            Guid.NewGuid(), agora, agora, usuarioId, parceiroAutenticado.Id, false, null,
-            agora.AddDays(dias), null, null, null, null, null, null);
-
-        await sessaoUsuarioRepository.AdicionarAsync(sessao);
-        await sessaoUsuarioRepository.SalvarAlteracoesAsync();
-        return sessao;
-    }
 }

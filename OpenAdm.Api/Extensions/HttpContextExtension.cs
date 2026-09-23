@@ -65,6 +65,11 @@ public static class HttpContextExtension
 
             if (sessao == null || !sessao.Ativa)
             {
+                if (sessao != null && !sessao.RevogadoEm.HasValue)
+                {
+                    await sessaoUsuarioRepository.DerrubarSessaoAsync(sessao.Id);
+                }
+
                 await httpContext.RetornarErroAsync(
                     "Sessão expirada, efetue o login novamente",
                     HttpStatusCode.Unauthorized);
@@ -87,18 +92,18 @@ public static class HttpContextExtension
         usuarioAutenticado.SessaoId = resultadoToken.Result.SessaoId;
         usuarioAutenticado.IsFuncionario = resultadoToken.Result.EhFuncionario;
 
-        if (!usuarioAutenticado.IsFuncionario)
-        {
-            var usuario = await usuarioAutenticado.GetUsuarioMiddlewareAsync();
+        var autenticaUsuarioService = httpContext.RequestServices.GetRequiredService<IAutenticaUsuarioService>();
 
-            if (!usuario.AcessoLiberadoEcommerce)
-            {
-                await httpContext.RetornarErroAsync("Seu acesso esta bloqueado!",
-                    httpStatusCode: HttpStatusCode.Unauthorized);
-                return false;
-            }
+        var resultado = await autenticaUsuarioService.ValidarAsync();
+
+        if (!string.IsNullOrWhiteSpace(resultado.Error))
+        {
+            httpContext.Response.Headers.Remove("novotoken");
+            await httpContext.RetornarErroAsync(resultado.Error,
+                HttpStatusCode.Unauthorized);
+            return false;
         }
 
-        return true;
+        return resultado.Result;
     }
 }

@@ -28,6 +28,7 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost("create")]
+    [UsuarioSessao]
     public async Task<IActionResult> CreateUsuario(CreateUsuarioDto createUsuarioDto)
     {
         var responseCreateUsuario = await _usuarioService.CreateUsuarioAsync(createUsuarioDto);
@@ -42,6 +43,7 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost("create-pessoa-fisica")]
+    [UsuarioSessao]
     public async Task<IActionResult> CretaeUsuarioSemValidarCnae(CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto)
     {
         var responseCreateUsuario = await _usuarioService.CreateUsuarioPessoaFisicaAsync(createUsuarioPessoaFisicaDto);
@@ -110,6 +112,7 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPut("recuperar-senha")]
+    [UsuarioSessao]
     public async Task<IActionResult> RecuperarSenha(RecuperarSenhaDto recuperarSenhaDto)
     {
         var result = await _usuarioService.RecuperarSenhaAsync(recuperarSenhaDto);

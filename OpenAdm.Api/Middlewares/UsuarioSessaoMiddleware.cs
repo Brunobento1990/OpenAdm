@@ -1,6 +1,6 @@
 using OpenAdm.Api.Attributes;
 using OpenAdm.Api.Extensions;
-using OpenAdm.Application.Models;
+using OpenAdm.Domain.Interfaces;
 using UAParser;
 
 namespace OpenAdm.Api.Middlewares;
@@ -23,7 +23,7 @@ public class UsuarioSessaoMiddleware
             return;
         }
 
-        var sessaoUsuarioRequest = context.RequestServices.GetRequiredService<UsuarioSessaoRequest>();
+        var sessaoUsuarioRequest = context.RequestServices.GetRequiredService<IUsuarioSessaoRequest>();
         
         sessaoUsuarioRequest.UserAgent = context.Request.Headers.UserAgent.ToString();
 

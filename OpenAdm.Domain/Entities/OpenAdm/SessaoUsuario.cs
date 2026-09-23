@@ -1,10 +1,12 @@
 using OpenAdm.Domain.Entities.Bases;
+using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Domain.Entities.OpenAdm;
 
 public class SessaoUsuario : BaseEntity
 {
-    public SessaoUsuario(
+    private SessaoUsuario(
         Guid id,
         DateTime dataDeCriacao,
         DateTime dataDeAtualizacao,
@@ -44,6 +46,25 @@ public class SessaoUsuario : BaseEntity
     public bool Ativa =>
         RevogadoEm == null &&
         ExpiraEm > DateTime.UtcNow;
+
+    public static SessaoUsuario Criar(
+        Guid usuarioId,
+        Guid parceiroId,
+        bool ehFuncionario,
+        int expiracaoEmDias,
+        IUsuarioSessaoRequest usuarioSessaoRequest)
+    {
+        var agora = DateTime.UtcNow;
+
+        return new SessaoUsuario(
+            Guid.NewGuid(), agora, agora, usuarioId, parceiroId, ehFuncionario, agora,
+            agora.AddDays(expiracaoEmDias), null,
+            usuarioSessaoRequest.EnderecoIp?.Limitar(SessaoUsuarioConfig.MaxLengthEnderecoIp),
+            usuarioSessaoRequest.UserAgent?.Limitar(SessaoUsuarioConfig.MaxLengthUserAgent),
+            usuarioSessaoRequest.SistemaOperacional?.Limitar(SessaoUsuarioConfig.MaxLengthSistemaOperacional),
+            usuarioSessaoRequest.Navegador?.Limitar(SessaoUsuarioConfig.MaxLengthNavegador),
+            usuarioSessaoRequest.Dispositivo?.Limitar(SessaoUsuarioConfig.MaxLengthDispositivo));
+    }
 }
 
 public static class SessaoUsuarioConfig

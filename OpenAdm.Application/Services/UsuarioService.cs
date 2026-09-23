@@ -8,8 +8,6 @@ using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.PaginateDto;
-using Microsoft.Extensions.Configuration;
-using OpenAdm.Domain.Entities.OpenAdm;
 
 namespace OpenAdm.Application.Services;
 
@@ -20,9 +18,7 @@ public class UsuarioService : IUsuarioService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly ICnpjConsultaService _cnpjConsultaService;
-    private readonly ISessaoUsuarioRepository _sessaoUsuarioRepository;
-    private readonly IParceiroAutenticado _parceiroAutenticado;
-    private readonly IConfiguration _configuration;
+    private readonly ISessaoUsuarioService _sessaoUsuarioService;
 
     public UsuarioService(
         IUsuarioRepository usuarioRepository,
@@ -30,21 +26,18 @@ public class UsuarioService : IUsuarioService
         IPedidoRepository pedidoRepository,
         IUsuarioAutenticado usuarioAutenticado,
         ICnpjConsultaService cnpjConsultaService,
-        ISessaoUsuarioRepository sessaoUsuarioRepository,
-        IParceiroAutenticado parceiroAutenticado,
-        IConfiguration configuration)
+        ISessaoUsuarioService sessaoUsuarioService)
     {
         _usuarioRepository = usuarioRepository;
         _tokenService = tokenService;
         _pedidoRepository = pedidoRepository;
         _usuarioAutenticado = usuarioAutenticado;
         _cnpjConsultaService = cnpjConsultaService;
-        _sessaoUsuarioRepository = sessaoUsuarioRepository;
-        _parceiroAutenticado = parceiroAutenticado;
-        _configuration = configuration;
+        _sessaoUsuarioService = sessaoUsuarioService;
     }
 
-    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto)
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(
+        CreateUsuarioPessoaFisicaDto createUsuarioPessoaFisicaDto)
     {
         createUsuarioPessoaFisicaDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioPessoaFisicaDto.Email);
@@ -62,7 +55,8 @@ public class UsuarioService : IUsuarioService
         return new ResponseLoginUsuarioViewModel(usuarioViewModel, token);
     }
 
-    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto, bool ativo = true)
+    public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioAsync(CreateUsuarioDto createUsuarioDto,
+        bool ativo = true)
     {
         createUsuarioDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
@@ -93,7 +87,8 @@ public class UsuarioService : IUsuarioService
 
             var result = await _cnpjConsultaService.ConsultaCnpjAsync(createUsuarioDto.Cnpj);
 
-            if (!result.CnaeFiscalDescricao.Contains("pesca") && !result.CnaesSecundarios.Any(x => x.Descricao.Contains("pesca")))
+            if (!result.CnaeFiscalDescricao.Contains("pesca") &&
+                !result.CnaesSecundarios.Any(x => x.Descricao.Contains("pesca")))
             {
                 throw new ExceptionApi("Seu CNAE deve ser do ramo de pesca");
             }
@@ -124,7 +119,7 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioViewModel> GetUsuarioByIdAsync()
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar o seu cadastro");
+                      ?? throw new ExceptionApi("Não foi possível localizar o seu cadastro");
 
         var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, quantidadeDePedidos);
@@ -153,7 +148,7 @@ public class UsuarioService : IUsuarioService
     public async Task<UsuarioViewModel> GetUsuarioByIdAdmAsync(Guid id)
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
+                      ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
 
         //var quantidadeDePedidos = await _pedidoRepository.GetQuantidadeDePedidoPorUsuarioAsync(usuario.Id);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, 0);
@@ -206,24 +201,25 @@ public class UsuarioService : IUsuarioService
     {
         updateUsuarioDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(_usuarioAutenticado.Id)
-            ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
+                      ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
 
-        usuario.Update(updateUsuarioDto.Email, updateUsuarioDto.Nome, updateUsuarioDto.Telefone, updateUsuarioDto.Cnpj, updateUsuarioDto.Cpf);
+        usuario.Update(updateUsuarioDto.Email, updateUsuarioDto.Nome, updateUsuarioDto.Telefone, updateUsuarioDto.Cnpj,
+            updateUsuarioDto.Cpf);
 
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var sessao = await _sessaoUsuarioRepository.ObterAsync(
-                         _usuarioAutenticado.SessaoId,
-                         usuario.Id,
-                         _parceiroAutenticado.Id,
-                         false)
-                     ?? throw new UnauthorizedAccessException(SessaoUsuarioConfig.ErroSessaoNaoEncontrada);
+
+        await _sessaoUsuarioService.DerrubarSessaoUsuarioIdAsync(usuario.Id);
+
+        var sessao = await _sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
+
         var token = _tokenService.GenerateToken(sessao);
 
         return new(usuarioViewModel, token);
     }
 
-    public async Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(PaginacaoDropDown<Usuario> paginacaoUsuarioDropDown)
+    public async Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(
+        PaginacaoDropDown<Usuario> paginacaoUsuarioDropDown)
     {
         var usuarios = await _usuarioRepository.PaginacaoDropDownAsync(paginacaoUsuarioDropDown);
         return usuarios.Select(x => new UsuarioViewModel()
@@ -243,17 +239,23 @@ public class UsuarioService : IUsuarioService
     public async Task<bool> AtivarBloquearAsync(Guid id)
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
+                      ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
         usuario.AtivarBloquear();
-        await _usuarioRepository.UpdateAsync(usuario);
-        return true;
 
+        await _usuarioRepository.UpdateAsync(usuario);
+
+        if (!usuario.Ativo)
+        {
+            await _sessaoUsuarioService.DerrubarSessaoUsuarioIdAsync(usuario.Id);
+        }
+
+        return true;
     }
 
     public async Task<UsuarioViewModel> GetUsuarioByIdValidacaoAsync(Guid id)
     {
         var usuario = await _usuarioRepository.GetUsuarioByIdAsync(id)
-            ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
+                      ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario, 0);
 
@@ -263,7 +265,9 @@ public class UsuarioService : IUsuarioService
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioNoAdminAsync(CreateUsuarioAdminDto createUsuarioDto)
     {
         createUsuarioDto.Validar();
-        Usuario? usuario = string.IsNullOrWhiteSpace(createUsuarioDto.Email) ? null : await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
+        Usuario? usuario = string.IsNullOrWhiteSpace(createUsuarioDto.Email)
+            ? null
+            : await _usuarioRepository.GetUsuarioByEmailAsync(createUsuarioDto.Email);
 
         if (usuario != null)
             throw new ExceptionApi("Este e-mail já se encontra cadastrado!");
@@ -295,7 +299,7 @@ public class UsuarioService : IUsuarioService
     {
         recuperarSenhaDto.Validar();
         var usuario = await _usuarioRepository.GetUsuarioByTokenEsqueceuSenhaAsync(recuperarSenhaDto.TokenEsqueceuSenha)
-            ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
+                      ?? throw new ExceptionApi("Não foi possível localizar seu cadastro");
 
         if (!usuario.DataExpiracaoTokenEsqueceuSenha.HasValue)
         {
@@ -319,16 +323,7 @@ public class UsuarioService : IUsuarioService
 
     private async Task<string> GerarTokenNovaSessaoAsync(Guid usuarioId)
     {
-        var agora = DateTime.UtcNow;
-        var dias = int.TryParse(_configuration["SessaoUsuario:ExpiracaoDias"], out var diasConfigurados)
-            ? diasConfigurados
-            : 10;
-        var sessao = new SessaoUsuario(
-            Guid.NewGuid(), agora, agora, usuarioId, _parceiroAutenticado.Id, false, agora,
-            agora.AddDays(dias), null, null, null, null, null, null);
-
-        await _sessaoUsuarioRepository.AdicionarAsync(sessao);
-        await _sessaoUsuarioRepository.SalvarAlteracoesAsync();
+        var sessao = await _sessaoUsuarioService.CriarAsync(usuarioId, ehFuncionario: false);
         return _tokenService.GenerateToken(sessao);
     }
 }

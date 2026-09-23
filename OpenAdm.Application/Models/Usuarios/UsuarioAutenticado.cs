@@ -6,10 +6,14 @@ namespace OpenAdm.Application.Models.Usuarios;
 public sealed class UsuarioAutenticado : IUsuarioAutenticado
 {
     private readonly IUsuarioRepository _usuarioRepository;
+    private readonly IFuncionarioRepository _funcionarioRepository;
 
-    public UsuarioAutenticado(IUsuarioRepository usuarioRepository)
+    public UsuarioAutenticado(
+        IUsuarioRepository usuarioRepository,
+        IFuncionarioRepository funcionarioRepository)
     {
         _usuarioRepository = usuarioRepository;
+        _funcionarioRepository = funcionarioRepository;
     }
 
     public Guid Id { get; set; }
@@ -20,15 +24,19 @@ public sealed class UsuarioAutenticado : IUsuarioAutenticado
     public async Task<Usuario> GetUsuarioAutenticadoAsync()
     {
         return await _usuarioRepository
-            .GetUsuarioByIdAsync(Id)
-            ?? throw new UnauthorizedAccessException("Usuário não autenticado!");
+                   .GetUsuarioByIdAsync(Id)
+               ?? throw new UnauthorizedAccessException("Usuário não autenticado!");
     }
 
-    public async Task<Usuario> GetUsuarioMiddlewareAsync()
+    public async Task<Usuario?> GetUsuarioMiddlewareAsync()
     {
         return await _usuarioRepository
-                   .GetUsuarioMiddlewareAsync(Id)
-               ?? throw new UnauthorizedAccessException("Usuário não autenticado!");
+                   .GetUsuarioMiddlewareAsync(Id);
+    }
+
+    public async Task<Funcionario?> GetFuncionarioMiddlewareAsync()
+    {
+        return await _funcionarioRepository.ObterPorIdMiddlewareAsync(Id, ParceiroId);
     }
 
     public async Task<Usuario?> GetUsuarioAutenticadoOrNullAsync()
