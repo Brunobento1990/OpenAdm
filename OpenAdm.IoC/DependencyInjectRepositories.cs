@@ -83,5 +83,6 @@ public static class DependencyInjectRepositories
         services.AddScoped<ICobrancaPedidoEcommerceRepository, CobrancaPedidoEcommerceRepository>();
         services.AddScoped<IFilaService, FilaRepository>();
         services.AddScoped<ILinkBioRepository, LinkBioRepository>();
+        services.AddScoped<IRepresentanteRepository, RepresentanteRepository>();
     }
 }

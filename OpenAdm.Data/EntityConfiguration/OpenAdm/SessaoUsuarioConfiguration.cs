@@ -32,7 +32,8 @@ internal class SessaoUsuarioConfiguration : BaseEntityConfiguration<SessaoUsuari
             x.ExpiraEm
         });
 
-        base.Configure(builder);
         builder.Ignore(x => x.Numero);
+        
+        base.Configure(builder);
     }
 }

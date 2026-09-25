@@ -36,6 +36,7 @@ public class ParceiroContext : DbContext
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
     public DbSet<EnderecoUsuario> EnderecoUsuario { get; set; }
+    public DbSet<Representante> Representantes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -66,6 +67,7 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new EstoqueConfiguration());
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoUsuarioConfiguration());
+        modelBuilder.ApplyConfiguration(new RepresentanteConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

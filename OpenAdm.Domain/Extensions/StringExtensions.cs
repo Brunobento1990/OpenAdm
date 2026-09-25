@@ -47,6 +47,18 @@ public static class StringExtensions
         return Convert.ToUInt64(value).ToString(@"000\.000\.000\-00");
     }
 
+    public static string? LimparMascaraCpf(this string? cpf)
+    {
+        return string.IsNullOrWhiteSpace(cpf)
+            ? null
+            : cpf.Replace(".", "").Replace("-", "").Replace(" ", "").Trim();
+    }
+
+    public static string? NullSeVazio(this string? value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+    }
+
     public static string LimparMascaraTelefone(this string telefone)
     {
         return telefone.Replace("(", "").Replace(")", "").Replace("-", "").Replace(" ", "").Trim();
