@@ -1,6 +1,8 @@
 ﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
 
+using OpenAdm.Domain.Enuns;
+
 namespace OpenAdm.Application.Models.Usuarios;
 
 public sealed class UsuarioAutenticado : IUsuarioAutenticado
@@ -19,7 +21,7 @@ public sealed class UsuarioAutenticado : IUsuarioAutenticado
     public Guid Id { get; set; }
     public Guid SessaoId { get; set; }
     public Guid ParceiroId { get; set; }
-    public bool IsFuncionario { get; set; }
+    public TipoUsuario TipoUsuario { get; set; }
 
     public async Task<Usuario> GetUsuarioAutenticadoAsync()
     {

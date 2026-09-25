@@ -5,6 +5,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
@@ -55,7 +56,7 @@ public class FuncionarioEsqueceuSenhaServiceTest
         _repository.Verify(x => x.Update(solicitacao), Times.Once);
         _repository.Verify(x => x.SaveChangesAsync(), Times.Once);
         _sessaoUsuarioService.Verify(
-            x => x.DerrubarSessoesAsync(solicitacao.Funcionario.Id, true), Times.Once);
+            x => x.DerrubarSessoesAsync(solicitacao.Funcionario.Id, TipoUsuario.Funcionario), Times.Once);
     }
 
     [Fact]

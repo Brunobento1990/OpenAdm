@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Api.Attributes;
 
@@ -14,7 +15,7 @@ public class IsFuncionarioAttribute : Attribute, IAsyncActionFilter
     {
         var serviceProvider = context.HttpContext.RequestServices;
         var tokenService = serviceProvider.GetRequiredService<IUsuarioAutenticado>();
-        if (!tokenService.IsFuncionario)
+        if (tokenService.TipoUsuario != TipoUsuario.Funcionario)
         {
             SetUnauthorizedResult(context, "Você não tem permissão para acessar essa rota!");
             return;

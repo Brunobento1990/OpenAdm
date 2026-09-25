@@ -1,6 +1,7 @@
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Services;
 
@@ -18,9 +19,12 @@ public class AutenticaUsuarioService : IAutenticaUsuarioService
     }
 
     public Task<ResultPartner<bool>> ValidarAsync()
-        => _usuarioAutenticado.IsFuncionario
-            ? ValidaFuncionarioAsync()
-            : ValidaUsuarioAsync();
+        => _usuarioAutenticado.TipoUsuario switch
+        {
+            TipoUsuario.Funcionario => ValidaFuncionarioAsync(),
+            TipoUsuario.Usuario => ValidaUsuarioAsync(),
+            _ => Task.FromResult((ResultPartner<bool>)"Tipo de usuário inválido")
+        };
 
     private async Task<ResultPartner<bool>> ValidaFuncionarioAsync()
     {

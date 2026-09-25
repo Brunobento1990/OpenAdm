@@ -195,7 +195,7 @@ public class UsuarioService : IUsuarioService
         usuario.UpdateSenha(updateSenhaUsuarioDto.HashSenha());
 
         await _usuarioRepository.UpdateAsync(usuario);
-        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario);
     }
 
     public async Task<ResponseLoginUsuarioViewModel> UpdateUsuarioAsync(UpdateUsuarioDto updateUsuarioDto)
@@ -210,9 +210,9 @@ public class UsuarioService : IUsuarioService
         await _usuarioRepository.UpdateAsync(usuario);
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
 
-        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario);
 
-        var sessao = await _sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
+        var sessao = await _sessaoUsuarioService.CriarAsync(usuario.Id, TipoUsuario.Usuario);
 
         var token = _tokenService.GenerateToken(sessao);
 
@@ -247,7 +247,7 @@ public class UsuarioService : IUsuarioService
 
         if (!usuario.Ativo)
         {
-            await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
+            await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario);
         }
 
         return true;
@@ -316,7 +316,7 @@ public class UsuarioService : IUsuarioService
 
         await _usuarioRepository.UpdateAsync(usuario);
 
-        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = await GerarTokenNovaSessaoAsync(usuario.Id);
@@ -326,7 +326,7 @@ public class UsuarioService : IUsuarioService
 
     private async Task<string> GerarTokenNovaSessaoAsync(Guid usuarioId)
     {
-        var sessao = await _sessaoUsuarioService.CriarAsync(usuarioId, ehFuncionario: false);
+        var sessao = await _sessaoUsuarioService.CriarAsync(usuarioId, TipoUsuario.Usuario);
         return _tokenService.GenerateToken(sessao);
     }
 }

@@ -61,7 +61,7 @@ public static class HttpContextExtension
                 dadosToken.SessaoId,
                 dadosToken.Id,
                 dadosToken.ParceiroId,
-                dadosToken.EhFuncionario);
+                dadosToken.TipoUsuario);
 
             if (sessao == null || !sessao.Ativa)
             {
@@ -90,7 +90,7 @@ public static class HttpContextExtension
 
         usuarioAutenticado.Id = resultadoToken.Result.Id;
         usuarioAutenticado.SessaoId = resultadoToken.Result.SessaoId;
-        usuarioAutenticado.IsFuncionario = resultadoToken.Result.EhFuncionario;
+        usuarioAutenticado.TipoUsuario = resultadoToken.Result.TipoUsuario;
 
         var autenticaUsuarioService = httpContext.RequestServices.GetRequiredService<IAutenticaUsuarioService>();
 

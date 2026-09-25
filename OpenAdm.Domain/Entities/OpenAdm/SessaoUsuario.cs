@@ -1,6 +1,7 @@
 using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Extensions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Domain.Entities.OpenAdm;
 
@@ -12,7 +13,7 @@ public class SessaoUsuario : BaseEntity
         DateTime dataDeAtualizacao,
         Guid usuarioId,
         Guid parceiroId,
-        bool ehFuncionario,
+        TipoUsuario tipoUsuario,
         DateTime? ultimaAtividadeEm,
         DateTime expiraEm, DateTime? revogadoEm, string? enderecoIp, string? userAgent, string? sistemaOperacional,
         string? navegador, string? dispositivo)
@@ -20,7 +21,7 @@ public class SessaoUsuario : BaseEntity
     {
         UsuarioId = usuarioId;
         ParceiroId = parceiroId;
-        EhFuncionario = ehFuncionario;
+        TipoUsuario = tipoUsuario;
         UltimaAtividadeEm = ultimaAtividadeEm;
         ExpiraEm = expiraEm;
         RevogadoEm = revogadoEm;
@@ -33,7 +34,7 @@ public class SessaoUsuario : BaseEntity
 
     public Guid UsuarioId { get; private set; }
     public Guid ParceiroId { get; private set; }
-    public bool EhFuncionario { get; private set; }
+    public TipoUsuario TipoUsuario { get; private set; }
     public DateTime? UltimaAtividadeEm { get; private set; }
     public DateTime ExpiraEm { get; private set; }
     public DateTime? RevogadoEm { get; private set; }
@@ -50,14 +51,14 @@ public class SessaoUsuario : BaseEntity
     public static SessaoUsuario Criar(
         Guid usuarioId,
         Guid parceiroId,
-        bool ehFuncionario,
+        TipoUsuario tipoUsuario,
         int expiracaoEmDias,
         IUsuarioSessaoRequest usuarioSessaoRequest)
     {
         var agora = DateTime.UtcNow;
 
         return new SessaoUsuario(
-            Guid.NewGuid(), agora, agora, usuarioId, parceiroId, ehFuncionario, agora,
+            Guid.NewGuid(), agora, agora, usuarioId, parceiroId, tipoUsuario, agora,
             agora.AddDays(expiracaoEmDias), null,
             usuarioSessaoRequest.EnderecoIp?.Limitar(SessaoUsuarioConfig.MaxLengthEnderecoIp),
             usuarioSessaoRequest.UserAgent?.Limitar(SessaoUsuarioConfig.MaxLengthUserAgent),

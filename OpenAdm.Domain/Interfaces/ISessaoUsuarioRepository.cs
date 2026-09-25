@@ -1,4 +1,5 @@
 using OpenAdm.Domain.Entities.OpenAdm;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Domain.Interfaces;
 
@@ -9,8 +10,8 @@ public interface ISessaoUsuarioRepository
         Guid sessaoId,
         Guid usuarioId,
         Guid parceiroId,
-        bool ehFuncionario);
+        TipoUsuario tipoUsuario);
     Task SalvarAlteracoesAsync();
     Task DerrubarSessaoAsync(Guid sessaoId);
-    Task DerrubarSessoesAsync(Guid usuarioId, Guid parceiroId, bool ehFuncionario);
+    Task DerrubarSessoesAsync(Guid usuarioId, Guid parceiroId, TipoUsuario tipoUsuario);
 }

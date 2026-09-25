@@ -4,6 +4,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
@@ -42,7 +43,8 @@ public class TrocarSenhaFuncionarioServiceTest
         Assert.True(PasswordAdapter.VerifyPassword("nova-senha", funcionario.Senha));
         _funcionarioRepository.Verify(x => x.Update(funcionario), Times.Once);
         _funcionarioRepository.Verify(x => x.SaveChangesAsync(), Times.Once);
-        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(funcionario.Id, true), Times.Once);
+        _sessaoUsuarioService.Verify(
+            x => x.DerrubarSessoesAsync(funcionario.Id, TipoUsuario.Funcionario), Times.Once);
     }
 
     [Fact]

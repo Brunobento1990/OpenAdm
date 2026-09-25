@@ -4,6 +4,7 @@ using OpenAdm.Application.Models.Funcionarios;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Services;
 
@@ -34,7 +35,7 @@ public class LoginFuncionarioService
             throw new ExceptionApi("E-mail ou senha inválidos!");
 
         var funcionarioViewModel = new FuncionarioViewModel().ToModel(funcionario);
-        var sessao = await _sessaoUsuarioService.CriarAsync(funcionario.Id, ehFuncionario: true);
+        var sessao = await _sessaoUsuarioService.CriarAsync(funcionario.Id, TipoUsuario.Funcionario);
 
         var token = _tokenService.GenerateToken(sessao);
         return new(token, funcionarioViewModel);

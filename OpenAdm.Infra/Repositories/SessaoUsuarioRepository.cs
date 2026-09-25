@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Infra.Repositories;
 
@@ -16,7 +17,7 @@ public class SessaoUsuarioRepository(AppDbContext appDbContext) : ISessaoUsuario
         Guid sessaoId,
         Guid usuarioId,
         Guid parceiroId,
-        bool ehFuncionario)
+        TipoUsuario tipoUsuario)
     {
         return appDbContext
             .SessoesUsuarios
@@ -25,7 +26,7 @@ public class SessaoUsuarioRepository(AppDbContext appDbContext) : ISessaoUsuario
                 x.Id == sessaoId &&
                 x.UsuarioId == usuarioId &&
                 x.ParceiroId == parceiroId &&
-                x.EhFuncionario == ehFuncionario);
+                x.TipoUsuario == tipoUsuario);
     }
 
     public async Task SalvarAlteracoesAsync()
@@ -41,13 +42,13 @@ public class SessaoUsuarioRepository(AppDbContext appDbContext) : ISessaoUsuario
                 x.SetProperty(y => y.RevogadoEm, DateTime.UtcNow));
     }
 
-    public async Task DerrubarSessoesAsync(Guid usuarioId, Guid parceiroId, bool ehFuncionario)
+    public async Task DerrubarSessoesAsync(Guid usuarioId, Guid parceiroId, TipoUsuario tipoUsuario)
     {
         await appDbContext.SessoesUsuarios
             .Where(x =>
                 x.UsuarioId == usuarioId &&
                 x.ParceiroId == parceiroId &&
-                x.EhFuncionario == ehFuncionario &&
+                x.TipoUsuario == tipoUsuario &&
                 x.RevogadoEm == null)
             .ExecuteUpdateAsync(x =>
                 x.SetProperty(y => y.RevogadoEm, DateTime.UtcNow));

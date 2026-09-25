@@ -3,6 +3,7 @@ using OpenAdm.Application.Dtos.Funcionarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Model;
 
 namespace OpenAdm.Application.Services;
@@ -41,7 +42,7 @@ public class TrocarSenhaFuncionarioService(
         funcionario.AtualizarSenha(PasswordAdapter.GenerateHash(dto.Senha));
         funcionarioRepository.Update(funcionario);
         await funcionarioRepository.SaveChangesAsync();
-        await sessaoUsuarioService.DerrubarSessoesAsync(funcionario.Id, ehFuncionario: true);
+        await sessaoUsuarioService.DerrubarSessoesAsync(funcionario.Id, TipoUsuario.Funcionario);
 
         return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel { Resultado = true };
     }

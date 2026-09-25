@@ -9,6 +9,7 @@ using System.Text;
 using OpenAdm.Domain.Model;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Extensions;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Services;
 
@@ -17,7 +18,8 @@ public class TokenService : ITokenService
     private const string KeySessaoId = "SessaoId";
     private const string KeyUsuarioId = "UsuarioId";
     private const string KeyParceiroId = "ParceiroId";
-    private const string KeyIsFuncionario = "EhFuncionario";
+    private const string KeyTipoUsuario = "TipoUsuario";
+    private const string KeyEhFuncionarioLegado = "EhFuncionario";
     private const string KeyDataLogin = "DataLogin";
 
     public string GenerateToken(SessaoUsuario sessao)
@@ -49,7 +51,7 @@ public class TokenService : ITokenService
             new(KeySessaoId, sessao.Id.ToString()),
             new(KeyUsuarioId, sessao.UsuarioId.ToString()),
             new(KeyParceiroId, sessao.ParceiroId.ToString()),
-            new(KeyIsFuncionario, sessao.EhFuncionario ? "TRUE" : "FALSE"),
+            new(KeyTipoUsuario, sessao.TipoUsuario.ToString()),
             new(KeyDataLogin, sessao.DataDeCriacao.FormatarDataJson()),
         };
 
@@ -80,14 +82,15 @@ public class TokenService : ITokenService
             var sessaoId = jwtToken.Claims.FirstOrDefault(c => c.Type == KeySessaoId)?.Value;
             var usuarioId = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyUsuarioId)?.Value;
             var parceiroId = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyParceiroId)?.Value;
-            var ehFuncionario = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyIsFuncionario)?.Value;
+            var tipoUsuarioClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyTipoUsuario)?.Value;
+            var ehFuncionarioLegado = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyEhFuncionarioLegado)?.Value;
             var dataLogin = jwtToken.Claims.FirstOrDefault(c => c.Type == KeyDataLogin)?.Value;
 
             if (!Guid.TryParse(sessaoId, out var sessaoIdParse) ||
                 !Guid.TryParse(usuarioId, out var usuarioIdParse) ||
                 !Guid.TryParse(parceiroId, out var parceiroIdParse) ||
                 !DateTime.TryParse(dataLogin, out var dataLoginParse) ||
-                ehFuncionario is not ("TRUE" or "FALSE"))
+                !TryObterTipoUsuario(tipoUsuarioClaim, ehFuncionarioLegado, out var tipoUsuario))
             {
                 return (ResultPartner<ValidaTokenModel>)"JWT inválido, efetue o login";
             }
@@ -95,7 +98,7 @@ public class TokenService : ITokenService
             return (ResultPartner<ValidaTokenModel>)new ValidaTokenModel()
             {
                 Expirado = false,
-                EhFuncionario = ehFuncionario == "TRUE",
+                TipoUsuario = tipoUsuario,
                 Id = usuarioIdParse,
                 ParceiroId = parceiroIdParse,
                 SessaoId = sessaoIdParse,
@@ -113,6 +116,27 @@ public class TokenService : ITokenService
         {
             return (ResultPartner<ValidaTokenModel>)"Token inválido, efetue o login";
         }
+    }
+
+    private static bool TryObterTipoUsuario(
+        string? tipoUsuarioClaim,
+        string? ehFuncionarioLegado,
+        out TipoUsuario tipoUsuario)
+    {
+        if (Enum.TryParse(tipoUsuarioClaim, ignoreCase: false, out tipoUsuario) &&
+            Enum.IsDefined(tipoUsuario))
+        {
+            return true;
+        }
+
+        tipoUsuario = ehFuncionarioLegado switch
+        {
+            "TRUE" => TipoUsuario.Funcionario,
+            "FALSE" => TipoUsuario.Usuario,
+            _ => default
+        };
+
+        return ehFuncionarioLegado is "TRUE" or "FALSE";
     }
 
 

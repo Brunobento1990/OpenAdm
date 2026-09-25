@@ -5,6 +5,7 @@ using OpenAdm.Application.Models;
 using OpenAdm.Application.Models.Emails;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Model;
 using Microsoft.Extensions.Configuration;
 
@@ -126,7 +127,7 @@ public class FuncionarioEsqueceuSenhaService : IFuncionarioEsqueceuSenhaService
         solicitacao.MarcarComoResetado();
         _funcionarioEsqueceuSenhaRepository.Update(solicitacao);
         await _funcionarioEsqueceuSenhaRepository.SaveChangesAsync();
-        await _sessaoUsuarioService.DerrubarSessoesAsync(solicitacao.Funcionario.Id, ehFuncionario: true);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(solicitacao.Funcionario.Id, TipoUsuario.Funcionario);
 
         return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel { Resultado = true };
     }

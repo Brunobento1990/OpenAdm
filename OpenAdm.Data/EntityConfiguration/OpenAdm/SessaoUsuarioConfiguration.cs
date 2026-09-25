@@ -27,7 +27,7 @@ internal class SessaoUsuarioConfiguration : BaseEntityConfiguration<SessaoUsuari
         {
             x.UsuarioId,
             x.ParceiroId,
-            x.EhFuncionario,
+            x.TipoUsuario,
             x.RevogadoEm,
             x.ExpiraEm
         });

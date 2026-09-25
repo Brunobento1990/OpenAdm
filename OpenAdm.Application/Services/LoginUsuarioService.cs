@@ -4,6 +4,7 @@ using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Services;
 
@@ -31,7 +32,7 @@ public class LoginUsuarioService(
         }
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
+        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, TipoUsuario.Usuario);
         var token = _tokenService.GenerateToken(sessao);
 
         return new(usuarioViewModel, token);
@@ -52,7 +53,7 @@ public class LoginUsuarioService(
             throw new ExceptionApi("Usuário inativo. Entre em contato com o administrador do sistema.");
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
-        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, ehFuncionario: false);
+        var sessao = await sessaoUsuarioService.CriarAsync(usuario.Id, TipoUsuario.Usuario);
         var token = _tokenService.GenerateToken(sessao);
         await _acessoEcommerceService.AtualizarAcessoAsync();
         return new(usuarioViewModel, token);

@@ -3,6 +3,7 @@ using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Services;
 
@@ -28,7 +29,7 @@ public class AtualizarSenhaUsuarioAdmService : IAtualizarSenhaUsuarioAdmService
         usuario.UpdateSenha(PasswordAdapter.GenerateHash(atualizarSenhaUsuarioAdmDto.Senha));
 
         await _usuarioRepository.UpdateAsync(usuario);
-        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, ehFuncionario: false);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario);
 
         return true;
     }

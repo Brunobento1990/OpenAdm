@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Application.Services;
 
@@ -11,7 +12,7 @@ public class SessaoUsuarioService(
     IUsuarioSessaoRequest usuarioSessaoRequest,
     IConfiguration configuration) : ISessaoUsuarioService
 {
-    public async Task<SessaoUsuario> CriarAsync(Guid usuarioId, bool ehFuncionario)
+    public async Task<SessaoUsuario> CriarAsync(Guid usuarioId, TipoUsuario tipoUsuario)
     {
         var dias = int.TryParse(configuration["SessaoUsuario:ExpiracaoDias"], out var diasConfigurados)
             ? diasConfigurados
@@ -20,7 +21,7 @@ public class SessaoUsuarioService(
         var sessao = SessaoUsuario.Criar(
             usuarioId,
             parceiroAutenticado.Id,
-            ehFuncionario,
+            tipoUsuario,
             dias,
             usuarioSessaoRequest);
 
@@ -33,6 +34,6 @@ public class SessaoUsuarioService(
     public Task DerrubarSessaoAsync(Guid sessaoId)
         => sessaoUsuarioRepository.DerrubarSessaoAsync(sessaoId);
 
-    public Task DerrubarSessoesAsync(Guid usuarioId, bool ehFuncionario)
-        => sessaoUsuarioRepository.DerrubarSessoesAsync(usuarioId, parceiroAutenticado.Id, ehFuncionario);
+    public Task DerrubarSessoesAsync(Guid usuarioId, TipoUsuario tipoUsuario)
+        => sessaoUsuarioRepository.DerrubarSessoesAsync(usuarioId, parceiroAutenticado.Id, tipoUsuario);
 }

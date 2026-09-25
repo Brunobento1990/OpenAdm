@@ -3,6 +3,7 @@ using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities.OpenAdm;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
@@ -42,7 +43,8 @@ public class UsuarioServiceTest
 
         Assert.Equal("Data de expiração de token expirada, recupere a senha novamente", exception.Message);
         _usuarioRepository.Verify(x => x.UpdateAsync(It.IsAny<OpenAdm.Domain.Entities.Usuario>()), Times.Never);
-        _sessaoUsuarioService.Verify(x => x.CriarAsync(It.IsAny<Guid>(), It.IsAny<bool>()), Times.Never);
+        _sessaoUsuarioService.Verify(
+            x => x.CriarAsync(It.IsAny<Guid>(), It.IsAny<TipoUsuario>()), Times.Never);
     }
 
     [Fact]
@@ -59,7 +61,7 @@ public class UsuarioServiceTest
         });
 
         _usuarioRepository.Verify(x => x.UpdateAsync(usuario), Times.Once);
-        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(usuario.Id, false), Times.Once);
+        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario), Times.Once);
     }
 
     [Fact]
@@ -70,9 +72,9 @@ public class UsuarioServiceTest
             .ComRecuperacaoDeSenha(token, DateTime.UtcNow.AddMinutes(-119))
             .Build();
         var sessao = SessaoUsuario.Criar(
-            usuario.Id, Guid.NewGuid(), false, 10, Mock.Of<IUsuarioSessaoRequest>());
+            usuario.Id, Guid.NewGuid(), TipoUsuario.Usuario, 10, Mock.Of<IUsuarioSessaoRequest>());
         ConfigurarUsuario(token, usuario);
-        _sessaoUsuarioService.Setup(x => x.CriarAsync(usuario.Id, false)).ReturnsAsync(sessao);
+        _sessaoUsuarioService.Setup(x => x.CriarAsync(usuario.Id, TipoUsuario.Usuario)).ReturnsAsync(sessao);
         _tokenService.Setup(x => x.GenerateToken(sessao)).Returns("novo-token");
 
         var resultado = await _usuarioService.RecuperarSenhaAsync(CriarDto(token));
@@ -81,8 +83,8 @@ public class UsuarioServiceTest
         Assert.Null(usuario.TokenEsqueceuSenha);
         Assert.Null(usuario.DataExpiracaoTokenEsqueceuSenha);
         _usuarioRepository.Verify(x => x.UpdateAsync(usuario), Times.Once);
-        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(usuario.Id, false), Times.Once);
-        _sessaoUsuarioService.Verify(x => x.CriarAsync(usuario.Id, false), Times.Once);
+        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario), Times.Once);
+        _sessaoUsuarioService.Verify(x => x.CriarAsync(usuario.Id, TipoUsuario.Usuario), Times.Once);
     }
 
     private void ConfigurarUsuario(Guid token, OpenAdm.Domain.Entities.Usuario usuario)

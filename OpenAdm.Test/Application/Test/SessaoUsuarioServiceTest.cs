@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Test.Application.Test;
 
@@ -33,19 +34,20 @@ public class SessaoUsuarioServiceTest
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task DeveCriarEPersistirNovaSessao(bool ehFuncionario)
+    [InlineData(TipoUsuario.Usuario)]
+    [InlineData(TipoUsuario.Funcionario)]
+    [InlineData(TipoUsuario.Representante)]
+    public async Task DeveCriarEPersistirNovaSessao(TipoUsuario tipoUsuario)
     {
         var usuarioId = Guid.NewGuid();
         var parceiroId = Guid.NewGuid();
         _parceiroAutenticado.SetupGet(x => x.Id).Returns(parceiroId);
 
-        var sessao = await _sessaoUsuarioService.CriarAsync(usuarioId, ehFuncionario);
+        var sessao = await _sessaoUsuarioService.CriarAsync(usuarioId, tipoUsuario);
 
         Assert.Equal(usuarioId, sessao.UsuarioId);
         Assert.Equal(parceiroId, sessao.ParceiroId);
-        Assert.Equal(ehFuncionario, sessao.EhFuncionario);
+        Assert.Equal(tipoUsuario, sessao.TipoUsuario);
         Assert.Equal(TimeSpan.FromDays(3), sessao.ExpiraEm - sessao.DataDeCriacao);
         _sessaoUsuarioRepository.Verify(x => x.AdicionarAsync(sessao), Times.Once);
         _sessaoUsuarioRepository.Verify(x => x.SalvarAlteracoesAsync(), Times.Once);
@@ -62,17 +64,18 @@ public class SessaoUsuarioServiceTest
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task DeveDerrubarSessoesPorUsuarioParceiroETipo(bool ehFuncionario)
+    [InlineData(TipoUsuario.Usuario)]
+    [InlineData(TipoUsuario.Funcionario)]
+    [InlineData(TipoUsuario.Representante)]
+    public async Task DeveDerrubarSessoesPorUsuarioParceiroETipo(TipoUsuario tipoUsuario)
     {
         var usuarioId = Guid.NewGuid();
         var parceiroId = Guid.NewGuid();
         _parceiroAutenticado.SetupGet(x => x.Id).Returns(parceiroId);
 
-        await _sessaoUsuarioService.DerrubarSessoesAsync(usuarioId, ehFuncionario);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuarioId, tipoUsuario);
 
         _sessaoUsuarioRepository.Verify(
-            x => x.DerrubarSessoesAsync(usuarioId, parceiroId, ehFuncionario), Times.Once);
+            x => x.DerrubarSessoesAsync(usuarioId, parceiroId, tipoUsuario), Times.Once);
     }
 }

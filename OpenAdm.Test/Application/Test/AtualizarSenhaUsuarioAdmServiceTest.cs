@@ -3,6 +3,7 @@ using OpenAdm.Application.Dtos.Usuarios;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
@@ -35,6 +36,7 @@ public class AtualizarSenhaUsuarioAdmServiceTest
 
         Assert.True(resultado);
         _usuarioRepository.Verify(x => x.UpdateAsync(usuario), Times.Once);
-        _sessaoUsuarioService.Verify(x => x.DerrubarSessoesAsync(usuario.Id, false), Times.Once);
+        _sessaoUsuarioService.Verify(
+            x => x.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario), Times.Once);
     }
 }
