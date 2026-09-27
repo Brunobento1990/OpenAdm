@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OpenAdm.Api.Attributes;
+using OpenAdm.Api.Extensions;
 using OpenAdm.Application.Dtos.Response;
+using OpenAdm.Application.Dtos.Representantes;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Domain.Interfaces;
@@ -15,17 +17,20 @@ public class LoginController : ControllerBase
 {
     private readonly ILoginFuncionarioService _loginFuncionarioService;
     private readonly ILoginUsuarioService _loginUsuarioService;
+    private readonly ILoginRepresentanteService _loginRepresentanteService;
     private readonly ISessaoUsuarioService _sessaoUsuarioService;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
 
     public LoginController(
         ILoginFuncionarioService loginFuncionarioService,
         ILoginUsuarioService loginUsuarioService,
+        ILoginRepresentanteService loginRepresentanteService,
         ISessaoUsuarioService sessaoUsuarioService,
         IUsuarioAutenticado usuarioAutenticado)
     {
         _loginFuncionarioService = loginFuncionarioService;
         _loginUsuarioService = loginUsuarioService;
+        _loginRepresentanteService = loginRepresentanteService;
         _sessaoUsuarioService = sessaoUsuarioService;
         _usuarioAutenticado = usuarioAutenticado;
     }
@@ -56,6 +61,12 @@ public class LoginController : ControllerBase
         var responselogin = await _loginUsuarioService.LoginV2Async(requestLogin);
         return Ok(responselogin);
     }
+
+    [HttpPost("representante")]
+    [ProducesResponseType<ResponseLoginRepresentanteViewModel>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> LoginRepresentante(LoginRepresentanteDto dto) =>
+        (await _loginRepresentanteService.LoginAsync(dto)).ToActionResult();
 
     [HttpPost("logout")]
     [Autentica]

@@ -22,6 +22,7 @@ public sealed class Representante : BaseEntity
     public string? Telefone { get; private set; }
     public string? Senha { get; private set; }
     public bool Ativo { get; private set; }
+    public IList<Pedido> Pedidos { get; private set; } = [];
 
     public void Editar(string nome, string? cpf, string? email, string? telefone)
     {

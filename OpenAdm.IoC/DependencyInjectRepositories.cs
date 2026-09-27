@@ -34,6 +34,7 @@ public static class DependencyInjectRepositories
 
         services.AddScoped<IConfiguracaoDePagamentoRepository, ConfiguracaoDePagamentoRepository>();
         services.AddScoped<ILoginUsuarioRepository, LoginUsuarioRepository>();
+        services.AddScoped<ILoginRepresentanteRepository, LoginRepresentanteRepository>();
         services.AddScoped<ICarrinhoRepository, CarrinhoRepository>();
         services.AddScoped<ITransacaoFinanceiraRepository, TransacaoFinanceiraRepository>();
         services.AddScoped<IBannerRepository, BannerRepository>();

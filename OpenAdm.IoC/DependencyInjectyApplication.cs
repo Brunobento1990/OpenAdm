@@ -31,6 +31,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IBannerService, BannerService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<ILoginFuncionarioService, LoginFuncionarioService>();
+        services.AddScoped<ILoginRepresentanteService, LoginRepresentanteService>();
         services.AddScoped<IFuncionarioEsqueceuSenhaService, FuncionarioEsqueceuSenhaService>();
         services.AddScoped<ITrocarSenhaFuncionarioService, TrocarSenhaFuncionarioService>();
         services.AddScoped<IPedidoService, PedidoService>();

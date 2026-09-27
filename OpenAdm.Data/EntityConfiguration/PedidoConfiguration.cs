@@ -21,6 +21,7 @@ public class PedidoConfiguration : IEntityTypeConfiguration<Pedido>
             .ValueGeneratedOnAdd();
         builder.Ignore(x => x.ValorTotal);
         builder.HasIndex(x => x.StatusPedido);
+        builder.HasIndex(x => x.RepresentanteId);
         builder.HasIndex(x => new { x.Excluido, x.StatusPedido });
         builder.HasQueryFilter(x => !x.Excluido);
         builder.Property(x => x.MotivoCancelamento)
@@ -29,5 +30,9 @@ public class PedidoConfiguration : IEntityTypeConfiguration<Pedido>
             .WithOne(x => x.Pedido)
             .HasForeignKey(x => x.PedidoId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.Representante)
+            .WithMany(x => x.Pedidos)
+            .HasForeignKey(x => x.RepresentanteId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

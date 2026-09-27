@@ -219,6 +219,23 @@ public class UsuarioService : IUsuarioService
         return new(usuarioViewModel, token);
     }
 
+    public async Task<UsuarioViewModel> UpdateUsuarioAsync(
+        Guid usuarioId,
+        UpdateUsuarioDto updateUsuarioDto)
+    {
+        updateUsuarioDto.Validar();
+        var usuario = await _usuarioRepository.GetUsuarioByIdAsync(usuarioId)
+                      ?? throw new ExceptionApi("Não foi possível localizar o cadastro do usuario");
+
+        usuario.Update(updateUsuarioDto.Email, updateUsuarioDto.Nome, updateUsuarioDto.Telefone,
+            updateUsuarioDto.Cnpj, updateUsuarioDto.Cpf);
+
+        await _usuarioRepository.UpdateAsync(usuario);
+        await _sessaoUsuarioService.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario);
+
+        return new UsuarioViewModel().ToModel(usuario);
+    }
+
     public async Task<IList<UsuarioViewModel>> PaginacaoDropDownAsync(
         PaginacaoDropDown<Usuario> paginacaoUsuarioDropDown)
     {

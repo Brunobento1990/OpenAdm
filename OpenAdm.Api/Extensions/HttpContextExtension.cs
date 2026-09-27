@@ -45,7 +45,8 @@ public static class HttpContextExtension
             return false;
         }
 
-        if (resultadoToken.Result.Expirado)
+        var tokenExpirado = resultadoToken.Result.Expirado;
+        if (tokenExpirado)
         {
             resultadoToken = tokenService.ValidarToken(token, validaLifeTime: false);
 
@@ -55,42 +56,42 @@ public static class HttpContextExtension
                     HttpStatusCode.Unauthorized);
                 return false;
             }
+        }
 
-            var dadosToken = resultadoToken.Result;
-            var sessao = await sessaoUsuarioRepository.ObterAsync(
-                dadosToken.SessaoId,
-                dadosToken.Id,
-                dadosToken.ParceiroId,
-                dadosToken.TipoUsuario);
+        var dadosToken = resultadoToken.Result;
+        var sessao = await sessaoUsuarioRepository.ObterAsync(
+            dadosToken.SessaoId,
+            dadosToken.Id,
+            dadosToken.ParceiroId,
+            dadosToken.TipoUsuario);
 
-            if (sessao == null || !sessao.Ativa)
-            {
-                if (sessao != null && !sessao.RevogadoEm.HasValue)
-                {
-                    await sessaoUsuarioRepository.DerrubarSessaoAsync(sessao.Id);
-                }
+        if (sessao == null || !sessao.Ativa)
+        {
+            if (sessao != null && !sessao.RevogadoEm.HasValue)
+                await sessaoUsuarioRepository.DerrubarSessaoAsync(sessao.Id);
 
-                await httpContext.RetornarErroAsync(
-                    "Sessão expirada, efetue o login novamente",
-                    HttpStatusCode.Unauthorized);
-                return false;
-            }
+            await httpContext.RetornarErroAsync(
+                "Sessão expirada, efetue o login novamente",
+                HttpStatusCode.Unauthorized);
+            return false;
+        }
 
+        if (tokenExpirado)
+        {
             var novoToken = tokenService.GenerateToken(sessao);
-
             httpContext.Response.Headers.TryAdd("novotoken", novoToken);
         }
 
-        if (resultadoToken.Result.ParceiroId != usuarioAutenticado.ParceiroId)
+        if (dadosToken.ParceiroId != usuarioAutenticado.ParceiroId)
         {
             await httpContext.RetornarErroAsync("JWT inválido para o parceiro informado",
                 HttpStatusCode.Unauthorized);
             return false;
         }
 
-        usuarioAutenticado.Id = resultadoToken.Result.Id;
-        usuarioAutenticado.SessaoId = resultadoToken.Result.SessaoId;
-        usuarioAutenticado.TipoUsuario = resultadoToken.Result.TipoUsuario;
+        usuarioAutenticado.Id = dadosToken.Id;
+        usuarioAutenticado.SessaoId = dadosToken.SessaoId;
+        usuarioAutenticado.TipoUsuario = dadosToken.TipoUsuario;
 
         var autenticaUsuarioService = httpContext.RequestServices.GetRequiredService<IAutenticaUsuarioService>();
 

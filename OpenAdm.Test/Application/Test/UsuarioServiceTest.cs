@@ -87,6 +87,30 @@ public class UsuarioServiceTest
         _sessaoUsuarioService.Verify(x => x.CriarAsync(usuario.Id, TipoUsuario.Usuario), Times.Once);
     }
 
+    [Fact]
+    public async Task DeveEditarUsuarioInformadoPeloRepresentante()
+    {
+        var usuario = UsuarioBuilder.Init().Build();
+        _usuarioRepository.Setup(x => x.GetUsuarioByIdAsync(usuario.Id)).ReturnsAsync(usuario);
+
+        var resultado = await _usuarioService.UpdateUsuarioAsync(usuario.Id, new UpdateUsuarioDto
+        {
+            Nome = "Cliente editado",
+            Email = "cliente@teste.com",
+            Telefone = "11999999999",
+            Cpf = "52998224725"
+        });
+
+        Assert.Equal(usuario.Id, resultado.Id);
+        Assert.Equal("Cliente editado", resultado.Nome);
+        Assert.Equal("cliente@teste.com", resultado.Email);
+        _usuarioRepository.Verify(x => x.UpdateAsync(usuario), Times.Once);
+        _sessaoUsuarioService.Verify(
+            x => x.DerrubarSessoesAsync(usuario.Id, TipoUsuario.Usuario), Times.Once);
+        _sessaoUsuarioService.Verify(
+            x => x.CriarAsync(It.IsAny<Guid>(), It.IsAny<TipoUsuario>()), Times.Never);
+    }
+
     private void ConfigurarUsuario(Guid token, OpenAdm.Domain.Entities.Usuario usuario)
     {
         _usuarioRepository

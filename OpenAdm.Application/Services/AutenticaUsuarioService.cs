@@ -22,6 +22,7 @@ public class AutenticaUsuarioService : IAutenticaUsuarioService
         => _usuarioAutenticado.TipoUsuario switch
         {
             TipoUsuario.Funcionario => ValidaFuncionarioAsync(),
+            TipoUsuario.Representante => ValidaRepresentanteAsync(),
             TipoUsuario.Usuario => ValidaUsuarioAsync(),
             _ => Task.FromResult((ResultPartner<bool>)"Tipo de usuário inválido")
         };
@@ -62,5 +63,16 @@ public class AutenticaUsuarioService : IAutenticaUsuarioService
         }
 
         return (ResultPartner<bool>)true;
+    }
+
+    private async Task<ResultPartner<bool>> ValidaRepresentanteAsync()
+    {
+        var representante = await _usuarioAutenticado.GetRepresentanteMiddlewareAsync();
+
+        if (representante is { Ativo: true })
+            return (ResultPartner<bool>)true;
+
+        await _sessaoUsuarioRepository.DerrubarSessaoAsync(_usuarioAutenticado.SessaoId);
+        return (ResultPartner<bool>)"Seu acesso esta bloqueado!";
     }
 }

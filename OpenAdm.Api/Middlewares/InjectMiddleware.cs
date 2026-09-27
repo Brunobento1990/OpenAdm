@@ -12,5 +12,7 @@ public static class InjectMiddleware
         app.UseMiddleware<AuthorizeMiddleware>();
         app.UseMiddleware<AutenticaMercadoPagoMiddleware>();
         app.UseMiddleware<TryAutenticaMiddleware>();
+        app.UseMiddleware<IsFuncionarioMiddleware>();
+        app.UseMiddleware<IsRepresentanteMiddleware>();
     }
 }

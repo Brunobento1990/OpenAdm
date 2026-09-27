@@ -27,6 +27,12 @@ public sealed class RepresentanteBuilder
         return this;
     }
 
+    public RepresentanteBuilder ComSenha(string? senha)
+    {
+        _senha = senha;
+        return this;
+    }
+
     public Representante Build() =>
         new(_id, _data, _data, 1, _nome, _cpf, _email, _telefone, _senha, _ativo);
 }

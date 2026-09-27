@@ -9,13 +9,16 @@ public sealed class UsuarioAutenticado : IUsuarioAutenticado
 {
     private readonly IUsuarioRepository _usuarioRepository;
     private readonly IFuncionarioRepository _funcionarioRepository;
+    private readonly IRepresentanteRepository _representanteRepository;
 
     public UsuarioAutenticado(
         IUsuarioRepository usuarioRepository,
-        IFuncionarioRepository funcionarioRepository)
+        IFuncionarioRepository funcionarioRepository,
+        IRepresentanteRepository representanteRepository)
     {
         _usuarioRepository = usuarioRepository;
         _funcionarioRepository = funcionarioRepository;
+        _representanteRepository = representanteRepository;
     }
 
     public Guid Id { get; set; }
@@ -40,6 +43,9 @@ public sealed class UsuarioAutenticado : IUsuarioAutenticado
     {
         return await _funcionarioRepository.ObterPorIdMiddlewareAsync(Id, ParceiroId);
     }
+
+    public Task<Representante?> GetRepresentanteMiddlewareAsync() =>
+        _representanteRepository.ObterPorIdAsync(Id);
 
     public async Task<Usuario?> GetUsuarioAutenticadoOrNullAsync()
     {

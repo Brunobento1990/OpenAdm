@@ -13,5 +13,6 @@ public interface IUsuarioAutenticado
     Task<Usuario> GetUsuarioAutenticadoAsync();
     Task<Usuario?> GetUsuarioMiddlewareAsync();
     Task<Funcionario?> GetFuncionarioMiddlewareAsync();
+    Task<Representante?> GetRepresentanteMiddlewareAsync();
     Task<Usuario?> GetUsuarioAutenticadoOrNullAsync();
 }

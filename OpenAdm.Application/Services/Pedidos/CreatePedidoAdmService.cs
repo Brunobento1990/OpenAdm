@@ -4,7 +4,6 @@ using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
-
 using OpenAdm.Domain.Interfaces;
 
 namespace OpenAdm.Application.Services.Pedidos;
@@ -14,6 +13,7 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IFaturaService _faturaService;
     private readonly IUsuarioService _usuarioService;
+
     public CreatePedidoAdmService(
         IPedidoRepository pedidoRepository,
         IFaturaService faturaService,
@@ -24,15 +24,24 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
         _usuarioService = usuarioService;
     }
 
-    public async Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto)
+    public async Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto, Guid? representanteId = null)
     {
         if (pedidoAdmCreateDto.ItensPedido.Count == 0)
         {
             throw new ExceptionApi("Informe os itens do pedido!");
         }
+
         var usuario = await _usuarioService.GetUsuarioByIdValidacaoAsync(id: pedidoAdmCreateDto.UsuarioId);
         var date = DateTime.UtcNow;
-        var pedido = new Pedido(Guid.NewGuid(), date, date, 0, StatusPedido.Aberto, usuario.Id, null);
+        var pedido = new Pedido(
+            Guid.NewGuid(),
+            date,
+            date,
+            0,
+            StatusPedido.Aberto,
+            usuario.Id,
+            null,
+            representanteId: representanteId);
 
         pedido.ProcessarItensPedido(pedidoAdmCreateDto.ItensPedido);
 
@@ -66,7 +75,7 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
             UsuarioId = pedido.UsuarioId,
             Tipo = TipoFaturaEnum.AReceber
         });
-        
+
         return true;
     }
 }

@@ -4,5 +4,5 @@ namespace OpenAdm.Application.Interfaces.Pedidos;
 
 public interface ICreatePedidoAdmService
 {
-    Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto);
+    Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto, Guid? representanteId = null);
 }

@@ -10,6 +10,7 @@ namespace OpenAdm.Infra.Paginacao;
 public class PaginacaoPedidoDto : FilterModel<Pedido>
 {
     public int? StatusPedido { get; set; }
+    public Guid? RepresentanteId { get; set; }
     public override Expression<Func<Pedido, object>>? IncludeCustom()
     {
         return x => x.ItensPedido;
@@ -17,20 +18,14 @@ public class PaginacaoPedidoDto : FilterModel<Pedido>
     public override Expression<Func<Pedido, bool>>? GetWhereBySearch()
     {
 
-        if (string.IsNullOrWhiteSpace(Search) && StatusPedido == null)
+        if (string.IsNullOrWhiteSpace(Search) && StatusPedido == null && RepresentanteId == null)
             return null;
 
-        if (!string.IsNullOrWhiteSpace(Search) && StatusPedido != null)
-            return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Email), $"%{Search}%")
-            || x.StatusPedido == (StatusPedido)StatusPedido;
-
-        if (!string.IsNullOrWhiteSpace(Search) && StatusPedido == null)
-            return x => EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Email), $"%{Search}%") ||
-                EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Nome), $"%{Search}%");
-
-        if (StatusPedido != null && string.IsNullOrWhiteSpace(Search))
-            return x => x.StatusPedido == (StatusPedido)StatusPedido;
-
-        return null;
+        return x =>
+            (!RepresentanteId.HasValue || x.RepresentanteId == RepresentanteId) &&
+            (!StatusPedido.HasValue || x.StatusPedido == (StatusPedido)StatusPedido) &&
+            (string.IsNullOrWhiteSpace(Search) ||
+             EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Email), $"%{Search}%") ||
+             EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Nome), $"%{Search}%"));
     }
 }
