@@ -15,22 +15,26 @@ public sealed class Pedido : BaseEntity
         StatusPedido statusPedido,
         Guid usuarioId,
         string? motivoCancelamento,
-        Guid? representanteId = null)
+        Guid? representanteId = null,
+        Guid? tabelaDePrecoId = null)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero)
     {
         StatusPedido = statusPedido;
         UsuarioId = usuarioId;
         MotivoCancelamento = motivoCancelamento;
         RepresentanteId = representanteId;
+        TabelaDePrecoId = tabelaDePrecoId;
     }
 
     public StatusPedido StatusPedido { get; private set; }
     public Guid UsuarioId { get; private set; }
     public Guid? RepresentanteId { get; private set; }
+    public Guid? TabelaDePrecoId { get; private set; }
     public string? MotivoCancelamento { get; private set; }
     public bool Excluido { get; private set; }
     public Usuario Usuario { get; set; } = null!;
     public Representante? Representante { get; set; }
+    public TabelaDePreco? TabelaDePreco { get; set; }
     public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
     public Fatura? Fatura { get; set; }
 

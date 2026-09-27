@@ -6,6 +6,7 @@ namespace OpenAdm.Application.Dtos.Pedidos;
 public class PedidoAdmCreateDto
 {
     public Guid UsuarioId { get; set; }
+    public Guid? TabelaDePrecoId { get; set; }
     public IList<ItemPedidoModel> ItensPedido { get; set; } = [];
     public EnderecoEntregaPedidoCreateDto? EnderecoEntrega { get; set; }
 }

@@ -1,8 +1,12 @@
 ﻿using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.TabelaDePrecos;
+using OpenAdm.Application.Models.Representantes;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
+using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
 
@@ -13,6 +17,19 @@ public class ItemTabelaDePrecoService : IItemTabelaDePrecoService
     public ItemTabelaDePrecoService(IItemTabelaDePrecoRepository itemTabelaDePrecoRepository)
     {
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
+    }
+
+    public async Task<PaginacaoViewModel<ItemCatalogoRepresentanteViewModel>> PaginarCatalogoRepresentanteAsync(
+        FilterModel<ItemTabelaDePreco> filtro)
+    {
+        var pagina = await _itemTabelaDePrecoRepository.PaginacaoAsync(filtro);
+
+        return new PaginacaoViewModel<ItemCatalogoRepresentanteViewModel>
+        {
+            TotalDeRegistros = pagina.TotalDeRegistros,
+            TotalPaginas = pagina.TotalPaginas,
+            Values = pagina.Values.Select(ItemCatalogoRepresentanteViewModel.FromEntity).ToList()
+        };
     }
 
     public async Task<ItensTabelaDePrecoViewModel> CreateItemTabelaDePrecoAsync(CreateItensTabelaDePrecoDto createItensTabelaDePrecoDto)

@@ -13,18 +13,22 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IFaturaService _faturaService;
     private readonly IUsuarioService _usuarioService;
+    private readonly IProcessarPedidoService _processarPedidoService;
+    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
 
     public CreatePedidoAdmService(
         IPedidoRepository pedidoRepository,
         IFaturaService faturaService,
-        IUsuarioService usuarioService)
+        IUsuarioService usuarioService, IProcessarPedidoService processarPedidoService, IConfiguracoesDePedidoService configuracoesDePedidoService)
     {
         _pedidoRepository = pedidoRepository;
         _faturaService = faturaService;
         _usuarioService = usuarioService;
+        _processarPedidoService = processarPedidoService;
+        _configuracoesDePedidoService = configuracoesDePedidoService;
     }
 
-    public async Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto, Guid? representanteId = null)
+    public async Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto, Guid? representanteId = null, bool processarPedido = false)
     {
         if (pedidoAdmCreateDto.ItensPedido.Count == 0)
         {
@@ -41,7 +45,8 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
             StatusPedido.Aberto,
             usuario.Id,
             null,
-            representanteId: representanteId);
+            representanteId: representanteId,
+            tabelaDePrecoId: pedidoAdmCreateDto.TabelaDePrecoId);
 
         pedido.ProcessarItensPedido(pedidoAdmCreateDto.ItensPedido);
 
@@ -76,6 +81,12 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
             Tipo = TipoFaturaEnum.AReceber
         });
 
+        if (processarPedido)
+        {
+            var configuracaoDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+            await _processarPedidoService.ProcessarCreateAsync(pedido.Id, configuracaoDePedido);
+        }
+        
         return true;
     }
 }

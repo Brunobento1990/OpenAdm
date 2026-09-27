@@ -3,6 +3,8 @@ using OpenAdm.Application.Services;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
+using OpenAdm.Domain.Model;
+using OpenAdm.Infra.Paginacao;
 using OpenAdm.Test.Domain.Builder;
 
 namespace OpenAdm.Test.Application.Test;
@@ -10,6 +12,30 @@ namespace OpenAdm.Test.Application.Test;
 public class ItemTabelaDePrecoServiceTest
 {
     private readonly Mock<IItemTabelaDePrecoRepository> _repository = new();
+
+    [Fact]
+    public async Task DevePaginarCatalogoDoRepresentanteComDadosDoProdutoEPrecos()
+    {
+        var produto = ProdutoBuilder.Init().SemDescricao("Produto representante").Build();
+        var item = ItemTabelaDePrecoBuilder.Init().ComProduto(produto).Build();
+        var filtro = new PaginacaoItemCatalogoRepresentanteDto();
+        _repository.Setup(x => x.PaginacaoAsync(filtro)).ReturnsAsync(new PaginacaoViewModel<ItemTabelaDePreco>
+        {
+            TotalDeRegistros = 1,
+            TotalPaginas = 1,
+            Values = [item]
+        });
+
+        var resultado = await CriarService().PaginarCatalogoRepresentanteAsync(filtro);
+
+        var model = Assert.Single(resultado.Values);
+        Assert.Equal(item.Id, model.Id);
+        Assert.Equal(produto.Id, model.ProdutoId);
+        Assert.Equal(produto.UrlFoto, model.FotoProduto);
+        Assert.Equal(produto.Descricao, model.Descricao);
+        Assert.Equal(item.ValorUnitarioAtacado, model.ValorUnitarioAtacado);
+        Assert.Equal(item.ValorUnitarioVarejo, model.ValorUnitarioVarejo);
+    }
 
     [Fact]
     public async Task CreateItemTabelaDePrecoAsync_DeveRetornarItemCompleto()
