@@ -1,5 +1,7 @@
 ﻿using OpenAdm.Application.Dtos.Bases;
 using OpenAdm.Application.Models.EnderecosEntregasPedido;
+using OpenAdm.Application.Models.Representantes;
+using OpenAdm.Application.Models.TabelaDePrecos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Enuns;
 
@@ -12,6 +14,8 @@ public class PedidoViewModel : BaseViewModel
     public decimal TotalItens { get; set; }
     public decimal TotalAReceber { get; set; }
     public EnderecoEntregaPedidoViewModel? EnderecoEntrega { get; set; }
+    public RepresentanteViewModel? Representante { get; set; }
+    public TabelaDePrecoViewModel? TabelaDePreco { get; set; }
 
     public decimal PorcentagemEstoqueAtendido { get; set; }
 
@@ -56,6 +60,13 @@ public class PedidoViewModel : BaseViewModel
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
 
+        Representante = entity.Representante == null
+            ? null
+            : RepresentanteViewModel.FromEntity(entity.Representante);
+        TabelaDePreco = entity.TabelaDePreco == null
+            ? null
+            : new TabelaDePrecoViewModel().ToModel(entity.TabelaDePreco);
+
         TotalAReceber = entity.Fatura?.ValorAPagarAReceber ?? 0;
 
         return this;
@@ -74,6 +85,13 @@ public class PedidoViewModel : BaseViewModel
 
         if (entity.Usuario != null)
             Usuario = entity.Usuario.Nome;
+
+        Representante = entity.Representante == null
+            ? null
+            : RepresentanteViewModel.FromEntity(entity.Representante);
+        TabelaDePreco = entity.TabelaDePreco == null
+            ? null
+            : new TabelaDePrecoViewModel().ToModel(entity.TabelaDePreco);
 
         EnderecoEntrega = entity.EnderecoEntrega == null
             ? null

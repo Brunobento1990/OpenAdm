@@ -58,6 +58,10 @@ internal class PdfPedidoService : IPdfPedidoService
                     {
                         column.Spacing(14);
                         column.Item().Element(container => ComposeClienteSection(container, pedido.Usuario));
+                        if (pedido.Representante != null || pedido.TabelaDePreco != null)
+                        {
+                            column.Item().Element(container => ComposeDadosComerciaisSection(container, pedido));
+                        }
                         column.Item().Element(container => ComposeComplementoPedidoSection(container, pedido));
                         column.Item().Element(container => ComposeItensTable(container, pedido));
                         column.Item().Element(container => ComposeResumoPedidoSection(container, pedido));
@@ -140,6 +144,26 @@ internal class PdfPedidoService : IPdfPedidoService
             {
                 row.RelativeItem().Element(item => Field(item, "Telefone", usuario.Telefone?.FormatPhone()));
                 row.RelativeItem().Element(item => Field(item, "E-mail", usuario.Email));
+            });
+        });
+    }
+
+    private static void ComposeDadosComerciaisSection(IContainer container, Pedido pedido)
+    {
+        container.Element(SectionBox).Column(column =>
+        {
+            column.Item().Element(item => SectionTitle(item, "DADOS COMERCIAIS"));
+            column.Item().PaddingTop(10).Row(row =>
+            {
+                if (pedido.Representante != null)
+                {
+                    row.RelativeItem().Element(item => Field(item, "Representante", pedido.Representante.Nome));
+                }
+
+                if (pedido.TabelaDePreco != null)
+                {
+                    row.RelativeItem().Element(item => Field(item, "Tabela de preço", pedido.TabelaDePreco.Descricao));
+                }
             });
         });
     }
