@@ -56,7 +56,8 @@ public sealed class PedidoRepresentanteController(
     public async Task<IActionResult> CreatePedido(PedidoAdmCreateDto pedidoAdmCreateDto)
     {
         var result =
-            await createPedidoAdmService.CreateAsync(pedidoAdmCreateDto, representanteId: usuarioAutenticado.Id);
+            await createPedidoAdmService.CreateAsync(pedidoAdmCreateDto, representanteId: usuarioAutenticado.Id,
+                processarPedido: true);
 
         return Ok(new { result });
     }
