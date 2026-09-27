@@ -71,6 +71,8 @@ public class PedidoRepository : IPedidoRepository
             .Include(x => x.ItensPedido)
                 .ThenInclude(x => x.Peso)
             .Include(x => x.Usuario)
+            .Include(x => x.Representante)
+            .Include(x => x.TabelaDePreco)
             .Include(x => x.EnderecoEntrega)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
