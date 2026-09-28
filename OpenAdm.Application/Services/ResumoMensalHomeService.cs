@@ -14,6 +14,12 @@ public sealed class ResumoMensalHomeService : IResumoMensalHomeService
     }
 
     public async Task<ResumoMensalHomeViewModel> ObterAsync()
+        => await ObterAsync(null);
+
+    public async Task<ResumoMensalHomeViewModel> ObterAsync(Guid representanteId)
+        => await ObterAsync((Guid?)representanteId);
+
+    private async Task<ResumoMensalHomeViewModel> ObterAsync(Guid? representanteId)
     {
         var agora = DateTime.UtcNow;
         var inicioAtual = new DateTime(agora.Year, agora.Month, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -21,8 +27,12 @@ public sealed class ResumoMensalHomeService : IResumoMensalHomeService
         var inicioAnterior = inicioAtual.AddYears(-1);
         var fimAnterior = fimAtual.AddYears(-1);
 
-        var atual = await _repository.ObterAsync(inicioAtual, fimAtual);
-        var anterior = await _repository.ObterAsync(inicioAnterior, fimAnterior);
+        var atual = representanteId.HasValue
+            ? await _repository.ObterAsync(inicioAtual, fimAtual, representanteId.Value)
+            : await _repository.ObterAsync(inicioAtual, fimAtual);
+        var anterior = representanteId.HasValue
+            ? await _repository.ObterAsync(inicioAnterior, fimAnterior, representanteId.Value)
+            : await _repository.ObterAsync(inicioAnterior, fimAnterior);
         var categoriasAtuais = atual.Categorias.ToDictionary(x => x.CategoriaId);
         var categoriasAnteriores = anterior.Categorias.ToDictionary(x => x.CategoriaId);
 

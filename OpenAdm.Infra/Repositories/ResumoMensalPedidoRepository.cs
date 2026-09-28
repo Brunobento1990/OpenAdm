@@ -16,10 +16,17 @@ public sealed class ResumoMensalPedidoRepository : IResumoMensalPedidoRepository
     }
 
     public async Task<ResumoMensalPedidoModel> ObterAsync(DateTime inicio, DateTime fim)
+        => await ObterAsync(inicio, fim, null);
+
+    public async Task<ResumoMensalPedidoModel> ObterAsync(DateTime inicio, DateTime fim, Guid representanteId)
+        => await ObterAsync(inicio, fim, (Guid?)representanteId);
+
+    private async Task<ResumoMensalPedidoModel> ObterAsync(DateTime inicio, DateTime fim, Guid? representanteId)
     {
         var pedidos = _context.Pedidos
             .AsNoTracking()
             .Where(x => x.StatusPedido == StatusPedido.Entregue &&
+                        (!representanteId.HasValue || x.RepresentanteId == representanteId) &&
                         x.DataDeCriacao >= inicio &&
                         x.DataDeCriacao < fim);
 
@@ -39,6 +46,7 @@ public sealed class ResumoMensalPedidoRepository : IResumoMensalPedidoRepository
             .AsNoTracking()
             .Where(x => x.Pedido.StatusPedido == StatusPedido.Entregue &&
                         !x.Pedido.Excluido &&
+                        (!representanteId.HasValue || x.Pedido.RepresentanteId == representanteId) &&
                         x.Pedido.DataDeCriacao >= inicio &&
                         x.Pedido.DataDeCriacao < fim)
             .GroupBy(x => new { x.Produto.CategoriaId, x.Produto.Categoria.Descricao })

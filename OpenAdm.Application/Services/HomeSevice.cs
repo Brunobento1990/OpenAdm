@@ -144,6 +144,11 @@ public class HomeSevice : IHomeSevice
         return cache;
     }
 
+    public async Task<HomeRepresentanteViewModel> GetHomeRepresentanteAsync(Guid representanteId) => new()
+    {
+        ResumoMensal = await _resumoMensalHomeService.ObterAsync(representanteId)
+    };
+
     private static IList<PedidoPorDiaModel> MontarCountDiario(IList<ContadorPedidoModel> registros, DateTime dataInicio)
     {
         var porData = registros.ToDictionary(r => r.Data.Date, r => r.Total);

@@ -74,6 +74,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<ISessaoUsuarioService, SessaoUsuarioService>();
         services.AddScoped<IAutenticaUsuarioService, AutenticaUsuarioService>();
         services.AddScoped<IRepresentanteService, RepresentanteService>();
+        services.AddScoped<IHistoricoClienteRepresentanteService, HistoricoClienteRepresentanteService>();
 
         services.AddKeyedScoped<IGerarCobrancaPedidoService, GerarCobrancaPixPedidoService>(MeioDePagamentoEnum.Pix);
     }

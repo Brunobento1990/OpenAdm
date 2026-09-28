@@ -13,6 +13,51 @@ namespace OpenAdm.Infra.Repositories;
 public class PedidoRepository(ParceiroContext parceiroContext)
     : GenericRepository<Pedido>(parceiroContext), IPedidoRepository
 {
+    public async Task<HistoricoClienteRepresentanteModel> ObterHistoricoClienteRepresentanteAsync(
+        Guid clienteId,
+        Guid representanteId)
+    {
+        var pedidos = ParceiroContext.Pedidos
+            .AsNoTracking()
+            .Where(x => x.UsuarioId == clienteId &&
+                        x.RepresentanteId == representanteId &&
+                        x.StatusPedido == StatusPedido.Entregue &&
+                        !x.Excluido);
+
+        var resumo = await pedidos
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                TicketMedio = g.Average(x => x.ItensPedido.Sum(i => i.ValorUnitario * i.Quantidade))
+            })
+            .FirstOrDefaultAsync();
+
+        var ultimoPedido = await pedidos
+            .OrderByDescending(x => x.DataDeCriacao)
+            .Select(x => new
+            {
+                Data = x.DataDeCriacao,
+                Valor = x.ItensPedido.Sum(i => i.ValorUnitario * i.Quantidade)
+            })
+            .FirstOrDefaultAsync();
+
+        var produtoMaisComprado = await pedidos
+            .SelectMany(x => x.ItensPedido)
+            .GroupBy(x => new { x.ProdutoId, x.Produto.Descricao })
+            .OrderByDescending(g => g.Sum(x => x.Quantidade))
+            .ThenBy(g => g.Key.Descricao)
+            .Select(g => g.Key.Descricao)
+            .FirstOrDefaultAsync();
+
+        return new HistoricoClienteRepresentanteModel
+        {
+            DataUltimaCompra = ultimoPedido == null ? null : ultimoPedido.Data,
+            TicketMedio = resumo?.TicketMedio ?? 0,
+            ProdutoMaisComprado = produtoMaisComprado,
+            ValorUltimoPedido = ultimoPedido?.Valor ?? 0
+        };
+    }
+
     public override async Task<PaginacaoViewModel<Pedido>> PaginacaoAsync(FilterModel<Pedido> filterModel)
     {
         var query = ParceiroContext

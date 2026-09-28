@@ -6,6 +6,9 @@ namespace OpenAdm.Domain.Interfaces;
 
 public interface IPedidoRepository : IGenericRepository<Pedido>
 {
+    Task<HistoricoClienteRepresentanteModel> ObterHistoricoClienteRepresentanteAsync(
+        Guid clienteId,
+        Guid representanteId);
     Task<ICollection<ItemCobrancaHomeAdmModel>> ListarAsync(IEnumerable<Guid> ids);
     Task<Pedido?> GetPedidoByIdAsync(Guid id);
     Task<IList<ItemPedido>> ObterItensDosPedidosAsync(IEnumerable<Guid> ids);

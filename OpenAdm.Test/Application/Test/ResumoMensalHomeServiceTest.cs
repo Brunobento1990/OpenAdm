@@ -92,4 +92,22 @@ public class ResumoMensalHomeServiceTest
         Assert.Equal(100, resultado.ValorTotalVendido.VariacaoPercentual);
         Assert.Equal(0, resultado.QuantidadePedidos.VariacaoPercentual);
     }
+
+    [Fact]
+    public async Task ObterAsync_DeveFiltrarResumoPeloRepresentante()
+    {
+        var representanteId = Guid.NewGuid();
+        _repository
+            .Setup(x => x.ObterAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), representanteId))
+            .ReturnsAsync(new ResumoMensalPedidoModel());
+
+        await new ResumoMensalHomeService(_repository.Object).ObterAsync(representanteId);
+
+        _repository.Verify(
+            x => x.ObterAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), representanteId),
+            Times.Exactly(2));
+        _repository.Verify(
+            x => x.ObterAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>()),
+            Times.Never);
+    }
 }
