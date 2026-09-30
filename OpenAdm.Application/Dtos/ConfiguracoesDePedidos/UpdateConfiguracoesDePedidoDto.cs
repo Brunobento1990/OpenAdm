@@ -12,4 +12,5 @@ public class UpdateConfiguracoesDePedidoDto
     public decimal? PedidoMinimoAtacado { get; set; }
     public decimal? PedidoMinimoVarejo { get; set; }
     public bool VendaDeProdutoComEstoque { get; set; } = false;
+    public bool ListarProdutoSomenteComEstoque { get; set; } = false;
 }

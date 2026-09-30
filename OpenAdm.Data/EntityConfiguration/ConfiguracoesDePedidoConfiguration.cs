@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Infra.EntityConfiguration;
 
-namespace OpenAdm.Infra.EntityConfiguration;
+namespace OpenAdm.Data.EntityConfiguration;
 
 internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfiguration<ConfiguracoesDePedido>
 {
@@ -19,6 +20,10 @@ internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfigurati
             .HasPrecision(12, 2);
 
         builder.Property(x => x.VendaDeProdutoComEstoque)
+            .IsRequired()
+            .HasDefaultValue(false);
+
+        builder.Property(x => x.ListarProdutoSomenteComEstoque)
             .IsRequired()
             .HasDefaultValue(false);
 

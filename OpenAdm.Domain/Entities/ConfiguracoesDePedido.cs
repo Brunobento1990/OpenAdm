@@ -15,7 +15,8 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         decimal? pedidoMinimoVarejo,
         Guid parceiroId,
         string? whatsApp,
-        bool vendaDeProdutoComEstoque)
+        bool vendaDeProdutoComEstoque,
+        bool listarProdutoSomenteComEstoque = false)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         EmailDeEnvio = emailDeEnvio;
@@ -24,9 +25,10 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         PedidoMinimoVarejo = pedidoMinimoVarejo;
         WhatsApp = whatsApp;
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
+        ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
     }
 
-    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsApp, bool vendaDeProdutoComEstoque)
+    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsApp, bool vendaDeProdutoComEstoque, bool listarProdutoSomenteComEstoque = false)
     {
         PedidoMinimoAtacado = pedidoMinimoAtacado;
         PedidoMinimoVarejo = pedidoMinimoVarejo;
@@ -34,12 +36,14 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         Ativo = ativo;
         WhatsApp = whatsApp;
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
+        ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
     }
 
     public string EmailDeEnvio { get; private set; }
     public string? WhatsApp { get; private set; }
     public bool Ativo { get; private set; }
-    public bool VendaDeProdutoComEstoque { get; private set; } = false;
+    public bool VendaDeProdutoComEstoque { get; private set; }
+    public bool ListarProdutoSomenteComEstoque { get; private set; }
     public decimal? PedidoMinimoAtacado { get; private set; }
     public decimal? PedidoMinimoVarejo { get; private set; }
 }

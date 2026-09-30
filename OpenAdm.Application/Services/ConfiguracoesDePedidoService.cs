@@ -40,7 +40,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 pedidoMinimoVarejo: 0,
                 parceiroId: _usuarioAutenticado.ParceiroId,
                 whatsApp: "",
-                vendaDeProdutoComEstoque: false);
+                vendaDeProdutoComEstoque: false,
+                listarProdutoSomenteComEstoque: false);
         }
 
         return configuracaoDePedido;
@@ -66,7 +67,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
                 parceiroId: _usuarioAutenticado.ParceiroId,
                 whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
-                vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque);
+                vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque,
+                listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque);
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
@@ -78,7 +80,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 pedidoMinimoAtacado: updateConfiguracoesDePedidoDto.PedidoMinimoAtacado,
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
                 whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
-                vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque);
+                vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque,
+                listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque);
 
             _configuracoesDePedidoRepository.Update(configuracaoDePedido);
         }
@@ -96,7 +99,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
         {
             return new()
             {
-                VendaDeProdutoComEstoque = false
+                VendaDeProdutoComEstoque = false,
+                ListarProdutoSomenteComEstoque = false
             };
         }
 
