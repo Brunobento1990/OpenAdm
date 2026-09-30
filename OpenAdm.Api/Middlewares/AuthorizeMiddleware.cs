@@ -1,10 +1,10 @@
-﻿using OpenAdm.Api.Attributes;
-using OpenAdm.Domain.Interfaces;
-using System.Net;
+﻿using System.Net;
+using OpenAdm.Api.Attributes;
 using OpenAdm.Api.Extensions;
 using OpenAdm.Application.Interfaces;
+using OpenAdm.Domain.Interfaces;
 
-namespace OpenAdm.Api.Midlewares;
+namespace OpenAdm.Api.Middlewares;
 
 public class AuthorizeMiddleware
 {
@@ -27,7 +27,11 @@ public class AuthorizeMiddleware
             return;
         }
 
-        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").LastOrDefault();
+        var token = httpContext.Request.Headers.Authorization
+            .ToString()
+            .Split(" ")
+            .LastOrDefault()?.Trim()
+            .Replace("Bearer", string.Empty);
         if (string.IsNullOrWhiteSpace(token))
         {
             await httpContext.RetornarErroAsync("Efetue o login", HttpStatusCode.Unauthorized);

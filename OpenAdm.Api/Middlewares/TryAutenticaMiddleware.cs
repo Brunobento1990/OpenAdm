@@ -32,7 +32,8 @@ public class TryAutenticaMiddleware
             return;
         }
 
-        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").LastOrDefault();
+        var token = httpContext.Request.Headers.Authorization.ToString().Split(" ").LastOrDefault()
+            ?.Trim().Replace("Bearer", string.Empty);
         if (string.IsNullOrWhiteSpace(token))
         {
             await _next(httpContext);
