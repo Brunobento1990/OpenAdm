@@ -42,16 +42,6 @@ public class ProdutoController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("list-by-categorias")]
-    [TryAutentica]
-    [ProducesResponseType<IList<ProdutoViewModel>>(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> ListProdutosByCategorias([FromQuery] Guid categoriaId)
-    {
-        var result = await _produtoService.GetProdutosByCategoriaIdAsync(categoriaId);
-        return Ok(result);
-    }
-
     [HttpPost("paginacao")]
     [Autentica]
     [IsFuncionario]

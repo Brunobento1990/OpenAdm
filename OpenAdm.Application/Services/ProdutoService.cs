@@ -142,21 +142,6 @@ public class ProdutoService : IProdutoService
         };
     }
 
-    public async Task<ICollection<ProdutoViewModel>> GetProdutosByCategoriaIdAsync(Guid categoriaId)
-    {
-        var produtos = await _produtoRepository.GetProdutosByCategoriaIdAsync(categoriaId);
-        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
-
-        var produtosIds = produtos.Select(x => x.Id).Distinct().ToList();
-
-        var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
-        var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);
-
-        var produtosViewModel = await MapearProdutosAsync(produtos, config, estoques, estoquesReservados);
-
-        return produtosViewModel;
-    }
-
     public async Task<ProdutoViewModel> GetProdutoViewModelByIdAsync(Guid id)
     {
         var produto = await _produtoRepository.GetProdutoByIdAsync(id)

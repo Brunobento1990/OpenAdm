@@ -1,6 +1,7 @@
 using OpenAdm.Application.Dtos.Produtos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Ecommerce;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Helpers;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
@@ -115,7 +116,10 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
                 tamanhoViewModel.QuantidadeEstoqueDisponivel = quantidadeDisponivel;
                 tamanhoViewModel.TemEstoqueDisponivel = temEstoqueDisponivel;
 
-                produtoViewModel.Tamanhos.Add(tamanhoViewModel);
+                if (!config.ListarProdutoSomenteComEstoque || PossuiEstoqueDisponivel(estoque, reservado))
+                {
+                    produtoViewModel.Tamanhos.Add(tamanhoViewModel);
+                }
             }
 
             foreach (var peso in produto.Pesos)
@@ -151,7 +155,10 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
                 pesoViewModel.QuantidadeEstoqueDisponivel = quantidadeDisponivel;
                 pesoViewModel.TemEstoqueDisponivel = temEstoqueDisponivel;
 
-                produtoViewModel.Pesos.Add(pesoViewModel);
+                if (!config.ListarProdutoSomenteComEstoque || PossuiEstoqueDisponivel(estoque, reservado))
+                {
+                    produtoViewModel.Pesos.Add(pesoViewModel);
+                }
             }
 
             if (produtoViewModel.Pesos.Count > 0 || produtoViewModel.Tamanhos.Count > 0)
@@ -164,5 +171,12 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
         }
 
         return resultadoViewModel;
+    }
+
+    private static bool PossuiEstoqueDisponivel(
+        Estoque? estoque,
+        EstoqueReservadoModel? reservado)
+    {
+        return (estoque?.Quantidade ?? 0) - (reservado?.QuantidadeReservada ?? 0) > 0;
     }
 }
