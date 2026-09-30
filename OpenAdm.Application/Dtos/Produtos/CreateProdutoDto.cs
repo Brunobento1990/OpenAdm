@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using OpenAdm.Application.Dtos.TabelasDePrecos;
+﻿using OpenAdm.Application.Dtos.TabelasDePrecos;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 
@@ -44,7 +43,6 @@ public class CreateProdutoDto
             Referencia,
             NovaFoto,
             nomeFoto,
-            false,
             VendaSomenteComEstoqueDisponivel,
             true);
 

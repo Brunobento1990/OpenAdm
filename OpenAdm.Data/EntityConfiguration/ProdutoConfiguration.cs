@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OpenAdm.Domain.Entities;
 
-namespace OpenAdm.Infra.EntityConfiguration;
+namespace OpenAdm.Data.EntityConfiguration;
 
 public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
 {
@@ -39,11 +39,10 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
         builder.HasMany(x => x.Tamanhos)
             .WithMany(x => x.Produtos)
             .UsingEntity<TamanhoProduto>();
-        builder.HasIndex(x => x.InativoEcommerce);
         builder.HasIndex(x => x.Ativo);
         builder.HasIndex(x => new { x.Ativo, x.Descricao });
-        builder.HasIndex(x => new { x.Ativo, x.InativoEcommerce, x.Numero });
-        builder.HasIndex(x => new { x.Ativo, x.InativoEcommerce, x.Referencia });
-        builder.HasIndex(x => new { x.CategoriaId, x.Ativo, x.InativoEcommerce, x.Numero });
+        builder.HasIndex(x => new { x.Ativo, x.Numero });
+        builder.HasIndex(x => new { x.Ativo, x.Referencia });
+        builder.HasIndex(x => new { x.CategoriaId, x.Ativo, x.Numero });
     }
 }

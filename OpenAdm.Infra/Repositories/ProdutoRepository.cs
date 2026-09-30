@@ -59,7 +59,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Include(x => x.Tamanhos)
             .Include(x => x.Pesos)
-            .Where(x => x.Ativo && !x.InativoEcommerce)
+            .Where(x => x.Ativo)
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)
@@ -97,7 +97,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
         var totalPages = await ParceiroContext
             .Produtos
             .AsNoTracking()
-            .Where(x => x.Ativo && !x.InativoEcommerce)
+            .Where(x => x.Ativo)
             .WhereIsNotNull(where)
             .WhereIsNotNull(wherePesos)
             .WhereIsNotNull(whereTamanhos)
@@ -114,7 +114,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
     {
         return await ParceiroContext
             .Produtos
-            .Where(x => x.Ativo && !x.InativoEcommerce)
+            .Where(x => x.Ativo)
             .TotalPage(_take);
     }
 
@@ -126,7 +126,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsQueryable()
             .OrderBy(x => x.Numero)
             .Include(x => x.Categoria)
-            .Where(x => x.CategoriaId == categoriaId && x.Ativo && !x.InativoEcommerce)
+            .Where(x => x.CategoriaId == categoriaId && x.Ativo)
             .ToListAsync();
 
         var produtosIds = produtos.Select(x => x.Id).ToList();
@@ -181,7 +181,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Categoria)
             .Include(x => x.Pesos)
             .Include(x => x.Tamanhos)
-            .Where(x => ids.Contains(x.Id) && x.Ativo && !x.InativoEcommerce)
+            .Where(x => ids.Contains(x.Id) && x.Ativo)
             .AsNoTracking()
             .ToListAsync();
 
@@ -202,7 +202,7 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .AsNoTracking()
             .Include(x => x.Pesos)
             .Include(x => x.Tamanhos)
-            .Where(x => ids.Contains(x.Id) && x.Ativo && !x.InativoEcommerce)
+            .Where(x => ids.Contains(x.Id) && x.Ativo)
             .ToListAsync();
     }
 

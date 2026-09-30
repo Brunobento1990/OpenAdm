@@ -106,20 +106,6 @@ public class ProdutoController : ControllerBase
         return Ok(produtoViewlModel);
     }
 
-    [HttpPut("inativar-ativar")]
-    [IsFuncionario]
-    [Autentica]
-    [ProducesResponseType(200)]
-    [ProducesResponseType<ErrorResponse>(400)]
-    public async Task<IActionResult> InativarAtivar([FromQuery] Guid id)
-    {
-        await _produtoService.InativarAtivarEcommerceAsync(id);
-        return Ok(new
-        {
-            result = true
-        });
-    }
-
     [HttpPut("ativar/{id}/{ativo}")]
     [IsFuncionario]
     [Autentica]
