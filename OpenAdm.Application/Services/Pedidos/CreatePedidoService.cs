@@ -162,14 +162,9 @@ public sealed class CreatePedidoService : ICreatePedidoService
             Message = "Pedido cadastrado com sucesso!",
         };
 
-        var proximoNumeroCobranca =
-            await _cobrancaPedidoEcommerceRepository.ProximoNumeroAsync(_usuarioAutenticado.ParceiroId);
-
         var cobranca = CobrancaPedidoEcommerce.Novo(
             pedido.Id,
-            pedido.ValorTotal,
-            numero: proximoNumeroCobranca,
-            _usuarioAutenticado.ParceiroId);
+            pedido.ValorTotalCobrar);
 
         await _cobrancaPedidoEcommerceRepository.AddAsync(cobranca);
         await _cobrancaPedidoEcommerceRepository.SaveChangesAsync();

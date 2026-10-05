@@ -61,7 +61,7 @@ builder.Services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (builder.Configuration["NaoSubirSwagger"]?.ToUpper() != "TRUE")
 {
     app.UseSwagger();
     app.UseSwaggerUI();

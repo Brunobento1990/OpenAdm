@@ -37,7 +37,7 @@ public class CobrancaPedidoService : ICobrancaPedidoService
 
     public async Task<ResultPartner<CobrancaPedidoViewModel>> GetParaNegociacaoAsync(Guid pedidoId)
     {
-        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(pedidoId, _parceiroAutenticado.Id);
+        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(pedidoId);
 
         if (cobranca == null)
         {

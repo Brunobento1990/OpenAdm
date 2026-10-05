@@ -30,7 +30,6 @@ public class AppDbContext : DbContext
     public DbSet<ConfiguracaoDeFrete> ConfiguracoesDeFrete { get; set; }
     public DbSet<EventoAplicacao> EventosAplicacao { get; set; }
     public DbSet<ParcelaCobranca> ParcelasCobrancas { get; set; }
-    public DbSet<CobrancaPedidoEcommerce> CobrancasPedidosEcommerce { get; set; }
     public DbSet<LinkBioConfiguracao> LinkBioConfiguracoes { get; set; }
     public DbSet<LinkBioItem> LinkBioItens { get; set; }
     public DbSet<LinkBioEvento> LinkBioEventos { get; set; }
@@ -54,7 +53,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ConfiguracaoDeFreteConfiguration());
         modelBuilder.ApplyConfiguration(new EventoAplicacaoConfiguration());
         modelBuilder.ApplyConfiguration(new ParcelaCobrancaConfiguration());
-        modelBuilder.ApplyConfiguration(new CobrancaPedidoEcommerceConfiguration());
         modelBuilder.ApplyConfiguration(new LinkBioConfiguracaoConfiguration());
         modelBuilder.ApplyConfiguration(new LinkBioItemConfiguration());
         modelBuilder.ApplyConfiguration(new LinkBioEventoConfiguration());

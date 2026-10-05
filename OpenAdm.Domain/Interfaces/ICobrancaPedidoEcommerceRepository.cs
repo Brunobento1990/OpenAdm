@@ -4,12 +4,14 @@ using OpenAdm.Domain.Model.Pedidos;
 
 namespace OpenAdm.Domain.Interfaces;
 
-public interface ICobrancaPedidoEcommerceRepository : IGenericBaseRepository<CobrancaPedidoEcommerce>
+public interface ICobrancaPedidoEcommerceRepository
 {
-    Task<CobrancaPedidoEcommerce?> GetByPedidoIdAsync(Guid pedidoId, Guid parceiroId);
-    Task AtualizarStatusAsync(Guid id, Guid parceiroId, StatusCobrancaPedidoEcommerceEnum status);
-    Task<decimal> TotalACobrarAposAsync(DateTime data, Guid parceiroId);
-    Task<int> QuantidadeACobrarAsync(Guid parceiroId);
-    Task<decimal> TotalACobrarAsync(Guid parceiroId);
-    Task<ICollection<CobrancaPedidoEcommerce>> CobrancasMaisAntigasAsync(Guid parceiroId);
+    Task AddAsync(CobrancaPedidoEcommerce cobranca);
+    Task SaveChangesAsync();
+    Task<CobrancaPedidoEcommerce?> GetByPedidoIdAsync(Guid pedidoId);
+    Task AtualizarStatusAsync(Guid id, StatusCobrancaPedidoEcommerceEnum status);
+    Task<decimal> TotalACobrarAposAsync(DateTime data);
+    Task<int> QuantidadeACobrarAsync();
+    Task<decimal> TotalACobrarAsync();
+    Task<ICollection<CobrancaPedidoEcommerce>> CobrancasMaisAntigasAsync();
 }

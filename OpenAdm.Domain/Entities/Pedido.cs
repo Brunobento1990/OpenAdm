@@ -2,6 +2,7 @@
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Model.Pedidos;
+using OpenAdm.Domain.Entities.OpenAdm;
 
 namespace OpenAdm.Domain.Entities;
 
@@ -37,6 +38,7 @@ public sealed class Pedido : BaseEntity
     public TabelaDePreco? TabelaDePreco { get; set; }
     public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
     public Fatura? Fatura { get; set; }
+    public CobrancaPedidoEcommerce? Cobranca { get; set; }
 
     public decimal ValorTotal
     {

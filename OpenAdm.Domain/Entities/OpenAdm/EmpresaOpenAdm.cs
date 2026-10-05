@@ -21,6 +21,6 @@ public sealed class EmpresaOpenAdm : BaseEntity
 
     public bool Ativo { get; private set; }
     public string ConnectionString { get; private set; }
-    public TipoParcelaCobrancaEnum TipoParcelaCobranca { get; private set; } = TipoParcelaCobrancaEnum.Gratis;
+    public TipoParcelaCobrancaEnum TipoParcelaCobranca { get; private set; }
     public LinkEmpresa? Link { get; set; }
 }

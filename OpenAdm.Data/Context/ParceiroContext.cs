@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.EntityConfiguration;
+using OpenAdm.Data.EntityConfiguration.OpenAdm;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Infra.EntityConfiguration;
 
@@ -37,6 +39,7 @@ public class ParceiroContext : DbContext
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
     public DbSet<EnderecoUsuario> EnderecoUsuario { get; set; }
     public DbSet<Representante> Representantes { get; set; }
+    public DbSet<CobrancaPedidoEcommerce> CobrancasPedidosEcommerce { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,6 +71,7 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new MovimentacaoDeProdutoConfiguration());
         modelBuilder.ApplyConfiguration(new EnderecoUsuarioConfiguration());
         modelBuilder.ApplyConfiguration(new RepresentanteConfiguration());
+        modelBuilder.ApplyConfiguration(new CobrancaPedidoEcommerceConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

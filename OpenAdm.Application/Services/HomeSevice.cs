@@ -64,18 +64,16 @@ public class HomeSevice : IHomeSevice
         var resumoMensal = await _resumoMensalHomeService.ObterAsync();
 
         var totalCobrancaHoje =
-            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.UtcNow,
-                _usuarioAutenticado.ParceiroId);
+            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.UtcNow);
 
         var totalCobrancaSemana =
-            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.UtcNow.AddDays(-7),
-                _usuarioAutenticado.ParceiroId);
+            await _cobrancaPedidoEcommerceRepository.TotalACobrarAposAsync(DateTime.UtcNow.AddDays(-7));
 
-        var totalCobranca = await _cobrancaPedidoEcommerceRepository.TotalACobrarAsync(_usuarioAutenticado.ParceiroId);
+        var totalCobranca = await _cobrancaPedidoEcommerceRepository.TotalACobrarAsync();
         var quantidadeTotalCobranca =
-            await _cobrancaPedidoEcommerceRepository.QuantidadeACobrarAsync(_usuarioAutenticado.ParceiroId);
+            await _cobrancaPedidoEcommerceRepository.QuantidadeACobrarAsync();
         var cobrancasMaisAntigas = await _cobrancaPedidoEcommerceRepository
-            .CobrancasMaisAntigasAsync(_usuarioAutenticado.ParceiroId);
+            .CobrancasMaisAntigasAsync();
 
         var pedidosCobrancasMaisAntigas =
             await _pedidoRepository

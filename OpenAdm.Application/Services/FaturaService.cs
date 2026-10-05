@@ -37,7 +37,7 @@ public sealed class FaturaService : IFaturaService
 
     public async Task<ResultPartner<ResultadoPadraoViewModel>> BaixaAutomaticaAsync(BaixaAutomaticaDto dto)
     {
-        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(dto.PedidoId, _parceiroAutenticado.Id);
+        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(dto.PedidoId);
 
         if (cobranca == null)
         {
@@ -99,7 +99,6 @@ public sealed class FaturaService : IFaturaService
 
         await _cobrancaPedidoRepository.AtualizarStatusAsync(
             cobranca.Id,
-            _parceiroAutenticado.Id,
             StatusCobrancaPedidoEcommerceEnum.GeradoFatura);
 
         return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel
@@ -110,7 +109,7 @@ public sealed class FaturaService : IFaturaService
 
     public async Task<ResultPartner<ResultadoPadraoViewModel>> NegociarCobrancaAsync(NegociarCobrancaPedidoDto dto)
     {
-        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(dto.PedidoId, _parceiroAutenticado.Id);
+        var cobranca = await _cobrancaPedidoRepository.GetByPedidoIdAsync(dto.PedidoId);
 
         if (cobranca == null)
         {
@@ -202,7 +201,6 @@ public sealed class FaturaService : IFaturaService
 
         await _cobrancaPedidoRepository.AtualizarStatusAsync(
             cobranca.Id,
-            _parceiroAutenticado.Id,
             StatusCobrancaPedidoEcommerceEnum.GeradoFatura);
 
         return (ResultPartner<ResultadoPadraoViewModel>)new ResultadoPadraoViewModel
