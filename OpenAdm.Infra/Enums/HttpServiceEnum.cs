@@ -2,7 +2,8 @@
 
 public enum HttpServiceEnum
 {
-    ConsultaCnpj,
+    ConsultaCnpjMinhaReceita,
+    ConsultaCnpjOpenCnpj,
     MercadoPago,
     CepHttpService,
     ConsultaCep,

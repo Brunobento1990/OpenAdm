@@ -1,48 +1,54 @@
-﻿using System.Text.Json;
+﻿using Microsoft.Extensions.Configuration;
 using OpenAdm.Application.HttpClient.Interfaces;
 using OpenAdm.Application.HttpClient.Response;
+using OpenAdm.Application.Interfaces;
 using OpenAdm.Domain.Exceptions;
-using OpenAdm.Domain.Helpers;
 using OpenAdm.Infra.Enums;
-using OpenAdm.Infra.Model;
+using OpenAdm.Infra.HttpService.Providers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace OpenAdm.Infra.HttpService.Services;
 
 public class CnpjHttpService : IHttpClientConsultaCnpj
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly string _nomeCliente = HttpServiceEnum.ConsultaCnpj.ToString();
+    private readonly IConfiguration _configuration;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly ICachedService<ConsultaCnpjResponse> _cache;
 
-    public CnpjHttpService(IHttpClientFactory httpClientFactory)
+    public CnpjHttpService(IConfiguration configuration, IServiceProvider serviceProvider,
+        ICachedService<ConsultaCnpjResponse> cache)
     {
-        _httpClientFactory = httpClientFactory;
+        _configuration = configuration;
+        _serviceProvider = serviceProvider;
+        _cache = cache;
     }
 
     public async Task<ConsultaCnpjResponse> ConsultarCnpjAsync(string cnpj)
     {
-        using var client = _httpClientFactory.CreateClient(_nomeCliente);
+        var nomeProvider = _configuration["ApiConsultaCnpj:Provider"] ?? "MinhaReceita";
 
-        var response = await client.GetAsync(cnpj);
-        var body = await response.Content.ReadAsStreamAsync();
-
-        if (!response.IsSuccessStatusCode)
+        if (!Enum.TryParse<ConsultaCnpjProviderEnum>(nomeProvider, true, out var providerKey))
         {
-            if (body == null || body.Length == 0)
-            {
-                throw new ExceptionApi("Não foi possível obter a resposta da consulta do seu CNPJ");
-            }
-
-            var erro = JsonSerializer.Deserialize<ConsultaCnpjErroResponse>(body, JsonSerializerOptionsApi.Options);
-
-            if (!string.IsNullOrWhiteSpace(erro?.Message))
-            {
-                throw new ExceptionApi(erro.Message);
-            }
-
-            throw new ExceptionApi("Não foi possível efetuar a consulta do seu CNPJ");
+            throw new ExceptionApi($"Provider de consulta de CNPJ '{nomeProvider}' não configurado");
         }
 
-        return JsonSerializer.Deserialize<ConsultaCnpjResponse>(body, JsonSerializerOptionsApi.Options)
-               ?? throw new ExceptionApi("Não foi possível efetuar a consulta do seu CNPJ!");
+        var cacheKey = $"consulta_cnpj_{providerKey}_{cnpj}";
+        var resultadoCache = await _cache.GetItemAsync(cacheKey);
+
+        if (resultadoCache != null)
+        {
+            return resultadoCache;
+        }
+
+        var provider = _serviceProvider.GetKeyedService<IConsultaCnpjProvider>(providerKey);
+
+        if (provider == null)
+        {
+            throw new ExceptionApi($"Provider de consulta de CNPJ '{nomeProvider}' não registrado");
+        }
+
+        var resultado = await provider.ConsultarAsync(cnpj);
+        await _cache.SetItemAsync(cacheKey, resultado);
+        return resultado;
     }
 }

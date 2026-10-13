@@ -22,6 +22,8 @@ public class ConsultaCnpjResponse
     [JsonPropertyName("descricao_situacao_cadastral")]
     public string DescricaoSituacaoCadastral { get; set; } = string.Empty;
 
+    public bool Ativa { get; set; }
+
     [JsonPropertyName("data_situacao_cadastral")]
     public DateTime? DataSituacaoCadastral { get; set; }
 
