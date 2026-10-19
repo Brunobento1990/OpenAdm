@@ -41,7 +41,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 parceiroId: _usuarioAutenticado.ParceiroId,
                 whatsApp: "",
                 vendaDeProdutoComEstoque: false,
-                listarProdutoSomenteComEstoque: false);
+                listarProdutoSomenteComEstoque: false,
+                mensagemPedidoFinalizado: null);
         }
 
         return configuracaoDePedido;
@@ -68,7 +69,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 parceiroId: _usuarioAutenticado.ParceiroId,
                 whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
                 vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque,
-                listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque);
+                listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque,
+                mensagemPedidoFinalizado: updateConfiguracoesDePedidoDto.MensagemPedidoFinalizado);
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
@@ -81,7 +83,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 pedidoMinimoVarejo: updateConfiguracoesDePedidoDto.PedidoMinimoVarejo,
                 whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
                 vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque,
-                listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque);
+                listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque,
+                mensagemPedidoFinalizado: updateConfiguracoesDePedidoDto.MensagemPedidoFinalizado);
 
             _configuracoesDePedidoRepository.Update(configuracaoDePedido);
         }
@@ -120,19 +123,29 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
 
         return new PedidoMinimoViewModel()
         {
-            PedidoMinimo = pedidoMinimo
+            PedidoMinimo = pedidoMinimo,
+            MensagemPedidoFinalizado = configuracaoDePedido.MensagemPedidoFinalizado
         };
     }
 
     public async Task<TodasConfiguracoesViewModel> GetTodasConfiguracoesAsync()
     {
-        var configuracaoDePedido = await GetPedidoMinimoAsync();
+        var configuracaoDePedido =
+            await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(_usuarioAutenticado.ParceiroId);
         var resultadoConfiguracaoDeFrete = await _configuracaoDeFreteService.ObterAsync();
 
         var config = new TodasConfiguracoesViewModel()
         {
-            PedidoMinimo = configuracaoDePedido.PedidoMinimo
+            MensagemPedidoFinalizado = configuracaoDePedido?.MensagemPedidoFinalizado
         };
+
+        if (configuracaoDePedido != null)
+        {
+            var usuarioViewModel = await _usuarioAutenticado.GetUsuarioAutenticadoAsync();
+            config.PedidoMinimo = usuarioViewModel.IsAtacado
+                ? configuracaoDePedido.PedidoMinimoAtacado
+                : configuracaoDePedido.PedidoMinimoVarejo;
+        }
 
         if (resultadoConfiguracaoDeFrete.Result == null || !resultadoConfiguracaoDeFrete.Result.Ativo)
         {

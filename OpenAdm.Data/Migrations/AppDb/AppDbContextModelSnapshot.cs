@@ -221,6 +221,10 @@ namespace OpenAdm.Data.Migrations.AppDb
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
+                    b.Property<string>("MensagemPedidoFinalizado")
+                        .HasMaxLength(3000)
+                        .HasColumnType("character varying(3000)");
+
                     b.Property<long>("Numero")
                         .HasColumnType("bigint");
 

@@ -14,6 +14,8 @@ internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfigurati
             .HasMaxLength(255);
         builder.Property(x => x.WhatsApp)
             .HasMaxLength(20);
+        builder.Property(x => x.MensagemPedidoFinalizado)
+            .HasMaxLength(3000);
         builder.Property(x => x.PedidoMinimoAtacado)
             .HasPrecision(12, 2);
         builder.Property(x => x.PedidoMinimoVarejo)

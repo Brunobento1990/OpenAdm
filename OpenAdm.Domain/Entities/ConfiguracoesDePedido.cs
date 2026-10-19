@@ -16,7 +16,8 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         Guid parceiroId,
         string? whatsApp,
         bool vendaDeProdutoComEstoque,
-        bool listarProdutoSomenteComEstoque = false)
+        bool listarProdutoSomenteComEstoque = false,
+        string? mensagemPedidoFinalizado = null)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         EmailDeEnvio = emailDeEnvio;
@@ -26,9 +27,10 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         WhatsApp = whatsApp;
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
         ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
+        MensagemPedidoFinalizado = mensagemPedidoFinalizado;
     }
 
-    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsApp, bool vendaDeProdutoComEstoque, bool listarProdutoSomenteComEstoque = false)
+    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsApp, bool vendaDeProdutoComEstoque, bool listarProdutoSomenteComEstoque = false, string? mensagemPedidoFinalizado = null)
     {
         PedidoMinimoAtacado = pedidoMinimoAtacado;
         PedidoMinimoVarejo = pedidoMinimoVarejo;
@@ -37,6 +39,7 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         WhatsApp = whatsApp;
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
         ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
+        MensagemPedidoFinalizado = mensagemPedidoFinalizado;
     }
 
     public string EmailDeEnvio { get; private set; }
@@ -46,4 +49,5 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
     public bool ListarProdutoSomenteComEstoque { get; private set; }
     public decimal? PedidoMinimoAtacado { get; private set; }
     public decimal? PedidoMinimoVarejo { get; private set; }
+    public string? MensagemPedidoFinalizado { get; private set; }
 }
