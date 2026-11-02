@@ -1,6 +1,7 @@
 ﻿using OpenAdm.Domain.Entities.Bases;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
+using OpenAdm.Domain.Extensions;
 
 namespace OpenAdm.Domain.Entities;
 
@@ -48,6 +49,42 @@ public sealed class Fatura : BaseEntity
     public decimal ValorPagoRecebido
     {
         get { return Parcelas.Where(x => x.Ativo).Sum(x => x.ValorPagoRecebido); }
+    }
+
+    public void AlterarTotal(decimal total)
+    {
+        Total = total;
+        DataDeAtualizacao = DateTime.UtcNow;
+    }
+
+    public void AjustarValorAReceber(decimal total)
+    {
+        if (total < ValorPagoRecebido)
+            throw new ExceptionApi("O valor do pedido não pode ficar abaixo do valor recebido!");
+
+        var valorAReceber = (total - ValorPagoRecebido).ArredondarCentavos();
+        var parcelas = Parcelas.Where(x => x.Ativo).ToList();
+        var parcelasAReceber = parcelas.Where(x => x.ValorAPagarAReceber > 0).ToList();
+        if (valorAReceber > 0 && parcelasAReceber.Count == 0)
+            parcelasAReceber = parcelas;
+
+        if (valorAReceber > 0 && parcelasAReceber.Count == 0)
+            throw new ExceptionApi("Não existem parcelas ativas para ratear o valor a receber!");
+
+        var baseRateio = parcelasAReceber.Sum(x => x.ValorAPagarAReceber);
+        decimal rateado = 0;
+        for (var i = 0; i < parcelasAReceber.Count; i++)
+        {
+            var parcela = parcelasAReceber[i];
+            var novoValor = i == parcelasAReceber.Count - 1
+                ? valorAReceber - rateado
+                : (baseRateio == 0 ? valorAReceber / parcelasAReceber.Count :
+                    valorAReceber * parcela.ValorAPagarAReceber / baseRateio).ArredondarCentavos();
+            parcela.AlterarValorAReceber(novoValor);
+            rateado += novoValor;
+        }
+
+        AlterarTotal(total);
     }
 
     public void Fechar()

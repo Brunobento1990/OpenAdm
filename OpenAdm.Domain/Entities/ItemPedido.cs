@@ -14,7 +14,8 @@ public sealed class ItemPedido : BaseItem
         Guid produtoId,
         Guid pedidoId,
         decimal valorUnitario,
-        decimal quantidade)
+        decimal quantidade,
+        bool ativo)
         : base(id, dataDeCriacao, dataDeAtualizacao, numero, produtoId)
     {
         PesoId = pesoId;
@@ -22,6 +23,7 @@ public sealed class ItemPedido : BaseItem
         PedidoId = pedidoId;
         ValorUnitario = valorUnitario;
         Quantidade = quantidade;
+        Ativo = ativo;
     }
 
     public void EditarQuantidade(decimal quantidade)
@@ -37,11 +39,18 @@ public sealed class ItemPedido : BaseItem
     public Pedido Pedido { get; set; } = null!;
     public decimal ValorUnitario { get; private set; }
     public decimal Quantidade { get; private set; }
+    public bool Ativo { get; private set; }
     public decimal ValorTotal
     {
         get
         {
-            return ValorUnitario * Quantidade;
+            return Ativo ? ValorUnitario * Quantidade : 0;
         }
+    }
+
+    public void Inativar()
+    {
+        Ativo = false;
+        DataDeAtualizacao = DateTime.UtcNow;
     }
 }

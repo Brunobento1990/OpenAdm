@@ -85,7 +85,7 @@ public class ItensPedidoBuilder
 
     public ItemPedido Build()
     {
-        var item = new ItemPedido(_id, _created, _update, _numero, _pesoId, _tamanhoId, _produtoId, _pedidoId, _valorUnitario, _quantidade);
+        var item = new ItemPedido(_id, _created, _update, _numero, _pesoId, _tamanhoId, _produtoId, _pedidoId, _valorUnitario, _quantidade, ativo: true);
         item.Produto = _produto!;
         return item;
     }

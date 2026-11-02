@@ -36,21 +36,4 @@ public class ItensPedidoController : ControllerBase
         return Ok(itens);
     }
 
-    [HttpDelete("delete")]
-    public async Task<IActionResult> DeleteItem([FromQuery] Guid id)
-    {
-        var result = await _itensPedidoService.DeleteItemPedidoAsync(id);
-        if (!result)
-        {
-            return BadRequest(new { message = "Ocorreu um erro, tente novamente" });
-        }
-        return Ok();
-    }
-
-    [HttpPut("update-quantidade")]
-    public async Task<IActionResult> UpdateQuantidade(UpdateQuantidadeItemPedidoDto updateQuantidadeItemPedidoDto)
-    {
-        await _itensPedidoService.EditarQuantidadeDoItemAsync(updateQuantidadeItemPedidoDto);
-        return Ok(new { message = "Item editado com sucesso!" });
-    }
 }

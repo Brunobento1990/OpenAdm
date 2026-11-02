@@ -15,6 +15,6 @@ public interface IProdutoRepository : IGenericRepository<Produto>
     Task<Produto?> GetProdutoByIdAsync(Guid id);
     Task<Produto?> GetProdutoByIdExcluirAsync(Guid id);
     Task<Produto?> GetProdutoByIdParaEditarAsync(Guid id);
-    Task<IDictionary<Guid, string>> GetDescricaoDeProdutosAsync(IList<Guid> ids);
+    Task<string?> GetDescricaoProdutoAsync(Guid id);
     Task<IDictionary<Guid, Produto>> GetDictionaryProdutosAsync(IList<Guid> ids);
 }

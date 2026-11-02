@@ -124,6 +124,18 @@ public sealed class Parcela : BaseEntity
         Observacao = observacao;
     }
 
+    public void AlterarValorAReceber(decimal valorAReceber)
+    {
+        ValidarAtiva();
+        var valor = ValorPagoRecebido + valorAReceber;
+        if (valor < ValorPagoRecebido)
+            throw new ExceptionApi("O valor da parcela não pode ficar abaixo do valor recebido!");
+
+        Valor = valor.ArredondarCentavos();
+        Quitada = ValorPagoRecebido >= Valor;
+        DataDeAtualizacao = DateTime.UtcNow;
+    }
+
     public TransacaoFinanceira Pagar(
         decimal valor,
         MeioDePagamentoEnum? meioDePagamento,

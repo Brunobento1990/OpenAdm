@@ -9,7 +9,7 @@ public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItemPedido>
     public void Configure(EntityTypeBuilder<ItemPedido> builder)
     {
         builder.HasKey(x => x.Id);
-        builder.HasQueryFilter(x => !x.Pedido.Excluido);
+        builder.HasQueryFilter(x => !x.Pedido.Excluido && x.Ativo);
         builder.Property(x => x.DataDeCriacao)
             .IsRequired()
             .ValueGeneratedOnAdd()
@@ -27,6 +27,10 @@ public class ItensPedidoConfiguration : IEntityTypeConfiguration<ItemPedido>
         builder.Property(x => x.Quantidade)
             .IsRequired()
             .HasPrecision(12, 2);
+        builder.Property(x => x.Ativo)
+            .IsRequired()
+            .HasDefaultValue(true);
+        builder.HasIndex(x => x.Ativo);
         builder.HasOne(x => x.Tamanho)
             .WithMany(x => x.ItensPedido)
             .HasForeignKey(x => x.TamanhoId)

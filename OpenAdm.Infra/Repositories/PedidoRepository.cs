@@ -129,6 +129,7 @@ public class PedidoRepository(ParceiroContext parceiroContext)
             .Include(x => x.Fatura)
             .ThenInclude(x => x!.Parcelas)
             .ThenInclude(x => x.Transacoes)
+            .Include(x => x.Cobranca)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
 

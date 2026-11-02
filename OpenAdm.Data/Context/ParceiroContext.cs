@@ -35,6 +35,7 @@ public class ParceiroContext : DbContext
     public DbSet<MovimentacaoDeProduto> MovimentacoesDeProdutos { get; set; }
     public DbSet<Fatura> Faturas { get; set; }
     public DbSet<FaturaHistorico> FaturasHistoricos { get; set; }
+    public DbSet<PedidoHistorico> PedidosHistoricos { get; set; }
     public DbSet<Parcela> Parcelas { get; set; }
     public DbSet<TransacaoFinanceira> TransacoesFinanceiras { get; set; }
     public DbSet<EnderecoUsuario> EnderecoUsuario { get; set; }
@@ -56,6 +57,7 @@ public class ParceiroContext : DbContext
         modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
         modelBuilder.ApplyConfiguration(new FaturaConfiguration());
         modelBuilder.ApplyConfiguration(new FaturaHistoricoConfiguration());
+        modelBuilder.ApplyConfiguration(new PedidoHistoricoConfiguration());
         modelBuilder.ApplyConfiguration(new CategoriaConfiguration());
         modelBuilder.ApplyConfiguration(new PesoConfiguration());
         modelBuilder.ApplyConfiguration(new PesosProdutosConfiguration());

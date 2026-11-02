@@ -39,15 +39,16 @@ public sealed class Pedido : BaseEntity
     public EnderecoEntregaPedido? EnderecoEntrega { get; set; }
     public Fatura? Fatura { get; set; }
     public CobrancaPedidoEcommerce? Cobranca { get; set; }
+    public IList<PedidoHistorico> Historicos { get; set; } = [];
 
     public decimal ValorTotal
     {
-        get { return ItensPedido.Sum(x => x.ValorTotal); }
+        get { return ItensPedido.Where(x => x.Ativo).Sum(x => x.ValorTotal); }
     }
 
     public decimal ValorTotalCobrar
     {
-        get { return ItensPedido.Sum(x => x.ValorTotal) + (EnderecoEntrega?.ValorFrete ?? 0); }
+        get { return ItensPedido.Where(x => x.Ativo).Sum(x => x.ValorTotal) + (EnderecoEntrega?.ValorFrete ?? 0); }
     }
 
     public IList<ItemPedido> ItensPedido { get; set; } = [];
@@ -103,7 +104,8 @@ public sealed class Pedido : BaseEntity
                     x.ProdutoId,
                     Id,
                     x.ValorUnitario,
-                    x.Quantidade))
+                    x.Quantidade,
+                    ativo: true))
             .ToList();
     }
 

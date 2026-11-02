@@ -263,13 +263,14 @@ public class ProdutoRepository(ParceiroContext parceiroContext)
             .ToListAsync();
     }
 
-    public async Task<IDictionary<Guid, string>> GetDescricaoDeProdutosAsync(IList<Guid> ids)
+    public Task<string?> GetDescricaoProdutoAsync(Guid id)
     {
-        return await ParceiroContext
+        return ParceiroContext
             .Produtos
             .AsNoTracking()
-            .Where(x => ids.Contains(x.Id))
-            .ToDictionaryAsync(x => x.Id, x => x.Descricao);
+            .Where(x => x.Id == id)
+            .Select(x => x.Descricao)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IDictionary<Guid, Produto>> GetDictionaryProdutosAsync(IList<Guid> ids)

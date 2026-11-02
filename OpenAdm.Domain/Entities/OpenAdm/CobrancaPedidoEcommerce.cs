@@ -38,4 +38,10 @@ public class CobrancaPedidoEcommerce : BaseEntity
             status: StatusCobrancaPedidoEcommerceEnum.ACobrar);
     }
 
+    public void AlterarTotal(decimal total)
+    {
+        Total = total;
+        DataDeAtualizacao = DateTime.UtcNow;
+    }
+
 }

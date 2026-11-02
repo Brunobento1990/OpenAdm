@@ -13,4 +13,6 @@ public interface IItensPedidoRepository : IGenericRepository<ItemPedido>
     Task<IList<EstoqueReservadoModel>> ObterEstoquesReservadosAsync(
         IEnumerable<Guid> produtosIds);
     Task<ItemPedido?> GetItemPedidoByIdAsync(Guid id);
+    Task<ItemPedido?> ObterParaAdministracaoAsync(Guid id);
+    Task AddHistoricoAsync(PedidoHistorico historico);
 }

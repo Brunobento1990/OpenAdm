@@ -314,6 +314,11 @@ namespace OpenAdm.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<bool>("Ativo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<DateTime>("DataDeAtualizacao")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp without time zone")
@@ -351,6 +356,8 @@ namespace OpenAdm.Data.Migrations
                         .HasColumnType("numeric(12,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Ativo");
 
                     b.HasIndex("PedidoId");
 
@@ -651,6 +658,30 @@ namespace OpenAdm.Data.Migrations
                     b.HasIndex("Excluido", "StatusPedido");
 
                     b.ToTable("Pedidos");
+                });
+
+            modelBuilder.Entity("OpenAdm.Domain.Entities.PedidoHistorico", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataDeCriacao")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("PedidoId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PedidoId");
+
+                    b.ToTable("PedidosHistoricos");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.Peso", b =>
@@ -1331,6 +1362,17 @@ namespace OpenAdm.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("OpenAdm.Domain.Entities.PedidoHistorico", b =>
+                {
+                    b.HasOne("OpenAdm.Domain.Entities.Pedido", "Pedido")
+                        .WithMany("Historicos")
+                        .HasForeignKey("PedidoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pedido");
+                });
+
             modelBuilder.Entity("OpenAdm.Domain.Entities.PesoProduto", b =>
                 {
                     b.HasOne("OpenAdm.Domain.Entities.Peso", "Peso")
@@ -1414,6 +1456,8 @@ namespace OpenAdm.Data.Migrations
                     b.Navigation("EnderecoEntrega");
 
                     b.Navigation("Fatura");
+
+                    b.Navigation("Historicos");
 
                     b.Navigation("ItensPedido");
                 });

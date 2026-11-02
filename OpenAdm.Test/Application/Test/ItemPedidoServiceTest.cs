@@ -1,59 +1,26 @@
-﻿using OpenAdm.Domain.Entities;
 using OpenAdm.Application.Dtos.ItensPedidos;
 using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Services;
+using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Test.Domain.Builder;
-using OpenAdm.Domain.Exceptions;
-using OpenAdm.Domain.Enuns;
 
 namespace OpenAdm.Test.Application.Test;
 
-public class ItemPedidoServiceTest
+public sealed class ItemPedidoServiceTest
 {
-    private readonly UpdateQuantidadeItemPedidoDto _itemPedidoDto;
-    private readonly Mock<IItensPedidoRepository> _itensPedidoRepositoryMock = new();
-    private readonly Mock<IPedidoRepository> _pedidoRepositoryMock = new();
-    private readonly Mock<INotificarPedidoEditadoService> _notificarPedidoEditadoService = new();
-    private readonly ItensPedidoService _service;
+    private readonly Mock<IItensPedidoRepository> _itensPedidoRepository = new();
+    private readonly Mock<IPedidoRepository> _pedidoRepository = new();
+    private readonly Mock<IProdutoRepository> _produtoRepository = new();
+    private readonly ItensPedidoAdministracaoService _service;
 
     public ItemPedidoServiceTest()
     {
-        _itemPedidoDto = new UpdateQuantidadeItemPedidoDto()
-        {
-            Quantidade = 0,
-            Id = Guid.NewGuid()
-        };
-
-        _service = new ItensPedidoService(
-            _itensPedidoRepositoryMock.Object, 
-            _pedidoRepositoryMock.Object,
-            _notificarPedidoEditadoService.Object);
-    }
-
-    //[Fact]
-    //public async Task NaoDeveEditarItemDoPedidoComQuantidadeInvalida()
-    //{
-    //    var item = ItensPedidoBuilder.Init().Build();
-    //    var pedido = PedidoBuilder.Init().Build();
-
-    //    _itensPedidoRepositoryMock.Setup(x => x.GetItemPedidoByIdAsync(_itemPedidoDto.Id)).ReturnsAsync(item);
-    //    _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(item.PedidoId)).ReturnsAsync(pedido);
-
-    //    await Assert.ThrowsAsync<ExceptionApi>(async () => await _service.EditarQuantidadeDoItemAsync(_itemPedidoDto));
-    //}
-
-    [Fact]
-    public async Task NaoDeveExcluirUltimoItemDoPedido()
-    {
-        var item = ItensPedidoBuilder.Init().Build();
-        var pedido = PedidoBuilder.Init().Build();
-        pedido.ItensPedido = new List<ItemPedido>() { item };
-
-        _itensPedidoRepositoryMock.Setup(x => x.GetItemPedidoByIdAsync(_itemPedidoDto.Id)).ReturnsAsync(item);
-        _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(item.PedidoId)).ReturnsAsync(pedido);
-
-        await Assert.ThrowsAsync<ExceptionApi>(async () => await _service.DeleteItemPedidoAsync(item.Id));
+        _service = new ItensPedidoAdministracaoService(
+            _itensPedidoRepository.Object,
+            _pedidoRepository.Object,
+            _produtoRepository.Object);
     }
 
     [Theory]
@@ -61,34 +28,39 @@ public class ItemPedidoServiceTest
     [InlineData(StatusPedido.Cancelado)]
     [InlineData(StatusPedido.Entregue)]
     [InlineData(StatusPedido.RotaDeEntrega)]
-    public async Task NaoDeveEditarItemDoPedidoComStatusDoPedidoDiferenteDeAberto(StatusPedido statusPedido)
+    public async Task NaoDeveEditarItemComStatusDiferenteDeAberto(StatusPedido status)
     {
-        _itemPedidoDto.Quantidade = 10;
         var item = ItensPedidoBuilder.Init().Build();
-        var pedido = PedidoBuilder.Init().ComStatusPedido(statusPedido).Build();
+        var pedido = PedidoBuilder.Init().ComStatusPedido(status).Build();
+        pedido.ItensPedido = [item];
+        item.Pedido = pedido;
+        _itensPedidoRepository.Setup(x => x.ObterParaAdministracaoAsync(item.Id)).ReturnsAsync(item);
 
-        _itensPedidoRepositoryMock.Setup(x => x.GetItemPedidoByIdAsync(_itemPedidoDto.Id)).ReturnsAsync(item);
-        _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(item.PedidoId)).ReturnsAsync(pedido);
+        var resultado = await _service.EditarQuantidadeAsync(new UpdateQuantidadeItemPedidoDto
+        {
+            Id = item.Id,
+            Quantidade = 10
+        });
 
-        await Assert.ThrowsAsync<ExceptionApi>(async () => await _service.EditarQuantidadeDoItemAsync(_itemPedidoDto));
+        Assert.Equal("Este pedido não está aberto e não pode ser alterado!", resultado.Error);
     }
 
     [Fact]
-    public async Task DeveEditarItemDoPedidoComQuantidade()
+    public async Task DeveValidarQuantidadeDepoisDeLocalizarPedidoEItem()
     {
         var item = ItensPedidoBuilder.Init().Build();
         var pedido = PedidoBuilder.Init().Build();
-        _itemPedidoDto.Quantidade = 10;
-        _itemPedidoDto.Id = item.Id;
+        pedido.ItensPedido = [item];
+        item.Pedido = pedido;
+        _itensPedidoRepository.Setup(x => x.ObterParaAdministracaoAsync(item.Id)).ReturnsAsync(item);
 
-        _itensPedidoRepositoryMock.Setup(x => x.GetItemPedidoByIdAsync(_itemPedidoDto.Id)).ReturnsAsync(item);
-        _pedidoRepositoryMock.Setup(x => x.GetPedidoByIdAsync(item.PedidoId)).ReturnsAsync(pedido);
+        var resultado = await _service.EditarQuantidadeAsync(new UpdateQuantidadeItemPedidoDto
+        {
+            Id = item.Id,
+            Quantidade = 0
+        });
 
-        var itemEditado = await _service.EditarQuantidadeDoItemAsync(_itemPedidoDto);
-
-        Assert.NotNull(itemEditado);
-        Assert.Equal(_itemPedidoDto.Quantidade, itemEditado.Quantidade);
-        Assert.Equal(_itemPedidoDto.Id, itemEditado.Id);
-
+        Assert.Equal("A quantidade deve ser maior que zero!", resultado.Error);
+        _itensPedidoRepository.Verify(x => x.Update(It.IsAny<ItemPedido>()), Times.Never);
     }
 }

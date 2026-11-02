@@ -21,6 +21,29 @@ public class ItensPedidoRepository : GenericRepository<ItemPedido>, IItensPedido
             .FirstOrDefaultAsync(x => x.Id == id && !x.Pedido.Excluido);
     }
 
+    public async Task<ItemPedido?> ObterParaAdministracaoAsync(Guid id)
+    {
+        return await ParceiroContext.ItensPedidos
+            .AsSplitQuery()
+            .Include(x => x.Pedido)
+            .ThenInclude(x => x.ItensPedido)
+            .Include(x => x.Produto)
+            .Include(x => x.Pedido)
+            .ThenInclude(x => x.EnderecoEntrega)
+            .Include(x => x.Pedido)
+            .ThenInclude(x => x.Fatura)
+            .ThenInclude(x => x!.Parcelas)
+            .ThenInclude(x => x.Transacoes)
+            .Include(x => x.Pedido)
+            .ThenInclude(x => x.Cobranca)
+            .FirstOrDefaultAsync(x => x.Id == id && !x.Pedido.Excluido);
+    }
+
+    public async Task AddHistoricoAsync(PedidoHistorico historico)
+    {
+        await ParceiroContext.PedidosHistoricos.AddAsync(historico);
+    }
+
     public async Task<IList<ItemPedido>> GetItensPedidoByPedidoIdAsync(Guid pedidoId)
     {
         var itens = await ParceiroContext

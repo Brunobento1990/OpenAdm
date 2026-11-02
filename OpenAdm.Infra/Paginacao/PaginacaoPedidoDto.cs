@@ -26,6 +26,7 @@ public class PaginacaoPedidoDto : FilterModel<Pedido>
             (!StatusPedido.HasValue || x.StatusPedido == (StatusPedido)StatusPedido) &&
             (string.IsNullOrWhiteSpace(Search) ||
              EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Email), $"%{Search}%") ||
+             EF.Functions.ILike(EF.Functions.Unaccent(x.Numero.ToString()), $"%{Search}%") ||
              EF.Functions.ILike(EF.Functions.Unaccent(x.Usuario.Nome), $"%{Search}%"));
     }
 }
