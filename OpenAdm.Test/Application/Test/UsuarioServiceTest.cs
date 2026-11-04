@@ -25,8 +25,11 @@ public class UsuarioServiceTest
             _tokenService.Object,
             Mock.Of<IPedidoRepository>(),
             _usuarioAutenticado.Object,
+            Mock.Of<IParceiroAutenticado>(),
             Mock.Of<ICnpjConsultaService>(),
-            _sessaoUsuarioService.Object);
+            _sessaoUsuarioService.Object,
+            Mock.Of<IConfiguracoesDePedidoRepository>(),
+            Mock.Of<IFilaService>());
     }
 
     [Fact]

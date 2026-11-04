@@ -13,12 +13,15 @@ namespace OpenAdm.Worker.Application.Service;
 public class NotificarParceiroWhatsAppService : IEventoAplicacaoService
 {
     private readonly IParceiroRepository _parceiroRepository;
+    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
     private readonly IHttpClientWhatsApp _httpClientWhatsApp;
 
     public NotificarParceiroWhatsAppService(IParceiroRepository parceiroRepository,
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
         IHttpClientWhatsApp httpClientWhatsApp)
     {
         _parceiroRepository = parceiroRepository;
+        _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
         _httpClientWhatsApp = httpClientWhatsApp;
     }
 
@@ -39,14 +42,21 @@ public class NotificarParceiroWhatsAppService : IEventoAplicacaoService
                 "Não foi possível localizar o parceiro para envio da notificação";
         }
 
-        foreach (var telefone in parceiro.Telefones)
+        var configuracoesDePedido = await _configuracoesDePedidoRepository
+            .GetConfiguracoesDePedidoAsync(eventoAplicacao.EmpresaOpenAdmId);
+        var whatsApp = configuracoesDePedido?.WhatsApp;
+
+        if (string.IsNullOrWhiteSpace(whatsApp))
         {
-            await _httpClientWhatsApp.EnviarMsgAsync(new EnviarMsgWppRequest()
-            {
-                Number = $"55{telefone.Telefone.LimparMascaraTelefone()}",
-                Text = notificarParceiroWhatsAppEvento.Mensagem
-            });
+            return (ResultPartner<ResultadoEventoAplicacaoDTO>)
+                "Não foi possível localizar o WhatsApp configurado para envio da notificação";
         }
+
+        await _httpClientWhatsApp.EnviarMsgAsync(new EnviarMsgWppRequest()
+        {
+            Number = $"55{whatsApp.LimparMascaraTelefone()}",
+            Text = notificarParceiroWhatsAppEvento.Mensagem
+        });
 
         return (ResultPartner<ResultadoEventoAplicacaoDTO>)new ResultadoEventoAplicacaoDTO()
         {

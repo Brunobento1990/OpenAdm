@@ -3,10 +3,12 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Models.Logins;
 using OpenAdm.Application.Models.Usuarios;
 using OpenAdm.Domain.Entities;
+using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 using OpenAdm.Domain.Model;
+using OpenAdm.Domain.Model.Eventos;
 using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Application.Services;
@@ -17,23 +19,32 @@ public class UsuarioService : IUsuarioService
     private readonly ITokenService _tokenService;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
+    private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly ICnpjConsultaService _cnpjConsultaService;
     private readonly ISessaoUsuarioService _sessaoUsuarioService;
+    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly IFilaService _filaService;
 
     public UsuarioService(
         IUsuarioRepository usuarioRepository,
         ITokenService tokenService,
         IPedidoRepository pedidoRepository,
         IUsuarioAutenticado usuarioAutenticado,
+        IParceiroAutenticado parceiroAutenticado,
         ICnpjConsultaService cnpjConsultaService,
-        ISessaoUsuarioService sessaoUsuarioService)
+        ISessaoUsuarioService sessaoUsuarioService,
+        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        IFilaService filaService)
     {
         _usuarioRepository = usuarioRepository;
         _tokenService = tokenService;
         _pedidoRepository = pedidoRepository;
         _usuarioAutenticado = usuarioAutenticado;
+        _parceiroAutenticado = parceiroAutenticado;
         _cnpjConsultaService = cnpjConsultaService;
         _sessaoUsuarioService = sessaoUsuarioService;
+        _configuracoesDePedidoRepository = configuracoesDePedidoRepository;
+        _filaService = filaService;
     }
 
     public async Task<ResponseLoginUsuarioViewModel> CreateUsuarioPessoaFisicaAsync(
@@ -48,6 +59,7 @@ public class UsuarioService : IUsuarioService
         usuario = createUsuarioPessoaFisicaDto.ToEntity();
 
         await _usuarioRepository.AddAsync(usuario);
+        await NotificarNovoCadastroAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
         var token = await GerarTokenNovaSessaoAsync(usuario.Id);
@@ -97,6 +109,7 @@ public class UsuarioService : IUsuarioService
         usuario = createUsuarioDto.ToEntity(ativo);
 
         await _usuarioRepository.AddAsync(usuario);
+        await NotificarNovoCadastroAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
 
@@ -307,6 +320,7 @@ public class UsuarioService : IUsuarioService
         usuario = createUsuarioDto.ToEntity();
 
         await _usuarioRepository.AddAsync(usuario);
+        await NotificarNovoCadastroAsync(usuario);
 
         var usuarioViewModel = new UsuarioViewModel().ToModel(usuario);
 
@@ -345,5 +359,28 @@ public class UsuarioService : IUsuarioService
     {
         var sessao = await _sessaoUsuarioService.CriarAsync(usuarioId, TipoUsuario.Usuario);
         return _tokenService.GenerateToken(sessao);
+    }
+
+    private async Task NotificarNovoCadastroAsync(Usuario usuario)
+    {
+        var configuracaoDePedido = await _configuracoesDePedidoRepository
+            .GetConfiguracoesDePedidoAsync(_parceiroAutenticado.Id);
+
+        if (configuracaoDePedido?.NotificarCadastroNovoCliente != true)
+        {
+            return;
+        }
+
+        var dados = new NotificarParceiroWhatsAppEvento
+        {
+            Mensagem = $"👤 *Novo cliente cadastrado!*\n*Nome:* {usuario.Nome}\n*E-mail:* {usuario.Email}\n*Telefone:* {usuario.Telefone}"
+        }.ToString();
+
+        var evento = EventoAplicacao.Criar(
+            dados: dados,
+            tipoEventoAplicacao: TipoEventoAplicacaoEnum.NotificarParceiroWhatsApp,
+            empresaOpenAdmId: _parceiroAutenticado.Id);
+
+        await _filaService.PublicarAsync(evento);
     }
 }

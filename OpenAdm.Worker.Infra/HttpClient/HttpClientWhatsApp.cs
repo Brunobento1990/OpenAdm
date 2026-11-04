@@ -66,6 +66,7 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
                 Phone = NormalizarTelefoneWuzApi(request.Number),
                 Body = request.Text
             }));
+        
         return response.IsSuccessStatusCode;
     }
 
