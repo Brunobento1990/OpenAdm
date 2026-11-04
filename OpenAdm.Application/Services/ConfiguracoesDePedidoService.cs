@@ -42,7 +42,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 whatsApp: "",
                 vendaDeProdutoComEstoque: false,
                 listarProdutoSomenteComEstoque: false,
-                mensagemPedidoFinalizado: null);
+                mensagemPedidoFinalizado: null,
+                notificarCadastroNovoCliente: false);
         }
 
         return configuracaoDePedido;
@@ -70,7 +71,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
                 vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque,
                 listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque,
-                mensagemPedidoFinalizado: updateConfiguracoesDePedidoDto.MensagemPedidoFinalizado);
+                mensagemPedidoFinalizado: updateConfiguracoesDePedidoDto.MensagemPedidoFinalizado,
+                notificarCadastroNovoCliente: updateConfiguracoesDePedidoDto.NotificarCadastroNovoCliente);
 
             await _configuracoesDePedidoRepository.AddAsync(configuracaoDePedido);
         }
@@ -84,7 +86,8 @@ public class ConfiguracoesDePedidoService : IConfiguracoesDePedidoService
                 whatsApp: updateConfiguracoesDePedidoDto.WhatsApp?.LimparMascaraTelefone(),
                 vendaDeProdutoComEstoque: updateConfiguracoesDePedidoDto.VendaDeProdutoComEstoque,
                 listarProdutoSomenteComEstoque: updateConfiguracoesDePedidoDto.ListarProdutoSomenteComEstoque,
-                mensagemPedidoFinalizado: updateConfiguracoesDePedidoDto.MensagemPedidoFinalizado);
+                mensagemPedidoFinalizado: updateConfiguracoesDePedidoDto.MensagemPedidoFinalizado,
+                notificarCadastroNovoCliente: updateConfiguracoesDePedidoDto.NotificarCadastroNovoCliente);
 
             _configuracoesDePedidoRepository.Update(configuracaoDePedido);
         }

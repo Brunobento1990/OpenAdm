@@ -3,6 +3,7 @@ using OpenAdm.Application.Interfaces;
 using OpenAdm.Application.Interfaces.Pedidos;
 using OpenAdm.Application.Models.Pedidos;
 using OpenAdm.Domain.Enuns;
+using OpenAdm.Domain.Entities;
 using OpenAdm.Domain.Exceptions;
 using OpenAdm.Domain.Interfaces;
 
@@ -28,7 +29,15 @@ public class UpdateStatusPedidoService : IUpdateStatusPedidoService
     {
         var pedido = await _pedidoRepository.GetPedidoByIdAsync(updateStatusPedidoDto.PedidoId)
                      ?? throw new ExceptionApi("Não foi possível localizar o pedido");
+        var statusAnterior = pedido.StatusPedido;
         pedido.UpdateStatus(updateStatusPedidoDto.StatusPedido);
+
+        if (statusAnterior != pedido.StatusPedido)
+        {
+            pedido.Historicos.Add(PedidoHistorico.Novo(
+                pedido.Id,
+                $"Status do pedido alterado de {statusAnterior} para {pedido.StatusPedido}."));
+        }
 
         _pedidoRepository.Update(pedido);
 

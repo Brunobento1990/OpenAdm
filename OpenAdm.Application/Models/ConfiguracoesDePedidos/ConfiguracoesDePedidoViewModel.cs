@@ -10,6 +10,7 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
     public decimal? PedidoMinimoVarejo { get; set; }
     public bool VendaDeProdutoComEstoque { get; set; } = false;
     public bool ListarProdutoSomenteComEstoque { get; set; } = false;
+    public bool NotificarCadastroNovoCliente { get; set; } = false;
     public string? MensagemPedidoFinalizado { get; set; }
 
 
@@ -26,6 +27,7 @@ public class ConfiguracoesDePedidoViewModel : BaseModel
         VendaDeProdutoComEstoque = configuracoesDePedido.VendaDeProdutoComEstoque;
         ListarProdutoSomenteComEstoque = configuracoesDePedido.ListarProdutoSomenteComEstoque;
         MensagemPedidoFinalizado = configuracoesDePedido.MensagemPedidoFinalizado;
+        NotificarCadastroNovoCliente = configuracoesDePedido.NotificarCadastroNovoCliente;
 
         return this;
     }

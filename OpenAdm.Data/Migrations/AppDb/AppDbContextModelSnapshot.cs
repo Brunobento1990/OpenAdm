@@ -225,6 +225,11 @@ namespace OpenAdm.Data.Migrations.AppDb
                         .HasMaxLength(3000)
                         .HasColumnType("character varying(3000)");
 
+                    b.Property<bool>("NotificarCadastroNovoCliente")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
                     b.Property<long>("Numero")
                         .HasColumnType("bigint");
 

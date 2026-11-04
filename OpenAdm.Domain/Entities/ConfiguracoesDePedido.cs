@@ -17,7 +17,8 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         string? whatsApp,
         bool vendaDeProdutoComEstoque,
         bool listarProdutoSomenteComEstoque = false,
-        string? mensagemPedidoFinalizado = null)
+        string? mensagemPedidoFinalizado = null,
+        bool notificarCadastroNovoCliente = false)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
         EmailDeEnvio = emailDeEnvio;
@@ -28,9 +29,10 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
         ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
         MensagemPedidoFinalizado = mensagemPedidoFinalizado;
+        NotificarCadastroNovoCliente = notificarCadastroNovoCliente;
     }
 
-    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsApp, bool vendaDeProdutoComEstoque, bool listarProdutoSomenteComEstoque = false, string? mensagemPedidoFinalizado = null)
+    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsApp, bool vendaDeProdutoComEstoque, bool listarProdutoSomenteComEstoque = false, string? mensagemPedidoFinalizado = null, bool notificarCadastroNovoCliente = false)
     {
         PedidoMinimoAtacado = pedidoMinimoAtacado;
         PedidoMinimoVarejo = pedidoMinimoVarejo;
@@ -40,6 +42,7 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
         ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
         MensagemPedidoFinalizado = mensagemPedidoFinalizado;
+        NotificarCadastroNovoCliente = notificarCadastroNovoCliente;
     }
 
     public string EmailDeEnvio { get; private set; }
@@ -47,6 +50,7 @@ public sealed class ConfiguracoesDePedido : BaseEntityParceiro
     public bool Ativo { get; private set; }
     public bool VendaDeProdutoComEstoque { get; private set; }
     public bool ListarProdutoSomenteComEstoque { get; private set; }
+    public bool NotificarCadastroNovoCliente { get; private set; }
     public decimal? PedidoMinimoAtacado { get; private set; }
     public decimal? PedidoMinimoVarejo { get; private set; }
     public string? MensagemPedidoFinalizado { get; private set; }

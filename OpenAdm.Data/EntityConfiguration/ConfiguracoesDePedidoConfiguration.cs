@@ -29,6 +29,10 @@ internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfigurati
             .IsRequired()
             .HasDefaultValue(false);
 
+        builder.Property(x => x.NotificarCadastroNovoCliente)
+            .IsRequired()
+            .HasDefaultValue(false);
+
         builder.HasIndex(x => new { x.Ativo, x.ParceiroId });
 
         base.Configure(builder);

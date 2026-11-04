@@ -13,6 +13,7 @@ public class UpdateConfiguracoesDePedidoDto
     public decimal? PedidoMinimoVarejo { get; set; }
     public bool VendaDeProdutoComEstoque { get; set; } = false;
     public bool ListarProdutoSomenteComEstoque { get; set; } = false;
+    public bool NotificarCadastroNovoCliente { get; set; } = false;
     [MaxLength(3000)]
     public string? MensagemPedidoFinalizado { get; set; }
 }
