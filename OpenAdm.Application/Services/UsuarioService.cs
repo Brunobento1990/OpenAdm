@@ -22,7 +22,7 @@ public class UsuarioService : IUsuarioService
     private readonly IParceiroAutenticado _parceiroAutenticado;
     private readonly ICnpjConsultaService _cnpjConsultaService;
     private readonly ISessaoUsuarioService _sessaoUsuarioService;
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly IConfiguracaoDoSistemaRepository _configuracoesDePedidoRepository;
     private readonly IFilaService _filaService;
 
     public UsuarioService(
@@ -33,7 +33,7 @@ public class UsuarioService : IUsuarioService
         IParceiroAutenticado parceiroAutenticado,
         ICnpjConsultaService cnpjConsultaService,
         ISessaoUsuarioService sessaoUsuarioService,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        IConfiguracaoDoSistemaRepository configuracoesDePedidoRepository,
         IFilaService filaService)
     {
         _usuarioRepository = usuarioRepository;
@@ -364,7 +364,7 @@ public class UsuarioService : IUsuarioService
     private async Task NotificarNovoCadastroAsync(Usuario usuario)
     {
         var configuracaoDePedido = await _configuracoesDePedidoRepository
-            .GetConfiguracoesDePedidoAsync(_parceiroAutenticado.Id);
+            .GetConfiguracaoDoSistemaAsync(_parceiroAutenticado.Id);
 
         if (configuracaoDePedido?.NotificarCadastroNovoCliente != true)
         {

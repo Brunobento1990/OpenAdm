@@ -192,7 +192,7 @@ namespace OpenAdm.Data.Migrations.AppDb
                     b.ToTable("ConfiguracoesDePagamento");
                 });
 
-            modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracoesDePedido", b =>
+            modelBuilder.Entity("OpenAdm.Domain.Entities.ConfiguracaoDoSistema", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -211,7 +211,7 @@ namespace OpenAdm.Data.Migrations.AppDb
                         .HasColumnType("timestamp without time zone")
                         .HasDefaultValueSql("now()");
 
-                    b.Property<string>("EmailDeEnvio")
+                    b.Property<string>("EmailParaEnvioNotificacao")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
@@ -249,7 +249,7 @@ namespace OpenAdm.Data.Migrations.AppDb
                         .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
-                    b.Property<string>("WhatsApp")
+                    b.Property<string>("WhatsAppParaEnvioNotificacao")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
@@ -261,7 +261,7 @@ namespace OpenAdm.Data.Migrations.AppDb
 
                     b.HasIndex("Ativo", "ParceiroId");
 
-                    b.ToTable("ConfiguracoesDePedidos");
+                    b.ToTable("ConfiguracaoDoSistema");
                 });
 
             modelBuilder.Entity("OpenAdm.Domain.Entities.EnderecoParceiro", b =>

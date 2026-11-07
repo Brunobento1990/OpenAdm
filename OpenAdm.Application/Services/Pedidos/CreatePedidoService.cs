@@ -16,7 +16,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
     private readonly IProcessarPedidoService _processarPedidoService;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly ICarrinhoRepository _carrinhoRepository;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IEstoqueRepository _estoqueRepository;
     private readonly IConfiguracaoDeFreteService _configuracaoDeFreteService;
@@ -28,7 +28,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         IProcessarPedidoService processarPedidoService,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         ICarrinhoRepository carrinhoRepository,
-        IConfiguracoesDePedidoService configuracoesDePedidoService,
+        IConfiguracaoDoSistemaService configuracaoDoSistemaService,
         IUsuarioAutenticado usuarioAutenticado,
         IEstoqueRepository estoqueRepository,
         IConfiguracaoDeFreteService configuracaoDeFreteService,
@@ -39,7 +39,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
         _processarPedidoService = processarPedidoService;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _carrinhoRepository = carrinhoRepository;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
         _usuarioAutenticado = usuarioAutenticado;
         _estoqueRepository = estoqueRepository;
         _configuracaoDeFreteService = configuracaoDeFreteService;
@@ -73,7 +73,7 @@ public sealed class CreatePedidoService : ICreatePedidoService
                 $"Seu pedido não foi selecionado um frete";
         }
 
-        var configuracaoDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var configuracaoDePedido = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
 
         var total = pedidoCreateDto.ItensQuantidadesValidas.Sum(x => x.Quantidade * x.ValorUnitario);
 

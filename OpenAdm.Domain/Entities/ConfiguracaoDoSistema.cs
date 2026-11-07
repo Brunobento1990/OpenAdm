@@ -2,51 +2,51 @@
 
 namespace OpenAdm.Domain.Entities;
 
-public sealed class ConfiguracoesDePedido : BaseEntityParceiro
+public sealed class ConfiguracaoDoSistema : BaseEntityParceiro
 {
-    public ConfiguracoesDePedido(
+    public ConfiguracaoDoSistema(
         Guid id,
         DateTime dataDeCriacao,
         DateTime dataDeAtualizacao,
         long numero,
-        string emailDeEnvio,
+        string emailParaEnvioNotificacao,
         bool ativo,
         decimal? pedidoMinimoAtacado,
         decimal? pedidoMinimoVarejo,
         Guid parceiroId,
-        string? whatsApp,
+        string? whatsAppParaEnvioNotificacao,
         bool vendaDeProdutoComEstoque,
         bool listarProdutoSomenteComEstoque = false,
         string? mensagemPedidoFinalizado = null,
         bool notificarCadastroNovoCliente = false)
             : base(id, dataDeCriacao, dataDeAtualizacao, numero, parceiroId)
     {
-        EmailDeEnvio = emailDeEnvio;
+        EmailParaEnvioNotificacao = emailParaEnvioNotificacao;
         Ativo = ativo;
         PedidoMinimoAtacado = pedidoMinimoAtacado;
         PedidoMinimoVarejo = pedidoMinimoVarejo;
-        WhatsApp = whatsApp;
+        WhatsAppParaEnvioNotificacao = whatsAppParaEnvioNotificacao;
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
         ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
         MensagemPedidoFinalizado = mensagemPedidoFinalizado;
         NotificarCadastroNovoCliente = notificarCadastroNovoCliente;
     }
 
-    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsApp, bool vendaDeProdutoComEstoque, bool listarProdutoSomenteComEstoque = false, string? mensagemPedidoFinalizado = null, bool notificarCadastroNovoCliente = false)
+    public void Update(string emailDeEnvio, bool ativo, decimal? pedidoMinimoAtacado, decimal? pedidoMinimoVarejo, string? whatsAppParaEnvioNotificacao, bool vendaDeProdutoComEstoque, bool listarProdutoSomenteComEstoque = false, string? mensagemPedidoFinalizado = null, bool notificarCadastroNovoCliente = false)
     {
         PedidoMinimoAtacado = pedidoMinimoAtacado;
         PedidoMinimoVarejo = pedidoMinimoVarejo;
-        EmailDeEnvio = emailDeEnvio;
+        EmailParaEnvioNotificacao = emailDeEnvio;
         Ativo = ativo;
-        WhatsApp = whatsApp;
+        WhatsAppParaEnvioNotificacao = whatsAppParaEnvioNotificacao;
         VendaDeProdutoComEstoque = vendaDeProdutoComEstoque;
         ListarProdutoSomenteComEstoque = listarProdutoSomenteComEstoque;
         MensagemPedidoFinalizado = mensagemPedidoFinalizado;
         NotificarCadastroNovoCliente = notificarCadastroNovoCliente;
     }
 
-    public string EmailDeEnvio { get; private set; }
-    public string? WhatsApp { get; private set; }
+    public string EmailParaEnvioNotificacao { get; private set; }
+    public string? WhatsAppParaEnvioNotificacao { get; private set; }
     public bool Ativo { get; private set; }
     public bool VendaDeProdutoComEstoque { get; private set; }
     public bool ListarProdutoSomenteComEstoque { get; private set; }

@@ -14,18 +14,18 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
     private readonly IUsuarioAutenticado _usuarioAutenticado;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly IEstoqueRepository _estoqueRepository;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
     private readonly IItensPedidoRepository _itensPedidoRepository;
 
     public ProdutoEcommerceService(IProdutoEcommerceRepository repository, IUsuarioAutenticado usuarioAutenticado,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository, IEstoqueRepository estoqueRepository,
-        IConfiguracoesDePedidoService configuracoesDePedidoService, IItensPedidoRepository itensPedidoRepository)
+        IConfiguracaoDoSistemaService configuracaoDoSistemaService, IItensPedidoRepository itensPedidoRepository)
     {
         _repository = repository;
         _usuarioAutenticado = usuarioAutenticado;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _estoqueRepository = estoqueRepository;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
         _itensPedidoRepository = itensPedidoRepository;
     }
 
@@ -43,7 +43,7 @@ public class ProdutoEcommerceService : IProdutoEcommerceService
             TotalPaginas = resultado.TotalPaginas,
         };
 
-        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.ConfiguracaoDoSistemaAsync();
 
         var produtosIds = resultado.Values.Select(x => x.Id).ToList();
 

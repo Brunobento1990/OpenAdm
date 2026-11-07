@@ -5,14 +5,14 @@ using OpenAdm.Infra.EntityConfiguration;
 
 namespace OpenAdm.Data.EntityConfiguration;
 
-internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfiguration<ConfiguracoesDePedido>
+internal class ConfiguracoesDePedidoConfiguration : BaseEntityEmpresaConfiguration<ConfiguracaoDoSistema>
 {
-    public override void Configure(EntityTypeBuilder<ConfiguracoesDePedido> builder)
+    public override void Configure(EntityTypeBuilder<ConfiguracaoDoSistema> builder)
     {
-        builder.Property(x => x.EmailDeEnvio)
+        builder.Property(x => x.EmailParaEnvioNotificacao)
             .IsRequired()
             .HasMaxLength(255);
-        builder.Property(x => x.WhatsApp)
+        builder.Property(x => x.WhatsAppParaEnvioNotificacao)
             .HasMaxLength(20);
         builder.Property(x => x.MensagemPedidoFinalizado)
             .HasMaxLength(3000);

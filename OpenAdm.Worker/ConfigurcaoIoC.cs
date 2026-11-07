@@ -43,7 +43,7 @@ public static class ConfigurcaoIoC
         services.AddScoped<IEventoAplicacaoRepository, EventoAplicacaoRepository>();
         services.AddScoped<IPedidoRepository, PedidoRepository>();
         services.AddScoped<IParceiroRepository, ParceiroRepository>();
-        services.AddScoped<IConfiguracoesDePedidoRepository, ConfiguracoesDePedidoRepository>();
+        services.AddScoped<IConfiguracaoDoSistemaRepository, ConfiguracaoDoSistemaRepository>();
         services.AddScoped<IParcelaCobrancaRepository, ParcelaCobrancaRepository>();
         services.AddScoped<IEmpresaOpenAdmRepository, EmpresaOpenAdmRepository>();
 

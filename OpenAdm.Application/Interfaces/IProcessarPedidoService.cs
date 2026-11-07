@@ -1,8 +1,8 @@
-﻿using OpenAdm.Application.Models.ConfiguracoesDePedidos;
+﻿using OpenAdm.Application.Models.ConfiguracaoDoSistema;
 
 namespace OpenAdm.Application.Interfaces;
 
 public interface IProcessarPedidoService
 {
-    Task ProcessarCreateAsync(Guid pedidoId, ConfiguracoesDePedidoViewModel configuracoesDePedidoViewModel);
+    Task ProcessarCreateAsync(Guid pedidoId, ConfiguracaoDoSistemaViewModel configuracoesDePedidoViewModel);
 }

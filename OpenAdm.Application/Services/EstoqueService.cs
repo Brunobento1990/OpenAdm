@@ -14,18 +14,18 @@ public class EstoqueService : IEstoqueService
 {
     private readonly IEstoqueRepository _estoqueRepository;
     private readonly IMovimentacaoDeProdutoRepository _movimentacaoDeProdutoRepository;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
     private readonly IItensPedidoRepository _itensPedidoRepository;
 
     public EstoqueService(
         IEstoqueRepository estoqueRepository,
         IMovimentacaoDeProdutoRepository movimentacaoDeProdutoRepository,
-        IConfiguracoesDePedidoService configuracoesDePedidoService,
+        IConfiguracaoDoSistemaService configuracaoDoSistemaService,
         IItensPedidoRepository itensPedidoRepository)
     {
         _estoqueRepository = estoqueRepository;
         _movimentacaoDeProdutoRepository = movimentacaoDeProdutoRepository;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
         _itensPedidoRepository = itensPedidoRepository;
     }
 
@@ -81,7 +81,7 @@ public class EstoqueService : IEstoqueService
 
     public async Task AtualizarEstoquesAsync(UpdateEstoquesDto updateEstoqueDto)
     {
-        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
 
         var estoques =
             await _estoqueRepository.GetPosicaoEstoqueAsync(updateEstoqueDto.Dados.Select(x => x.Id).ToList());
@@ -105,7 +105,7 @@ public class EstoqueService : IEstoqueService
 
     public async Task<bool> MovimentacaoDePedidoEntregueAsync(IList<ItemPedido> itens)
     {
-        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
 
         var estoques = await _estoqueRepository
             .GetPosicaoEstoqueDosProdutosAsync(
@@ -174,7 +174,7 @@ public class EstoqueService : IEstoqueService
     public async Task<bool> MovimentacaoDeProdutoAsync(
         MovimentacaoDeProdutoDto dto)
     {
-        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
 
         var estoque = await GetEstoqueLocalAsync(
             dto.ProdutoId,
@@ -223,7 +223,7 @@ public class EstoqueService : IEstoqueService
 
     public async Task<bool> UpdateEstoqueAsync(UpdateEstoqueDto updateEstoqueDto)
     {
-        var config = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
 
         var estoque = await _estoqueRepository.GetEstoqueAsync(x =>
                           x.ProdutoId == updateEstoqueDto.ProdutoId &&

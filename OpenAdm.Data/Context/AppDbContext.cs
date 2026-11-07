@@ -14,7 +14,7 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<ConfiguracoesDePedido> ConfiguracoesDePedidos { get; set; }
+    public DbSet<ConfiguracaoDoSistema> ConfiguracaoDoSistema { get; set; }
     public DbSet<EmpresaOpenAdm> Empresas { get; set; }
     public DbSet<LinkEmpresa> LinksEmpresas { get; set; }
     public DbSet<EnderecoParceiro> EnderecoParceiro { get; set; }

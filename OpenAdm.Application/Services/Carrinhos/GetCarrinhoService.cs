@@ -14,7 +14,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
     private readonly IProdutoRepository _produtoRepository;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
     private readonly IEstoqueRepository _estoqueRepository;
     private readonly IItensPedidoRepository _itensPedidoRepository;
 
@@ -23,14 +23,14 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         IProdutoRepository produtoRepository,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         IUsuarioAutenticado usuarioAutenticado,
-        IConfiguracoesDePedidoService configuracoesDePedidoService,
+        IConfiguracaoDoSistemaService configuracaoDoSistemaService,
         IEstoqueRepository estoqueRepository, IItensPedidoRepository itensPedidoRepository)
     {
         _carrinhoRepository = carrinhoRepository;
         _produtoRepository = produtoRepository;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _usuarioAutenticado = usuarioAutenticado;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
         _estoqueRepository = estoqueRepository;
         _itensPedidoRepository = itensPedidoRepository;
     }
@@ -45,7 +45,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
         var produtos = await _produtoRepository.GetProdutosByListIdAsync(produtosIds);
 
-        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.ConfiguracaoDoSistemaAsync();
 
         var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
         var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);
@@ -195,7 +195,7 @@ public sealed class GetCarrinhoService : IGetCarrinhoService
         var itensTabelaDePreco = await _itemTabelaDePrecoRepository.GetItensTabelaDePrecoByIdProdutosAsync(produtosIds);
         var produtos = await _produtoRepository.GetProdutosByListIdV2Async(produtosIds);
 
-        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.ConfiguracaoDoSistemaAsync();
 
         var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
         var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);

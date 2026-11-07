@@ -23,7 +23,7 @@ public static class ProdutoEcommerceHelper
     public static PosicaoEstoqueModel ObterPosicao(
         Produto produto,
         Estoque? estoque,
-        ConfiguracoesDePedido config,
+        ConfiguracaoDoSistema config,
         decimal reservado)
     {
         return new PosicaoEstoqueModel(
@@ -34,7 +34,7 @@ public static class ProdutoEcommerceHelper
 
     public static void AplicarEstoque(
         Produto produto,
-        ConfiguracoesDePedido config,
+        ConfiguracaoDoSistema config,
         Estoque? estoque,
         EstoqueReservadoModel? estoqueReservado,
         out decimal quantidadeDisponivel,

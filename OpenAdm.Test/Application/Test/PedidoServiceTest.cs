@@ -5,7 +5,7 @@ using OpenAdm.Domain.Model.Pedidos;
 using OpenAdm.Application.Dtos.Pedidos;
 using OpenAdm.Application.Dtos.Parceiros;
 using OpenAdm.Application.Models.ConfiguracoesDePagamentos;
-using OpenAdm.Application.Models.ConfiguracoesDePedidos;
+using OpenAdm.Application.Models.ConfiguracaoDoSistema;
 using OpenAdm.Domain.Entities;
 using OpenAdm.Test.Domain.Builder;
 
@@ -17,7 +17,7 @@ public class PedidoServiceTest
     private readonly Mock<IProcessarPedidoService> _processarPedidoServiceMock;
     private readonly Mock<IItemTabelaDePrecoRepository> _itemTabelaDePrecoRepositoryMock;
     private readonly Mock<ICarrinhoRepository> _carrinhoRepositoryMock;
-    private readonly Mock<IConfiguracoesDePedidoService> _configuracoesDePedidoServiceMock;
+    private readonly Mock<IConfiguracaoDoSistemaService> _configuracoesDePedidoServiceMock;
     private readonly Mock<IUsuarioAutenticado> _usuarioAutenticadoMock;
     private readonly Mock<IEstoqueRepository> _estoqueRepositoryMock;
     private readonly Mock<IConfiguracaoDeFreteService> _configuracaoDeFreteServiceMock;
@@ -33,7 +33,7 @@ public class PedidoServiceTest
         _processarPedidoServiceMock = new Mock<IProcessarPedidoService>();
         _itemTabelaDePrecoRepositoryMock = new Mock<IItemTabelaDePrecoRepository>();
         _carrinhoRepositoryMock = new Mock<ICarrinhoRepository>();
-        _configuracoesDePedidoServiceMock = new Mock<IConfiguracoesDePedidoService>();
+        _configuracoesDePedidoServiceMock = new Mock<IConfiguracaoDoSistemaService>();
         _usuarioAutenticadoMock = new Mock<IUsuarioAutenticado>();
         _estoqueRepositoryMock = new Mock<IEstoqueRepository>();
         _configuracaoDeFreteServiceMock = new Mock<IConfiguracaoDeFreteService>();
@@ -449,8 +449,8 @@ public class PedidoServiceTest
         decimal? pedidoMinimoVarejo = null,
         bool vendaDeProdutoComEstoque = false) =>
         _configuracoesDePedidoServiceMock
-            .Setup(x => x.GetConfiguracoesDePedidoAsync())
-            .ReturnsAsync(new ConfiguracoesDePedidoViewModel
+            .Setup(x => x.GetConfiguracaoDoSistemaAsync())
+            .ReturnsAsync(new ConfiguracaoDoSistemaViewModel
             {
                 PedidoMinimoAtacado = pedidoMinimoAtacado,
                 PedidoMinimoVarejo = pedidoMinimoVarejo,

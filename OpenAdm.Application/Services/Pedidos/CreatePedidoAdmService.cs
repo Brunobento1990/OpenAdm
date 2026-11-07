@@ -14,18 +14,18 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
     private readonly IFaturaService _faturaService;
     private readonly IUsuarioService _usuarioService;
     private readonly IProcessarPedidoService _processarPedidoService;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
 
     public CreatePedidoAdmService(
         IPedidoRepository pedidoRepository,
         IFaturaService faturaService,
-        IUsuarioService usuarioService, IProcessarPedidoService processarPedidoService, IConfiguracoesDePedidoService configuracoesDePedidoService)
+        IUsuarioService usuarioService, IProcessarPedidoService processarPedidoService, IConfiguracaoDoSistemaService configuracaoDoSistemaService)
     {
         _pedidoRepository = pedidoRepository;
         _faturaService = faturaService;
         _usuarioService = usuarioService;
         _processarPedidoService = processarPedidoService;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
     }
 
     public async Task<bool> CreateAsync(PedidoAdmCreateDto pedidoAdmCreateDto, Guid? representanteId = null, bool processarPedido = false)
@@ -83,7 +83,7 @@ public class CreatePedidoAdmService : ICreatePedidoAdmService
 
         if (processarPedido)
         {
-            var configuracaoDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var configuracaoDePedido = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
             await _processarPedidoService.ProcessarCreateAsync(pedido.Id, configuracaoDePedido);
         }
         

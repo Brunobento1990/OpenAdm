@@ -1,5 +1,5 @@
 ﻿using OpenAdm.Application.Interfaces;
-using OpenAdm.Application.Models.ConfiguracoesDePedidos;
+using OpenAdm.Application.Models.ConfiguracaoDoSistema;
 using OpenAdm.Domain.Entities.OpenAdm;
 using OpenAdm.Domain.Enuns;
 using OpenAdm.Domain.Interfaces;
@@ -21,7 +21,7 @@ public class ProcessarPedidoService : IProcessarPedidoService
         _filaService = filaService;
     }
 
-    public async Task ProcessarCreateAsync(Guid pedidoId, ConfiguracoesDePedidoViewModel configuracoesDePedido)
+    public async Task ProcessarCreateAsync(Guid pedidoId, ConfiguracaoDoSistemaViewModel configuracoesDePedido)
     {
         var dados = new NovoPedidoEvento()
         {

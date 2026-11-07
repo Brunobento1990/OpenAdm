@@ -7,35 +7,35 @@ using OpenAdm.Domain.PaginateDto;
 
 namespace OpenAdm.Worker.Infra.Repositories;
 
-public class ConfiguracoesDePedidoRepository : IConfiguracoesDePedidoRepository
+public class ConfiguracaoDoSistemaRepository : IConfiguracaoDoSistemaRepository
 {
     private readonly AppDbContext _appDbContext;
 
-    public ConfiguracoesDePedidoRepository(AppDbContext appDbContext)
+    public ConfiguracaoDoSistemaRepository(AppDbContext appDbContext)
     {
         _appDbContext = appDbContext;
     }
 
-    public Task AddAsync(ConfiguracoesDePedido entity)
+    public Task AddAsync(ConfiguracaoDoSistema entity)
     {
         throw new NotImplementedException();
     }
 
-    public void Delete(ConfiguracoesDePedido entity)
+    public void Delete(ConfiguracaoDoSistema entity)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync(Guid parceiroId)
+    public async Task<ConfiguracaoDoSistema?> GetConfiguracaoDoSistemaAsync(Guid parceiroId)
     {
         return await _appDbContext
-            .ConfiguracoesDePedidos
+            .ConfiguracaoDoSistema
             .AsNoTracking()
             .OrderByDescending(x => x.Numero)
             .FirstOrDefaultAsync(x => x.Ativo && x.ParceiroId == parceiroId);
     }
 
-    public Task<PaginacaoViewModel<ConfiguracoesDePedido>> PaginacaoAsync(FilterModel<ConfiguracoesDePedido> filterModel)
+    public Task<PaginacaoViewModel<ConfiguracaoDoSistema>> PaginacaoAsync(FilterModel<ConfiguracaoDoSistema> filterModel)
     {
         throw new NotImplementedException();
     }
@@ -50,7 +50,7 @@ public class ConfiguracoesDePedidoRepository : IConfiguracoesDePedidoRepository
         throw new NotImplementedException();
     }
 
-    public void Update(ConfiguracoesDePedido entity)
+    public void Update(ConfiguracaoDoSistema entity)
     {
         throw new NotImplementedException();
     }

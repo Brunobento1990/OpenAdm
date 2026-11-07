@@ -6,21 +6,21 @@ namespace OpenAdm.Application.Services;
 
 public sealed class NotificarPedidoEditadoService : INotificarPedidoEditadoService
 {
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
     //private readonly IProducerGeneric<ProcessarPedidoModel> _producerGeneric;
 
-    public NotificarPedidoEditadoService(IConfiguracoesDePedidoService configuracoesDePedidoService)
+    public NotificarPedidoEditadoService(IConfiguracaoDoSistemaService configuracaoDoSistemaService)
     {
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
     }
 
     public async Task NotificarAsync(Pedido pedido)
     {
-        var configuracoesDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var configuracoesDePedido = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
         pedido.ItensPedido = new List<ItemPedido>();
         var processarPedidoModel = new ProcessarPedidoModel()
         {
-            EmailEnvio = configuracoesDePedido.EmailDeEnvio,
+            EmailEnvio = configuracoesDePedido.EmailParaEnvioNotificacao,
             Pedido = pedido
         };
         //_producerGeneric.Publish(processarPedidoModel, "pedido-editado");

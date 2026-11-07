@@ -28,7 +28,7 @@ public class UsuarioServiceTest
             Mock.Of<IParceiroAutenticado>(),
             Mock.Of<ICnpjConsultaService>(),
             _sessaoUsuarioService.Object,
-            Mock.Of<IConfiguracoesDePedidoRepository>(),
+            Mock.Of<IConfiguracaoDoSistemaRepository>(),
             Mock.Of<IFilaService>());
     }
 

@@ -16,14 +16,14 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
     private readonly IPdfPedidoService _pdfPedidoService;
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IParceiroRepository _parceiroRepository;
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly IConfiguracaoDoSistemaRepository _configuracoesDePedidoRepository;
     private readonly IHttpClientWhatsApp _httpClientWhatsApp;
     private readonly IEmailService _emailService;
 
     public NotificarNovoPedidoService(IPdfPedidoService pdfPedidoService,
         IPedidoRepository pedidoRepository,
         IParceiroRepository parceiroRepository,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        IConfiguracaoDoSistemaRepository configuracoesDePedidoRepository,
         IHttpClientWhatsApp httpClientWhatsApp,
         IEmailService emailService)
     {
@@ -61,7 +61,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
         }
 
         var configuracoesDePedido =
-            await _configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(eventoAplicacao.EmpresaOpenAdmId);
+            await _configuracoesDePedidoRepository.GetConfiguracaoDoSistemaAsync(eventoAplicacao.EmpresaOpenAdmId);
 
         if (configuracoesDePedido == null)
         {
@@ -71,11 +71,11 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
 
         var pdf = _pdfPedidoService.GeneratePdfPedido(pedido, parceiro);
 
-        if (!string.IsNullOrWhiteSpace(configuracoesDePedido.WhatsApp))
+        if (!string.IsNullOrWhiteSpace(configuracoesDePedido.WhatsAppParaEnvioNotificacao))
         {
             var payload = new EnviarPDFWppRequest()
             {
-                Number = $"55{configuracoesDePedido.WhatsApp.LimparMascaraTelefone()}",
+                Number = $"55{configuracoesDePedido.WhatsAppParaEnvioNotificacao.LimparMascaraTelefone()}",
                 Mediatype = "document",
                 Mimetype = "application/pdf",
                 Caption =
@@ -109,7 +109,7 @@ public class NotificarNovoPedidoService : IEventoAplicacaoService
         var emailModel = new EnviarEmailDTO()
         {
             Assunto = "Novo pedido",
-            Email = configuracoesDePedido.EmailDeEnvio,
+            Email = configuracoesDePedido.EmailParaEnvioNotificacao,
             Arquivo = pdf,
             NomeDoArquivo = $"pedido-{pedido.Numero}",
             TipoDoArquivo = "application/pdf",

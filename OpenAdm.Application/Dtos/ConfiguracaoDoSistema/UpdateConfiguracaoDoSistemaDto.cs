@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace OpenAdm.Application.Dtos.ConfiguracoesDePedidos;
+namespace OpenAdm.Application.Dtos.ConfiguracaoDoSistema;
 
-public class UpdateConfiguracoesDePedidoDto
+public class UpdateConfiguracaoDoSistemaDto
 {
     [Required]
     [DataType(DataType.EmailAddress)]
     [MaxLength(255)]
-    public string EmailDeEnvio { get; set; } = string.Empty;
-    public string? WhatsApp { get; set; }
+    public string EmailParaEnvioNotificacao { get; set; } = string.Empty;
+    public string? WhatsAppParaEnvioNotificacao { get; set; }
     public decimal? PedidoMinimoAtacado { get; set; }
     public decimal? PedidoMinimoVarejo { get; set; }
     public bool VendaDeProdutoComEstoque { get; set; } = false;

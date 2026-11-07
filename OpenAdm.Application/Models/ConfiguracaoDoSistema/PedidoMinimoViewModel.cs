@@ -1,4 +1,4 @@
-﻿namespace OpenAdm.Application.Models.ConfiguracoesDePedidos;
+﻿namespace OpenAdm.Application.Models.ConfiguracaoDoSistema;
 
 public class PedidoMinimoViewModel
 {

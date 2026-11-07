@@ -13,11 +13,11 @@ namespace OpenAdm.Worker.Application.Service;
 public class NotificarParceiroWhatsAppService : IEventoAplicacaoService
 {
     private readonly IParceiroRepository _parceiroRepository;
-    private readonly IConfiguracoesDePedidoRepository _configuracoesDePedidoRepository;
+    private readonly IConfiguracaoDoSistemaRepository _configuracoesDePedidoRepository;
     private readonly IHttpClientWhatsApp _httpClientWhatsApp;
 
     public NotificarParceiroWhatsAppService(IParceiroRepository parceiroRepository,
-        IConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
+        IConfiguracaoDoSistemaRepository configuracoesDePedidoRepository,
         IHttpClientWhatsApp httpClientWhatsApp)
     {
         _parceiroRepository = parceiroRepository;
@@ -43,8 +43,8 @@ public class NotificarParceiroWhatsAppService : IEventoAplicacaoService
         }
 
         var configuracoesDePedido = await _configuracoesDePedidoRepository
-            .GetConfiguracoesDePedidoAsync(eventoAplicacao.EmpresaOpenAdmId);
-        var whatsApp = configuracoesDePedido?.WhatsApp;
+            .GetConfiguracaoDoSistemaAsync(eventoAplicacao.EmpresaOpenAdmId);
+        var whatsApp = configuracoesDePedido?.WhatsAppParaEnvioNotificacao;
 
         if (string.IsNullOrWhiteSpace(whatsApp))
         {

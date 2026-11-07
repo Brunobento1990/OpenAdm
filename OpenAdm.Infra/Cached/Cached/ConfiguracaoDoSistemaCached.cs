@@ -7,14 +7,14 @@ using OpenAdm.Infra.Repositories;
 
 namespace OpenAdm.Infra.Cached.Cached;
 
-public class ConfiguracoesDePedidoCached(
-    ConfiguracoesDePedidoRepository configuracoesDePedidoRepository,
-    ICachedService<ConfiguracoesDePedido> cachedService) : IConfiguracoesDePedidoRepository
+public class ConfiguracaoDoSistemaCached(
+    ConfiguracaoDoSistemaRepository configuracoesDePedidoRepository,
+    ICachedService<ConfiguracaoDoSistema> cachedService) : IConfiguracaoDoSistemaRepository
 {
-    private const string KeyPrefix = "configuracoes-de-pedido";
+    private const string KeyPrefix = "configuracao-do-sistema";
     private readonly HashSet<string> _keysParaRemover = [];
 
-    public async Task<ConfiguracoesDePedido?> GetConfiguracoesDePedidoAsync(Guid parceiroId)
+    public async Task<ConfiguracaoDoSistema?> GetConfiguracaoDoSistemaAsync(Guid parceiroId)
     {
         var key = ObterKey(parceiroId);
         var configuracoes = await cachedService.GetItemAsync(key);
@@ -24,7 +24,7 @@ public class ConfiguracoesDePedidoCached(
             return configuracoes;
         }
 
-        configuracoes = await configuracoesDePedidoRepository.GetConfiguracoesDePedidoAsync(parceiroId);
+        configuracoes = await configuracoesDePedidoRepository.GetConfiguracaoDoSistemaAsync(parceiroId);
 
         if (configuracoes is not null)
         {
@@ -34,18 +34,18 @@ public class ConfiguracoesDePedidoCached(
         return configuracoes;
     }
 
-    public async Task AddAsync(ConfiguracoesDePedido entity)
+    public async Task AddAsync(ConfiguracaoDoSistema entity)
     {
         await configuracoesDePedidoRepository.AddAsync(entity);
     }
 
-    public void Update(ConfiguracoesDePedido entity)
+    public void Update(ConfiguracaoDoSistema entity)
     {
         MarcarCacheParaRemocao(entity.ParceiroId);
         configuracoesDePedidoRepository.Update(entity);
     }
 
-    public void Delete(ConfiguracoesDePedido entity)
+    public void Delete(ConfiguracaoDoSistema entity)
     {
         MarcarCacheParaRemocao(entity.ParceiroId);
         configuracoesDePedidoRepository.Delete(entity);
@@ -65,8 +65,8 @@ public class ConfiguracoesDePedidoCached(
     public Task<long> ProximoNumeroAsync(Guid parceiroId)
         => configuracoesDePedidoRepository.ProximoNumeroAsync(parceiroId);
 
-    public Task<PaginacaoViewModel<ConfiguracoesDePedido>> PaginacaoAsync(
-        FilterModel<ConfiguracoesDePedido> filterModel)
+    public Task<PaginacaoViewModel<ConfiguracaoDoSistema>> PaginacaoAsync(
+        FilterModel<ConfiguracaoDoSistema> filterModel)
         => configuracoesDePedidoRepository.PaginacaoAsync(filterModel);
 
     private void MarcarCacheParaRemocao(Guid parceiroId)

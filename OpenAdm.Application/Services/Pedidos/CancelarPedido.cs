@@ -12,15 +12,15 @@ public class CancelarPedido : ICancelarPedido
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IEmailApiService _emailService;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
     public CancelarPedido(
         IPedidoRepository pedidoRepository,
         IEmailApiService emailService,
-        IConfiguracoesDePedidoService configuracoesDePedidoService)
+        IConfiguracaoDoSistemaService configuracaoDoSistemaService)
     {
         _pedidoRepository = pedidoRepository;
         _emailService = emailService;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
     }
 
     public async Task<bool> CancelarAsync(CancelarPedidoDto cancelarPedidoDto)
@@ -30,9 +30,9 @@ public class CancelarPedido : ICancelarPedido
         pedido.Cancelar(cancelarPedidoDto.Motivo);
         await _pedidoRepository.UpdateAsync(pedido);
         
-        var configuracoesDePedido = await _configuracoesDePedidoService.GetConfiguracoesDePedidoAsync();
+        var configuracoesDePedido = await _configuracaoDoSistemaService.GetConfiguracaoDoSistemaAsync();
 
-        if (!string.IsNullOrWhiteSpace(configuracoesDePedido.EmailDeEnvio))
+        if (!string.IsNullOrWhiteSpace(configuracoesDePedido.EmailParaEnvioNotificacao))
         {
             var message = $"Pedido cancelado!\nN. do pedido : {pedido.Numero}";
             var assunto = "Cancelamento de pedido";
@@ -45,7 +45,7 @@ public class CancelarPedido : ICancelarPedido
             var emailModel = new ToEnvioEmailApiModel()
             {
                 Assunto = assunto,
-                Email = configuracoesDePedido.EmailDeEnvio,
+                Email = configuracoesDePedido.EmailParaEnvioNotificacao,
                 Mensagem = message,
                 NomeDoArquivo = $"pedido-{pedido.Numero}"
             };

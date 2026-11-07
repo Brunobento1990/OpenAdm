@@ -48,7 +48,7 @@ public static class DependencyInjectyApplication
         services.AddScoped<IPesoService, PesoService>();
         services.AddScoped<ITamanhoService, TamanhoService>();
         services.AddScoped<ITabelaDePrecoService, TabelaDePrecoService>();
-        services.AddScoped<IConfiguracoesDePedidoService, ConfiguracoesDePedidoService>();
+        services.AddScoped<IConfiguracaoDoSistemaService, ConfiguracaoDoSistemaService>();
         services.AddScoped<IItemTabelaDePrecoService, ItemTabelaDePrecoService>();
         services.AddScoped<IMovimentacaoDeProdutosService, MovimentacaoDeProdutosService>();
         services.AddScoped<IEstoqueService, EstoqueService>();

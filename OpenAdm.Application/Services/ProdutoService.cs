@@ -19,7 +19,7 @@ public class ProdutoService : IProdutoService
     private readonly IUploadImageBlobClient _uploadImageBlobClient;
     private readonly IItemTabelaDePrecoRepository _itemTabelaDePrecoRepository;
     private readonly IUsuarioAutenticado _usuarioAutenticado;
-    private readonly IConfiguracoesDePedidoService _configuracoesDePedidoService;
+    private readonly IConfiguracaoDoSistemaService _configuracaoDoSistemaService;
     private readonly IEstoqueRepository _estoqueRepository;
     private readonly IItensPedidoRepository _itensPedidoRepository;
 
@@ -30,7 +30,7 @@ public class ProdutoService : IProdutoService
         IUploadImageBlobClient uploadImageBlobClient,
         IItemTabelaDePrecoRepository itemTabelaDePrecoRepository,
         IUsuarioAutenticado usuarioAutenticado,
-        IConfiguracoesDePedidoService configuracoesDePedidoService,
+        IConfiguracaoDoSistemaService configuracaoDoSistemaService,
         IEstoqueRepository estoqueRepository, IItensPedidoRepository itensPedidoRepository)
     {
         _produtoRepository = produtoRepository;
@@ -39,7 +39,7 @@ public class ProdutoService : IProdutoService
         _uploadImageBlobClient = uploadImageBlobClient;
         _itemTabelaDePrecoRepository = itemTabelaDePrecoRepository;
         _usuarioAutenticado = usuarioAutenticado;
-        _configuracoesDePedidoService = configuracoesDePedidoService;
+        _configuracaoDoSistemaService = configuracaoDoSistemaService;
         _estoqueRepository = estoqueRepository;
         _itensPedidoRepository = itensPedidoRepository;
     }
@@ -127,7 +127,7 @@ public class ProdutoService : IProdutoService
         
         var produtosIds = paginacao.Values.Select(x => x.Id).Distinct().ToList();
         
-        var config = await _configuracoesDePedidoService.ConfiguracaoDePedidoAsync();
+        var config = await _configuracaoDoSistemaService.ConfiguracaoDoSistemaAsync();
 
         var estoques = await _estoqueRepository.GetPosicaoEstoqueDosProdutosAsync(produtosIds);
         var estoquesReservados = await _itensPedidoRepository.ObterEstoquesReservadosAsync(produtosIds);
@@ -222,7 +222,7 @@ public class ProdutoService : IProdutoService
     }
 
     private async Task<ICollection<ProdutoViewModel>> MapearProdutosAsync(ICollection<Produto> produtos,
-        ConfiguracoesDePedido config,
+        ConfiguracaoDoSistema config,
         IList<Estoque> estoques,
         IList<EstoqueReservadoModel> estoquesReservados)
     {
@@ -293,7 +293,7 @@ public class ProdutoService : IProdutoService
     public static void MapearProdutoEstoque(
         Produto produto,
         ProdutoViewModel produtoViewModel,
-        ConfiguracoesDePedido config,
+        ConfiguracaoDoSistema config,
         IList<Estoque> estoques,
         IList<EstoqueReservadoModel> estoquesReservados)
     {
