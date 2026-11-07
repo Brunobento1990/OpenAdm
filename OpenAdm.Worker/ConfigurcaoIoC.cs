@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using OpenAdm.Data.Context;
 using OpenAdm.Domain.Enuns;
@@ -19,7 +18,7 @@ public static class ConfigurcaoIoC
 {
     public static IServiceCollection ConfigurarJobs(this IServiceCollection services)
     {
-        //services.AddHostedService<ConexaoWhatsAppJob>();
+        services.AddHostedService<ConexaoWhatsAppJob>();
         services.AddHostedService<EventoAplicacaoJob>();
         services.AddHostedService<GerarParcelaCobrancaJob>();
 
@@ -70,10 +69,11 @@ public static class ConfigurcaoIoC
         services.AddHttpClient(nameof(HttpClientEnum.WhatsApp), x =>
         {
             x.BaseAddress = new Uri(urlWhatsApp);
+            x.Timeout = TimeSpan.FromSeconds(15);
             x.DefaultRequestHeaders.Add("token", apiKeyWhatsApp);
         });
 
-        services.AddScoped<IHttpClientWhatsApp, HttpClientWhatsApp>();
+        services.AddScoped<IHttpClientWhatsApp, HttpClientWuzApiWhatsApp>();
 
         return services;
     }

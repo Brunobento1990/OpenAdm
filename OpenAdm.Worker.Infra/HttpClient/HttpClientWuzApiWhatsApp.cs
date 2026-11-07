@@ -9,12 +9,12 @@ using OpenAdm.Worker.Infra.Enum;
 
 namespace OpenAdm.Worker.Infra.HttpClient;
 
-public class HttpClientWhatsApp : IHttpClientWhatsApp
+public class HttpClientWuzApiWhatsApp : IHttpClientWhatsApp
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly string _instance = "open-adm";
 
-    public HttpClientWhatsApp(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public HttpClientWuzApiWhatsApp(IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _httpClientFactory = httpClientFactory;
         var instance = configuration["WhatsApp:Instance"];
@@ -23,11 +23,11 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
             _instance = instance;
         }
     }
-    
+
     private string NormalizarTelefoneWuzApi(string telefone)
     {
         telefone = Regex.Replace(telefone, @"\D", "");
-        
+
         if (telefone.Length == 13 &&
             telefone.StartsWith("55") &&
             telefone[4] == '9')
@@ -47,12 +47,12 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
             Phone = NormalizarTelefoneWuzApi(request.Number),
             FileName = request.FileName,
             Document = $"data:application/pdf;base64,{request.Media}",
-            Caption =  request.Caption
+            Caption = request.Caption
         };
-        
-        var response = await client.PostAsync($"chat/send/document",
+
+        using var response = await client.PostAsync("chat/send/document",
             JsonSerializerOptionsApi.ToJson(body));
-        
+
         return response.IsSuccessStatusCode;
     }
 
@@ -60,41 +60,39 @@ public class HttpClientWhatsApp : IHttpClientWhatsApp
     {
         using var client = _httpClientFactory.CreateClient(nameof(HttpClientEnum.WhatsApp));
 
-        var response = await client.PostAsync("chat/send/text",
+        using var response = await client.PostAsync("chat/send/text",
             JsonSerializerOptionsApi.ToJson(new EnviarMsgWuzApiWppRequest()
             {
                 Phone = NormalizarTelefoneWuzApi(request.Number),
                 Body = request.Text
             }));
-        
+
         return response.IsSuccessStatusCode;
     }
 
-    public async Task<ResultPartner<StatusConexaoWhatsAppResponse>> StatusConexaoAsync()
+    public async Task<ResultPartner<bool>> StatusConexaoAsync()
     {
         using var client = _httpClientFactory.CreateClient(nameof(HttpClientEnum.WhatsApp));
 
-        var response = await client.GetAsync($"instance/connectionState/{_instance}");
+        using var response = await client.GetAsync("session/status");
 
         if (!response.IsSuccessStatusCode)
         {
             var erroBody = await response.Content.ReadAsStringAsync();
 
-            return (ResultPartner<StatusConexaoWhatsAppResponse>)(string.IsNullOrWhiteSpace(erroBody)
-                ? "Sem response do erro"
-                : erroBody);
+            return (ResultPartner<bool>)erroBody;
         }
 
         var body = await response.Content.ReadAsStreamAsync();
 
-        var bodyParse = JsonSerializerOptionsApi.FromJson<StatusConexaoWhatsAppResponse>(body);
+        var bodyParse = JsonSerializerOptionsApi.FromJson<StatusConexaoWhatsAppWuzApiResponse>(body);
 
         if (bodyParse == null)
         {
-            return (ResultPartner<StatusConexaoWhatsAppResponse>)
+            return (ResultPartner<bool>)
                 "Não foi possível dar parse no json da resposta da conexão do whatsApp";
         }
 
-        return (ResultPartner<StatusConexaoWhatsAppResponse>)bodyParse;
+        return (ResultPartner<bool>)(bodyParse.Data?.Connected == true);
     }
 }

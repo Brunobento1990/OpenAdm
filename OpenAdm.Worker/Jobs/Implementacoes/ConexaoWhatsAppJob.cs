@@ -31,9 +31,10 @@ public class ConexaoWhatsAppJob : BackgroundService
                 continue;
             }
 
+            await using var scoped = _serviceProvider.CreateAsyncScope();
+            
             try
             {
-                await using var scoped = _serviceProvider.CreateAsyncScope();
                 var servicoConexaoWhatsApp = scoped.ServiceProvider.GetService<IHttpClientWhatsApp>();
 
                 if (servicoConexaoWhatsApp == null)
@@ -43,36 +44,42 @@ public class ConexaoWhatsAppJob : BackgroundService
 
                 var response = await servicoConexaoWhatsApp.StatusConexaoAsync();
 
-                if (response.Result?.Instance?.Conectado == true)
+                if (response.Result)
                 {
                     continue;
                 }
 
-                if (string.IsNullOrEmpty(_emailDeErro))
-                {
-                    continue;
-                }
-
-                var servicoEmail = scoped.ServiceProvider.GetService<IEmailService>();
-
-                if (servicoEmail == null)
-                {
-                    continue;
-                }
-
-                var emailModel = new EnviarEmailDTO()
-                {
-                    Assunto = "Erro de conexão whats app",
-                    Email = _emailDeErro,
-                    Mensagem = response.Error ?? "Não há erro específico de conexão",
-                };
-
-                await servicoEmail.EnviarAsync(emailModel);
+                await NotificarErroConexao(scoped, response.Error ?? "Não há erro específico de conexão");
             }
             catch (Exception e)
             {
                 LogService.Error(e.InnerException?.Message ?? e.Message);
+                await NotificarErroConexao(scoped, e.InnerException?.Message ?? e.Message);
             }
         }
+    }
+
+    private async Task NotificarErroConexao(AsyncServiceScope scoped, string erro)
+    {
+        if (string.IsNullOrEmpty(_emailDeErro))
+        {
+            return;
+        }
+
+        var servicoEmail = scoped.ServiceProvider.GetService<IEmailService>();
+
+        if (servicoEmail == null)
+        {
+            return;
+        }
+
+        var emailModel = new EnviarEmailDTO()
+        {
+            Assunto = "Erro de conexão whats app",
+            Email = _emailDeErro,
+            Mensagem = erro,
+        };
+
+        await servicoEmail.EnviarAsync(emailModel);
     }
 }
